@@ -1,97 +1,177 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Welcome"
+description: "Enterprise-grade multitenant platform for remittance, digital lending, and investment services"
+icon: "sack-dollar"
 ---
 
-## Setting up
+<img
+  className="block dark:hidden"
+  src="/images/image-hero.png"
+  alt="FinCode Platform Hero"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/image-hero.png"
+  alt="FinCode Platform Hero"
+/>
 
-Get your documentation site up and running in minutes.
+## Who Are We?
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+FinCode is a comprehensive multitenant financial services platform that powers remittance, digital lending, and investment operations. Built for scale, security, and complete tenant isolation, FinCode enables financial institutions, fintech companies, and money service businesses to launch and manage their services with enterprise-grade infrastructure.
 
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Get your integration running in under 10 minutes with our step-by-step
+    guide.
+  </Card>
+  <Card title="Authentication Guide" icon="key" href="/authentication">
+    Learn about API keys, OAuth, and tenant-scoped tokens.
   </Card>
   <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
+    title="Architecture Overview"
+    icon="sitemap"
+    href="/overview/architecture"
   >
-    Customize the design and colors of your site to match your brand.
+    Understand our multitenant architecture and security model.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
+  <Card title="API Reference" icon="code" href="/api/authentication">
+    Explore our comprehensive API documentation with interactive examples.
+  </Card>
+</CardGroup>
+
+---
+
+## Core Products
+
+<CardGroup cols={3}>
+  <Card
+    title="Remittance"
+    icon="money-bill-transfer"
+    href="/remittance/process-flows"
   >
-    Organize your docs to help users find what they need and succeed with your product.
+    Cross-border money transfers with competitive FX rates, real-time tracking,
+    and multi-corridor support.
   </Card>
   <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
+    title="Digital Lending"
+    icon="hand-holding-dollar"
+    href="/lending/loan-lifecycle"
   >
-    Auto-generate API documentation from OpenAPI specifications.
+    Automated loan origination, underwriting, disbursement, and repayment
+    management.
   </Card>
-</Columns>
+  <Card title="Investment" icon="chart-line" href="/investment/account-opening">
+    Portfolio management, asset allocation, and investment tracking with
+    real-time analytics.
+  </Card>
+</CardGroup>
 
-## Create beautiful pages
+---
 
-Everything you need to create world-class documentation.
+## Platform Features
 
-<Columns cols={2}>
+<AccordionGroup>
+  <Accordion title="Multitenant Architecture" icon="buildings">
+    Complete data isolation with tenant-specific configurations, branding, and
+    business logic. Each tenant operates in a secure, isolated environment with
+    customizable workflows and fee structures.
+  </Accordion>
+
+{" "}
+
+<Accordion title="Role-Based Access Control" icon="users">
+  Granular permissions for managers, agents, and end customers. Define custom
+  roles, workflows, and approval chains per tenant with full audit trails.
+</Accordion>
+
+{" "}
+
+<Accordion title="Real-Time Processing" icon="bolt">
+  Instant transaction processing, real-time FX rates, automated loan decisions,
+  and immediate settlement capabilities powered by our Songhai Exchange (SHE)
+  switching platform.
+</Accordion>
+
+{" "}
+
+<Accordion title="Comprehensive API" icon="webhook">
+  RESTful APIs with webhook support, detailed documentation, and interactive
+  testing. Built for developers with clear error handling and extensive code
+  examples.
+</Accordion>
+
+{" "}
+
+<Accordion title="Compliance & Security" icon="shield-check">
+  Built-in KYC/AML checks, transaction monitoring, regulatory reporting, and
+  enterprise-grade security with encryption at rest and in transit.
+</Accordion>
+
+  <Accordion title="Analytics & Reporting" icon="chart-mixed">
+    Real-time dashboards, transaction analytics, tenant performance metrics, and
+    customizable reports for operational insights.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Developer Resources
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/api/authentication">
+    OAuth 2.0, API keys, and tenant-scoped tokens for secure API access.
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/api/webhooks">
+    Real-time event notifications for transactions, loan status, and system
+    events.
+  </Card>
   <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
+    title="Error Handling"
+    icon="triangle-exclamation"
+    href="/remittance/error-handling"
   >
-    Use MDX to style your docs pages.
+    Comprehensive error codes, retry logic, and troubleshooting guides.
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
+  <Card title="Rate Limits" icon="gauge-high" href="/api/rate-limits">
+    Understand API quotas, throttling policies, and best practices.
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+</CardGroup>
 
-## Need inspiration?
+---
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+## Get Started Quickly
+
+<Steps>
+  <Step title="Set Up Authentication">
+    Generate your API keys and configure OAuth 2.0 for secure access. [Get
+    Started →](/authentication)
+  </Step>
+  <Step title="Onboard Your First Tenant">
+    Create a tenant, configure settings, and set up user roles. [Onboard Tenant
+    →](/integration/tenant-onboarding)
+  </Step>
+  <Step title="Send Your First Transaction">
+    Follow our quickstart guide to process your first remittance. [Quick Start
+    →](/quickstart)
+  </Step>
+  <Step title="Integrate Webhooks">
+    Set up real-time notifications for transaction events. [Configure Webhooks
+    →](/api/webhooks)
+  </Step>
+</Steps>
+
+---
+
+## Need Help?
+
+<CardGroup cols={3}>
+  <Card title="API Status" icon="signal" href="https://status.fincode.com">
+    Check real-time system status and uptime.
+  </Card>
+  <Card title="Support" icon="lifebuoy" href="mailto:hello@fincode.co.uk">
+    Contact our technical support team.
+  </Card>
+  <Card title="GitHub" icon="github" href="https://github.com/fincodeuk">
+    Explore SDKs and code examples.
+  </Card>
+</CardGroup>

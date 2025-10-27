@@ -1,80 +1,167 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "Quick Start Guide"
+description: "Get your FinCode integration up and running in under 15 minutes"
+icon: "rocket"
 ---
 
-## Get started in three steps
+# Quick Start
 
-Get your documentation site running locally and make your first customization.
+Get started with FinCode's multitenant platform in three simple steps. This guide will walk you through environment setup, authentication, and processing your first transaction.
 
-### Step 1: Set up your local environment
+## Step 1: Environment Setup & Authentication
 
 <AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
+  <Accordion icon="key" title="Get Your API Credentials">
+    1. **Access the Dashboard**: Go to [app.fincode.com](https://app.fincode.com) and create your account
+    2. **Create Your First Tenant**: Set up your tenant profile and configuration
+    3. **Generate API Keys**: Navigate to Settings → API Keys and create your sandbox keys
+    4. **Download SDK** (Optional): Get our client libraries for faster integration
+
+    <Tip>Keep your API keys secure! Never commit them to version control.</Tip>
+
   </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
+
+  <Accordion icon="gear" title="Configure Your Environment">
+    ### Sandbox vs Production
+    - **Sandbox**: `https://api-sandbox.fincode.com` - For testing with simulated transactions
+    - **Production**: `https://api.fincode.com` - For live transactions
+
+    ### Environment Variables
+    ```bash
+    # Add to your environment configuration
+    FINCODE_API_KEY=sk_sandbox_your_key_here
+    FINCODE_BASE_URL=https://api-sandbox.fincode.com
+    FINCODE_TENANT_ID=your_tenant_id
+    ```
+
+    <Warning>Always test thoroughly in sandbox before moving to production.</Warning>
+
   </Accordion>
 </AccordionGroup>
 
-### Step 2: Deploy your changes
+## Step 2: Make Your First API Call
 
 <AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+  <Accordion icon="terminal" title="Test Authentication">
+    Verify your setup by making a simple API call to check your tenant status:
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+    ```bash
+    curl -X GET "https://api-sandbox.fincode.com/v1/tenants/me" \
+      -H "X-Tenant-ID: $FINCODE_TENANT_ID" \
+      -H "Authorization: Bearer $FINCODE_API_KEY"
+    ```
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
+    **Expected Response:**
+    ```json
+    {
+      "tenant_id": "tenant_123",
+      "name": "Your Tenant Name",
+      "status": "active",
+      "products": ["remittance", "lending"],
+      "created_at": "2024-01-15T10:30:00Z"
+    }
+    ```
+
+    <Tip>Use this endpoint to verify your authentication and tenant configuration.</Tip>
+
+  </Accordion>
+
+  <Accordion icon="code" title="SDK Installation (Optional)">
+    ### JavaScript/Node.js
+    ```bash
+    npm install @fincode/sdk
+    ```
+
+    ```javascript
+    import { FinCode } from '@fincode/sdk';
+
+    const client = new FinCode({
+      apiKey: process.env.FINCODE_API_KEY,
+      baseURL: process.env.FINCODE_BASE_URL,
+      tenantId: process.env.FINCODE_TENANT_ID
+    });
+
+    // Test connection
+    const tenant = await client.tenants.getMe();
+    ```
+
+    ### Python
+    ```bash
+    pip install fincode-python
+    ```
+
+    ```python
+    from fincode import FinCode
+
+    client = FinCode(
+        api_key=os.getenv('FINCODE_API_KEY'),
+        base_url=os.getenv('FINCODE_BASE_URL'),
+        tenant_id=os.getenv('FINCODE_TENANT_ID')
+    )
+
+    tenant = client.tenants.get_me()
+    ```
+
   </Accordion>
 </AccordionGroup>
 
-### Step 3: Go live
+## Step 3: Process Your First Transaction
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
+Choose your starting point based on which product you're integrating:
 
 <CardGroup cols={2}>
+  <Card
+    title="Send a Remittance"
+    icon="money-bill-transfer"
+    href="/remittance/process-flows"
+  >
+    **Quick Test**: Send a test money transfer between demo accounts
+    - Create beneficiary
+    - Get FX quote
+    - Send transfer
+    - Track status
+    
+    [Start with Remittance →](/remittance/api/transactions)
+  </Card>
 
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card
+    title="Create a Loan Application"
+    icon="hand-holding-dollar"
+    href="/lending/loan-lifecycle"
+  >
+    **Quick Test**: Submit a test loan application
+    - Create customer profile
+    - Submit application
+    - Check decision
+    - Simulate disbursement
+    
+    [Start with Lending →](/lending/api/applications)
+  </Card>
 </CardGroup>
 
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+### Example: Quick Remittance Test
+
+```javascript
+// Create a test remittance transaction
+const transaction = await client.remittance.transactions.create({
+  sender: {
+    name: "Test Sender",
+    identification: {
+      type: "PASSPORT",
+      number: "TEST123456",
+    },
+  },
+  recipient: {
+    name: "Test Recipient",
+    bank_account: {
+      account_number: "987654321",
+      bank_code: "TESTBANK",
+    },
+  },
+  amount: {
+    value: 100,
+    currency: "USD",
+    target_currency: "EUR",
+  },
+});
+```

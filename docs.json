@@ -1,68 +1,143 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "FinCode Platform",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#734CDC",
+    "light": "#734CDC",
+    "dark": "#79359F"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Overview",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
+            "pages": ["index", "quickstart", "authentication"]
+          },
+          {
+            "group": "Core Concepts",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "overview/architecture",
+              "overview/multitenancy",
+              "overview/security"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Integration Guide",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "integration/api-keys",
+              "integration/webhooks",
+              "integration/testing",
+              "integration/go-live"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Remittance",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Process Flows",
             "pages": [
-              "api-reference/introduction"
+              "remittance/process-flows",
+              "remittance/transaction-lifecycle",
+              "remittance/fx-conversion",
+              "remittance/settlement"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "API Reference",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "remittance/api/transactions",
+              "remittance/api/beneficiaries",
+              "remittance/api/quotes",
+              "remittance/api/rates"
+            ]
+          },
+          {
+            "group": "Features & Compliance",
+            "pages": ["remittance/corridors", "remittance/compliance"]
+          }
+        ]
+      },
+      {
+        "tab": "Lending",
+        "groups": [
+          {
+            "group": "Process Flows",
+            "pages": [
+              "lending/loan-lifecycle",
+              "lending/application-flow",
+              "lending/underwriting",
+              "lending/disbursement"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "pages": [
+              "lending/api/applications",
+              "lending/api/loans",
+              "lending/api/repayments",
+              "lending/api/collections"
+            ]
+          },
+          {
+            "group": "Credit Assessment",
+            "pages": ["lending/credit-scoring", "lending/risk-models"]
+          }
+        ]
+      },
+      {
+        "tab": "Investment",
+        "groups": [
+          {
+            "group": "Process Flows",
+            "pages": [
+              "investment/account-opening",
+              "investment/portfolio-management",
+              "investment/trading-flow",
+              "investment/withdrawal-process"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "pages": [
+              "investment/api/accounts",
+              "investment/api/portfolios",
+              "investment/api/transactions",
+              "investment/api/holdings"
+            ]
+          },
+          {
+            "group": "Portfolio Management",
+            "pages": ["investment/asset-allocation", "investment/performance"]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Authentication",
+            "pages": ["api/authentication", "api/api_keys", "api/rate_limits"]
+          },
+          {
+            "group": "Common Endpoints",
+            "pages": ["api/users", "api/accounts"]
+          },
+          {
+            "group": "Webhooks & Events",
+            "pages": ["api/webhooks", "api/events", "api/webhook_security"]
+          },
+          {
+            "group": "SDKs & Tools",
+            "pages": [
+              "api/sdks/javascript",
+              "api/sdks/python",
+              "api/sdks/javascript"
             ]
           }
         ]
@@ -71,52 +146,44 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "API Status",
+          "href": "https://status.fincode.com",
+          "icon": "signal"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "GitHub",
+          "href": "https://github.com/fincodeuk",
+          "icon": "github"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/logo.png",
+    "dark": "/logo/logo.png",
+    "href": "https://fincode.com"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:hello@fincode.co.uk"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "href": "https://fincode.co.uk/contact-us/"
     }
   },
   "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+    "options": ["copy", "view", "chatgpt", "claude", "cursor"]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/fincodeuk",
+      "linkedin": "https://linkedin.com/company/fincodeUk",
+      "twitter": "https://twitter.com/fincodehq"
     }
   }
 }
