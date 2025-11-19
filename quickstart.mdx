@@ -1,167 +1,361 @@
 ---
 title: "Quick Start Guide"
-description: "Get your FinCode integration up and running in under 15 minutes"
+description: "Get your integration up and running in under 15 minutes."
 icon: "rocket"
 ---
 
 # Quick Start
 
-Get started with FinCode's multitenant platform in three simple steps. This guide will walk you through environment setup, authentication, and processing your first transaction.
+Get started with FinCode's multitenant platform in three simple steps. This guide will walk you through account setup, authentication, and making your first API call.
 
-## Step 1: Environment Setup & Authentication
+## Step 1: Account Setup & Due Diligence
 
 <AccordionGroup>
-  <Accordion icon="key" title="Get Your API Credentials">
-    1. **Access the Dashboard**: Go to [app.fincode.com](https://app.fincode.com) and create your account
-    2. **Create Your First Tenant**: Set up your tenant profile and configuration
-    3. **Generate API Keys**: Navigate to Settings → API Keys and create your sandbox keys
-    4. **Download SDK** (Optional): Get our client libraries for faster integration
+  <Accordion icon="clipboard-check" title="Complete Due Diligence">
+    Before you can start integrating, you will need to complete our general onboarding process with the following steps:
 
-    <Tip>Keep your API keys secure! Never commit them to version control.</Tip>
+    1. **Submit Application**: Visit [fincode.co.uk/contact-us](https://fincode.co.uk/contact-us) to begin your application.
+    2. **Provide Documentation**: Submit required business documents.
+    3. **KYC/KYB Verification**: Complete the different verification processes.
+    4. **Compliance Review**: Our team will review your application (typically 2-3 days).
+    5. **Account Approval**: Receive approval notification with your sandbox details.
+
+    <Tip>Have your business registration documents, proof of address, and compliance certificates ready to speed up the process.</Tip>
 
   </Accordion>
 
-  <Accordion icon="gear" title="Configure Your Environment">
-    ### Sandbox vs Production
-    - **Sandbox**: `https://api-sandbox.fincode.com` - For testing with simulated transactions
-    - **Production**: `https://api.fincode.com` - For live transactions
+  <Accordion icon="server" title="Get Your Subdomain">
+    Once approved, you'll receive your unique sandbox credentials:
 
-    ### Environment Variables
-    ```bash
-    # Add to your environment configuration
-    FINCODE_API_KEY=sk_sandbox_your_key_here
-    FINCODE_BASE_URL=https://api-sandbox.fincode.com
-    FINCODE_TENANT_ID=your_tenant_id
+    ### Your Subdomain Format
     ```
+    https://{your-company}.fincode.software
+    ```
+
+    Your subdomain is your dedicated environment where all your API calls will be made. This ensures complete tenant isolation and data security.
+
+    <Info>Your subdomain will be provided in your approval email. Keep this information secure as it's required for all API requests.</Info>
+
+  </Accordion>
+
+  <Accordion icon="box" title="Access Your Sandbox Environment">
+    After approval, you'll have access to two environments:
+
+    - **Sandbox**: `https://your-company.fincode.software/sandbox` - Use this for testing with simulated data and creating new records.
+    - **Production**: `https://your-company.fincode.tech`
+
+    Log in to your dashboard at your subdomain to access:
+    - API documentation specific to your tenant
+    - Sandbox test data and accounts
+    - Configuration settings
+    - Webhook management
+    - Analytics and reporting
 
     <Warning>Always test thoroughly in sandbox before moving to production.</Warning>
 
   </Accordion>
 </AccordionGroup>
 
-## Step 2: Make Your First API Call
+## Step 2: Generate API Tokens
 
 <AccordionGroup>
-  <Accordion icon="terminal" title="Test Authentication">
-    Verify your setup by making a simple API call to check your tenant status:
+  <Accordion icon="key" title="Create Your First Token">
+    1. **Log in to Dashboard**: Visit `https://your-company.fincode.software`
+    2. **Navigate to API Settings**: Go to Settings → API & Tokens
+    3. **Generate Token**: Click "Generate New Token" and select your environment (Sandbox/Production)
+    4. **Set Permissions**: Choose the appropriate scopes for your token:
+       - `remittance:read` - Read remittance transactions
+       - `remittance:write` - Create and update remittance transactions
+       - `lending:read` - Read loan applications and data
+       - `lending:write` - Create and manage loan applications
+       - `investment:read` - Read investment portfolios
+       - `investment:write` - Create and manage investments
+    5. **Save Securely**: Copy your token immediately - it won't be shown again
 
+    <Tip>Create separate tokens for different environments and rotate them regularly for security.</Tip>
+
+  </Accordion>
+
+  <Accordion icon="shield" title="Token Security Best Practices">
+    ### Protecting Your Tokens
+    - Never commit tokens to version control
+    - Use environment variables for token storage
+    - Rotate tokens every 90 days or when compromised
+    - Use least-privilege principle - only grant necessary permissions
+    - Monitor token usage in your dashboard
+
+    ### Environment Variables Setup
     ```bash
-    curl -X GET "https://api-sandbox.fincode.com/v1/tenants/me" \
-      -H "X-Tenant-ID: $FINCODE_TENANT_ID" \
-      -H "Authorization: Bearer $FINCODE_API_KEY"
+    # Add to your .env file
+    FINCODE_SUBDOMAIN=your-company
+    FINCODE_API_TOKEN=fct_sandbox_your_token_here
+    FINCODE_BASE_URL=https://your-company.fincode.software
+    ```
+
+    <Warning>If you suspect a token has been compromised, revoke it immediately from your dashboard.</Warning>
+
+  </Accordion>
+</AccordionGroup>
+
+## Step 3: Make Your First API Call
+
+Test your authentication by logging in via API. This will verify your setup and return an access token for subsequent requests.
+
+<AccordionGroup>
+  <Accordion icon="code" title="Node.js Example">
+    ```javascript
+    const axios = require('axios');
+
+    const FINCODE_SUBDOMAIN = process.env.FINCODE_SUBDOMAIN;
+    const FINCODE_API_TOKEN = process.env.FINCODE_API_TOKEN;
+    const BASE_URL = `https://${FINCODE_SUBDOMAIN}.fincode.software`;
+
+    async function login() {
+      try {
+        const response = await axios.post(
+          `${BASE_URL}//api/v6/services/securitymanagement/login`,
+          {
+            email: 'your-email@company.com',
+            currentPassword: 'your-password'
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'uuid': 200,
+              'platform': 'fincode'
+            }
+          }
+        );
+
+        console.log('Login successful!');
+        console.log('Access Token:', response.data.token);
+
+        return response.data;
+      } catch (error) {
+        console.error('Login failed:', error.response?.data || error.message);
+        throw error;
+      }
+    }
+
+    login()
+      .then(data => {
+        const accessToken = data.access_token;
+        console.log('Ready to make API calls!');
+      })
+      .catch(err => {
+        console.error('Authentication error:', err);
+      });
     ```
 
     **Expected Response:**
     ```json
     {
-      "tenant_id": "tenant_123",
-      "name": "Your Tenant Name",
-      "status": "active",
-      "products": ["remittance", "lending"],
-      "created_at": "2024-01-15T10:30:00Z"
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "modules": ["REMITTANCE", "LENDING"],
+      "country": "Nigeria",
+      "expires_in": 3600,
+      "organisation": "def50200a1b2c3d4e5f6...",
+      "profileDetailsResponseDTO": {
+        "phone": "448182147656",
+        "dob": "1994-02-24",
+        "email": "your-email@company.com",
+        "userType": "REGISTERED_CUSTOMER",
+        "id": "8ecca811-607f-44e1-a57e-cd856c50437d",
+        "accessScope": "CUSTOMER_FLOW",
+      }
     }
     ```
 
-    <Tip>Use this endpoint to verify your authentication and tenant configuration.</Tip>
+  </Accordion>
+
+  <Accordion icon="code" title="Java Example">
+    ```java
+    import java.net.URI;
+    import java.net.http.HttpClient;
+    import java.net.http.HttpRequest;
+    import java.net.http.HttpResponse;
+    import java.net.http.HttpRequest.BodyPublishers;
+    import com.google.gson.Gson;
+    import com.google.gson.JsonObject;
+
+    public class FinCodeAuth {
+        private static final String FINCODE_SUBDOMAIN = System.getenv("FINCODE_SUBDOMAIN");
+        private static final String FINCODE_API_TOKEN = System.getenv("FINCODE_API_TOKEN");
+        private static final String BASE_URL = String.format(
+            "https://%s.fincode.software",
+            FINCODE_SUBDOMAIN
+        );
+
+        public static class LoginResponse {
+            public String token;
+            public String role;
+            public int currencyCode;
+            public String twoFactorEnabled;
+            public String organisation;
+            public ProfileDetailsResponseDTO user;
+
+            public static class User {
+                public String id;
+                public String firstName;
+                public String lastName;
+                public String phone;
+            }
+        }
+
+        public static LoginResponse login(String email, String currentPassword) throws Exception {
+            HttpClient client = HttpClient.newHttpClient();
+            Gson gson = new Gson();
+
+            JsonObject requestBody = new JsonObject();
+            requestBody.addProperty("email", email);
+            requestBody.addProperty("currentPassword", currentPassword);
+
+            // Build request
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/api/v6/services/securitymanagement/login"))
+                .header("Content-Type", "application/json")
+                .header("X-API-Token", FINCODE_API_TOKEN)
+                .header("uuid", 200)
+                .header("platform", "fincode")
+                .POST(BodyPublishers.ofString(gson.toJson(requestBody)))
+                .build();
+
+            HttpResponse<String> response = client.send(
+                request,
+                HttpResponse.BodyHandlers.ofString()
+            );
+
+            if (response.statusCode() == 200) {
+                System.out.println("Login successful!");
+                LoginResponse loginResponse = gson.fromJson(
+                    response.body(),
+                    LoginResponse.class
+                );
+
+                System.out.println("Access Token: " + loginResponse.token);
+
+                return loginResponse;
+            } else {
+                throw new Exception("Login failed: " + response.body());
+            }
+        }
+
+        public static void main(String[] args) {
+            try {
+                LoginResponse response = login(
+                    "your-email@company.com",
+                    "your-password"
+                );
+
+                String accessToken = response.token;
+                System.out.println("Ready to make API calls!");
+
+            } catch (Exception e) {
+                System.err.println("Authentication error: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+    ```
 
   </Accordion>
 
-  <Accordion icon="code" title="SDK Installation (Optional)">
-    ### JavaScript/Node.js
+  <Accordion icon="terminal" title="cURL Example">
     ```bash
-    npm install @fincode/sdk
-    ```
-
-    ```javascript
-    import { FinCode } from '@fincode/sdk';
-
-    const client = new FinCode({
-      apiKey: process.env.FINCODE_API_KEY,
-      baseURL: process.env.FINCODE_BASE_URL,
-      tenantId: process.env.FINCODE_TENANT_ID
-    });
-
-    // Test connection
-    const tenant = await client.tenants.getMe();
-    ```
-
-    ### Python
-    ```bash
-    pip install fincode-python
-    ```
-
-    ```python
-    from fincode import FinCode
-
-    client = FinCode(
-        api_key=os.getenv('FINCODE_API_KEY'),
-        base_url=os.getenv('FINCODE_BASE_URL'),
-        tenant_id=os.getenv('FINCODE_TENANT_ID')
-    )
-
-    tenant = client.tenants.get_me()
+    curl -X POST "https://your-company.fincode.software/api/v6/services/securitymanagement/login" \
+      -H "Content-Type: application/json" \
+      -H "X-API-Token: $FINCODE_API_TOKEN" \
+      -d '{
+        "email": "your-email@company.com",
+        "currentPassword": "your-password"
+      }'
     ```
 
   </Accordion>
 </AccordionGroup>
 
-## Step 3: Process Your First Transaction
+## Next Steps
 
-Choose your starting point based on which product you're integrating:
+Now that you're authenticated, choose your product to continue:
 
-<CardGroup cols={2}>
+<CardGroup cols={3}>
   <Card
-    title="Send a Remittance"
+    title="Remittance"
     icon="money-bill-transfer"
-    href="/remittance/process-flows"
+    href="/remittance/overview"
   >
-    **Quick Test**: Send a test money transfer between demo accounts
+    Send your first cross-border transfer
     - Create beneficiary
     - Get FX quote
-    - Send transfer
+    - Process transaction
     - Track status
-    
-    [Start with Remittance →](/remittance/api/transactions)
   </Card>
 
+{" "}
+
+<Card
+  title="Digital Lending"
+  icon="hand-holding-dollar"
+  href="/lending/overview"
+>
+  Submit your first loan application - Create customer profile - Submit
+  application - Check decision - Manage disbursement
+</Card>
+
   <Card
-    title="Create a Loan Application"
-    icon="hand-holding-dollar"
-    href="/lending/loan-lifecycle"
+    title="Investment"
+    icon="chart-line"
+    href="/investment/overview"
   >
-    **Quick Test**: Submit a test loan application
-    - Create customer profile
-    - Submit application
-    - Check decision
-    - Simulate disbursement
-    
-    [Start with Lending →](/lending/api/applications)
+    Open your first investment account
+    - Create account
+    - Add portfolio
+    - Execute trades
+    - Monitor performance
   </Card>
 </CardGroup>
 
-### Example: Quick Remittance Test
+---
 
-```javascript
-// Create a test remittance transaction
-const transaction = await client.remittance.transactions.create({
-  sender: {
-    name: "Test Sender",
-    identification: {
-      type: "PASSPORT",
-      number: "TEST123456",
-    },
-  },
-  recipient: {
-    name: "Test Recipient",
-    bank_account: {
-      account_number: "987654321",
-      bank_code: "TESTBANK",
-    },
-  },
-  amount: {
-    value: 100,
-    currency: "USD",
-    target_currency: "EUR",
-  },
-});
-```
+## Common Issues & Troubleshooting
+
+<AccordionGroup>
+  <Accordion icon="circle-exclamation" title="Authentication Errors">
+    **401 Unauthorized**
+    - Verify your API token is correct and not expired
+    - Ensure you're using the correct subdomain
+    - Check that your token has the necessary permissions
+
+    **403 Forbidden**
+    - Your account may not have access to the requested resource
+    - Contact support to verify your tenant permissions
+
+  </Accordion>
+
+  <Accordion icon="clock" title="Token Expiration">
+    Access tokens expire after 1 hour. Use the refresh token to get a new access token:
+
+    ```javascript
+    const response = await axios.post(
+      `${BASE_URL}/api/v1/auth/refresh`,
+      {
+        refresh_token: refreshToken
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Token': FINCODE_API_TOKEN
+        }
+      }
+    );
+    ```
+
+  </Accordion>
+
+  <Accordion icon="life-ring" title="Need Help?">
+    - **Documentation**: Browse our [API Reference](/api/authentication)
+    - **Support**: Email [hello@fincode.co.uk](mailto:hello@fincode.co.uk)
+    - **System Status**: Check [status.fincode.com](https://status.fincode.com)
+    - **Community**: Visit our [GitHub](https://github.com/fincodeuk) for examples
+  </Accordion>
+</AccordionGroup>

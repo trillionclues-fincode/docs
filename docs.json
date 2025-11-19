@@ -26,12 +26,13 @@
             ]
           },
           {
-            "group": "Integration Guide",
+            "group": "Integration",
             "pages": [
               "integration/api-keys",
               "integration/webhooks",
               "integration/testing",
-              "integration/go-live"
+              "integration/go-live",
+              "integration/error-handling"
             ]
           }
         ]
@@ -40,12 +41,23 @@
         "tab": "Remittance",
         "groups": [
           {
-            "group": "Process Flows",
+            "group": "Getting Started",
+            "pages": ["remittance/overview", "remittance/process-flows"]
+          },
+          {
+            "group": "Core Flows",
             "pages": [
-              "remittance/process-flows",
               "remittance/transaction-lifecycle",
               "remittance/fx-conversion",
               "remittance/settlement"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "remittance/corridors",
+              "remittance/compliance",
+              "remittance/error-handling"
             ]
           },
           {
@@ -56,10 +68,6 @@
               "remittance/api/quotes",
               "remittance/api/rates"
             ]
-          },
-          {
-            "group": "Features & Compliance",
-            "pages": ["remittance/corridors", "remittance/compliance"]
           }
         ]
       },
@@ -67,13 +75,21 @@
         "tab": "Lending",
         "groups": [
           {
-            "group": "Process Flows",
+            "group": "Getting Started",
+            "pages": ["lending/overview", "lending/loan-lifecycle"]
+          },
+          {
+            "group": "Core Flows",
             "pages": [
-              "lending/loan-lifecycle",
               "lending/application-flow",
               "lending/underwriting",
-              "lending/disbursement"
+              "lending/disbursement",
+              "lending/repayment-flow"
             ]
+          },
+          {
+            "group": "Credit Assessment",
+            "pages": ["lending/credit-scoring", "lending/risk-models"]
           },
           {
             "group": "API Reference",
@@ -83,10 +99,6 @@
               "lending/api/repayments",
               "lending/api/collections"
             ]
-          },
-          {
-            "group": "Credit Assessment",
-            "pages": ["lending/credit-scoring", "lending/risk-models"]
           }
         ]
       },
@@ -94,12 +106,23 @@
         "tab": "Investment",
         "groups": [
           {
-            "group": "Process Flows",
+            "group": "Getting Started",
+            "pages": ["investment/overview", "investment/account-opening"]
+          },
+          {
+            "group": "Core Flows",
             "pages": [
-              "investment/account-opening",
               "investment/portfolio-management",
               "investment/trading-flow",
               "investment/withdrawal-process"
+            ]
+          },
+          {
+            "group": "Portfolio Management",
+            "pages": [
+              "investment/asset-allocation",
+              "investment/performance",
+              "investment/rebalancing"
             ]
           },
           {
@@ -110,10 +133,6 @@
               "investment/api/transactions",
               "investment/api/holdings"
             ]
-          },
-          {
-            "group": "Portfolio Management",
-            "pages": ["investment/asset-allocation", "investment/performance"]
           }
         ]
       },
@@ -122,23 +141,28 @@
         "groups": [
           {
             "group": "Authentication",
-            "pages": ["api/authentication", "api/api_keys", "api/rate_limits"]
+            "pages": ["api/authentication", "api/api-keys", "api/rate-limits"]
           },
           {
-            "group": "Common Endpoints",
-            "pages": ["api/users", "api/accounts"]
+            "group": "Core Endpoints",
+            "pages": ["api/users", "api/accounts", "api/tenants"]
           },
           {
             "group": "Webhooks & Events",
-            "pages": ["api/webhooks", "api/events", "api/webhook_security"]
+            "pages": ["api/webhooks", "api/events", "api/webhook-security"]
           },
           {
-            "group": "SDKs & Tools",
+            "group": "SDKs & Libraries",
             "pages": [
               "api/sdks/javascript",
               "api/sdks/python",
-              "api/sdks/javascript"
+              "api/sdks/php",
+              "api/sdks/ruby"
             ]
+          },
+          {
+            "group": "Testing & Tools",
+            "pages": ["api/postman-collection", "api/sandbox-environment"]
           }
         ]
       }
@@ -154,6 +178,11 @@
           "anchor": "GitHub",
           "href": "https://github.com/fincodeuk",
           "icon": "github"
+        },
+        {
+          "anchor": "Support",
+          "href": "mailto:hello@fincode.co.uk",
+          "icon": "lifebuoy"
         }
       ]
     }
@@ -164,15 +193,9 @@
     "href": "https://fincode.com"
   },
   "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hello@fincode.co.uk"
-      }
-    ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
+      "label": "Contact Sales",
       "href": "https://fincode.co.uk/contact-us/"
     }
   },
