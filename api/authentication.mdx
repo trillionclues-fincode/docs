@@ -1,33 +1,423 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "API Reference"
+description: "Complete API documentation for FinCode platform - Authentication, Remittance, Lending, and Investment endpoints"
+icon: "code"
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+Our REST API provides programmatic access to all FinCode services including remittance, digital lending, and investment operations.
 
-## Welcome
+<Info>
+  All API endpoints require authentication using JWT tokens. Make sure you've
+  completed the [authentication setup](/authentication) before making API calls.
+</Info>
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+---
+
+## Base URLs
+
+Your API base URL depends on your tenant domain and environment:
+
+<CodeGroup>
+```bash Sandbox
+https://{domain}.fincode.software/api/v6/services/
+```
+
+```bash Production
+https://{domain}.fincode.tech/api/v6/services/
+```
+
+</CodeGroup>
+
+<Warning>
+  Always test your integration thoroughly in the sandbox environment before
+  deploying to production.
+</Warning>
+
+---
+
+## API Architecture
+
+The FinCode API is organized into service-based endpoints following a RESTful architecture:
+
+```
+/api/v6/services/{service-name}/{resource}
+```
+
+### Service Categories
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/api/auth/login">
+    User authentication, token management, and session handling
+  </Card>
+
+{" "}
 
 <Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
+  title="Transactions"
+  icon="money-bill-transfer"
+  href="/api/transactions/create"
 >
-  View the OpenAPI specification file
+  Remittance, lending, and investment transaction processing
 </Card>
+
+{" "}
+
+<Card title="Compliance" icon="shield-check" href="/api/compliance/kyc">
+  KYC/AML verification, sanctions screening, and regulatory compliance
+</Card>
+
+{" "}
+
+<Card title="Reporting" icon="chart-bar" href="/api/reporting/analytics">
+  Analytics, transaction reports, and business intelligence
+</Card>
+
+{" "}
+
+<Card title="Configuration" icon="gear" href="/api/configuration/tenant">
+  Tenant settings, plugins, and system configuration
+</Card>
+
+{" "}
+
+<Card title="Cross-Border" icon="globe" href="/api/crossborder/rates">
+  Exchange rates, corridors, fees, and international transfers
+</Card>
+
+{" "}
+
+<Card
+  title="Revenue Sharing"
+  icon="hand-holding-dollar"
+  href="/api/revenue/settlements"
+>
+  Commission management, partner payouts, and revenue distribution
+</Card>
+
+  <Card title="User Management" icon="users" href="/api/users/create">
+    Create and manage managers, agents, cashiers, and customers
+  </Card>
+</CardGroup>
+
+---
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API requests must include authentication headers:
+
+### Required Headers
+
+```javascript
+{
+  "X-Auth-Token": "your_jwt_access_token",
+  "Content-Type": "application/json",
+  "platform": "fincode",
+  "uuid": "200"
+}
+```
+
+### Example Authenticated Request
+
+```javascript
+const axios = require("axios");
+
+const response = await axios.get(
+  "https://your-company.fincode.software/api/v6/services/admin/organisation-preference-management/fetch-organisation-preference",
+  {
+    headers: {
+      "X-Auth-Token": process.env.JWT_ACCESS_TOKEN,
+      "Content-Type": "application/json",
+      platform: "fincode",
+      uuid: "200",
+    },
+  }
+);
+```
+
+<Tip>
+  Store your JWT tokens securely and implement automatic token refresh to
+  maintain uninterrupted API access.
+</Tip>
+
+---
+
+## Request & Response Format
+
+### Standard Request Structure
+
+All POST and PUT requests follow this structure:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
+{
+  "data": {
+    // Request payload
+  },
+  "metadata": {
+    "request_id": "unique_request_identifier",
+    "timestamp": "2024-01-15T10:30:00Z"
   }
-]
+}
 ```
+
+### Standard Response Structure
+
+Successful responses (HTTP 200-299):
+
+```json
+{
+  "success": true,
+  "data": {
+    // Response data
+  },
+  "metadata": {
+    "request_id": "unique_request_identifier",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "processing_time_ms": 145
+  }
+}
+```
+
+Error responses (HTTP 400-599):
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_REQUEST",
+    "message": "Detailed error message",
+    "field": "specific_field_name",
+    "details": {}
+  },
+  "metadata": {
+    "request_id": "unique_request_identifier",
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+---
+
+## Error Codes
+
+### Common Error Codes
+
+| Code                  | HTTP Status | Description                                 |
+| --------------------- | ----------- | ------------------------------------------- |
+| `AUTH_REQUIRED`       | 401         | Missing or invalid authentication token     |
+| `FORBIDDEN`           | 403         | Insufficient permissions for this operation |
+| `NOT_FOUND`           | 404         | Resource not found                          |
+| `VALIDATION_ERROR`    | 422         | Request validation failed                   |
+| `RATE_LIMIT_EXCEEDED` | 429         | Too many requests                           |
+| `SERVER_ERROR`        | 500         | Internal server error                       |
+| `SERVICE_UNAVAILABLE` | 503         | Service temporarily unavailable             |
+
+### Error Handling Example
+
+```javascript
+try {
+  const response = await makeApiCall();
+  return response.data;
+} catch (error) {
+  if (error.response) {
+    switch (error.response.status) {
+      case 401:
+        // Refresh token and retry
+        await refreshToken();
+        return makeApiCall();
+
+      case 429:
+        // Wait and retry with exponential backoff
+        await sleep(error.response.headers["retry-after"] * 1000);
+        return makeApiCall();
+
+      case 422:
+        // Handle validation errors
+        console.error("Validation failed:", error.response.data.error);
+        throw error;
+
+      default:
+        console.error("API error:", error.response.data);
+        throw error;
+    }
+  }
+  throw error;
+}
+```
+
+---
+
+## Webhooks
+
+FinCode can notify your application of events via webhooks. Configure webhook endpoints in your dashboard.
+
+### Webhook Events
+
+- `transaction.created`
+- `transaction.completed`
+- `transaction.failed`
+- `kyc.verification.completed`
+- `loan.approved`
+- `loan.disbursed`
+- `payment.received`
+
+### Webhook Payload Example
+
+```json
+{
+  "event": "transaction.completed",
+  "event_id": "evt_123456",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "data": {
+    "transaction_id": "txn_789012",
+    "status": "completed",
+    "amount": 1000.0,
+    "currency": "USD"
+  },
+  "signature": "sha256_signature_for_verification"
+}
+```
+
+[Learn more about webhooks →](/api/webhooks)
+
+---
+
+## SDKs & Libraries
+
+<Note>
+  Official SDKs are currently in development. We'll support
+  JavaScript/TypeScript, Python, PHP, and Ruby in the near future. For now, you
+  can use standard HTTP clients like `axios`, `fetch`, or `requests` to
+  integrate with our API.
+</Note>
+
+### Coming Soon
+
+<CardGroup cols={2}>
+  <Card title="JavaScript/TypeScript" icon="js" iconType="solid">
+    Node.js and browser support with full TypeScript definitions
+  </Card>
+
+{" "}
+
+<Card title="Python" icon="python" iconType="solid">
+  Pythonic API with async/await support
+</Card>
+
+{" "}
+
+<Card title="PHP" icon="php" iconType="solid">
+  PSR-compliant library for PHP 7.4+
+</Card>
+
+  <Card title="Ruby" icon="gem" iconType="solid">
+    Ruby gem with Rails integration
+  </Card>
+</CardGroup>
+
+---
+
+## Testing & Sandbox
+
+Use the sandbox environment for testing without affecting production data:
+
+- **URL**: `https://{domain}.fincode.software/api/v6/services/`
+- **Data**: All transactions are simulated
+- **Webhooks**: Webhook events are generated but not processed
+- **Rate Limits**: More lenient than production
+
+### Test Data
+
+<Accordion title="Test Cards & Bank Accounts" icon="credit-card">
+  Use these test credentials in sandbox:
+
+**Test Bank Account**
+
+```json
+{
+  "account_number": "8883633074",
+  "bank_code": "044",
+  "account_name": "VICTOR ADEBIYI"
+}
+```
+
+**Test Card**
+
+```json
+{
+  "card_number": "4111 1111 1111 1111",
+  "expiry": "12/27",
+  "cvv": "123"
+}
+```
+
+</Accordion>
+
+---
+
+## Quick Links
+
+<CardGroup cols={3}>
+  <Card title="Authentication" icon="key" href="/api/auth/login">
+    Get started with API authentication
+  </Card>
+
+{" "}
+
+<Card
+  title="Remittance API"
+  icon="money-bill-transfer"
+  href="/api/transactions/remittance"
+>
+  Send cross-border transfers
+</Card>
+
+{" "}
+
+<Card
+  title="Lending API"
+  icon="hand-holding-dollar"
+  href="/api/transactions/lending"
+>
+  Manage loan applications
+</Card>
+
+{" "}
+
+<Card
+  title="Investment API"
+  icon="chart-line"
+  href="/api/transactions/investment"
+>
+  Portfolio management
+</Card>
+
+{" "}
+
+<Card title="Webhooks" icon="webhook" href="/api/webhooks">
+  Event notifications
+</Card>
+
+  <Card title="Postman Collection" icon="code" href="/api/postman-collection">
+    Import API collection
+  </Card>
+</CardGroup>
+
+---
+
+## Support & Resources
+
+<CardGroup cols={3}>
+  <Card title="API Status" icon="signal" href="https://status.fincode.com">
+    Real-time system status
+  </Card>
+
+{" "}
+
+<Card title="Support" icon="lifebuoy" href="mailto:hello@fincode.co.uk">
+  Technical support team
+</Card>
+
+  <Card title="GitHub" icon="github" href="https://github.com/fincodeuk">
+    Code examples & samples
+  </Card>
+</CardGroup>

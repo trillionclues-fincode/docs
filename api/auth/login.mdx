@@ -1,0 +1,286 @@
+---
+title: "Login"
+api: "PUT https://remitjunction.fincode.software/api/v6/services/securitymanagement/login"
+description: "Authenticate users and obtain access tokens for API requests"
+---
+
+Authenticate users with email and password to obtain JWT access and refresh tokens. This endpoint supports all user roles: MANAGER, AGENT, CASHIER, and CUSTOMER, etc.
+
+<RequestExample>
+      ```bash cURL PUT    
+  [https://remitjunction.fincode.software/api/v6/services/securitymanagement/login](https://remitjunction.fincode.software/api/v6/services/securitymanagement/login)
+      ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField
+  header='Content-Type'
+  type='string'
+  required
+  default='application/json'
+>
+    Must be `application/json`
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+    Platform identifier. Use `fincode`
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+    Unique request identifier. Use `200`
+</ParamField>
+
+---
+
+## Request Body
+
+<ParamField body='email' type='string' required>
+      User's email address registered in the system
+</ParamField>
+
+<ParamField body='currentPassword' type='string' required>
+      User's password (minimum 8 characters)
+</ParamField>
+
+---
+
+## Response
+
+<ResponseField name='access_token' type='string'>
+  JWT access token valid for 1 hour. Use this token in the `X-Auth-Token` header
+  for authenticated requests.
+</ResponseField>
+
+<ResponseField name='expires_in' type='number'>
+  Token expiration time in seconds (default: 3600)
+</ResponseField>
+
+<ResponseField name='refresh_token' type='string'>
+  Refresh token for obtaining new access tokens without re-authentication
+</ResponseField>
+
+<ResponseField name="user" type="object">
+  User information and permissions
+  <Expandable title="user object">
+    <ResponseField name="id" type="string">
+      Unique user identifier
+    </ResponseField>
+
+    <ResponseField name="email" type="string">
+      User's email address
+    </ResponseField>
+
+    <ResponseField name="role" type="string">
+      User role: `MANAGER`, `AGENT`, `CASHIER`, or `CUSTOMER`
+    </ResponseField>
+
+    <ResponseField name="tenant_id" type="string">
+      Tenant/organization identifier
+    </ResponseField>
+
+    <ResponseField name="permissions" type="array">
+      List of granted permissions for this user
+    </ResponseField>
+
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl -X PUT "https://remitjunction.fincode.software/api/v6/services/securitymanagement/login" \
+  -H "Content-Type: application/json" \
+  -H "platform: fincode" \
+  -H "uuid: 200" \
+  -d '{
+    "email": "manager@yourcompany.com",
+    "currentPassword": "Password@1"
+  }'
+```
+
+```java Java
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+public class FinCodeLogin {
+
+    public static class LoginRequest {
+        public String email;
+        public String currentPassword;
+
+        public LoginRequest(String email, String password) {
+            this.email = email;
+            this.currentPassword = password;
+        }
+    }
+
+    public static class LoginResponse {
+        public String access_token;
+        public int expires_in;
+        public String refresh_token;
+        public User user;
+
+        public static class User {
+            public String id;
+            public String email;
+            public String role;
+            public String tenant_id;
+            public String[] permissions;
+        }
+    }
+
+    public static LoginResponse login(String email, String password) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        Gson gson = new Gson();
+
+        LoginRequest loginRequest = new LoginRequest(email, password);
+        String requestBody = gson.toJson(loginRequest);
+
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("https://remitjunction.fincode.software/api/v6/services/securitymanagement/login"))
+            .header("Content-Type", "application/json")
+            .header("platform", "fincode")
+            .header("uuid", "200")
+            .PUT(HttpRequest.BodyPublishers.ofString(requestBody))
+            .build();
+
+        HttpResponse<String> response = client.send(
+            request,
+            HttpResponse.BodyHandlers.ofString()
+        );
+
+        if (response.statusCode() == 200) {
+            LoginResponse loginResponse = gson.fromJson(response.body(), LoginResponse.class);
+
+            System.out.println("Login successful!");
+            System.out.println("User Role: " + loginResponse.user.role);
+            System.out.println("Access Token: " + loginResponse.access_token);
+
+            return loginResponse;
+        } else {
+            throw new Exception("Login failed: " + response.body());
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            LoginResponse response = login("manager@yourcompany.com", "Password@1");
+            String accessToken = response.access_token;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+</CodeGroup>
+
+---
+
+## Error Handling
+
+<AccordionGroup>
+  <Accordion title="Invalid Credentials (401)" icon="circle-xmark">
+    **Cause**: Email or password is incorrect
+    
+    **Solution**:
+    - Verify email address is correct
+    - Check password is entered correctly
+    - Use password reset if forgotten
+    - Contact support if issue persists
+  </Accordion>
+<Accordion title='Account Locked (403)' icon='lock'>
+  **Cause**: Multiple failed login attempts 
+  
+  **Solution**:
+  - Wait for the lockout period to expire
+  - Contact your administrator to unlock the account
+  - Use the "Forgot Password" flow to reset password
+</Accordion>
+<Accordion title='Rate Limit Exceeded (429)' icon='clock'>
+  **Cause**: Too many login attempts in a short period
+  
+  **Solution**:
+  - Wait for the time specified
+  - Implement exponential backoff in your application
+  - Cache tokens instead of re-authenticating frequently
+</Accordion>
+
+  <Accordion title="User Not Found (404)" icon="user-xmark">
+    **Cause**: Email address not registered in the system
+    
+    **Solution**:
+    - Verify the email address
+    - Check if the user exists in your tenant
+    - Contact administrator to create the user account
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Token Storage" icon="database">
+    - Store tokens securely (encrypted storage)
+    - Never log tokens in text
+    - Use environment variables for tokens
+    - Clear tokens on logout
+  </Card>
+<Card title="Token Refresh" icon="rotate">
+  - Implement automatic token refresh
+  - Refresh before expiration (5 min buffer)
+  - Handle refresh token failures gracefully
+</Card>
+<Card title="Error Handling" icon="shield">
+  - Implement retry logic for network errors
+  - Handle rate limits with exponential backoff
+  - Show user-friendly error messages
+</Card>
+
+  <Card title="Security" icon="lock">
+    - Use HTTPS in production
+    - Implement CSRF protection
+    - Set secure cookie flags
+    - Monitor for suspicious login attempts
+  </Card>
+</CardGroup>
+
+---
+
+## Testing in Sandbox
+
+Use these test credentials in your sandbox environment:
+
+```javascript
+const testCredentials = {
+  manager: {
+    email: "hello@remitjunction.co.uk",
+    password: "Password@1",
+  },
+  agent: {
+    email: "hello+2@remitjunction.co.uk",
+    password: "Password@1",
+  },
+  cashier: {
+    email: "excel.nwachukwu+662@fincode.co.uk",
+    password: "PQW7ERMP",
+  },
+  customer: {
+    email: "excel.nwachukwu+662@fincode.co.uk",
+    password: "Password@1",
+  },
+};
+```
+
+<Warning>
+  These credentials only work in sandbox. Never use test credentials in
+  production.
+</Warning>

@@ -1,0 +1,90 @@
+---
+title: "Refresh Token"
+api: "PUT https://remitjunction.fincode.software/api/v6/services/securitymanagement/refresh-token"
+description: "Obtain a new access token and refresh token using a valid refresh token."
+---
+
+Use a valid refresh token to obtain a new pair of JWT access and refresh tokens without requiring the user to re-authenticate with email and password. This is essential for maintaining a long-lived user session.
+
+<RequestExample>
+        ```bash cURL PUT      
+  [https://remitjunction.fincode.software/api/v6/services/securitymanagement/refresh-token](https://remitjunction.fincode.software/api/v6/services/securitymanagement/refresh-token)
+        ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField
+  header='Content-Type'
+  type='string'
+  required
+  default='application/json'
+>
+      Must be `application/json`
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+      Platform identifier. Use `fincode`
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+      Unique request identifier. Use `200`
+</ParamField>
+
+## Request Body
+
+<ParamField body='refresh_token' type='string' required>
+        The refresh token obtained from the `/login` or previous
+  `/refresh-token` response.
+</ParamField>
+
+## Response
+
+The response is identical to the successful login response, providing new tokens.
+
+<ResponseField name='access_token' type='string'>
+    JWT access token valid for 1 hour. Use this token in the `X-Auth-Token`
+  header   for subsequent authenticated requests.
+</ResponseField>
+
+<ResponseField name='expires_in' type='number'>
+    Token expiration time in seconds (default: 3600)
+</ResponseField>
+
+<ResponseField name='refresh_token' type='string'>
+    **New** refresh token. You should always update the stored refresh token
+  with this new one.
+</ResponseField>
+
+---
+
+## Code Examples
+
+<CodeGroup>
+```bash cURL
+curl -X PUT "https://remitjunction.fincode.software/api/v6/services/securitymanagement/refresh-token" \
+  -H "Content-Type: application/json" \
+  -H "platform: fincode" \
+  -H "uuid: 200" \
+  -d '{
+    "refresh_token": "YOUR_VALID_REFRESH_TOKEN_HERE"
+  }'
+```
+</CodeGroup>
+
+---
+
+<AccordionGroup>
+
+  <Accordion title='Invalid Refresh Token (401)' icon='circle-xmark'>
+    - Prompt the user to log in again using email and password.
+    - Check the server logs to confirm token revocation status.
+  </Accordion>
+  <Accordion title='Token Already Used (403)' icon='rotate-right'>
+    - Treat as a security breach. Force the user to log in again.
+    - Check if your system correctly overwrites the old refresh token with the new one.
+  </Accordion> <Accordion title='Rate Limit Exceeded (429)' icon='clock'>
+    - Wait for the time specified.
+    - Ensure your client only attempts a refresh when the access token is close to expiration.
+  </Accordion>
+</AccordionGroup>

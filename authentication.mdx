@@ -24,13 +24,13 @@ sequenceDiagram
     participant Auth Service
     participant Database
 
-    Client->>API: POST /auth/login (credentials)
+    Client->>API: PUT /auth/login (credentials)
     API->>Auth Service: Validate credentials
     Auth Service->>Database: Check user & role
     Database-->>Auth Service: User data
     Auth Service-->>API: Generate JWT tokens
     API-->>Client: Access token + Refresh token
-    Client->>API: API Request + Bearer token
+    Client->>API: API Request + Auth token
     API->>Auth Service: Validate token
     Auth Service-->>API: Token valid + permissions
     API-->>Client: Response
@@ -41,27 +41,40 @@ sequenceDiagram
 ## User Roles & Permissions
 
 <CardGroup cols={2}>
-  <Card title="Manager" icon="user-tie">
-    - Tenant configuration - User management - All transaction operations - Analytics and reporting - Webhook configuration - API key management
+  <Card title="MANAGER">
+    - Plugins management
+    - Agent configuration
+    - KYC/AML configuration
+    - Analytics and reporting
+    - Process transaction refunds.
+    - Organisation user management
+    - Crossboarder setup & operations
   </Card>
-
-{" "}
-
-<Card title="AGENT" icon="headset">
-  - Create and manage transactions - Customer verification (KYC) - Transaction
-  status updates - View customer profiles - Process refunds access
+  <Card title="AGENT">
+  - Call-over reports
+  - Corridor management
+  - View customer profiles
+  - Transaction status updates
+  - Exchange rate and fee markups
+  - Tenant-specific analytics and reporting
+  </Card>
+<Card title="CASHIER">
+  - Print receipts
+  - Process payments
+  - Create transactions
+  - Handle cash collections
+  - View transaction history
+  - Verify transaction details
 </Card>
 
-{" "}
-
-<Card title="CASHIER" icon="cash-register">
-  - Create transactions - Process payments - Verify transaction details - Handle
-  cash collections - View transaction history - Print receipts
+<Card title="CUSTOMER">
+  - Request quotes
+  - Initiate transfers
+  - Create beneficiaries
+  - View own transactions
+  - View transaction history
+  - Update profile information
 </Card>
-
-  <Card title="CUSTOMER" icon="user">
-  - View own transactions - Create beneficiaries - Request quotes - Initiate transfers - View transaction history  - Update profile information
-  </Card>
 </CardGroup>
 
 ---
@@ -78,13 +91,13 @@ Test authentication for different user roles in your sandbox environment. Select
 
     **Login Request:**
     ```bash
-    curl -X POST "https://your-company.fincode.software/sandbox/api/v1/auth/login" \
+    curl -X PUT "https://{domain}.fincode.software/api/v6/services/securitymanagement/login" \
       -H "Content-Type: application/json" \
-      -H "X-Auth-Token: YOUR_API_TOKEN" \
+      -H "platform: fincode" \
+      -H "uuid: 200" \
       -d '{
         "email": "manager@yourcompany.com",
-        "password": "your-secure-password",
-        "role": "MANAGER"
+        "currentPassword": "your-secure-password"
       }'
     ```
 
@@ -93,17 +106,17 @@ Test authentication for different user roles in your sandbox environment. Select
     const axios = require('axios');
 
     async function loginAsManager() {
-      const response = await axios.post(
-        'https://your-company.fincode.software/sandbox/api/v1/auth/login',
+      const response = await axios.put(
+        'https://{domain}.fincode.software/api/v6/services/securitymanagement/login',
         {
           email: 'manager@yourcompany.com',
-          password: 'your-secure-password',
-          role: 'MANAGER'
+          currentPassword: 'your-secure-password'
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            'X-Auth-Token': process.env.FINCODE_API_TOKEN
+            'platform': "fincode",
+            'uuid': "200",
           }
         }
       );
@@ -116,7 +129,6 @@ Test authentication for different user roles in your sandbox environment. Select
     ```json
     {
       "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-      "token_type": "Bearer",
       "expires_in": 3600,
       "refresh_token": "def50200a1b2c3d4e5f6...",
       "user": {
@@ -146,13 +158,13 @@ Test authentication for different user roles in your sandbox environment. Select
 
     **Login Request:**
     ```bash
-    curl -X POST "https://your-company.fincode.software/sandbox/api/v1/auth/login" \
+    curl -X PUT "https://{domain}.fincode.software/api/v6/services/securitymanagement/login" \
       -H "Content-Type: application/json" \
-      -H "X-Auth-Token: YOUR_API_TOKEN" \
+      -H "platform: fincode" \
+      -H "uuid: 200" \
       -d '{
         "email": "agent@yourcompany.com",
-        "password": "your-secure-password",
-        "role": "AGENT"
+        "currentPassword": "your-secure-password"
       }'
     ```
 
@@ -161,17 +173,17 @@ Test authentication for different user roles in your sandbox environment. Select
     const axios = require('axios');
 
     async function loginAsAgent() {
-      const response = await axios.post(
-        'https://your-company.fincode.software/sandbox/api/v1/auth/login',
+      const response = await axios.put(
+        'https://{domain}.fincode.software/api/v6/services/securitymanagement/login',
         {
           email: 'agent@yourcompany.com',
-          password: 'your-secure-password',
-          role: 'AGENT'
+          currentPassword: 'your-secure-password'
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            'X-Auth-Token': process.env.FINCODE_API_TOKEN
+            'platform': 'fincode',
+            'uuid': '200'
           }
         }
       );
@@ -184,7 +196,6 @@ Test authentication for different user roles in your sandbox environment. Select
     ```json
     {
       "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-      "token_type": "Bearer",
       "expires_in": 3600,
       "refresh_token": "def50200a1b2c3d4e5f6...",
       "user": {
@@ -214,13 +225,13 @@ Test authentication for different user roles in your sandbox environment. Select
 
     **Login Request:**
     ```bash
-    curl -X POST "https://your-company.fincode.software/sandbox/api/v1/auth/login" \
+    curl -X PUT "https://{domain}.fincode.software/api/v6/services/securitymanagement/login" \
       -H "Content-Type: application/json" \
-      -H "X-Auth-Token: YOUR_API_TOKEN" \
+      -H "platform: fincode" \
+      -H "uuid: 200" \
       -d '{
         "email": "cashier@yourcompany.com",
-        "password": "your-secure-password",
-        "role": "CASHIER"
+        "currentPassword": "your-secure-password"
       }'
     ```
 
@@ -229,17 +240,17 @@ Test authentication for different user roles in your sandbox environment. Select
     const axios = require('axios');
 
     async function loginAsCashier() {
-      const response = await axios.post(
-        'https://your-company.fincode.software/sandbox/api/v1/auth/login',
+      const response = await axios.put(
+        'https://{domain}.fincode.software/api/v6/services/securitymanagement/login',
         {
           email: 'cashier@yourcompany.com',
-          password: 'your-secure-password',
-          role: 'CASHIER'
+          currentPassword: 'your-secure-password'
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            'X-Auth-Token': process.env.FINCODE_API_TOKEN
+            'platform': 'fincode',
+            'uuid': '200',
           }
         }
       );
@@ -252,7 +263,6 @@ Test authentication for different user roles in your sandbox environment. Select
     ```json
     {
       "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-      "token_type": "Bearer",
       "expires_in": 3600,
       "refresh_token": "def50200a1b2c3d4e5f6...",
       "user": {
@@ -280,13 +290,13 @@ Test authentication for different user roles in your sandbox environment. Select
 
     **Login Request:**
     ```bash
-    curl -X POST "https://your-company.fincode.software/sandbox/api/v1/auth/login" \
+    curl -X PUT "https://{domain}.fincode.software/api/v6/services/securitymanagement/login" \
       -H "Content-Type: application/json" \
-      -H "X-Auth-Token: YOUR_API_TOKEN" \
+      -H "platform: fincode" \
+      -H "uuid: 200" \
       -d '{
         "email": "customer@example.com",
-        "password": "customer-password",
-        "role": "CUSTOMER"
+        "currentPassword": "customer-password"
       }'
     ```
 
@@ -295,17 +305,17 @@ Test authentication for different user roles in your sandbox environment. Select
     const axios = require('axios');
 
     async function loginAsCustomer() {
-      const response = await axios.post(
-        'https://your-company.fincode.software/sandbox/api/v1/auth/login',
+      const response = await axios.put(
+        'https://{domain}.fincode.software/sandbox/api/v6/services/securitymanagement/login',
         {
           email: 'customer@example.com',
-          password: 'customer-password',
-          role: 'CUSTOMER'
+          currentPassword: 'customer-password'
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            'X-Auth-Token': process.env.FINCODE_API_TOKEN
+            'platform': 'fincode',
+            'uuid': '200',
           }
         }
       );
@@ -318,7 +328,6 @@ Test authentication for different user roles in your sandbox environment. Select
     ```json
     {
       "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-      "token_type": "Bearer",
       "expires_in": 3600,
       "refresh_token": "def50200a1b2c3d4e5f6...",
       "user": {
@@ -351,15 +360,14 @@ Once authenticated, include the access token in all subsequent API requests:
 ```javascript
 const axios = require("axios");
 
-const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
-
 const response = await axios.get(
-  "https://your-company.fincode.software/sandbox/api/v1/transactions",
+  "https://{domain}.fincode.software/api/v6/services/admin/organisation-preference-management/fetch-organisaction-preference",
   {
     headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "X-Auth-Token": process.env.FINCODE_API_TOKEN,
+      "X-Auth-Token": process.env.JWT_ACCESS_TOKEN,
       "Content-Type": "application/json",
+      platform: "fincode",
+      uuid: "200",
     },
   }
 );
@@ -368,8 +376,10 @@ const response = await axios.get(
 **Required Headers:**
 
 - `Authorization: Bearer {access_token}` - Your JWT access token
-- `X-Auth-Token: {api_token}` - Your tenant API token
+- `X-Auth-Token: {api_token}` - Your JWT access token
 - `Content-Type: application/json` - For POST/PUT requests
+- `platform: fincode` - For identifying request platform
+- `uuid: 200` - Unique uuid string
 
 ---
 
@@ -386,14 +396,16 @@ Access tokens expire after **1 hour**. You have two options to maintain authenti
     ```javascript
     async function refreshAccessToken(refreshToken) {
       const response = await axios.post(
-        'https://your-company.fincode.software/sandbox/api/v1/auth/refresh',
+        'https://{domain}.fincode.software/api/v6/services/securitymanagement/refresh',
         {
           refresh_token: refreshToken
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            'X-Auth-Token': process.env.FINCODE_API_TOKEN
+            'X-Auth-Token': process.env.JWT_ACCESS_TOKEN,
+            'platform': 'fincode',
+            'uuid': '200',
           }
         }
       );
@@ -406,7 +418,6 @@ Access tokens expire after **1 hour**. You have two options to maintain authenti
     ```json
     {
       "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-      "token_type": "Bearer",
       "expires_in": 3600
     }
     ```
@@ -451,12 +462,13 @@ Revoke tokens when logging out or if compromised:
 ```javascript
 async function logout(accessToken) {
   await axios.post(
-    "https://your-company.fincode.software/sandbox/api/v1/auth/logout",
+    "https://{domain}.fincode.software/api/v6/services/securitymanagement/logout",
     {},
     {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "X-Auth-Token": process.env.FINCODE_API_TOKEN,
+        "X-Auth-Token": process.env.JWT_ACCESS_TOKEN,
+        platform: "fincode",
+        uuid: "200",
       },
     }
   );
@@ -474,20 +486,15 @@ async function logout(accessToken) {
     - Never store tokens in localStorage or sessionStorage
     - Encrypt tokens at rest in your backend
   </Card>
-
-{" "}
-
 <Card title="Token Rotation" icon="rotate">
   - Rotate refresh tokens after each use - Implement token expiration monitoring
   - Set up automatic token refresh - Handle token refresh failures gracefully
 </Card>
-
-{" "}
-
 <Card title="Network Security" icon="shield-halved">
-  - Always use HTTPS in production - Implement certificate pinning for mobile
-  apps - Use secure communication channels - Monitor for man-in-the-middle
-  attacks
+  - Always use HTTPS in production
+  - Implement certificate pinning for apps
+  - Use secure communication channels
+  - Monitor for man-in-the-middle attacks
 </Card>
 
   <Card title="Access Control" icon="user-shield">
@@ -504,17 +511,20 @@ async function logout(accessToken) {
 
 | Permission            | MANAGER | AGENT        | CASHIER | CUSTOMER |
 | --------------------- | ------- | ------------ | ------- | -------- |
-| Create Transactions   | ✅      | ✅           | ✅      | ✅ (own) |
+| Create Transactions   | ❌      | ❌           | ✅      | ✅ (own) |
 | View All Transactions | ✅      | ✅           | ❌      | ❌       |
-| Update Transactions   | ✅      | ✅           | ❌      | ❌       |
-| Manage Users          | ✅      | ❌           | ❌      | ❌       |
-| KYC Verification      | ✅      | ✅           | ❌      | ❌       |
+| Update Transactions   | ✅      | ✅           | ✅      | ❌       |
+| Manage Users          | ✅      | ✅ (own)     | ✅      | ❌       |
+| KYC/AML Configuration | ✅      | ❌           | ❌      | ❌       |
+| KYC/AML Verification  | ❌      | ❌           | ❌      | ✅       |
 | Tenant Configuration  | ✅      | ❌           | ❌      | ❌       |
-| Process Refunds       | ✅      | ✅           | ❌      | ❌       |
-| View Reports          | ✅      | ✅ (limited) | ❌      | ❌       |
-| Manage Beneficiaries  | ✅      | ✅           | ❌      | ✅ (own) |
-| API Key Management    | ✅      | ❌           | ❌      | ❌       |
-| Webhook Configuration | ✅      | ❌           | ❌      | ❌       |
+| Process Refunds       | ✅      | ❌           | ❌      | ❌       |
+| Analytics/Reports     | ✅      | ✅ (limited) | ❌      | ❌       |
+| Manage Beneficiaries  | ✅      | ❌           | ❌      | ✅ (own) |
+| Plugin Management     | ✅      | ❌           | ❌      | ❌       |
+| Agent Configuration   | ✅      | ❌           | ❌      | ❌       |
+| Rate/Fee Markups      | ❌      | ❌           | ❌      | ✅ (own) |
+| Request quotes        | ❌      | ❌           | ✅      | ✅       |
 
 ---
 
@@ -562,8 +572,7 @@ async function logout(accessToken) {
     {
       "error": "forbidden",
       "message": "Insufficient permissions to access this resource",
-      "required_permission": "transactions:write",
-      "user_role": "CASHIER"
+      "role": "CASHIER"
     }
     ```
 
@@ -594,23 +603,29 @@ async function logout(accessToken) {
 
 Use these test credentials for different roles in sandbox:
 
+1. const managerDomain = "https://remitjunction.fincode.software/api/v6/services/securitymanagement/login"
+
+2. const agentAndCustomerDomain = "https://agent.fincode.software/api/v6/services/securitymanagement/login"
+
+3. const cashierDomain = "https://agent.fincode.software/api/v6/services/securitymanagement/login"
+
 ```javascript
 const testUsers = {
   manager: {
-    email: "manager@test.fincode.software",
-    password: "Test123!Manager",
+    email: "hello@remitjunction.co.uk",
+    currentPassword: "Password@1",
   },
   agent: {
-    email: "agent@test.fincode.software",
-    password: "Test123!Agent",
+    email: "hello+2@remitjunction.co.uk",
+    password: "Password@1",
   },
   cashier: {
-    email: "cashier@test.fincode.software",
-    password: "Test123!Cashier",
+    email: "excel.nwachukwu+662@fincode.co.uk",
+    password: "PQW7ERMP",
   },
   customer: {
-    email: "customer@test.fincode.software",
-    password: "Test123!Customer",
+    email: "excel.nwachukwu+662@fincode.co.uk",
+    password: "Password@1",
   },
 };
 ```

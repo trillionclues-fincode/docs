@@ -24,27 +24,27 @@ Get started with FinCode's multitenant platform in three simple steps. This guid
 
   </Accordion>
 
-  <Accordion icon="server" title="Get Your Subdomain">
+  <Accordion icon="server" title="Get Your Credentials">
     Once approved, you'll receive your unique sandbox credentials:
 
-    ### Your Subdomain Format
+    ### Your Domain Format
     ```
-    https://{your-company}.fincode.software
+    https://{domain}.fincode.software
     ```
 
-    Your subdomain is your dedicated environment where all your API calls will be made. This ensures complete tenant isolation and data security.
+    Your domain is your dedicated environment where all your API calls will be made. This ensures complete tenant isolation and data security.
 
-    <Info>Your subdomain will be provided in your approval email. Keep this information secure as it's required for all API requests.</Info>
+    <Info>Your domain will be provided in your approval email. Keep this information secure as it's required for all API requests.</Info>
 
   </Accordion>
 
-  <Accordion icon="box" title="Access Your Sandbox Environment">
+  <Accordion icon="box" title="Access Your Sandbox">
     After approval, you'll have access to two environments:
 
-    - **Sandbox**: `https://your-company.fincode.software/sandbox` - Use this for testing with simulated data and creating new records.
-    - **Production**: `https://your-company.fincode.tech`
+    - **Sandbox**: `https://{domain}.fincode.software/sandbox`
+    - **Production**: `https://{domain}.fincode.tech`
 
-    Log in to your dashboard at your subdomain to access:
+    Log in to your dashboard at your domain to access:
     - API documentation specific to your tenant
     - Sandbox test data and accounts
     - Configuration settings
@@ -60,19 +60,9 @@ Get started with FinCode's multitenant platform in three simple steps. This guid
 
 <AccordionGroup>
   <Accordion icon="key" title="Create Your First Token">
-    1. **Log in to Dashboard**: Visit `https://your-company.fincode.software`
-    2. **Navigate to API Settings**: Go to Settings → API & Tokens
-    3. **Generate Token**: Click "Generate New Token" and select your environment (Sandbox/Production)
-    4. **Set Permissions**: Choose the appropriate scopes for your token:
-       - `remittance:read` - Read remittance transactions
-       - `remittance:write` - Create and update remittance transactions
-       - `lending:read` - Read loan applications and data
-       - `lending:write` - Create and manage loan applications
-       - `investment:read` - Read investment portfolios
-       - `investment:write` - Create and manage investments
-    5. **Save Securely**: Copy your token immediately - it won't be shown again
-
-    <Tip>Create separate tokens for different environments and rotate them regularly for security.</Tip>
+    1. Log in through the API
+    2. Populate Login Details
+    3. Generate Token for the selected environment (Sandbox/Production)
 
   </Accordion>
 
@@ -87,9 +77,9 @@ Get started with FinCode's multitenant platform in three simple steps. This guid
     ### Environment Variables Setup
     ```bash
     # Add to your .env file
-    FINCODE_SUBDOMAIN=your-company
-    FINCODE_API_TOKEN=fct_sandbox_your_token_here
-    FINCODE_BASE_URL=https://your-company.fincode.software
+    DOMAIN=domain
+    JWT_ACCESS_TOKEN=fct_sandbox_your_token_here
+    FINCODE_BASE_URL=https://{domain}.fincode.software
     ```
 
     <Warning>If you suspect a token has been compromised, revoke it immediately from your dashboard.</Warning>
@@ -106,14 +96,14 @@ Test your authentication by logging in via API. This will verify your setup and 
     ```javascript
     const axios = require('axios');
 
-    const FINCODE_SUBDOMAIN = process.env.FINCODE_SUBDOMAIN;
-    const FINCODE_API_TOKEN = process.env.FINCODE_API_TOKEN;
-    const BASE_URL = `https://${FINCODE_SUBDOMAIN}.fincode.software`;
+    const DOMAIN = process.env.DOMAIN;
+    const JWT_ACCESS_TOKEN = process.env.JWT_ACCESS_TOKEN;
+    const BASE_URL = `https://${DOMAIN}.fincode.software`;
 
     async function login() {
       try {
         const response = await axios.post(
-          `${BASE_URL}//api/v6/services/securitymanagement/login`,
+          `${BASE_URL}/api/v6/services/securitymanagement/login`,
           {
             email: 'your-email@company.com',
             currentPassword: 'your-password'
@@ -179,11 +169,11 @@ Test your authentication by logging in via API. This will verify your setup and 
     import com.google.gson.JsonObject;
 
     public class FinCodeAuth {
-        private static final String FINCODE_SUBDOMAIN = System.getenv("FINCODE_SUBDOMAIN");
-        private static final String FINCODE_API_TOKEN = System.getenv("FINCODE_API_TOKEN");
+        private static final String DOMAIN = System.getenv("DOMAIN");
+        private static final String JWT_ACCESS_TOKEN = System.getenv("JWT_ACCESS_TOKEN");
         private static final String BASE_URL = String.format(
             "https://%s.fincode.software",
-            FINCODE_SUBDOMAIN
+            DOMAIN
         );
 
         public static class LoginResponse {
@@ -214,7 +204,7 @@ Test your authentication by logging in via API. This will verify your setup and 
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/api/v6/services/securitymanagement/login"))
                 .header("Content-Type", "application/json")
-                .header("X-API-Token", FINCODE_API_TOKEN)
+                .header("X-API-Token", JWT_ACCESS_TOKEN)
                 .header("uuid", 200)
                 .header("platform", "fincode")
                 .POST(BodyPublishers.ofString(gson.toJson(requestBody)))
@@ -262,9 +252,9 @@ Test your authentication by logging in via API. This will verify your setup and 
 
   <Accordion icon="terminal" title="cURL Example">
     ```bash
-    curl -X POST "https://your-company.fincode.software/api/v6/services/securitymanagement/login" \
+    curl -X POST "https://{domain}.fincode.software/api/v6/services/securitymanagement/login" \
       -H "Content-Type: application/json" \
-      -H "X-API-Token: $FINCODE_API_TOKEN" \
+      -H "X-API-Token: $JWT_ACCESS_TOKEN" \
       -d '{
         "email": "your-email@company.com",
         "currentPassword": "your-password"
@@ -284,22 +274,21 @@ Now that you're authenticated, choose your product to continue:
     icon="money-bill-transfer"
     href="/remittance/overview"
   >
-    Send your first cross-border transfer
     - Create beneficiary
     - Get FX quote
     - Process transaction
     - Track status
   </Card>
-
-{" "}
-
+  
 <Card
   title="Digital Lending"
   icon="hand-holding-dollar"
   href="/lending/overview"
 >
-  Submit your first loan application - Create customer profile - Submit
-  application - Check decision - Manage disbursement
+  - Create customer
+  - Submit application
+  - Check decision
+  - Manage disbursement
 </Card>
 
   <Card
@@ -307,7 +296,6 @@ Now that you're authenticated, choose your product to continue:
     icon="chart-line"
     href="/investment/overview"
   >
-    Open your first investment account
     - Create account
     - Add portfolio
     - Execute trades
@@ -323,7 +311,7 @@ Now that you're authenticated, choose your product to continue:
   <Accordion icon="circle-exclamation" title="Authentication Errors">
     **401 Unauthorized**
     - Verify your API token is correct and not expired
-    - Ensure you're using the correct subdomain
+    - Ensure you're using the correct domain
     - Check that your token has the necessary permissions
 
     **403 Forbidden**
@@ -344,7 +332,7 @@ Now that you're authenticated, choose your product to continue:
       {
         headers: {
           'Content-Type': 'application/json',
-          'X-API-Token': FINCODE_API_TOKEN
+          'X-API-Token': JWT_ACCESS_TOKEN
         }
       }
     );

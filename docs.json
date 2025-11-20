@@ -2,6 +2,10 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "FinCode Platform",
+  "modeToggle": {
+    "default": "light",
+    "isHidden": false
+  },
   "colors": {
     "primary": "#734CDC",
     "light": "#734CDC",
@@ -140,57 +144,136 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "Authentication",
-            "pages": ["api/authentication", "api/api-keys", "api/rate-limits"]
+            "group": "Introduction",
+            "pages": ["api/authentication"]
           },
           {
-            "group": "Core Endpoints",
-            "pages": ["api/users", "api/accounts", "api/tenants"]
+            "group": "Authentication & Users",
+            "pages": [
+              "api/auth/login",
+              "api/auth/refresh-token",
+              "api/auth/logout",
+              "api/users/create-manager",
+              "api/users/create-agent",
+              "api/users/create-cashier",
+              "api/users/create-customer",
+              "api/users/list-users",
+              "api/users/update-user",
+              "api/users/delete-user"
+            ]
+          },
+          {
+            "group": "Transactions - Remittance",
+            "pages": [
+              "api/transactions/remittance/create-transaction",
+              "api/transactions/remittance/get-transaction",
+              "api/transactions/remittance/list-transactions",
+              "api/transactions/remittance/update-transaction",
+              "api/transactions/remittance/cancel-transaction",
+              "api/transactions/remittance/create-beneficiary",
+              "api/transactions/remittance/get-quote",
+              "api/transactions/remittance/confirm-transaction"
+            ]
+          },
+          {
+            "group": "Transactions - Lending",
+            "pages": [
+              "api/transactions/lending/create-application",
+              "api/transactions/lending/get-application",
+              "api/transactions/lending/list-applications",
+              "api/transactions/lending/approve-loan",
+              "api/transactions/lending/disburse-loan",
+              "api/transactions/lending/create-repayment",
+              "api/transactions/lending/get-loan-schedule",
+              "api/transactions/lending/list-repayments"
+            ]
+          },
+          {
+            "group": "Transactions - Investment",
+            "pages": [
+              "api/transactions/investment/create-account",
+              "api/transactions/investment/get-account",
+              "api/transactions/investment/create-portfolio",
+              "api/transactions/investment/buy-asset",
+              "api/transactions/investment/sell-asset",
+              "api/transactions/investment/get-holdings",
+              "api/transactions/investment/get-performance"
+            ]
+          },
+          {
+            "group": "Compliance & KYC",
+            "pages": [
+              "api/compliance/verify-customer",
+              "api/compliance/submit-kyc-documents",
+              "api/compliance/check-sanctions",
+              "api/compliance/aml-screening",
+              "api/compliance/get-verification-status",
+              "api/compliance/update-risk-level"
+            ]
+          },
+          {
+            "group": "Reporting & Analytics",
+            "pages": [
+              "api/reporting/transaction-report",
+              "api/reporting/revenue-report",
+              "api/reporting/agent-performance",
+              "api/reporting/tenant-analytics",
+              "api/reporting/export-data",
+              "api/reporting/call-over-report"
+            ]
+          },
+          {
+            "group": "Configuration & Plugins",
+            "pages": [
+              "api/configuration/get-tenant-settings",
+              "api/configuration/update-tenant-settings",
+              "api/configuration/manage-plugins",
+              "api/configuration/configure-notifications",
+              "api/configuration/payment-methods",
+              "api/configuration/business-rules"
+            ]
+          },
+          {
+            "group": "Cross-Border Operations",
+            "pages": [
+              "api/crossborder/get-exchange-rates",
+              "api/crossborder/list-corridors",
+              "api/crossborder/calculate-fees",
+              "api/crossborder/get-payout-methods",
+              "api/crossborder/verify-recipient-bank",
+              "api/crossborder/get-rate-markup"
+            ]
+          },
+          {
+            "group": "Revenue Sharing",
+            "pages": [
+              "api/revenue/calculate-commission",
+              "api/revenue/list-settlements",
+              "api/revenue/create-payout",
+              "api/revenue/get-partner-balance",
+              "api/revenue/revenue-breakdown"
+            ]
           },
           {
             "group": "Webhooks & Events",
             "pages": ["api/webhooks", "api/events", "api/webhook-security"]
           },
           {
-            "group": "SDKs & Libraries",
-            "pages": [
-              "api/sdks/javascript",
-              "api/sdks/python",
-              "api/sdks/php",
-              "api/sdks/ruby"
-            ]
-          },
-          {
             "group": "Testing & Tools",
-            "pages": ["api/postman-collection", "api/sandbox-environment"]
+            "pages": [
+              "api/postman-collection",
+              "api/sandbox-environment",
+              "api/rate-limits"
+            ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "API Status",
-          "href": "https://status.fincode.com",
-          "icon": "signal"
-        },
-        {
-          "anchor": "GitHub",
-          "href": "https://github.com/fincodeuk",
-          "icon": "github"
-        },
-        {
-          "anchor": "Support",
-          "href": "mailto:hello@fincode.co.uk",
-          "icon": "lifebuoy"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/logo.png",
     "dark": "/logo/logo.png",
-    "href": "https://fincode.com"
+    "href": "https://docs.fincode.technology"
   },
   "navbar": {
     "primary": {

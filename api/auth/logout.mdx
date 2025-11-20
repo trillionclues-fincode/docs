@@ -1,0 +1,102 @@
+---
+title: "Logout"
+api: "POST https://remitjunction.fincode.software/api/v6/services/securitymanagement/logout"
+description: "Invalidate the current user session by revoking the refresh token and access token."
+---
+
+Invalidate the current user session by revoking both the access token and the refresh token. After a successful logout, the user must perform a full login with email and password to regain access.
+
+<RequestExample>
+        ```bash cURL PUT      
+  [https://remitjunction.fincode.software/api/v6/services/securitymanagement/logout](https://remitjunction.fincode.software/api/v6/services/securitymanagement/logout)
+        ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField
+  header='Content-Type'
+  type='string'
+  required
+  default='application/json'
+>
+      Must be `application/json`
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+      Platform identifier. Use `fincode`
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+      Unique request identifier. Use `200`
+</ParamField>
+<ParamField
+  header='x-auth-token'
+  type='string'
+  required
+  default='eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJyb2xlcyI6WyJNQU5BR0VSIl0sInVzZXItaWQiOiJmMjBiYzg2Yy03NGU1LTQ1NzAtODdlNi0xNzUzZWQwZTM2OTYiLCJpc3MiOiJ0b2tlbi5pc3N1ZXI6aHR0cHM6Ly9tb25leXRyYW5zZmVyYXBwbGljYXRpb24uY29tIiwiZXhwIjoxNzYzNjU1NTAyLCJ0ZW5hbmN5LWlkIjoiMDEwODA3OWEtZTk2NS00OGNlLTkwOWMtZGU5MjliZDllODMwIiwiY2xpZW50LWlkIjoiMDEwODA3OWEtZTk2NS00OGNlLTkwOWMtZGU5MjliZDllODMwIiwiaWF0IjoxNzYzNjUxOTAyLCJqdGkiOiIyZWM1MmY2Yi05MGI1LTRlMGUtYWVm'
+>
+    Unique JWT token
+</ParamField>
+
+## Response
+
+This endpoint typically returns an empty success response (`200 OK`) or a confirmation message, as the tokens themselves are being destroyed.
+
+<ResponseField name='status' type='string'>
+    Confirmation status, e.g., `SUCCESS`.
+</ResponseField>
+
+<ResponseField name='message' type='string'>
+    Confirmation message, e.g., "User logged out successfully."
+</ResponseField>
+
+---
+
+## Code Examples
+
+<CodeGroup>
+
+```javascript Node.js
+const axios = require("axios");
+
+async function logout(refreshToken) {
+  try {
+    const response = await axios.put(
+      "[https://remitjunction.fincode.software/api/v6/services/securitymanagement/logout](https://remitjunction.fincode.software/api/v6/services/securitymanagement/logout)",
+      {
+        refresh_token: refreshToken,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          platform: "fincode",
+          uuid: "200",
+        },
+      }
+    );
+
+    console.log("Logout successful:", response.data.message);
+    return response.data;
+  } catch (error) {
+    console.error("Logout failed:", error.response?.data || error.message);
+    throw error;
+  }
+}
+
+// Example Usage
+const currentRefreshToken = "eyJhbGciOiJ...";
+logout(currentRefreshToken);
+```
+
+```bash cURL
+curl -X PUT "https://remitjunction.fincode.software/api/v6/services/securitymanagement/logout" \
+  -H "Content-Type: application/json" \
+  -H "platform: fincode" \
+  -H "uuid: 200" \
+  -d '{
+    "refresh_token": "YOUR_CURRENT_REFRESH_TOKEN"
+  }'
+```
+
+</CodeGroup>
