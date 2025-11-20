@@ -1,0 +1,137 @@
+---
+title: "Supported Currencies"
+api: "GET https://remitjunction.fincode.software/api/v6/services/quote/supported-currencies/{sendingCountryCode}/{receivingCountryCode}/{deliveryMethod}"
+description: "Retrieves the list of supported currencies for a specific remittance corridor and delivery method."
+---
+
+This endpoint is the final step in determining the valid parameters for initiating a transaction. It retrieves all supported payout currencies for the specified **sending country**, **receiving country**, and **delivery method**.
+
+<RequestExample>
+          ```bash cURL GET        
+  [https://remitjunction.fincode.software/api/v6/services/quote/supported-currencies/GBR/NGA/ACCOUNTPAYMENT](https://remitjunction.fincode.software/api/v6/services/quote/supported-currencies/GBR/NGA/ACCOUNTPAYMENT)
+          ```
+</RequestExample>
+
+## Request Headers
+
+This endpoint requires a valid **Access Token**
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token`
+  endpoint. This token must belong to a user with appropriate permissions (e.g.,
+  `MANAGER` or `AGENT`).
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+        Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+        Unique request identifier.
+</ParamField>
+
+## Path Parameters
+
+All path parameters are mandatory to define the specific corridor.
+
+<ParamField path='sendingCountryCode' type='string' required default='GBR'>
+  The **country code** the customer is sending from (ISO 3166-1 alpha-3 code).
+</ParamField>
+
+<ParamField path='receivingCountryCode' type='string' required default='NGA'>
+  The **country code** the recipient is in (ISO 3166-1 alpha-3 code).
+</ParamField>
+
+<ParamField
+  path='deliveryMethod'
+  type='string'
+  required
+  default='ACCOUNTPAYMENT'
+>
+  The intended **payout method** (e.g., `ACCOUNTPAYMENT`, `CASH_PICKUP`).
+</ParamField>
+
+## Response
+
+The response returns a list of currency objects that are supported for the specified transfer path.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='array'>
+  A list of supported currency codes and details.
+  <Expandable title='data array item (Currency Details)'>
+    <ResponseField name='currencyCode' type='string'>
+      The ISO 4217 code of the supported currency (e.g., `NGN`).
+    </ResponseField>
+    <ResponseField name='currencyName' type='string'>
+      The full name of the currency (e.g., "Nigerian Naira").
+    </ResponseField>
+    <ResponseField name='minAmount' type='number'>
+      The minimum transaction amount supported for this currency.
+    </ResponseField>
+    <ResponseField name='maxAmount' type='number'>
+      The maximum transaction amount supported for this currency.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+---
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v6/services/quote/supported-currencies/GBR/NGA/ACCOUNTPAYMENT' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```
+
+```javascript Node.js
+const axios = require("axios");
+
+const BASE_URL =
+  "[https://agent.fincode.software/api/v6/services/quote](https://agent.fincode.software/api/v6/services/quote)";
+
+async function getSupportedCurrencies(
+  sendCountry,
+  receiveCountry,
+  deliveryMethod
+) {
+  const url = `${BASE_URL}/supported-currencies/${sendCountry}/${receiveCountry}/${deliveryMethod}`;
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        platform: "fincode",
+        uuid: "200",
+      },
+    });
+
+    const currencies = response.data.data;
+
+    console.log(
+      `Supported Payout Currencies for ${sendCountry} to ${receiveCountry} via ${deliveryMethod}:`
+    );
+    currencies.forEach((c) => {
+      console.log(
+        `- ${c.currencyName} (${c.currencyCode}) - Min: ${c.minAmount}, Max: ${c.maxAmount}`
+      );
+    });
+
+    return currencies;
+  } catch (error) {
+    console.error(
+      "Failed to fetch supported currencies:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example: Sending from Great Britain (GBR) to Nigeria (NGA) via Account Payment
+getSupportedCurrencies("GBR", "NGA", "ACCOUNTPAYMENT");
+```
+
+</CodeGroup>

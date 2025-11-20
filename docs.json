@@ -148,35 +148,56 @@
             "pages": ["api/authentication"]
           },
           {
-            "group": "Authentication & Users",
+            "group": "Authentication",
             "pages": [
               "api/auth/login",
-              "api/auth/refresh-token",
               "api/auth/logout",
+              "api/auth/profile",
+              "api/auth/refresh-token",
               "api/users/create-manager",
               "api/users/create-agent",
               "api/users/create-cashier",
-              "api/users/create-customer",
-              "api/users/list-users",
-              "api/users/update-user",
-              "api/users/delete-user"
+              "api/users/create-customer"
             ]
           },
           {
-            "group": "Transactions - Remittance",
+            "group": "Security & Utilities",
             "pages": [
-              "api/transactions/remittance/create-transaction",
-              "api/transactions/remittance/get-transaction",
-              "api/transactions/remittance/list-transactions",
-              "api/transactions/remittance/update-transaction",
-              "api/transactions/remittance/cancel-transaction",
-              "api/transactions/remittance/create-beneficiary",
-              "api/transactions/remittance/get-quote",
-              "api/transactions/remittance/confirm-transaction"
+              "api/security/list-countries",
+              "api/security/active-countries",
+              "api/security/privacy-policy",
+              "api/security/fetch-preference"
+            ]
+          },
+
+          {
+            "group": "Compliance & KYC",
+            "pages": [
+              "api/compliance/cra-forms",
+              "api/compliance/dynamic-fields",
+              "api/compliance/continue-enrolment",
+              "api/compliance/awaiting-compliance",
+              "api/compliance/submit-kyc-documents",
+              "api/compliance/aml-screening"
             ]
           },
           {
-            "group": "Transactions - Lending",
+            "group": "Remittance",
+            "pages": [
+              "api/transactions/call-quote",
+              "api/transactions/history-data",
+              "api/transactions/wallet-account",
+              "api/transactions/beneficiary-list",
+              "api/transactions/transaction-types",
+              "api/transactions/create-transaction",
+              "api/transactions/beneficiary-details",
+              "api/transactions/delivery-currencies",
+              "api/transactions/destination-countries",
+              "api/transactions/supported-currencies"
+            ]
+          },
+          {
+            "group": "Lending",
             "pages": [
               "api/transactions/lending/create-application",
               "api/transactions/lending/get-application",
@@ -189,7 +210,7 @@
             ]
           },
           {
-            "group": "Transactions - Investment",
+            "group": "Investment",
             "pages": [
               "api/transactions/investment/create-account",
               "api/transactions/investment/get-account",
@@ -198,17 +219,6 @@
               "api/transactions/investment/sell-asset",
               "api/transactions/investment/get-holdings",
               "api/transactions/investment/get-performance"
-            ]
-          },
-          {
-            "group": "Compliance & KYC",
-            "pages": [
-              "api/compliance/verify-customer",
-              "api/compliance/submit-kyc-documents",
-              "api/compliance/check-sanctions",
-              "api/compliance/aml-screening",
-              "api/compliance/get-verification-status",
-              "api/compliance/update-risk-level"
             ]
           },
           {

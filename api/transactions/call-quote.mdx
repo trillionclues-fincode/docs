@@ -1,0 +1,241 @@
+---
+title: "Call Quote"
+api: "POST https://remitjunction.fincode.software/api/v6/services/quote/callQuote"
+description: "Calculates the real-time exchange rate, fees, and total cost for an intended transaction."
+---
+
+This endpoint provides a definitive, real-time calculation (the **Quote**) for an intended transaction.
+
+It calculates the total payable amount, all applicable fees, the guaranteed exchange rate, and the final recipient amount based on the provided parameters.
+
+<RequestExample>
+          ```bash cURL POST        
+  [https://remitjunction.fincode.software/api/v6/services/quote/callQuote](https://remitjunction.fincode.software/api/v6/services/quote/callQuote)
+          ```
+</RequestExample>
+
+## Request Headers
+
+This endpoint requires a valid **Access Token**
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token`
+  endpoint. This token must belong to a user with appropriate permissions (e.g.,
+  `MANAGER` or `AGENT`).
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+        Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+        Unique request identifier.
+</ParamField>
+
+<ParamField
+  header='Content-Type'
+  type='string'
+  required
+  default='application/json'
+>
+        Must be `application/json`.
+</ParamField>
+
+## Request Body
+
+The request body defines the core parameters for the rate calculation. You should use either `principalAmount` or `deriveAmount`, depending on the desired calculation direction (`inverseCalculation`).
+
+<ParamField body='principalAmount' type='string'>
+  The amount of the **sending** currency (the source amount). Required if
+  `inverseCalculation` is `false`. Example: `"10"`.
+</ParamField>
+
+<ParamField body='principalAmountCurrency' type='string' required default='GBP'>
+  The currency code of the `principalAmount` (e.g., `GBP`).
+</ParamField>
+
+<ParamField body='deriveAmount' type='string'>
+  The amount the recipient should receive (the destination amount). Required if
+  `inverseCalculation` is `true`.
+</ParamField>
+
+<ParamField body='deriveAmountCurrency' type='string' required default='NGN'>
+  The currency code of the `deriveAmount` (e.g., `NGN`).
+</ParamField>
+
+<ParamField body='inverseCalculation' type='boolean' required default='false'>
+  If `false` (default), calculate the receiving amount from the
+  `principalAmount`. If `true`, calculate the sending amount from the desired
+  `deriveAmount`.
+</ParamField>
+
+<ParamField
+  body='paymentType'
+  type='string'
+  required
+  default='ONLINE_CARD_PAYMENT'
+>
+  The sender's method of payment (e.g., `ONLINE_CARD_PAYMENT`, `BANK_TRANSFER`).
+</ParamField>
+
+<ParamField
+  body='chargeCategory'
+  type='string'
+  required
+  default='MONEYTRANSFER'
+>
+  The category of the transaction for fee assessment. Example: `MONEYTRANSFER`.
+</ParamField>
+
+<ParamField
+  body='transactionType'
+  type='string'
+  required
+  default='ACCOUNTPAYMENT'
+>
+  The method of fund delivery (e.g., `ACCOUNTPAYMENT`).
+</ParamField>
+
+<ParamField body='destinationCountry' type='string' required default='NGA'>
+  The country code where the recipient receives funds (ISO 3166-1 alpha-3).
+</ParamField>
+
+<ParamField body='tradeOriginatingCountry' type='string' required default='GBR'>
+  The country code where the transaction originates (ISO 3166-1 alpha-3).
+</ParamField>
+
+<ParamField body='conversion' type='boolean' required default='true'>
+  If `true`, FX conversion is applied (standard for cross-currency transfers).
+</ParamField>
+
+<ParamField body='promoCode' type='string'>
+  Optional: A valid promotion code to apply discounts.
+</ParamField>
+
+<ParamField body='mobileOperator' type='string'>
+  Required if the `transactionType` is mobile top-up; otherwise optional.
+</ParamField>
+
+## Response
+
+The response contains the final quote details, including rates, fees, and validity.
+
+<ResponseField name='exchangeRate' type='number'>
+  The fixed exchange rate guaranteed for the transaction.
+</ResponseField>
+
+<ResponseField name='fees' type='number'>
+  The total calculated fees for the transaction.
+</ResponseField>
+
+<ResponseField name='principalAmount' type='number'>
+  The final calculated sending amount (payer amount).
+</ResponseField>
+
+<ResponseField name='deriveAmount' type='number'>
+  The final calculated receiving amount (recipient amount).
+</ResponseField>
+
+<ResponseField name='quoteExpiryMinutes' type='number'>
+  The duration (in minutes) for which this specific quote is guaranteed to be
+  valid.
+</ResponseField>
+
+<ResponseField name='totalPayableAmount' type='number'>
+  The final amount the customer needs to pay, including principal and fees.
+</ResponseField>
+
+<ResponseField name='quoteId' type='string'>
+  A unique identifier for this specific quote (used when confirming the
+  transaction).
+</ResponseField>
+
+<ResponseField name='message' type='string'>
+  Confirmation message from the server.
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST 'https://remitjunction.fincode.software/api/v6/services/quote/callQuote' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--header 'Content-Type: application/json' \
+--data '{
+    "paymentType": "ONLINE_CARD_PAYMENT",
+    "chargeCategory": "MONEYTRANSFER",
+    "principalAmount": "10",
+    "principalAmountCurrency": "GBP",
+    "deriveAmount": "",
+    "deriveAmountCurrency": "NGN",
+    "transactionType": "ACCOUNTPAYMENT",
+    "destinationCountry": "NGA",
+    "inverseCalculation": false,
+    "tradeOriginatingCountry": "GBR",
+    "conversion": true
+}'
+```
+
+```javascript Node.js
+const axios = require("axios");
+
+const BASE_URL =
+  "[https://remitjunction.fincode.software/api/v6/services/quote](https://remitjunction.fincode.software/api/v6/services/quote)";
+
+const quotePayload = {
+  paymentType: "ONLINE_CARD_PAYMENT",
+  chargeCategory: "MONEYTRANSFER",
+  principalAmount: "10",
+  principalAmountCurrency: "GBP",
+  deriveAmount: "",
+  deriveAmountCurrency: "NGN",
+  transactionType: "ACCOUNTPAYMENT",
+  destinationCountry: "NGA",
+  inverseCalculation: false,
+  tradeOriginatingCountry: "GBR",
+  conversion: true,
+  promoCode: "",
+  mobileOperator: "",
+};
+
+async function callQuote(payload) {
+  try {
+    const response = await axios.post(`${BASE_URL}/callQuote`, payload, {
+      headers: {
+        platform: "fincode",
+        uuid: "200",
+        "Content-Type": "application/json",
+      },
+    });
+
+    const quote = response.data;
+    console.log(`--- Quote Summary ---`);
+    console.log(
+      `Sending: ${quote.principalAmount} ${quote.principalAmountCurrency}`
+    );
+    console.log(
+      `Rate: 1 ${quote.principalAmountCurrency} = ${quote.exchangeRate} ${quote.deriveAmountCurrency}`
+    );
+    console.log(`Fees: ${quote.fees}`);
+    console.log(`Total Payable: ${quote.totalPayableAmount}`);
+    console.log(
+      `Recipient Receives: ${quote.deriveAmount} ${quote.deriveAmountCurrency}`
+    );
+    console.log(`Quote valid for: ${quote.quoteExpiryMinutes} minutes.`);
+
+    return quote;
+  } catch (error) {
+    console.error(
+      "Failed to get quote:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+callQuote(quotePayload);
+```
+
+</CodeGroup>

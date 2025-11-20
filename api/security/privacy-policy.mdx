@@ -1,0 +1,84 @@
+---
+title: "Password Policy"
+api: "GET https://remitjunction.fincode.software/api/v6/services/admin/security/view-password-policy"
+description: "Retrieves the organization's current password complexity and validity rules."
+---
+
+Retrieves the current rules and restrictions for user passwords, including minimum length, required characters, and expiration settings. This endpoint helps client applications enforce correct password creation and updates.
+
+<RequestExample>
+          ```bash cURL GET        
+  [https://remitjunction.fincode.software/api/v6/services/admin/security/view-password-policy](https://remitjunction.fincode.software/api/v6/services/admin/security/view-password-policy)
+          ```
+</RequestExample>
+
+## Request Headers
+
+This endpoint is typically **public** and **does not require an Access Token** for authorization, relying on the organization domain provided in the URL.
+
+<ParamField header='platform' type='string' required default='fincode'>
+        Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+        Unique request identifier.
+</ParamField>
+
+---
+
+## Response
+
+The response returns an object detailing all the password policy rules enforced by the organization.
+
+<ResponseField name='policyId' type='string'>
+    Unique identifier for the password policy record.
+</ResponseField>
+
+<ResponseField name='minimumLength' type='number'>
+    The minimum number of characters required for a password.
+</ResponseField>
+
+---
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v6/services/admin/security/view-password-policy' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```
+
+```javascript Node.js
+const axios = require("axios");
+
+const BASE_URL =
+  "[https://remitjunction.fincode.software/api/v6/services/admin/security](https://remitjunction.fincode.software/api/v6/services/admin/security)";
+
+async function viewPasswordPolicy() {
+  try {
+    const response = await axios.get(`${BASE_URL}/view-password-policy`, {
+      headers: {
+        platform: "fincode",
+        uuid: "200",
+      },
+    });
+
+    console.log("Password Policy fetched successfully!");
+    console.log("Minimum Length:", response.data.minimumLength);
+    console.log("Requires Digit:", response.data.requiresDigit);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Failed to fetch password policy:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+viewPasswordPolicy();
+```
+
+</CodeGroup>

@@ -1,0 +1,134 @@
+---
+title: "Destination Countries"
+api: "GET https://remitjunction.fincode.software/api/v6/services/quote/destination-country-by-delivery-method/{sendingCountryCode}/{deliveryMethod}"
+description: "Retrieves a list of valid destination countries for a given sending country and payout method, used for defining remittance corridors."
+---
+
+This endpoint retrieves the list of countries where money can be sent, based on the customer's current location (`sendingCountryCode`) and the intended method of delivery (e.g., `ACCOUNTPAYMENT`).
+
+This is a key step in initiating a transaction.
+
+<RequestExample>
+          ```bash cURL GET        
+  [https://remitjunction.fincode.software/api/v6/services/quote/destination-country-by-delivery-method/GBR/ACCOUNTPAYMENT](https://remitjunction.fincode.software/api/v6/services/quote/destination-country-by-delivery-method/GBR/ACCOUNTPAYMENT)
+          ```
+</RequestExample>
+
+## Request Headers
+
+This endpoint requires a valid **Access Token**
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token`
+  endpoint. This token must belong to a user with appropriate permissions (e.g.,
+  `MANAGER` or `AGENT`).
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+        Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+        Unique request identifier.
+</ParamField>
+
+## Path Parameters
+
+The dynamic parts of the URL are mandatory for filtering the results.
+
+<ParamField path='sendingCountryCode' type='string' required default='GBR'>
+  The **country code** of the customer sending the money (ISO 3166-1 alpha-3
+  code).
+</ParamField>
+
+<ParamField
+  path='deliveryMethod'
+  type='string'
+  required
+  default='ACCOUNTPAYMENT'
+>
+  The intended **payout method** (e.g., `ACCOUNTPAYMENT`, `CASH_PICKUP`).
+</ParamField>
+
+## Response
+
+The response returns a list of destination country objects that are enabled for the specified corridor.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='array'>
+  A list of available destination countries.
+  <Expandable title='data array item (Country Details)'>
+    <ResponseField name='countryCode' type='string'>
+      The ISO 3166-1 alpha-3 code of the destination country (e.g., `NGA`).
+    </ResponseField>
+    <ResponseField name='countryName' type='string'>
+      The full name of the country (e.g., "Nigeria").
+    </ResponseField>
+    <ResponseField name='payoutCurrencies' type='array'>
+      A list of currencies supported in this destination country.
+    </ResponseField>
+    <ResponseField name='isActive' type='boolean'>
+      Indicates if the corridor is currently active.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+---
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v6/services/quote/destination-country-by-delivery-method/GBR/ACCOUNTPAYMENT' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```
+
+```javascript Node.js
+const axios = require("axios");
+
+const BASE_URL =
+  "[https://agent.fincode.software/api/v6/services/quote](https://agent.fincode.software/api/v6/services/quote)";
+
+async function getDestinationCountries(sendingCountryCode, deliveryMethod) {
+  const url = `${BASE_URL}/destination-country-by-delivery-method/${sendingCountryCode}/${deliveryMethod}`;
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        platform: "fincode",
+        uuid: "200",
+      },
+    });
+
+    const countries = response.data.data;
+
+    console.log(
+      `Available destinations from ${sendingCountryCode} via ${deliveryMethod}:`
+    );
+    countries.forEach((c) => {
+      console.log(
+        `- ${c.countryName} (${
+          c.countryCode
+        }) - Currencies: ${c.payoutCurrencies.join(", ")}`
+      );
+    });
+
+    return countries;
+  } catch (error) {
+    console.error(
+      "Failed to fetch destination countries:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example: Sending from Great Britain via Account Payment
+getDestinationCountries("GBR", "ACCOUNTPAYMENT");
+```
+
+</CodeGroup>

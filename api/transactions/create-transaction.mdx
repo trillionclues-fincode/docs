@@ -1,0 +1,404 @@
+---
+title: "Create Transaction"
+api: "POST https://fincode.fincode.tech/api/v6/services/transactionmanagement/create-transaction"
+description: "Initiate a new remittance or lending transaction with sender, recipient, and transfer details."
+---
+
+Initiates a new transaction, covering all details required for compliance, routing, and processing. This endpoint is used for Remittance transactions.
+
+<RequestExample>
+        ```bash cURL POST      
+  [https://fincode.fincode.tech/api/v6/services/transactionmanagement/create-transaction](https://fincode.fincode.tech/api/v6/services/transactionmanagement/create-transaction)
+        ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token`
+  endpoint.
+</ParamField>
+
+<ParamField
+  header='Content-Type'
+  type='string'
+  required
+  default='application/json'
+>
+      Must be `application/json`
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+      Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+      Unique request identifier.
+</ParamField>
+
+<ParamField header='password' type='string' required>
+  The user's current password. Used for second-factor transaction authorization.
+</ParamField>
+
+<ParamField header='ipAddress' type='string' required>
+  The originating IP address of the user initiating the transaction.
+</ParamField>
+
+---
+
+## Request Body
+
+<ParamField body='amount' type='string' required>
+  The **receiving** amount (including fees if `inclusive` is true). Max 3
+  decimal places.
+</ParamField>
+
+<ParamField body='sendAmount' type='string' required>
+  The **sending** amount. Max 3 decimal places.
+</ParamField>
+
+<ParamField body='inclussive' type='boolean' required>
+  If `true`, fees are deducted from the `sendAmount`. If `false`, fees are added
+  to the `sendAmount`.
+</ParamField>
+
+<ParamField body='receivingCurrency' type='string' required default='NGN'>
+  The currency the recipient will receive (ISO 4217 code).
+</ParamField>
+
+<ParamField body='sendCurrency' type='string' required default='GBP'>
+  The currency the sender is paying with (ISO 4217 code).
+</ParamField>
+
+<ParamField body='type' type='string' required default='ACCOUNTPAYMENT'>
+  Type of transfer being executed. Example: `ACCOUNTPAYMENT`.
+</ParamField>
+
+<ParamField
+  body='transactionProcessingMode'
+  type='string'
+  default='NONE_AGGREGATION'
+>
+  Specifies the aggregation strategy. Example: `NONE_AGGREGATION`.
+</ParamField>
+
+<ParamField body='descriptionText' type='string'>
+  Optional description for the transfer.
+</ParamField>
+
+<ParamField body='preExistingSenderCustomerCode' type='string' required>
+  The unique identifier for the existing sender customer (`HAPF4D`).
+</ParamField>
+
+<ParamField body='preExistingRecipientCustomerCode' type='string' required>
+  The unique identifier for the existing recipient customer (`QI2KSB`).
+</ParamField>
+
+<ParamField body='securityQuestion' type='string'>
+  Security question text (required for specific payout methods like cash
+  pickup).
+</ParamField>
+
+<ParamField body='securityAnswer' type='string'>
+  Answer to the security question.
+</ParamField>
+
+<ParamField
+  body='transactionModule'
+  type='string'
+  required
+  default='REMITTANCE'
+>
+  The core business module this transaction belongs to. Must be `REMITTANCE`.
+</ParamField>
+
+<ParamField body='eligibleDocumentList' type='array'>
+  List of documents required for this transaction (usually empty unless
+  compliance triggers).
+</ParamField>
+
+<ParamField body='creditParty' type='array' required>
+  Recipient banking/payout details.
+  <Expandable title='creditParty object array'>
+    <ParamField body='creditParty[].key' type='string' required>
+      Key identifier for the detail (e.g., `bankaccountno`).
+    </ParamField>
+    <ParamField body='creditParty[].value' type='string' required>
+      The actual value for the key (e.g., `8883968718`).
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body='internationalTransferInformation' type='object' required>
+  Details related to the cross-border nature of the transfer.
+  <Expandable title='internationalTransferInformation object'>
+    <ParamField
+      body='internationalTransferInformation.originCountry'
+      type='string'
+      required
+      default='GBR'
+    >
+      Country of the sender (ISO 3166-1 alpha-3 code).
+    </ParamField>
+    <ParamField
+      body='internationalTransferInformation.receivingCountry'
+      type='string'
+      required
+      default='NGA'
+    >
+      Country of the recipient (ISO 3166-1 alpha-3 code).
+    </ParamField>
+    <ParamField
+      body='internationalTransferInformation.sourceOfFunds'
+      type='string'
+      required
+      default='INHERITANCE'
+    >
+      The source of the money being sent (e.g., `SALARY`, `INHERITANCE`).
+    </ParamField>
+    <ParamField
+      body='internationalTransferInformation.remittancePurpose'
+      type='string'
+      required
+      default='EDUCATIONAL_EXPENSES'
+    >
+      The purpose of the transfer (e.g., `EDUCATIONAL_EXPENSES`,
+      `FAMILY_SUPPORT`).
+    </ParamField>
+    <ParamField
+      body='internationalTransferInformation.relationshipSender'
+      type='string'
+    >
+      Relationship of the sender to the recipient.
+    </ParamField>
+    <ParamField
+      body='internationalTransferInformation.deliveryMethod'
+      type='string'
+      required
+      default='directtoaccount'
+    >
+      The method for paying out the funds. Example: `directtoaccount`.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+---
+
+## Response
+
+Upon success, this endpoint returns the newly created transaction object, including the unique transaction identifier and its initial status.
+
+<ResponseField name='transactionId' type='string'>
+  Unique system identifier for the newly created transaction.
+</ResponseField>
+
+<ResponseField name='status' type='string' default='CREATED'>
+  The initial status of the transaction. Typically `CREATED` or `PENDING`.
+</ResponseField>
+
+<ResponseField name='exchangeRate' type='number'>
+  The exchange rate applied to this transaction.
+</ResponseField>
+
+<ResponseField name='totalFees' type='number'>
+  The total fees charged for the transaction.
+</ResponseField>
+
+<ResponseField name='sendAmount' type='number'>
+  The finalized amount debited from the sender.
+</ResponseField>
+
+<ResponseField name='receiveAmount' type='number'>
+  The finalized amount credited to the recipient.
+</ResponseField>
+
+<ResponseField name='message' type='string'>
+  Confirmation message from the server.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Detailed transaction data object.
+  <Expandable title='data object'>
+    <ResponseField name='transactionDate' type='string'>
+      Timestamp of transaction creation.
+    </ResponseField>
+    <ResponseField name='sender' type='object'>
+      Summary of sender details.
+    </ResponseField>
+    <ResponseField name='recipient' type='object'>
+      Summary of recipient details.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+---
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://fincode.fincode.tech/api/v6/services/transactionmanagement/create-transaction' \
+--header 'X-Auth-Token: eyBZNxSsgtrVJ_e5jicLPjebOPMxuyCWpJ-hRXrmHNfkieFghwPc4ZH8gBqlr1ZE-8eQ-97gCCY9XnI51FFKtarVp78TpI3uWjzE3tl7EE3XPs78EtN_EdhUWq4gNX0x1dif-P135leOKewey96g-b1Y9hB0iGT-QE4geBjzvO9S2ItRKPx4SSTMjnvwUTmYA3JLmtsEaHTktae_g0fPTRTlugaMMi1fMJw' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--header 'password: Password@1' \
+--header 'ipAddress: 104.15.1' \
+--header 'Content-Type: application/json' \
+--data '{
+    "amount": "12749.650",
+    "sendAmount": "1.000",
+    "inclussive": true,
+    "receivingCurrency": "NGN",
+    "sendCurrency": "GBP",
+    "type": "ACCOUNTPAYMENT",
+    "transactionProcessingMode": "NONE_AGGREGATION",
+    "descriptionText": "",
+    "creditParty": [
+        {
+            "key": "bankname",
+            "value": "First City Monument Bank (FCMB)"
+        },
+        {
+            "key": "bankaccountno",
+            "value": "8883968718"
+        },
+        {
+            "key": "swiftbic",
+            "value": "23434535274"
+        },
+        {
+            "key": "bankcode",
+            "value": "214"
+        },
+        {
+            "key": "branchcode",
+            "value": null
+        }
+    ],
+    "preExistingSenderCustomerCode": "HAPF4D",
+    "preExistingRecipientCustomerCode": "QI2KSB",
+    "securityQuestion": "",
+    "securityAnswer": "",
+    "transactionModule": "REMITTANCE",
+    "eligibleDocumentList": [],
+    "internationalTransferInformation": {
+        "originCountry": "GBR",
+        "receivingCountry": "NGA",
+        "sourceOfFunds": "INHERITANCE",
+        "remittancePurpose": "EDUCATIONAL_EXPENSES",
+        "relationshipSender": "",
+        "deliveryMethod": "directtoaccount"
+    }
+}'
+```
+
+````javascript Node.js
+const axios = require("axios");
+
+const BASE_URL = "[https://fincode.fincode.tech/api/v6/services/transactionmanagement](https://fincode.fincode.tech/api/v6/services/transactionmanagement)";
+
+const transactionData = {
+    "amount": "12749.650",
+    "sendAmount": "1.000",
+    "inclussive": true,
+    "receivingCurrency": "NGN",
+    "sendCurrency": "GBP",
+    "type": "ACCOUNTPAYMENT",
+    "transactionProcessingMode": "NONE_AGGREGATION",
+    "descriptionText": "Rent payment",
+    "creditParty": [
+        { "key": "bankaccountno", "value": "8883968718" },
+        { "key": "bankcode", "value": "214" }
+    ],
+    "preExistingSenderCustomerCode": "HAPF4D",
+    "preExistingRecipientCustomerCode": "QI2KSB",
+    "securityQuestion": "",
+    "securityAnswer": "",
+    "transactionModule": "REMITTANCE",
+    "eligibleDocumentList": [],
+    "internationalTransferInformation": {
+        "originCountry": "GBR",
+        "receivingCountry": "NGA",
+        "sourceOfFunds": "SALARY",
+        "remittancePurpose": "FAMILY_SUPPORT",
+        "relationshipSender": "RELATIVE",
+        "deliveryMethod": "directtoaccount"
+    }
+};
+
+async function createTransaction(accessToken, password, ipAddress) {
+    try {
+        const response = await axios.post(
+            `${BASE_URL}/create-transaction`,
+            transactionData,
+            {
+                headers: {
+                    'X-Auth-Token': accessToken,
+                    'Content-Type': 'application/json',
+                    'platform': 'fincode',
+                    'uuid': '200',
+                    'password': password,
+                    'ipAddress': ipAddress
+                }
+            }
+        );
+
+        console.log("Transaction created successfully!");
+        console.log("Transaction ID:", response.data.transactionId);
+        console.log("Status:", response.data.status);
+        return response.data;
+    } catch (error) {
+        console.error("Transaction creation failed:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+// Usage Example
+const accessToken = "YOUR_JWT_ACCESS_TOKEN";
+const userPassword = "Password@1";
+const userIp = "104.15.1.1";
+
+createTransaction(accessToken, userPassword, userIp);
+
+```bash cURL
+curl --location '[https://fincode.fincode.tech/api/v6/services/transactionmanagement/create-transaction](https://fincode.fincode.tech/api/v6/services/transactionmanagement/create-transaction)' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--header 'password: Password@1' \
+--header 'ipAddress: 104.15.1.1' \
+--header 'Content-Type: application/json' \
+--data '{
+    "amount": "12749.650",
+    "sendAmount": "1.000",
+    "inclussive": true,
+    "receivingCurrency": "NGN",
+    "sendCurrency": "GBP",
+    "type": "ACCOUNTPAYMENT",
+    "transactionProcessingMode": "NONE_AGGREGATION",
+    "descriptionText": "Rent payment",
+    "creditParty": [
+        {
+            "key": "bankaccountno",
+            "value": "8883968718"
+        },
+        {
+            "key": "bankcode",
+            "value": "214"
+        }
+    ],
+    "preExistingSenderCustomerCode": "HAPF4D",
+    "preExistingRecipientCustomerCode": "QI2KSB",
+    "transactionModule": "REMITTANCE",
+    "internationalTransferInformation": {
+        "originCountry": "GBR",
+        "receivingCountry": "NGA",
+        "sourceOfFunds": "SALARY",
+        "remittancePurpose": "FAMILY_SUPPORT",
+        "deliveryMethod": "directtoaccount"
+    }
+}'
+````
+
+</CodeGroup>

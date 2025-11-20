@@ -1,0 +1,135 @@
+---
+title: "User Profile"
+api: "GET https://remitjunction.fincode.software/api/v6/services/usermanagement/profile"
+description: "Retrieves the detailed profile information for the authenticated user."
+---
+
+Retrieves comprehensive profile information for the authenticated user, based on the **JWT Access Token** provided in the headers.
+
+<RequestExample>
+          ```bash cURL GET        
+  [https://remitjunction.fincode.software/api/v6/services/usermanagement/profile](https://remitjunction.fincode.software/api/v6/services/usermanagement/profile)
+          ```
+</RequestExample>
+
+## Request Headers
+
+This endpoint requires a valid **Access Token** for authorization.
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token`
+  endpoint.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+        Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+        Unique request identifier.
+</ParamField>
+
+---
+
+## Response
+
+The response returns the detailed user profile object.
+
+<ResponseField name='id' type='string'>
+  Unique user identifier.
+</ResponseField>
+
+<ResponseField name='email' type='string'>
+  User's primary email address.
+</ResponseField>
+
+<ResponseField name='role' type='string'>
+  User role: `MANAGER`, `AGENT`, `CASHIER`, or `CUSTOMER`.
+</ResponseField>
+
+<ResponseField name='firstName' type='string'>
+  User's first name.
+</ResponseField>
+
+<ResponseField name='lastName' type='string'>
+  User's last name.
+</ResponseField>
+
+<ResponseField name='tenantId' type='string'>
+  Tenant/organization identifier.
+</ResponseField>
+
+<ResponseField name='mobileNumber' type='string'>
+  User's registered mobile phone number.
+</ResponseField>
+
+<ResponseField name='address' type='object'>
+  User's physical address details.
+  <Expandable title='address object'>
+    <ResponseField name='street' type='string'>
+      Street and house number.
+    </ResponseField>
+    <ResponseField name='city' type='string'>
+      City or town.
+    </ResponseField>
+    <ResponseField name='country' type='string'>
+      Country (ISO 3166-1 alpha-3 code).
+    </ResponseField>
+    <ResponseField name='zipCode' type='string'>
+      Postal or zip code.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name='permissions' type='array'>
+    List of granted permissions for this user.
+</ResponseField>
+
+---
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v6/services/usermanagement/profile' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```
+
+```javascript Node.js
+const axios = require("axios");
+
+const BASE_URL =
+  "[https://remitjunction.fincode.software/api/v6/services/usermanagement](https://agent.remitjunction.software/api/v6/services/usermanagement)";
+
+async function getUserProfile(accessToken) {
+  try {
+    const response = await axios.get(`${BASE_URL}/profile`, {
+      headers: {
+        "X-Auth-Token": accessToken,
+        platform: "fincode",
+        uuid: "200",
+      },
+    });
+
+    console.log("Profile fetched successfully!");
+    console.log("User:", response.data.firstName, response.data.lastName);
+    console.log("Role:", response.data.role);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Failed to fetch profile:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = "YOUR_JWT_ACCESS_TOKEN";
+getUserProfile(accessToken);
+```
+
+</CodeGroup>

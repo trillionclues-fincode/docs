@@ -1,0 +1,137 @@
+---
+title: "List Attached Forms"
+api: "GET https://remitjunction.fincode.software/api/v6/services/admin/compliance/list-attached-form"
+description: "Retrieves a list of required compliance forms or documents currently attached to the authenticated user's profile."
+---
+
+Retrieves a list of specific compliance forms, documents, or data requirements currently pending or attached to the user's profile.
+
+This is often used by agents or administrators to manage customer compliance requirements.
+
+<RequestExample>
+          ```bash cURL GET        
+  [https://remitjunction.fincode.software/api/v6/services/admin/compliance/list-attached-form](https://remitjunction.fincode.software/api/v6/services/admin/compliance/list-attached-form)
+          ```
+</RequestExample>
+
+## Request Headers
+
+This endpoint requires a valid **Access Token** for administrative authorization.
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token`
+  endpoint. This token must belong to a user with appropriate permissions (e.g.,
+  `MANAGER` or `AGENT`).
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+        Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+        Unique request identifier.
+</ParamField>
+
+---
+
+## Query Parameters
+
+While not explicitly in your example, administrative endpoints often use query parameters to specify which customer to check.
+
+<ParamField query='customerCode' type='string'>
+  The unique customer code of the user whose compliance forms are being queried.
+</ParamField>
+
+---
+
+## Response
+
+The response returns a list of compliance documents/forms that are pending or attached to the customer's profile.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='message' type='string'>
+  A descriptive message (often `null` or empty on success).
+</ResponseField>
+
+<ResponseField name='data' type='array'>
+  A list of attached compliance forms or document requirements. If empty (`[]`),
+  the customer has no currently attached forms.
+  <Expandable title='data array item (Form/Document Details)'>
+    <ResponseField name='formId' type='string'>
+      Unique identifier for the specific form or document type.
+    </ResponseField>
+    <ResponseField name='title' type='string'>
+      Human-readable name of the requirement (e.g., "Source of Funds
+      Declaration").
+    </ResponseField>
+    <ResponseField name='status' type='string'>
+      Current status of the form/document (e.g., `PENDING_SUBMISSION`,
+      `AWAITING_REVIEW`).
+    </ResponseField>
+    <ResponseField name='requiredForRiskLevel' type='string'>
+      The minimum risk level that triggers this requirement.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+---
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v6/services/admin/compliance/list-attached-form?customer' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```
+
+```javascript Node.js
+const axios = require("axios");
+
+const BASE_URL =
+  "[https://agent.fincode.software/api/v6/services/admin/compliance](https://agent.fincode.software/api/v6/services/admin/compliance)";
+
+async function listAttachedForms(accessToken, customerCode) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/list-attached-form?customerCode=${customerCode}`,
+      {
+        headers: {
+          "X-Auth-Token": accessToken,
+          platform: "fincode",
+          uuid: "200",
+        },
+      }
+    );
+
+    const attachedForms = response.data.data;
+
+    console.log(`Forms/Documents Check Status: ${response.data.status}`);
+    if (attachedForms.length > 0) {
+      console.log(`PENDING FORMS: ${attachedForms.length} item(s) found.`);
+      attachedForms.forEach((form) => {
+        console.log(`- ${form.title} (Status: ${form.status})`);
+      });
+    } else {
+      console.log("No compliance forms currently attached.");
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Form check failed:", error.response?.data || error.message);
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = "YOUR_AGENT_ACCESS_TOKEN";
+const customerCode = "CUST12345";
+listAttachedForms(accessToken, customerCode);
+```
+
+</CodeGroup>

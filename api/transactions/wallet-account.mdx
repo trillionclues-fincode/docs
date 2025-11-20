@@ -1,0 +1,119 @@
+---
+title: "Wallet Account List"
+api: "GET https://remitjunction.fincode.software/api/v6/services/walletmanagement/walletaccountlist"
+description: "Retrieves a list of all wallet accounts associated with the authenticated user."
+---
+
+Retrieves a list of all digital wallet accounts (e.g., currency accounts) registered under the current user's profile. This list is essential for displaying balances or selecting a source account for transactions.
+
+<RequestExample>
+          ```bash cURL GET        
+  [https://remitjunction.fincode.software/api/v6/services/walletmanagement/walletaccountlist](https://remitjunction.fincode.software/api/v6/services/walletmanagement/walletaccountlist)
+          ```
+</RequestExample>
+
+## Request Headers
+
+This endpoint requires a valid **Access Token** for authorization to identify the user.
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token`
+  endpoint.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+        Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+        Unique request identifier.
+</ParamField>
+
+---
+
+## Response
+
+The response returns an array containing details for each associated wallet account.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='array'>
+  A list of the user's wallet accounts.
+  <Expandable title='data array item (Wallet Account Details)'>
+    <ResponseField name='walletAccountId' type='string'>
+      Unique system identifier for the wallet account.
+    </ResponseField>
+    <ResponseField name='currency' type='string'>
+      The currency of the wallet (ISO 4217 code, e.g., `GBP`, `NGN`, `USD`).
+    </ResponseField>
+    <ResponseField name='availableBalance' type='number'>
+      The current available balance in the wallet.
+    </ResponseField>
+    <ResponseField name='ledgerBalance' type='number'>
+      The total balance including pending funds.
+    </ResponseField>
+    <ResponseField name='accountName' type='string'>
+      The name registered to the wallet account holder.
+    </ResponseField>
+    <ResponseField name='status' type='string' default='ACTIVE'>
+      The current status of the wallet account (e.g., `ACTIVE`, `SUSPENDED`).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+---
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v6/services/walletmanagement/walletaccountlist' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```
+
+```javascript Node.js
+const axios = require("axios");
+
+const BASE_URL =
+  "[https://agent.fincode.software/api/v6/services/walletmanagement](https://agent.fincode.software/api/v6/services/walletmanagement)";
+
+async function getWalletAccountList(accessToken) {
+  try {
+    const response = await axios.get(`${BASE_URL}/walletaccountlist`, {
+      headers: {
+        "X-Auth-Token": accessToken,
+        platform: "fincode",
+        uuid: "200",
+      },
+    });
+
+    const walletAccounts = response.data.data;
+
+    console.log(`Wallets Found: ${walletAccounts.length}`);
+    walletAccounts.forEach((wallet) => {
+      console.log(
+        `- ${wallet.currency} Wallet: ${wallet.availableBalance} ${wallet.currency} (ID: ${wallet.walletAccountId})`
+      );
+    });
+
+    return walletAccounts;
+  } catch (error) {
+    console.error(
+      "Failed to fetch wallet list:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = "YOUR_JWT_ACCESS_TOKEN";
+getWalletAccountList(accessToken);
+```
+
+</CodeGroup>
