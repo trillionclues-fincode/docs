@@ -1,0 +1,331 @@
+---
+title: 'Create Customer'
+api: 'POST https://remitjunction.fincode.software/api/v6/services/usermanagement/create-customer'
+description: 'Register a new customer account in the FinCode platform'
+---
+
+Create a new customer account with personal information and authentication credentials.
+
+Customers can access self-service features including sending remittances, applying for loans, and managing investments.
+
+<RequestExample>
+  ```bash cURL POST
+  https://https://remitjunction.fincode.software/api/v6/services/usermanagement/create-customer
+  ```
+</RequestExample>
+
+## Request Headers
+
+| Header         | Type   | Required | Description                          |
+| -------------- | ------ | -------- | ------------------------------------ |
+| `X-Auth-Token` | string | Yes      | JWT access token from login          |
+| `Content-Type` | string | Yes      | Must be `application/json`           |
+| `platform`     | string | Yes      | Platform identifier. Use `fincode`   |
+| `uuid`         | string | Yes      | Unique request identifier. Use `200` |
+
+## Request Body
+
+### Personal Information
+
+<ParamField body='firstName' type='string' required>
+  Customer's first name (2-50 characters)
+</ParamField>
+
+<ParamField body='lastName' type='string' required>
+  Customer's last name (2-50 characters)
+</ParamField>
+
+<ParamField body='email' type='string' required>
+  Customer's email address (must be unique)
+</ParamField>
+
+<ParamField body='phoneNumber' type='string' required>
+  Customer's phone number in international format (e.g., +44123456789)
+</ParamField>
+
+<ParamField body='dateOfBirth' type='string' required>
+  Date of birth in ISO format (YYYY-MM-DD). Customer must be 18+ years old
+</ParamField>
+
+### Address Information
+
+<ParamField body='address' type='object' required>
+  Customer's residential address
+  <Expandable title='address properties'>
+    <ParamField body='street' type='string' required>
+      Street address
+    </ParamField>
+
+    <ParamField body='city' type='string' required>
+      City name
+    </ParamField>
+
+    <ParamField body='state' type='string'>
+      State or province
+    </ParamField>
+
+    <ParamField body='postalCode' type='string' required>
+      Postal or ZIP code
+    </ParamField>
+
+    <ParamField body='country' type='string' required>
+      ISO 3166-1 alpha-2 country code (e.g., "GB", "US", "NG")
+    </ParamField>
+
+  </Expandable>
+</ParamField>
+
+### Authentication
+
+<ParamField body='password' type='string' required>
+  Initial password (min 8 characters, must include uppercase, lowercase, number,
+  and special character)
+</ParamField>
+
+<ParamField body='confirmPassword' type='string' required>
+  Password confirmation (must match password field)
+</ParamField>
+
+### Optional Fields
+
+<ParamField body='middleName' type='string'>
+  Customer's middle name
+</ParamField>
+
+<ParamField body='nationality' type='string'>
+  ISO 3166-1 alpha-2 nationality code
+</ParamField>
+
+<ParamField body='occupation' type='string'>
+  Customer's occupation or profession
+</ParamField>
+
+<ParamField body='sourceOfFunds' type='string'>
+  Source of funds (e.g., "salary", "business", "investment")
+</ParamField>
+
+<ParamField body='sendWelcomeEmail' type='boolean' default='true'>
+  Whether to send a welcome email to the customer
+</ParamField>
+
+## Response
+
+<ResponseField name='success' type='boolean'>
+  Indicates if the customer was created successfully
+</ResponseField>
+
+<ResponseField name='customerId' type='string'>
+  Unique identifier for the created customer
+</ResponseField>
+
+<ResponseField name='customer' type='object'>
+  Complete customer information
+  <Expandable title='customer object'>
+    <ResponseField name='id' type='string'>
+      Customer unique identifier
+    </ResponseField>
+
+    <ResponseField name='userId' type='string'>
+      Associated user account ID
+    </ResponseField>
+
+    <ResponseField name='firstName' type='string'>
+      Customer's first name
+    </ResponseField>
+
+    <ResponseField name='lastName' type='string'>
+      Customer's last name
+    </ResponseField>
+
+    <ResponseField name='email' type='string'>
+      Customer's email address
+    </ResponseField>
+
+    <ResponseField name='phoneNumber' type='string'>
+      Customer's phone number
+    </ResponseField>
+
+    <ResponseField name='status' type='string'>
+      Account status: `active`, `pending_verification`, `suspended`
+    </ResponseField>
+
+    <ResponseField name='kycStatus' type='string'>
+      KYC verification status: `not_started`, `in_progress`, `verified`,
+      `failed`
+    </ResponseField>
+
+    <ResponseField name='createdAt' type='string'>
+      Timestamp when customer was created (ISO 8601)
+    </ResponseField>
+
+    <ResponseField name='tenantId' type='string'>
+      Tenant/organization identifier
+    </ResponseField>
+
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```javascript Node.js
+const axios = require('axios');
+
+async function createCustomer(accessToken, customerData) {
+  try {
+    const response = await axios.post(
+      'https://remitjunction.fincode.software/api/v6/services/usermanagement/create-customer',
+      {
+        firstName: customerData.firstName,
+        lastName: customerData.lastName,
+        email: customerData.email,
+        phoneNumber: customerData.phoneNumber,
+        dateOfBirth: customerData.dateOfBirth,
+        address: {
+          street: customerData.address.street,
+          city: customerData.address.city,
+          state: customerData.address.state,
+          postalCode: customerData.address.postalCode,
+          country: customerData.address.country,
+        },
+        password: customerData.password,
+        confirmPassword: customerData.confirmPassword,
+        nationality: customerData.nationality,
+        occupation: customerData.occupation,
+        sourceOfFunds: customerData.sourceOfFunds,
+        sendWelcomeEmail: true,
+      },
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'Content-Type': 'application/json',
+          platform: 'fincode',
+          uuid: '200',
+        },
+      }
+    );
+
+    console.log('Customer created successfully!');
+    console.log('Customer ID:', response.data.customerId);
+    console.log('KYC Status:', response.data.customer.kycStatus);
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      'Failed to create customer:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+const newCustomer = {
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'john.doe@example.com',
+  phoneNumber: '+447123456789',
+  dateOfBirth: '1990-05-15',
+  address: {
+    street: '123 High Street',
+    city: 'London',
+    state: 'Greater London',
+    postalCode: 'SW1A 1AA',
+    country: 'GB',
+  },
+  password: 'SecurePass123!',
+  confirmPassword: 'SecurePass123!',
+  nationality: 'GB',
+  occupation: 'Software Engineer',
+  sourceOfFunds: 'salary',
+};
+
+createCustomer(accessToken, newCustomer)
+  .then((data) => console.log('Success:', data))
+  .catch((err) => console.error('Error:', err));
+```
+
+```bash cURL
+curl -X POST "https://remitjunction.fincode.software/api/v6/services/usermanagement/create-customer" \
+  -H "X-Auth-Token: YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "platform: fincode" \
+  -H "uuid: 200" \
+  -d '{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "phoneNumber": "+447123456789",
+    "dateOfBirth": "1990-05-15",
+    "address": {
+      "street": "123 High Street",
+      "city": "London",
+      "state": "Greater London",
+      "postalCode": "SW1A 1AA",
+      "country": "GB"
+    },
+    "password": "SecurePass123!",
+    "confirmPassword": "SecurePass123!",
+    "nationality": "GB",
+    "occupation": "Software Engineer",
+    "sourceOfFunds": "salary",
+    "sendWelcomeEmail": true
+  }'
+```
+
+</CodeGroup>
+
+## Validation Rules
+
+<AccordionGroup>
+  <Accordion title='Email Validation' icon='envelope'>
+    - Must be a valid email format - Must be unique across all customers in the
+    tenant - Cannot be changed after creation - Maximum length: 255 characters
+  </Accordion>
+
+{' '}
+
+<Accordion title='Password Requirements' icon='lock'>
+  - Minimum 8 characters - At least one uppercase letter (A-Z) - At least one
+  lowercase letter (a-z) - At least one number (0-9) - At least one special
+  character (!@#$%^&*) - Cannot contain common words or patterns
+</Accordion>
+
+{' '}
+
+<Accordion title='Phone Number Format' icon='phone'>
+  - Must be in international format with country code - Example: +447123456789
+  (UK), +12125551234 (US) - No spaces or special characters except leading + -
+  Must be a valid phone number for the country
+</Accordion>
+
+{' '}
+
+<Accordion title='Age Requirement' icon='calendar'>
+  - Customer must be at least 18 years old - Date of birth must be in ISO format
+  (YYYY-MM-DD) - Cannot be a future date - Cannot be more than 120 years ago
+</Accordion>
+
+  <Accordion title='Name Validation' icon='user'>
+    - First name: 2-50 characters - Last name: 2-50 characters - Only letters,
+    spaces, hyphens, and apostrophes allowed - No numbers or special characters
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title='Login' icon='right-to-bracket' href='/api/auth/login'>
+    Authenticate the newly created customer
+  </Card>
+
+{' '}
+
+<Card
+  title='Submit KYC Documents'
+  icon='id-card'
+  href='/api/compliance/submit-cra'
+>
+  Upload verification documents for the customer
+</Card>
+</CardGroup>

@@ -1,7 +1,7 @@
 ---
-title: "History Data"
-api: "POST https://remitjunction.fincode.software/api/v6/services/transactionmanagement/history-data"
-description: "Retrieves a paginated and filtered list of transactions for the authenticated customer or a customer managed by the agent/manager."
+title: 'History Data'
+api: 'POST https://remitjunction.fincode.software/api/v6/services/transactionmanagement/history-data'
+description: 'Retrieves a paginated and filtered list of transactions for the authenticated customer or a customer managed by the agent/manager.'
 ---
 
 This endpoint fetches the transaction history, allowing for detailed filtering by amount range, date range, and pagination. It uses a `POST` method because the complex filtering parameters are sent in the request body.
@@ -12,15 +12,13 @@ This endpoint fetches the transaction history, allowing for detailed filtering b
           ```
 </RequestExample>
 
----
-
 ## Request Headers
 
 This administrative endpoint requires a valid **Access Token** for authorization.
 
 <ParamField header='X-Auth-Token' type='string' required>
   The **JWT Access Token** of a user with appropriate permissions (e.g.,
-  `MANAGER` or `AGENT`).
+  `CUSTOMER` or `CASHIER`).
 </ParamField>
 
 <ParamField header='platform' type='string' required default='fincode'>
@@ -39,8 +37,6 @@ This administrative endpoint requires a valid **Access Token** for authorization
 >
         Must be `application/json`.
 </ParamField>
-
----
 
 ## Request Body
 
@@ -76,8 +72,6 @@ The request body is used to define the filtering and pagination parameters.
   Optional: The unique customer code to search transactions for. If omitted,
   returns transactions for the authenticated user.
 </ParamField>
-
----
 
 ## Response
 
@@ -115,8 +109,6 @@ The response includes the filtered list of transactions and total counts for pag
   Confirmation message from the server.
 </ResponseField>
 
----
-
 ## Code Examples
 
 <CodeGroup>
@@ -138,17 +130,17 @@ curl -X GET 'https://remitjunction.fincode.software/api/v6/services/transactionm
 ```
 
 ```javascript Node.js
-const axios = require("axios");
+const axios = require('axios');
 
 const BASE_URL =
-  "[https://agent.fincode.software/api/v6/services/transactionmanagement](https://agent.fincode.software/api/v6/services/transactionmanagement)";
+  'https://remitjunction.fincode.software/api/v6/services/transactionmanagement';
 
 const historyPayload = {
   fromAmount: 0.1,
   toAmount: 100000000,
-  fromDate: "2025-09-21",
-  toDate: "2025-11-20",
-  totalNumber: 20, // Reduced for a more common page size example
+  fromDate: '2025-09-21',
+  toDate: '2025-11-20',
+  totalNumber: 20,
   startNumber: 1,
 };
 
@@ -156,10 +148,10 @@ async function getTransactionHistory(accessToken, payload) {
   try {
     const response = await axios.post(`${BASE_URL}/history-data`, payload, {
       headers: {
-        "X-Auth-Token": accessToken,
-        platform: "fincode",
-        uuid: "200",
-        "Content-Type": "application/json",
+        'X-Auth-Token': accessToken,
+        platform: 'fincode',
+        uuid: '200',
+        'Content-Type': 'application/json',
       },
     });
 
@@ -176,7 +168,7 @@ async function getTransactionHistory(accessToken, payload) {
     return response.data;
   } catch (error) {
     console.error(
-      "Failed to fetch history:",
+      'Failed to fetch history:',
       error.response?.data || error.message
     );
     throw error;
@@ -184,7 +176,7 @@ async function getTransactionHistory(accessToken, payload) {
 }
 
 // Usage Example
-const accessToken = "YOUR_JWT_ACCESS_TOKEN";
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
 getTransactionHistory(accessToken, historyPayload);
 ```
 

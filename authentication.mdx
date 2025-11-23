@@ -1,10 +1,8 @@
 ---
-title: "Authentication"
-description: "Secure authentication and role-based access control for the FinCode platform."
-icon: "key"
+title: 'Authentication'
+description: 'Secure authentication and role-based access control for the FinCode platform.'
+icon: 'key'
 ---
-
-# Authentication
 
 FinCode uses a role-based authentication system with JWT tokens to secure API access. Each user is assigned a specific role that determines their permissions and accessible resources within your tenant.
 
@@ -12,8 +10,6 @@ FinCode uses a role-based authentication system with JWT tokens to secure API ac
   All API requests must include a valid access token in the Authorization
   header.
 </Info>
-
----
 
 ## Authentication Flow
 
@@ -35,8 +31,6 @@ sequenceDiagram
     Auth Service-->>API: Token valid + permissions
     API-->>Client: Response
 ```
-
----
 
 ## User Roles & Permissions
 
@@ -351,23 +345,21 @@ Test authentication for different user roles in your sandbox environment. Select
   </Tab>
 </Tabs>
 
----
-
 ## Making Authenticated Requests
 
 Once authenticated, include the access token in all subsequent API requests:
 
 ```javascript
-const axios = require("axios");
+const axios = require('axios');
 
 const response = await axios.get(
-  "https://{domain}.fincode.software/api/v6/services/admin/organisation-preference-management/fetch-organisaction-preference",
+  'https://{domain}.fincode.software/api/v6/services/admin/organisation-preference-management/fetch-organisaction-preference',
   {
     headers: {
-      "X-Auth-Token": process.env.JWT_ACCESS_TOKEN,
-      "Content-Type": "application/json",
-      platform: "fincode",
-      uuid: "200",
+      'X-Auth-Token': process.env.JWT_ACCESS_TOKEN,
+      'Content-Type': 'application/json',
+      platform: 'fincode',
+      uuid: '200',
     },
   }
 );
@@ -380,8 +372,6 @@ const response = await axios.get(
 - `Content-Type: application/json` - For POST/PUT requests
 - `platform: fincode` - For identifying request platform
 - `uuid: 200` - Unique uuid string
-
----
 
 ## Token Management
 
@@ -462,20 +452,18 @@ Revoke tokens when logging out or if compromised:
 ```javascript
 async function logout(accessToken) {
   await axios.post(
-    "https://{domain}.fincode.software/api/v6/services/securitymanagement/logout",
+    'https://{domain}.fincode.software/api/v6/services/securitymanagement/logout',
     {},
     {
       headers: {
-        "X-Auth-Token": process.env.JWT_ACCESS_TOKEN,
-        platform: "fincode",
-        uuid: "200",
+        'X-Auth-Token': process.env.JWT_ACCESS_TOKEN,
+        platform: 'fincode',
+        uuid: '200',
       },
     }
   );
 }
 ```
-
----
 
 ## Security Best Practices
 
@@ -505,8 +493,6 @@ async function logout(accessToken) {
   </Card>
 </CardGroup>
 
----
-
 ## Role Permission Matrix
 
 | Permission            | MANAGER | AGENT        | CASHIER | CUSTOMER |
@@ -525,8 +511,6 @@ async function logout(accessToken) {
 | Agent Configuration   | ✅      | ❌           | ❌      | ❌       |
 | Rate/Fee Markups      | ❌      | ❌           | ❌      | ✅ (own) |
 | Request quotes        | ❌      | ❌           | ✅      | ✅       |
-
----
 
 ## Error Handling
 
@@ -597,59 +581,19 @@ async function logout(accessToken) {
   </Accordion>
 </AccordionGroup>
 
----
-
-## Testing in Sandbox
-
-Use these test credentials for different roles in sandbox:
-
-1. const managerDomain = "https://remitjunction.fincode.software/api/v6/services/securitymanagement/login"
-
-2. const agentAndCustomerDomain = "https://agent.fincode.software/api/v6/services/securitymanagement/login"
-
-3. const cashierDomain = "https://agent.fincode.software/api/v6/services/securitymanagement/login"
-
-```javascript
-const testUsers = {
-  manager: {
-    email: "hello@remitjunction.co.uk",
-    currentPassword: "Password@1",
-  },
-  agent: {
-    email: "hello+2@remitjunction.co.uk",
-    password: "Password@1",
-  },
-  cashier: {
-    email: "excel.nwachukwu+662@fincode.co.uk",
-    password: "PQW7ERMP",
-  },
-  customer: {
-    email: "excel.nwachukwu+662@fincode.co.uk",
-    password: "Password@1",
-  },
-};
-```
-
-<Warning>
-  These test credentials only work in sandbox environment. Never use test
-  credentials in production.
-</Warning>
-
----
-
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="API Keys" icon="key" href="/integration/api-keys">
+  <Card title='API Keys' icon='key' href='/integration/api-keys'>
     Learn about generating and managing API keys for your tenant
   </Card>
-  <Card title="Webhooks" icon="webhook" href="/integration/webhooks">
+  <Card title='Webhooks' icon='webhook' href='/integration/webhooks'>
     Set up real-time notifications for authentication events
   </Card>
-  <Card title="Rate Limits" icon="gauge-high" href="/api/rate-limits">
+  <Card title='Rate Limits' icon='gauge-high' href='/api/rate-limits'>
     Understand authentication rate limits and best practices
   </Card>
-  <Card title="Security" icon="shield-check" href="/overview/security">
+  <Card title='Security' icon='shield-check' href='/overview/security'>
     Deep dive into FinCode's security architecture
   </Card>
 </CardGroup>

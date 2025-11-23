@@ -1,7 +1,7 @@
 ---
-title: "Call Quote"
-api: "POST https://remitjunction.fincode.software/api/v6/services/quote/callQuote"
-description: "Calculates the real-time exchange rate, fees, and total cost for an intended transaction."
+title: 'Call Quote'
+api: 'POST https://remitjunction.fincode.software/api/v6/services/quote/callQuote'
+description: 'Calculates the real-time exchange rate, fees, and total cost for an intended transaction.'
 ---
 
 This endpoint provides a definitive, real-time calculation (the **Quote**) for an intended transaction.
@@ -21,7 +21,7 @@ This endpoint requires a valid **Access Token**
 <ParamField header='X-Auth-Token' type='string' required>
   The **JWT Access Token** obtained from the `/login` or `/refresh-token`
   endpoint. This token must belong to a user with appropriate permissions (e.g.,
-  `MANAGER` or `AGENT`).
+  `CUSTOMER` or `CASHIER`).
 </ParamField>
 
 <ParamField header='platform' type='string' required default='fincode'>
@@ -179,34 +179,33 @@ curl -X POST 'https://remitjunction.fincode.software/api/v6/services/quote/callQ
 ```
 
 ```javascript Node.js
-const axios = require("axios");
+const axios = require('axios');
 
-const BASE_URL =
-  "[https://remitjunction.fincode.software/api/v6/services/quote](https://remitjunction.fincode.software/api/v6/services/quote)";
+const BASE_URL = 'https://remitjunction.fincode.software/api/v6/services/quote';
 
 const quotePayload = {
-  paymentType: "ONLINE_CARD_PAYMENT",
-  chargeCategory: "MONEYTRANSFER",
-  principalAmount: "10",
-  principalAmountCurrency: "GBP",
-  deriveAmount: "",
-  deriveAmountCurrency: "NGN",
-  transactionType: "ACCOUNTPAYMENT",
-  destinationCountry: "NGA",
+  paymentType: 'ONLINE_CARD_PAYMENT',
+  chargeCategory: 'MONEYTRANSFER',
+  principalAmount: '10',
+  principalAmountCurrency: 'GBP',
+  deriveAmount: '',
+  deriveAmountCurrency: 'NGN',
+  transactionType: 'ACCOUNTPAYMENT',
+  destinationCountry: 'NGA',
   inverseCalculation: false,
-  tradeOriginatingCountry: "GBR",
+  tradeOriginatingCountry: 'GBR',
   conversion: true,
-  promoCode: "",
-  mobileOperator: "",
+  promoCode: '',
+  mobileOperator: '',
 };
 
 async function callQuote(payload) {
   try {
     const response = await axios.post(`${BASE_URL}/callQuote`, payload, {
       headers: {
-        platform: "fincode",
-        uuid: "200",
-        "Content-Type": "application/json",
+        platform: 'fincode',
+        uuid: '200',
+        'Content-Type': 'application/json',
       },
     });
 
@@ -228,7 +227,7 @@ async function callQuote(payload) {
     return quote;
   } catch (error) {
     console.error(
-      "Failed to get quote:",
+      'Failed to get quote:',
       error.response?.data || error.message
     );
     throw error;

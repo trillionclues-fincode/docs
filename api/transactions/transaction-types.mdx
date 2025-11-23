@@ -1,7 +1,7 @@
 ---
-title: "Transaction Types"
-api: "GET https://remitjunction.fincode.software/api/v6/services/transactionmanagement/transaction-types"
-description: "Retrieves a list of all supported transaction types available on the platform for the current organization."
+title: 'Transaction Types'
+api: 'GET https://remitjunction.fincode.software/api/v6/services/transactionmanagement/transaction-types'
+description: 'Retrieves a list of all supported transaction types available on the platform for the current organization.'
 ---
 
 Retrieves a list of all currently active and supported transaction types (e.g., `ACCOUNTPAYMENT`, `CASH_PICKUP`, `BILL_PAYMENT`) available for the organization associated with the subdomain. This is typically used to populate selection menus when a user initiates a new transaction flow.
@@ -23,8 +23,6 @@ This endpoint is typically **open/unauthenticated** and relies on the domain to 
 <ParamField header='uuid' type='string' required default='200'>
         Unique request identifier.
 </ParamField>
-
----
 
 ## Response
 
@@ -53,8 +51,6 @@ The response returns a list of transaction type objects.
   </Expandable>
 </ResponseField>
 
----
-
 ## Code Examples
 
 <CodeGroup>
@@ -66,21 +62,21 @@ curl --location 'https://remitjunction.fincode.software/api/v6/services/transact
 ```
 
 ```javascript Node.js
-const axios = require("axios");
+const axios = require('axios');
 
 const BASE_URL =
-  "[https://remitjunction.fincode.software/api/v6/services/transactionmanagement](https://remitjunction.fincode.software/api/v6/services/transactionmanagement)";
+  'https://remitjunction.fincode.software/api/v6/services/transactionmanagement';
 
 async function getTransactionTypes() {
   try {
     const response = await axios.get(`${BASE_URL}/transaction-types`, {
       headers: {
-        platform: "fincode",
-        uuid: "200",
+        platform: 'fincode',
+        uuid: '200',
       },
     });
 
-    console.log("Supported Transaction Types:");
+    console.log('Supported Transaction Types:');
     response.data.data.forEach((type) => {
       console.log(`- ${type.name} (${type.code}) - Module: ${type.module}`);
     });
@@ -88,7 +84,7 @@ async function getTransactionTypes() {
     return response.data.data;
   } catch (error) {
     console.error(
-      "Failed to fetch transaction types:",
+      'Failed to fetch transaction types:',
       error.response?.data || error.message
     );
     throw error;

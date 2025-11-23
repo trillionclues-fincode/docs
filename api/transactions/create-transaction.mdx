@@ -1,14 +1,14 @@
 ---
-title: "Create Transaction"
-api: "POST https://fincode.fincode.tech/api/v6/services/transactionmanagement/create-transaction"
-description: "Initiate a new remittance or lending transaction with sender, recipient, and transfer details."
+title: 'Create Transaction'
+api: 'POST https://remitjunction.fincode.software/api/v6/services/transactionmanagement/create-transaction'
+description: 'Initiate a new remittance or lending transaction with sender, recipient, and transfer details.'
 ---
 
 Initiates a new transaction, covering all details required for compliance, routing, and processing. This endpoint is used for Remittance transactions.
 
 <RequestExample>
         ```bash cURL POST      
-  [https://fincode.fincode.tech/api/v6/services/transactionmanagement/create-transaction](https://fincode.fincode.tech/api/v6/services/transactionmanagement/create-transaction)
+  [https://remitjunction.fincode.software/api/v6/services/transactionmanagement/create-transaction](https://remitjunction.fincode.software/api/v6/services/transactionmanagement/create-transaction)
         ```
 </RequestExample>
 
@@ -43,8 +43,6 @@ Initiates a new transaction, covering all details required for compliance, routi
 <ParamField header='ipAddress' type='string' required>
   The originating IP address of the user initiating the transaction.
 </ParamField>
-
----
 
 ## Request Body
 
@@ -182,8 +180,6 @@ Initiates a new transaction, covering all details required for compliance, routi
   </Expandable>
 </ParamField>
 
----
-
 ## Response
 
 Upon success, this endpoint returns the newly created transaction object, including the unique transaction identifier and its initial status.
@@ -231,14 +227,12 @@ Upon success, this endpoint returns the newly created transaction object, includ
   </Expandable>
 </ResponseField>
 
----
-
 ## Code Examples
 
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://fincode.fincode.tech/api/v6/services/transactionmanagement/create-transaction' \
+curl --location 'https://remitjunction.fincode.software/api/v6/services/transactionmanagement/create-transaction' \
 --header 'X-Auth-Token: eyBZNxSsgtrVJ_e5jicLPjebOPMxuyCWpJ-hRXrmHNfkieFghwPc4ZH8gBqlr1ZE-8eQ-97gCCY9XnI51FFKtarVp78TpI3uWjzE3tl7EE3XPs78EtN_EdhUWq4gNX0x1dif-P135leOKewey96g-b1Y9hB0iGT-QE4geBjzvO9S2ItRKPx4SSTMjnvwUTmYA3JLmtsEaHTktae_g0fPTRTlugaMMi1fMJw' \
 --header 'platform: fincode' \
 --header 'uuid: 200' \
@@ -296,7 +290,7 @@ curl --location 'https://fincode.fincode.tech/api/v6/services/transactionmanagem
 ````javascript Node.js
 const axios = require("axios");
 
-const BASE_URL = "[https://fincode.fincode.tech/api/v6/services/transactionmanagement](https://fincode.fincode.tech/api/v6/services/transactionmanagement)";
+const BASE_URL = "https://remitjunction.fincode.software/api/v6/services/transactionmanagement";
 
 const transactionData = {
     "amount": "12749.650",
@@ -362,7 +356,7 @@ const userIp = "104.15.1.1";
 createTransaction(accessToken, userPassword, userIp);
 
 ```bash cURL
-curl --location '[https://fincode.fincode.tech/api/v6/services/transactionmanagement/create-transaction](https://fincode.fincode.tech/api/v6/services/transactionmanagement/create-transaction)' \
+curl --location 'https://remitjunction.fincode.software/api/v6/services/transactionmanagement/create-transaction' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'platform: fincode' \
 --header 'uuid: 200' \

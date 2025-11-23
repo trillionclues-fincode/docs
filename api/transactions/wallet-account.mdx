@@ -1,7 +1,7 @@
 ---
-title: "Wallet Account List"
-api: "GET https://remitjunction.fincode.software/api/v6/services/walletmanagement/walletaccountlist"
-description: "Retrieves a list of all wallet accounts associated with the authenticated user."
+title: 'Wallet Account List'
+api: 'GET https://remitjunction.fincode.software/api/v6/services/walletmanagement/walletaccountlist'
+description: 'Retrieves a list of all wallet accounts associated with the authenticated user.'
 ---
 
 Retrieves a list of all digital wallet accounts (e.g., currency accounts) registered under the current user's profile. This list is essential for displaying balances or selecting a source account for transactions.
@@ -28,8 +28,6 @@ This endpoint requires a valid **Access Token** for authorization to identify th
 <ParamField header='uuid' type='string' required default='200'>
         Unique request identifier.
 </ParamField>
-
----
 
 ## Response
 
@@ -63,8 +61,6 @@ The response returns an array containing details for each associated wallet acco
   </Expandable>
 </ResponseField>
 
----
-
 ## Code Examples
 
 <CodeGroup>
@@ -77,18 +73,18 @@ curl --location 'https://remitjunction.fincode.software/api/v6/services/walletma
 ```
 
 ```javascript Node.js
-const axios = require("axios");
+const axios = require('axios');
 
 const BASE_URL =
-  "[https://agent.fincode.software/api/v6/services/walletmanagement](https://agent.fincode.software/api/v6/services/walletmanagement)";
+  'https://remitjunction.fincode.software/api/v6/services/walletmanagement';
 
 async function getWalletAccountList(accessToken) {
   try {
     const response = await axios.get(`${BASE_URL}/walletaccountlist`, {
       headers: {
-        "X-Auth-Token": accessToken,
-        platform: "fincode",
-        uuid: "200",
+        'X-Auth-Token': accessToken,
+        platform: 'fincode',
+        uuid: '200',
       },
     });
 
@@ -104,7 +100,7 @@ async function getWalletAccountList(accessToken) {
     return walletAccounts;
   } catch (error) {
     console.error(
-      "Failed to fetch wallet list:",
+      'Failed to fetch wallet list:',
       error.response?.data || error.message
     );
     throw error;
@@ -112,7 +108,7 @@ async function getWalletAccountList(accessToken) {
 }
 
 // Usage Example
-const accessToken = "YOUR_JWT_ACCESS_TOKEN";
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
 getWalletAccountList(accessToken);
 ```
 

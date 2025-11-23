@@ -1,7 +1,7 @@
 ---
-title: "Beneficiary Details"
-api: "GET https://remitjunction.fincode.software/api/v6/services/usermanagement/view-beneficiery-details/{beneficiaryId}"
-description: "Retrieves the full profile and banking details for a specific saved beneficiary."
+title: 'Beneficiary Details'
+api: 'GET https://remitjunction.fincode.software/api/v6/services/usermanagement/view-beneficiery-details/{beneficiaryId}'
+description: 'Retrieves the full profile and banking details for a specific saved beneficiary.'
 ---
 
 Retrieves all stored details for a single beneficiary, identified by the unique `{beneficiaryId}`. This includes personal information and the associated payout account details.
@@ -97,26 +97,26 @@ The response returns a comprehensive object containing the beneficiary's profile
 <CodeGroup>
 
 ```bash cURL
-curl --location '[https://remitjunction.fincode.software/api/v6/services/usermanagement/view-beneficiery-details/6327c026-c646-4a9d-86b2-57731d867727](https://remitjunction.fincode.software/api/v6/services/usermanagement/view-beneficiery-details/6327c026-c646-4a9d-86b2-57731d867727)' \
+curl --location 'https://remitjunction.fincode.software/api/v6/services/usermanagement/view-beneficiery-details/6327c026-c646-4a9d-86b2-57731d867727' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'platform: fincode' \
 --header 'uuid: 200'
 ```
 
 ```javascript Node.js
-const axios = require("axios");
+const axios = require('axios');
 
 const BASE_URL =
-  "[https://remitjunction.fincode.software/api/v6/services/usermanagement](https://remitjunction.fincode.software/api/v6/services/usermanagement)";
+  'https://remitjunction.fincode.software/api/v6/services/usermanagement';
 
 async function viewBeneficiaryDetails(accessToken, beneficiaryId) {
   const url = `${BASE_URL}/view-beneficiery-details/${beneficiaryId}`;
   try {
     const response = await axios.get(url, {
       headers: {
-        "X-Auth-Token": accessToken,
-        platform: "fincode",
-        uuid: "200",
+        'X-Auth-Token': accessToken,
+        platform: 'fincode',
+        uuid: '200',
       },
     });
 
@@ -132,7 +132,7 @@ async function viewBeneficiaryDetails(accessToken, beneficiaryId) {
     return beneficiary;
   } catch (error) {
     console.error(
-      "Failed to fetch beneficiary details:",
+      'Failed to fetch beneficiary details:',
       error.response?.data || error.message
     );
     throw error;
@@ -140,8 +140,8 @@ async function viewBeneficiaryDetails(accessToken, beneficiaryId) {
 }
 
 // Usage Example
-const accessToken = "YOUR_JWT_ACCESS_TOKEN";
-const beneficiaryId = "6327c026-c646-4a9d-86b2-57731d867727";
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+const beneficiaryId = '6327c026-c646-4a9d-86b2-57731d867727';
 viewBeneficiaryDetails(accessToken, beneficiaryId);
 ```
 

@@ -1,7 +1,7 @@
 ---
-title: "Continue Enrolment"
-api: "GET https://remitjunction.fincode.software/api/v6/services/admin/compliance/continue-enrolment"
-description: "Checks or triggers the next stage of external compliance screening for a customer, typically after a Customer Risk Assessment (CRA) form submission."
+title: 'Continue Enrolment'
+api: 'GET https://remitjunction.fincode.software/api/v6/services/admin/compliance/continue-enrolment'
+description: 'Checks or triggers the next stage of external compliance screening for a customer, typically after a Customer Risk Assessment (CRA) form submission.'
 ---
 
 This endpoint is crucial for initiating or checking the status of required **external compliance screenings** (e.g., identity verification, sanctions checks) after a customer has submitted their initial forms or documents.
@@ -31,8 +31,6 @@ This administrative endpoint requires a valid **Access Token** for authorization
         Unique request identifier.
 </ParamField>
 
----
-
 ## Request Body
 
 This endpoint typically requires the identifier of the customer whose enrolment status is being queried or advanced.
@@ -41,8 +39,6 @@ This endpoint typically requires the identifier of the customer whose enrolment 
   The unique identifier of the customer whose enrolment process needs to be
   continued or checked.
 </ParamField>
-
----
 
 ## Response
 
@@ -81,8 +77,6 @@ The response confirms the status of the external screening process. If a link is
   updated.
 </ResponseField>
 
----
-
 ## Code Examples
 
 <CodeGroup>
@@ -99,10 +93,10 @@ curl -X GET 'https://remitjunction.fincode.software/api/v6/services/admin/compli
 ```
 
 ```javascript Node.js
-const axios = require("axios");
+const axios = require('axios');
 
 const BASE_URL =
-  "[https://remitjunction.fincode.software/api/v6/services/admin/compliance](https://remitjunction.fincode.software/api/v6/services/admin/compliance)";
+  'https://remitjunction.fincode.software/api/v6/services/admin/compliance';
 
 async function continueEnrolment(accessToken, customerCode) {
   try {
@@ -111,10 +105,10 @@ async function continueEnrolment(accessToken, customerCode) {
       { customerCode: customerCode },
       {
         headers: {
-          "X-Auth-Token": accessToken,
-          platform: "fincode",
-          uuid: "200",
-          "Content-Type": "application/json",
+          'X-Auth-Token': accessToken,
+          platform: 'fincode',
+          uuid: '200',
+          'Content-Type': 'application/json',
         },
       }
     );
@@ -128,16 +122,16 @@ async function continueEnrolment(accessToken, customerCode) {
       console.log(`Link valid for: ${data.validityMinutes} minutes.`);
     } else if (data.externalScreeningEnrolled === true) {
       console.log(
-        "External screening is complete or underway. Awaiting result callback."
+        'External screening is complete or underway. Awaiting result callback.'
       );
     } else {
-      console.log("Waiting for customer document submission.");
+      console.log('Waiting for customer document submission.');
     }
 
     return data;
   } catch (error) {
     console.error(
-      "Enrolment check failed:",
+      'Enrolment check failed:',
       error.response?.data || error.message
     );
     throw error;
@@ -145,8 +139,8 @@ async function continueEnrolment(accessToken, customerCode) {
 }
 
 // Usage Example
-const accessToken = "YOUR_AGENT_ACCESS_TOKEN";
-const customerCode = "CUST98765";
+const accessToken = 'YOUR_AGENT_ACCESS_TOKEN';
+const customerCode = 'CUST98765';
 continueEnrolment(accessToken, customerCode);
 ```
 

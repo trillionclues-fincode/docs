@@ -1,7 +1,7 @@
 ---
-title: "Dynamic Fields"
-api: "GET https://remitjunction.fincode.software/api/v6/services/dynamicfields/dynamic-fields-group/{processGroupCode}"
-description: "Retrieves a set of dynamic input fields required for a specific process (e.g., creating a transaction)."
+title: 'Dynamic Fields'
+api: 'GET https://remitjunction.fincode.software/api/v6/services/dynamicfields/dynamic-fields-group/{processGroupCode}'
+description: 'Retrieves a set of dynamic input fields required for a specific process (e.g., creating a transaction).'
 ---
 
 Retrieves the structured set of dynamic fields (forms, documents, or additional data) required for a specific business process, identified by the `{processGroupCode}` in the URL.
@@ -85,8 +85,6 @@ The response contains the structure defining the group of fields, including inpu
   </Expandable>
 </ResponseField>
 
----
-
 ## Code Examples
 
 <CodeGroup>
@@ -98,18 +96,17 @@ curl --location 'https://remitjunction.fincode.software/api/v6/services/dynamicf
 ```
 
 ```javascript Node.js
-const axios = require("axios");
+const axios = require('axios');
 
-const BASE_URL =
-  "[https://agent.fincode.software/api/v6/services/dynamicfields](https://agent.fincode.software/api/v6/services/dynamicfields)";
+const BASE_URL = 'https://agent.fincode.software/api/v6/services/dynamicfields';
 
 async function getDynamicFields(processGroupCode) {
   const url = `${BASE_URL}/dynamic-fields-group/${processGroupCode}`;
   try {
     const response = await axios.get(url, {
       headers: {
-        platform: "fincode",
-        uuid: "200",
+        platform: 'fincode',
+        uuid: '200',
       },
     });
 
@@ -125,7 +122,7 @@ async function getDynamicFields(processGroupCode) {
     return group;
   } catch (error) {
     console.error(
-      "Failed to fetch dynamic fields:",
+      'Failed to fetch dynamic fields:',
       error.response?.data || error.message
     );
     throw error;
@@ -133,7 +130,7 @@ async function getDynamicFields(processGroupCode) {
 }
 
 // Usage Example
-const groupCode = "REGISTERED_CUSTOMER_SEND_BANK_TRANSFER";
+const groupCode = 'REGISTERED_CUSTOMER_SEND_BANK_TRANSFER';
 getDynamicFields(groupCode);
 ```
 

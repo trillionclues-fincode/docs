@@ -2,9 +2,9 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "FinCode Platform",
-  "modeToggle": {
+  "appearance": {
     "default": "light",
-    "isHidden": false
+    "isHidden": true
   },
   "colors": {
     "primary": "#734CDC",
@@ -154,9 +154,6 @@
               "api/auth/logout",
               "api/auth/profile",
               "api/auth/refresh-token",
-              "api/users/create-manager",
-              "api/users/create-agent",
-              "api/users/create-cashier",
               "api/users/create-customer"
             ]
           },
@@ -165,7 +162,7 @@
             "pages": [
               "api/security/list-countries",
               "api/security/active-countries",
-              "api/security/privacy-policy",
+              "api/security/password-policy",
               "api/security/fetch-preference"
             ]
           },
@@ -177,7 +174,7 @@
               "api/compliance/dynamic-fields",
               "api/compliance/continue-enrolment",
               "api/compliance/awaiting-compliance",
-              "api/compliance/submit-kyc-documents",
+              "api/compliance/submit-cra",
               "api/compliance/aml-screening"
             ]
           },

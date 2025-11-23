@@ -1,6 +1,6 @@
 ---
-title: "List Countries"
-api: "GET https://remitjunction.fincode.software/api/v6/services/utilitiesmanagement/list-all-countries"
+title: 'List Countries'
+api: 'GET https://remitjunction.fincode.software/api/v6/services/utilitiesmanagement/list-all-countries'
 description: "Retrieves the systems's saved country list."
 ---
 
@@ -24,8 +24,6 @@ This endpoint is typically **public** and **does not require an Access Token** f
         Unique request identifier.
 </ParamField>
 
----
-
 ## Response
 
 The response returns an object detailing all the countries of the world with their different iso3Codes.
@@ -38,8 +36,6 @@ The response returns an object detailing all the countries of the world with the
     The country's common name.
 </ResponseField>
 
----
-
 ## Code Examples
 
 <CodeGroup>
@@ -51,23 +47,23 @@ curl --location 'https://remitjunction.fincode.software/api/v6/services/utilitie
 ```
 
 ```javascript Node.js
-const axios = require("axios");
+const axios = require('axios');
 
 const BASE_URL =
-  "[https://remitjunction.fincode.software/api/v6/services/utilitiesmanagement](https://remitjunction.fincode.software/api/v6/services/utilitiesmanagement)";
+  'https://remitjunction.fincode.software/api/v6/services/utilitiesmanagement';
 
 async function viewCountryList() {
   try {
     const response = await axios.get(`${BASE_URL}/list-all-countries`, {
       headers: {
-        platform: "fincode",
-        uuid: "200",
+        platform: 'fincode',
+        uuid: '200',
       },
     });
     return response.data;
   } catch (error) {
     console.error(
-      "Failed to fetch country list:",
+      'Failed to fetch country list:',
       error.response?.data || error.message
     );
     throw error;
