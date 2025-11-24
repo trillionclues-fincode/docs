@@ -1,7 +1,7 @@
 ---
-title: "API Reference"
-description: "Complete API documentation for FinCode platform - Authentication, Remittance, Lending, and Investment endpoints."
-icon: "code"
+title: 'API Reference'
+description: 'Complete API documentation for FinCode platform - Authentication, Remittance, Lending, and Investment endpoints.'
+icon: 'code'
 ---
 
 Our REST API provides programmatic access to all FinCode services including remittance, digital lending, and investment operations.
@@ -103,7 +103,7 @@ The FinCode API is organized into service-based endpoints following a RESTful ar
 
 ## Authentication
 
-All API requests must include authentication headers:
+All API requests must include authentication headers otherwise stated:
 
 ### Required Headers
 
@@ -119,16 +119,16 @@ All API requests must include authentication headers:
 ### Example Authenticated Request
 
 ```javascript
-const axios = require("axios");
+const axios = require('axios');
 
 const response = await axios.get(
-  "https://your-company.fincode.software/api/v6/services/admin/organisation-preference-management/fetch-organisation-preference",
+  'https://your-company.fincode.software/api/v6/services/admin/organisation-preference-management/fetch-organisation-preference',
   {
     headers: {
-      "X-Auth-Token": process.env.JWT_ACCESS_TOKEN,
-      "Content-Type": "application/json",
-      platform: "fincode",
-      uuid: "200",
+      'X-Auth-Token': process.env.JWT_ACCESS_TOKEN,
+      'Content-Type': 'application/json',
+      platform: 'fincode',
+      uuid: '200',
     },
   }
 );
@@ -227,16 +227,16 @@ try {
 
       case 429:
         // Wait and retry with exponential backoff
-        await sleep(error.response.headers["retry-after"] * 1000);
+        await sleep(error.response.headers['retry-after'] * 1000);
         return makeApiCall();
 
       case 422:
         // Handle validation errors
-        console.error("Validation failed:", error.response.data.error);
+        console.error('Validation failed:', error.response.data.error);
         throw error;
 
       default:
-        console.error("API error:", error.response.data);
+        console.error('API error:', error.response.data);
         throw error;
     }
   }

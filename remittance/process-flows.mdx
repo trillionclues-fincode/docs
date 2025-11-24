@@ -1,0 +1,1304 @@
+---
+title: 'Process Flows'
+description: 'Detailed visual diagrams and step-by-step explanations of the complete remittance transaction journey.'
+icon: 'diagram-project'
+---
+
+This guide provides comprehensive visual diagrams and step-by-step explanations of the complete remittance flow, from user onboarding through transaction settlement.
+
+<Note>
+  The complete journey has **4 main phases**: Onboarding, Transaction
+  Initiation, Payment & Processing, and Post-Transaction.
+</Note>
+
+### Phase 1: User Onboarding & Authentication
+
+#### 1.1 User Registration
+
+The registration process creates a new user account with required personal information.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant App
+    participant API
+    participant Email Service
+    participant Admin
+
+    User->>App: Download from App Store
+    User->>App: Click "Register"
+    App->>User: Show registration form
+    User->>App: Submit details
+    App->>API: POST /create-customer
+    API->>API: Validate data
+    API->>API: Create user account
+    API->>Email Service: Send welcome email
+    Email Service-->>User: Welcome email
+    API->>Admin: Notify new registration
+    API-->>App: Registration successful
+    App-->>User: Navigate to login
+```
+
+<Card title='API Endpoint' href='/api/users/create-customer'>
+  Go to create customer endpoint.
+</Card>
+
+#### User Experience Flow
+
+<Steps>
+  <Step title="Download App">
+    User downloads the app from PlayStore (Android) or App Store (iOS)
+  </Step>
+
+<Step title='Start Registration'>
+  User taps "Register as New User" on the welcome screen
+</Step>
+
+<Step title='Fill Form'>
+  User completes the multi-step registration form with personal details
+</Step>
+
+<Step title='Email Verification'>
+  User receives a welcome email with account confirmation
+</Step>
+
+  <Step title="Admin Notification">
+    Admin dashboard receives notification about the new registration for monitoring
+  </Step>
+</Steps>
+
+### 1.2 User Login & Authentication
+
+Secure authentication using email and password with JWT token management.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant App
+    participant API
+    participant Auth Service
+
+    User->>App: Launch app
+    User->>App: Click "Login"
+    App->>User: Show login form
+    User->>App: Enter email & password
+    App->>API: PUT /auth/login
+    API->>Auth Service: Validate credentials
+    Auth Service->>Auth Service: Check user role
+    Auth Service-->>API: User authenticated
+    API->>API: Generate JWT tokens
+    API-->>App: Return tokens + user data
+    App->>App: Store tokens securely
+    App-->>User: Navigate to dashboard
+```
+
+<Card title='API Endpoint' href='/api/auth/login'>
+  Go to create login endpoint.
+</Card>
+
+### 1.3 KYC Verification
+
+Know Your Customer (KYC) verification is required before users can make transactions.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant App
+    participant API
+    participant KYC Service
+    participant Compliance
+
+    App->>API: Check KYC requirement
+    API-->>App: KYC required
+    App->>User: Show KYC form
+    User->>App: Upload ID documents
+    User->>App: Enter personal details
+    App->>API: POST /submit-kyc-documents
+    API->>KYC Service: Process documents
+    KYC Service->>KYC Service: Extract data (OCR)
+    KYC Service->>Compliance: Run checks
+    Compliance->>Compliance: Verify identity
+    Compliance->>Compliance: Sanctions screening
+    Compliance-->>KYC Service: Verification result
+    KYC Service-->>API: KYC status updated
+    API-->>App: Verification complete
+    App->>User: Send notification
+    App-->>User: Navigate to dashboard
+```
+
+<Card title='API Endpoint' href='/api/compliance/submit-kyc-documents'>
+  Go to submit kyc document endpoint.
+</Card>
+
+<Tabs>
+  <Tab title="Tier 1 - Basic KYC">
+    ### Required Documents
+    - **Government-issued ID**: Passport, driver's license, or national ID card
+    - **Selfie**: For liveness check and face matching
+
+    ### Verification Process
+    1. Automated OCR extracts data from ID document
+    2. Face matching compares selfie with ID photo
+    3. Basic sanctions screening against global watchlists
+    4. Identity verification through third-party services
+
+    **5-15 minutes** - Fully automated processing
+
+    <Tip>
+      Tier 1 is ideal for users who need to send smaller amounts quickly without extensive documentation.
+    </Tip>
+
+  </Tab>
+
+  <Tab title="Tier 2 - Enhanced KYC">
+    ### Required Documents
+    - **Government-issued ID**: Same as Tier 1
+    - **Proof of address**: Utility bill, bank statement, or government letter (dated within 3 months)
+    - **Selfie**: For liveness check
+
+    ### Verification Process
+    1. All Tier 1 verification checks
+    2. Enhanced PEP (Politically Exposed Person) screening
+    3. Address verification and validation
+    4. Source of funds verification
+    5. Employment verification (if applicable)
+
+    **1-24 hours** - Includes manual review for certain documents
+
+    <Tip>
+      Tier 2 is required for business users or individuals making large-value transfers regularly.
+    </Tip>
+
+  </Tab>
+</Tabs>
+
+#### KYC Decision Flow
+
+```mermaid
+graph TD
+    A[KYC Submission] --> B{Document Quality OK?}
+    B -->|No| C[Request Re-upload]
+    B -->|Yes| D[OCR Extraction]
+    D --> E{Data Extracted?}
+    E -->|No| F[Manual Review]
+    E -->|Yes| G[Face Match]
+    G --> H{Match Score > 85%?}
+    H -->|No| F
+    H -->|Yes| I[Sanctions Check]
+    I --> J{Clean?}
+    J -->|No| K[REJECTED]
+    J -->|Yes| L[Identity Verification]
+    L --> M{Verified?}
+    M -->|No| F
+    M -->|Yes| N[APPROVED]
+    F --> O{Reviewable?}
+    O -->|Yes| N
+    O -->|No| K
+
+    style N fill:#d4edda
+    style K fill:#f8d7da
+    style F fill:#fff3cd
+```
+
+---
+
+### 1.4 Customer Risk Assessment (CRA)
+
+CRA forms collect additional information for regulatory compliance and risk assessment.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant App
+    participant API
+    participant Compliance
+
+    App->>API: Check for pending CRA forms
+    API->>Compliance: Get required forms
+    Compliance-->>API: Return form templates
+    API-->>App: CRA forms required
+    App->>User: Display dynamic form
+    User->>App: Complete form fields
+    App->>API: POST /cra-forms
+    API->>Compliance: Store responses
+    Compliance->>Compliance: Calculate risk score
+    Compliance-->>API: Risk assessment complete
+    API-->>App: Proceed to dashboard
+    App-->>User: Dashboard loaded
+```
+
+<Card title='API Endpoint' href='/api/compliance/compliance/cra-forms'>
+  Go to CRA form endpoint.
+</Card>
+
+#### When CRA Forms Are Required
+
+<CardGroup cols={2}>
+  <Card title="First Transaction">
+    Required when transaction amount exceeds £500/$750 for the first time
+  </Card>
+
+<Card title='High-Risk Corridors'>
+  Transactions to countries with enhanced due diligence requirements
+</Card>
+
+<Card title='Periodic Reviews'>
+  Annual or biennial reviews for active customers
+</Card>
+
+  <Card title="Regulatory Changes">
+    When new regulations require additional information
+  </Card>
+</CardGroup>
+
+#### Typical CRA Questions
+
+<AccordionGroup>
+  <Accordion title="Source of Funds">
+    **Question**: Where does the money you're sending come from?
+    
+    **Options**:
+    - Employment/Salary
+    - Business income
+    - Savings
+    - Gift
+    - Inheritance
+    - Investment returns
+    - Other (specify)
+  </Accordion>
+
+<Accordion title='Purpose of Transfer'>
+  **Question**: What is the purpose of this transfer? **Options**: - Family
+  support - Education fees - Medical expenses - Business payment - Property
+  purchase - Investment - Gift - Other (specify)
+</Accordion>
+
+<Accordion title='Beneficiary Relationship'>
+  **Question**: What is your relationship to the beneficiary? **Options**: -
+  Family member (parent, sibling, spouse, child) - Friend - Business partner -
+  Employee - Myself - Other (specify)
+</Accordion>
+
+<Accordion title='Transaction Frequency'>
+  **Question**: How often do you plan to send money? **Options**: - One-time
+  only - Monthly - Quarterly - As needed - Weekly
+</Accordion>
+
+  <Accordion title="Employment Details">
+    **Question**: What is your occupation and employer?
+    
+    **Fields**:
+    - Occupation/Job title
+    - Employer name
+    - Industry sector
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Phase 2: Transaction Initiation
+
+### 2.1 Dashboard & Send Money
+
+The dashboard is the central hub for all remittance activities.
+
+```mermaid
+graph LR
+    A[Dashboard] --> B[Recent Transactions]
+    A --> C[Send Money]
+    A --> D[Transaction History]
+    A --> E[Beneficiaries]
+    A --> F[Profile]
+
+    C --> G[Bank Transfer]
+    C --> H[Mobile Money]
+    C --> I[Cash Pickup]
+
+    style A fill:#e1f5ff
+    style C fill:#fff3cd
+```
+
+#### Dashboard Features
+
+<CardGroup cols={3}>
+  <Card title="Quick Send" icon="paper-plane">
+    One-tap access to start a new transaction
+  </Card>
+
+<Card title='Recent Activity' icon='clock'>
+  Last 5 transactions with status indicators
+</Card>
+
+<Card title='KYC Status' icon='id-badge'>
+  Current verification tier and limits
+</Card>
+
+<Card title='Saved Beneficiaries' icon='user-group'>
+  Quick access to frequent recipients
+</Card>
+
+<Card title='Transaction Limits' icon='gauge'>
+  Remaining daily/monthly limits
+</Card>
+
+  <Card title="Exchange Rates" icon="chart-line">
+    Live rates for popular corridors
+  </Card>
+</CardGroup>
+
+---
+
+### 2.2 Transaction Type Selection
+
+Users choose from three or more primary transaction types based on beneficiary preferences.
+
+<Tabs>
+  <Tab title="Bank Transfer">
+    ### Overview
+    Direct deposit into beneficiary's bank account using SWIFT or local banking rails.
+    ### User Flow
+    1. User selects "Bank Transfer" option
+    2. Choose destination country from list
+    3. Enter transfer amount
+    4. Get instant quote with FX rate
+
+    ### Required Information
+    - Account number or IBAN
+    - SWIFT/BIC code (for international transfers)
+    - Beneficiary full name (must match bank records)
+    - Branch details (if required)
+
+    ### Settlement Time
+    **1-24 hours** depending on destination country and local banking hours
+
+    ### Best For
+    - Large transfer amounts
+    - Regular recipients with bank accounts
+    - Countries with strong banking infrastructure
+
+    **API Endpoint**: [Create Transaction](/api/transactions/create-transaction)
+
+    <Tip>
+      Bank transfers typically have the lowest fees for amounts over £500/$750.
+    </Tip>
+
+  </Tab>
+
+  <Tab title="Mobile Money">
+    ### Overview
+    Instant transfer to mobile wallet providers like MTN, Airtel, Vodafone, M-Pesa, and more.
+
+    ### User Flow
+    1. User selects "Mobile Money" option
+    2. Choose destination country
+    3. Select mobile network provider from dropdown
+    4. Enter transfer amount
+    5. Get instant quote
+
+    ### Required Information
+    - Mobile phone number of beneficiary
+    - Mobile network provider name
+    - Beneficiary full name (if validation not supported)
+
+    ### Settlement Time
+    **Instant to 1 hour** - Fastest delivery method
+
+    ### Best For
+    - Unbanked beneficiaries
+    - Urgent transfers
+    - African, Asian, and Latin American corridors
+    - Small to medium amounts
+
+    ### Supported Providers
+    <CardGroup cols={2}>
+      <Card title="Africa">
+        MTN, Airtel, Vodacom, Safaricom M-Pesa, Orange Money, Tigo
+      </Card>
+      <Card title="Asia">
+        bKash, Nagad, GCash, PayMaya, Wave Money
+      </Card>
+    </CardGroup>
+
+<Card title='API Endpoint' href='/api/transactions/create-transaction'>
+  Go to create transaction endpoint.
+</Card>
+
+    <Warning>
+      Mobile money has daily limits imposed by mobile network operators (typically $500-$1000 per day).
+    </Warning>
+
+  </Tab>
+
+  <Tab title="Cash Pickup">
+    ### Overview
+    Beneficiary collects physical cash at partner agent locations worldwide.
+
+    ### User Flow
+    1. User selects "Cash Pickup" option
+    2. Choose destination country
+    3. Select pickup network partner
+    4. Enter transfer amount
+    5. Get instant quote
+
+    ### Required Information
+    - Beneficiary Phone number
+    - Pickup unique code/secret
+
+    ### Settlement Time
+    **Instant availability** - Cash ready within minutes (beneficiary has 24-48 hours to collect)
+
+    ### Best For
+    - Beneficiaries without bank accounts or mobile money
+    - Urgent cash needs
+    - Rural areas with limited banking infrastructure
+    - One-time transfers
+
+    ### Pickup Process
+    1. Sender completes transaction and receives reference number
+    2. Beneficiary receives SMS with pickup code/PIN
+    3. Beneficiary visits agent location with:
+       - Government-issued ID
+       - Pickup code/PIN
+       - Sender's name
+    4. Agent verifies identity and disburses cash
+
+    ### Partner Networks
+    - Ria
+    - Remitly
+    - MoneyGram
+    - Western Union
+
+<Card title='API Endpoint' href='/api/transactions/create-transaction'>
+  Go to create transaction endpoint.
+</Card>
+
+    <Note>
+      Cash pickup typically has higher fees (3-5%) but offers universal accessibility.
+    </Note>
+
+  </Tab>
+</Tabs>
+
+<Card title='API Endpoint' href='/api/transactions/transaction-types'>
+  Go to transaction types endpoint.
+</Card>
+
+### 2.3 FX Quotation Flow
+
+Real-time exchange rate quotation with rate locking mechanism.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant App
+    participant API
+    participant FX Service
+    participant Compliance
+    participant Fee Engine
+
+    User->>App: Enter send/receive amount
+    User->>App: Select destination country
+    App->>API: POST /call-quote
+    API->>FX Service: Get live exchange rate
+    FX Service-->>API: Current rate
+    API->>Fee Engine: Calculate fees
+    Fee Engine-->>API: Transfer fee + margins
+    API->>Compliance: Check transaction limits
+    Compliance-->>API: Within limits
+    API->>API: Calculate total amounts
+    API-->>App: Return quote breakdown
+    App-->>User: Display quote
+
+    Note over User,App: Quote valid for 10 minutes
+
+    User->>App: Accept quote
+    App->>API: POST /lock-rate
+    API->>FX Service: Lock rate
+    FX Service-->>API: Rate locked
+    API-->>App: Proceed to beneficiary
+```
+
+<Card title='API Endpoint' href='/api/transactions/call-quote'>
+  Go to transaction types endpoint.
+</Card>
+
+#### Rate Locking
+
+<Info>
+  **Quote Validity**: All quotes are valid for **10 minutes** from creation.
+  After expiration, users must request a new quote.
+</Info>
+
+When a user accepts a quote:
+
+1. Exchange rate is **locked** at the quoted rate
+2. User has 10 minutes to complete payment
+3. If payment is not completed, the transaction expires
+4. Rate lock prevents FX fluctuation risk during payment
+
+### 2.4 Beneficiary Management
+
+Users can save and manage beneficiaries for faster repeat transactions.
+
+```mermaid
+graph TD
+    A[Select Beneficiary] --> B{Has Beneficiaries?}
+    B -->|Yes| C[Show Beneficiary List]
+    B -->|No| D[Create New Beneficiary]
+    C --> E{Select Action}
+    E -->|Select| F[Use Existing]
+    E -->|New| D
+    D --> G[Enter Details]
+    G --> H[Validate Information]
+    H --> I{Valid?}
+    I -->|Yes| J[Sanctions Screening]
+    I -->|No| G
+    J --> K{Screening Passed?}
+    K -->|Yes| L[Save Beneficiary]
+    K -->|No| M[Cannot Add]
+    L --> N[Proceed to Review]
+    F --> N
+
+    style B fill:#fff3cd
+    style I fill:#fff3cd
+    style K fill:#fff3cd
+```
+
+**API Endpoints**:
+
+<Card title='API Endpoint' href='/api/transactions/beneficiary-list'>
+  View all saved beneficiaries endpoint.
+</Card>
+<Card title='API Endpoint' href='/api/transactions/create-beneficiary'>
+  Create/update beneficiary endpoint.
+</Card>
+
+#### Create New Beneficiary Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant App
+    participant API
+    participant Validation Service
+    participant Sanctions DB
+
+    User->>App: Enter beneficiary details
+    App->>API: POST /beneficiary-details
+    API->>Validation Service: Validate account
+    Validation Service->>Validation Service: Check bank/provider exists
+    Validation Service->>Validation Service: Verify account format
+    Validation Service->>Validation Service: Validate routing codes
+    Validation Service-->>API: Validation result
+
+    alt Account Valid
+        API->>Sanctions DB: Screen beneficiary name
+        Sanctions DB->>Sanctions DB: Check watchlists
+        Sanctions DB-->>API: Screening result
+
+        alt No Sanctions Match
+            API->>API: Save beneficiary
+            API-->>App: Beneficiary created
+            App-->>User: Show success message
+        else Sanctions Match
+            API-->>App: Cannot add beneficiary
+            App-->>User: Show compliance message
+        end
+    else Account Invalid
+        API-->>App: Validation failed
+        App-->>User: Show error & corrections
+    end
+```
+
+#### Beneficiary Validation Rules
+
+<Tabs>
+  <Tab title="Bank Transfer">
+    ### Validation Checks
+    - **Bank name**: Must exist in destination country
+    - **Account number**: Format validation (e.g., 10 digits for Nigerian accounts)
+    - **SWIFT/BIC code**: Valid code from SWIFT registry
+    - **IBAN**: Checksum validation for IBAN countries
+    - **Beneficiary name**: Minimum 3 characters, maximum 100 characters
+
+    ### Example: UK Bank
+    ```json
+    {
+      "beneficiaryName": "John Smith",
+      "bankName": "Barclays Bank UK",
+      "accountNumber": "12345678",
+      "sortCode": "20-00-00",
+      "country": "GB"
+    }
+    ```
+
+    ### Example: Nigerian Bank
+    ```json
+    {
+      "beneficiaryName": "Chinwe Okafor",
+      "bankName": "Guaranty Trust Bank",
+      "accountNumber": "0123456789",
+      "country": "NG"
+    }
+    ```
+
+  </Tab>
+
+  <Tab title="Mobile Money">
+    ### Validation Checks
+    - **Phone number**: International format validation
+    - **Provider**: Must be active in destination country
+    - **Number registration**: Some providers verify if number is registered
+    - **Beneficiary name**: Must match registered mobile money account
+
+    ### Example: Kenya M-Pesa
+    ```json
+    {
+      "beneficiaryName": "James Mwangi",
+      "phoneNumber": "+254712345678",
+      "provider": "Safaricom M-Pesa",
+      "country": "KE"
+    }
+    ```
+
+    ### Example: Ghana MTN
+    ```json
+    {
+      "beneficiaryName": "Akua Mensah",
+      "phoneNumber": "+233201234567",
+      "provider": "MTN Mobile Money",
+      "country": "GH"
+    }
+    ```
+
+  </Tab>
+
+  <Tab title="Cash Pickup">
+    ### Validation Checks
+    - **Full name**: At least first and last name
+    - **Phone number**: Valid international format
+    - **Pickup location**: Valid city in destination country
+    - **ID requirement**: Beneficiary must have government ID
+
+    ### Example
+    ```json
+    {
+      "beneficiaryName": "Maria Rodriguez",
+      "phoneNumber": "+521234567890",
+      "pickupLocation": "Mexico City",
+      "pickupNetwork": "Elektra",
+      "country": "MX"
+    }
+    ```
+
+    <Warning>
+      For cash pickup, beneficiary name must **exactly match** their government-issued ID.
+    </Warning>
+
+  </Tab>
+</Tabs>
+
+---
+
+## Phase 3: Payment & Processing
+
+### 3.1 Transaction Review
+
+Before payment, users review all transaction details for accuracy.
+
+#### Review Screen Components
+
+<AccordionGroup>
+  <Accordion title="Send Details">
+    - **Send amount**: Amount user is sending
+    - **Send currency**: Source currency (GBP, USD, EUR)
+    - **Exchange rate**: Locked FX rate
+    - **Rate validity**: Countdown timer (10 minutes)
+  </Accordion>
+<Accordion title='Fees & Total'>
+    - **Transfer fee**: Platform fee
+    - **Payment method fee**:Card fee if applicable
+    - **Total to pay**: Final amount to be charged
+    - **Fee breakdown**:
+  Transparent cost structure
+</Accordion>
+<Accordion title='Receive Details'>
+  - **Receive amount**: Amount beneficiary gets
+  - **Receive currency**: Destination currency
+  - **Delivery method**: Bank/Mobile/Cash
+  - **Estimated delivery**: Time to complete
+</Accordion>
+
+  <Accordion title="Beneficiary Info">
+    - **Recipient name**: Full name
+    - **Delivery details**: Account/phone number
+    - **Destination country**: Country flag and name
+    - **Transaction type**: Visual indicator
+  </Accordion>
+</AccordionGroup>
+
+### 3.2 Payment Processing
+
+Secure payment through card or open banking with 3D Secure authentication.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant App
+    participant API
+    participant Payment Gateway
+    participant Bank
+    participant System
+
+    User->>App: Confirm transaction
+    App->>API: POST /create-transaction
+    API->>API: Create transaction record
+    API-->>App: Transaction ID (WAITING_TO_PAY)
+
+    App->>User: Choose payment method
+    User->>App: Select card/open banking
+    App->>Payment Gateway: Initialize payment
+    Payment Gateway->>Payment Gateway: Create session
+    Payment Gateway-->>App: Payment session URL
+    App-->>User: Redirect to payment page
+
+    alt Card Payment
+        User->>Payment Gateway: Enter card details
+        Payment Gateway->>Bank: Request 3DS authentication
+        Bank-->>User: OTP/2FA prompt
+        User->>Bank: Complete authentication
+        Bank->>Bank: Validate OTP
+        Bank-->>Payment Gateway: Auth successful
+        Payment Gateway->>Payment Gateway: Charge card
+    else Open Banking
+        User->>Payment Gateway: Select bank
+        Payment Gateway-->>User: Redirect to bank login
+        User->>Bank: Login with credentials
+        Bank-->>User: Show payment authorization
+        User->>Bank: Authorize payment
+        Bank->>Bank: Process payment
+        Bank-->>Payment Gateway: Payment authorized
+    end
+
+    Payment Gateway->>Payment Gateway: Process payment
+    Payment Gateway-->>API: Webhook: Payment successful
+    API->>System: Update status to VERIFYING
+    API->>System: Trigger compliance checks
+    Payment Gateway-->>App: Redirect with success
+    App-->>User: Show success screen
+    App-->>User: Display transaction reference
+```
+
+### 3.3 Compliance Screening
+
+All transactions undergo automated compliance checks before processing.
+
+```mermaid
+sequenceDiagram
+    participant System
+    participant Compliance API
+    participant AML Service
+    participant Sanctions DB
+    participant Risk Engine
+
+    System->>Compliance API: Screen transaction
+    Compliance API->>AML Service: Check AML/CFT rules
+    AML Service->>AML Service: Analyze transaction patterns
+    AML Service->>AML Service: Check velocity limits
+    AML Service->>AML Service: Review transaction history
+    AML Service-->>Compliance API: AML result
+
+    Compliance API->>Sanctions DB: Screen all parties
+    Sanctions DB->>Sanctions DB: Check OFAC lists
+    Sanctions DB->>Sanctions DB: Check EU sanctions
+    Sanctions DB->>Sanctions DB: Check UN lists
+    Sanctions DB-->>Compliance API: No matches found
+
+    Compliance API->>Risk Engine: Calculate risk score
+    Risk Engine->>Risk Engine: Assess country risk
+    Risk Engine->>Risk Engine: Evaluate customer profile
+    Risk Engine->>Risk Engine: Analyze transaction size
+    Risk Engine-->>Compliance API: Risk score: LOW
+
+    alt Low Risk - Approved
+        Compliance API-->>System: STATUS: APPROVED
+        System->>System: Proceed to FX conversion
+    else Medium Risk - Flagged
+        Compliance API-->>System: STATUS: FLAGGED
+        System->>System: Hold for manual review
+        System->>System: Notify compliance team
+        Note over System: Transaction paused (1-24 hours)
+    else High Risk - Rejected
+        Compliance API-->>System: STATUS: REJECTED
+        System->>System: Cancel transaction
+        System->>System: Initiate refund process
+        System->>System: Send rejection notice to customer
+    end
+```
+
+<Card title='API Endpoint' href='/api/compliance/aml-screening'>
+  Go to transaction types endpoint.
+</Card>
+
+#### Screening Checks Performed
+
+<Tabs>
+  <Tab title="AML/CFT Checks">
+    ### Anti-Money Laundering & Counter-Terrorism Financing
+
+    **Transaction Pattern Analysis**:
+    - Unusual transaction amounts
+    - Frequency of transfers
+    - Multiple small transactions (structuring)
+    - Sudden changes in behavior
+    - Round-number transactions
+
+    **Velocity Checks**:
+    - Daily transaction count
+    - Weekly transaction volume
+    - Monthly cumulative amount
+    - Same-day repeat transactions
+
+    **Historical Analysis**:
+    - Customer transaction history
+    - Failed transaction attempts
+    - Previous flagged transactions
+    - Account age vs. transaction size
+
+    <Warning>
+      Transactions showing signs of money laundering (e.g., multiple small transfers to avoid limits) are automatically flagged.
+    </Warning>
+
+  </Tab>
+
+  <Tab title="Sanctions Screening">
+    ### Global Watchlist Checks
+
+    **Lists Checked**:
+    - **OFAC** (US Office of Foreign Assets Control)
+    - **EU Sanctions List**
+    - **UN Consolidated List**
+    - **UK HM Treasury**
+    - **National sanctions lists** (per jurisdiction)
+
+    **Entities Screened**:
+    - Sender (customer)
+    - Beneficiary
+    - Sender's country
+    - Beneficiary's country
+    - Financial institutions involved
+
+    **Matching Algorithm**:
+    - Exact name matches
+    - Fuzzy matching (90%+ similarity)
+    - Alias and known-as names
+    - Date of birth verification
+    - Address matching
+    <Info>
+      Even partial matches (80%+) trigger manual review to prevent false positives.
+    </Info>
+
+  </Tab>
+
+  <Tab title="PEP Screening">
+    ### Politically Exposed Persons
+
+    **Categories**:
+    - **Tier 1 PEPs**: Heads of state, ministers, judges
+    - **Tier 2 PEPs**: Senior government officials
+    - **Tier 3 PEPs**: Close associates and family members
+    - **Former PEPs**: Individuals who held positions in past 12-18 months
+
+    **Enhanced Due Diligence**:
+    - Source of wealth verification
+    - Purpose of transaction scrutiny
+    - Relationship to beneficiary
+    - Country risk assessment
+    - Additional documentation requirements
+
+    **Databases Used**:
+    - World-Check (Refinitiv)
+    - Dow Jones Risk & Compliance
+    - LexisNexis
+    - Local PEP databases
+
+    <Note>
+      PEP transactions aren't rejected automatically but require enhanced due diligence.
+    </Note>
+
+  </Tab>
+
+  <Tab title="Risk Scoring">
+    ### Dynamic Risk Assessment
+
+    **Risk Score Outcomes**:
+    - **0-30**: Low risk → Auto-approve
+    - **31-60**: Medium risk → Flag for review
+    - **61-100**: High risk → Reject or enhanced review
+
+    **Country Risk Classification**:
+    - **Low**: UK, US, EU, Canada, Australia
+    - **Medium**: Most Asian, Latin American countries
+    - **High**: FATF blacklisted or sanctioned countries
+
+    <Tip>
+      Regular customers with consistent transaction patterns receive better risk scores over time.
+    </Tip>
+
+  </Tab>
+</Tabs>
+
+#### Compliance Decision Matrix
+
+```mermaid
+graph TD
+    A[Transaction Submitted] --> B{Sanctions Match?}
+    B -->|Yes| C[REJECT - Refund]
+    B -->|No| D{AML Flags?}
+    D -->|Severe| C
+    D -->|Minor| E{Calculate Risk Score}
+    D -->|None| E
+    E --> F{Risk Level?}
+    F -->|Low 0-30| G[AUTO-APPROVE]
+    F -->|Medium 31-60| H[MANUAL REVIEW]
+    F -->|High 61-100| I{PEP?}
+    I -->|Yes| J[ENHANCED DD]
+    I -->|No| C
+    H --> K{Reviewer Decision}
+    K -->|Approve| G
+    K -->|Reject| C
+    J --> L{EDD Complete?}
+    L -->|Pass| G
+    L -->|Fail| C
+
+    style G fill:#d4edda
+    style C fill:#f8d7da
+    style H fill:#fff3cd
+    style J fill:#fff3cd
+```
+
+---
+
+### 3.4 FX Conversion & Settlement
+
+Once compliance checks pass, the system converts currency and initiates payout.
+
+```mermaid
+sequenceDiagram
+    participant System
+    participant FX Service
+    participant Settlement API
+    participant Partner Network
+    participant Beneficiary
+    participant Notifications
+
+    System->>FX Service: Convert at locked rate
+    FX Service->>FX Service: Apply exchange rate
+    FX Service->>FX Service: Deduct FX margin
+    FX Service-->>System: Conversion complete
+    System->>System: Update status to PAID
+
+    System->>Settlement API: Initiate payout request
+    Settlement API->>Settlement API: Select optimal route
+    Settlement API->>Partner Network: Transfer funds
+
+    alt Bank Transfer
+        Partner Network->>Partner Network: Initiate SWIFT/Local transfer
+        Partner Network->>Partner Network: Process through banking rails
+        Partner Network-->>Beneficiary: Credit bank account
+        Note over Partner Network,Beneficiary: 1-24 hours
+    else Mobile Money
+        Partner Network->>Partner Network: Call mobile provider API
+        Partner Network->>Partner Network: Verify recipient number
+        Partner Network-->>Beneficiary: Credit mobile wallet
+        Note over Partner Network,Beneficiary: Instant - 1 hour
+    else Cash Pickup
+        Partner Network->>Partner Network: Generate unique PIN
+        Partner Network->>Partner Network: Activate at agent locations
+        Partner Network-->>Beneficiary: SMS with PIN code
+        Note over Partner Network,Beneficiary: Instant availability
+    end
+
+    Beneficiary-->>Partner Network: Acknowledge receipt
+    Partner Network-->>Settlement API: Confirmation received
+    Settlement API-->>System: Status: COMPLETED
+
+    System->>Notifications: Trigger notifications
+    Notifications-->>Beneficiary: SMS: Funds received
+    Notifications-->>System: Email: Transaction receipt
+    Notifications-->>System: Push: Transaction complete
+```
+
+#### Settlement Times by Method
+
+| Payout Method     | Typical Time  | Fastest | Latest   | Availability       |
+| ----------------- | ------------- | ------- | -------- | ------------------ |
+| **Bank Transfer** | 2-6 hours     | 1 hour  | 24 hours | Business days only |
+| **Mobile Money**  | 10-30 minutes | Instant | 1 hour   | 24/7               |
+| **Cash Pickup**   | Instant       | Instant | N/A      | Agent hours        |
+
+<Info>
+  **Business Day Definition**: Monday-Friday, 9 AM - 5 PM local time, excluding
+  public holidays in the destination country.
+</Info>
+
+## Phase 4: Post-Transaction
+
+### 4.1 Status Tracking
+
+Transactions move through defined states from creation to completion.
+
+```mermaid
+stateDiagram-v2
+    [*] --> WaitingToPay: Transaction Created
+    WaitingToPay --> Verifying: Payment Received
+    WaitingToPay --> Cancelled: User Cancelled
+    WaitingToPay --> Expired: Rate/Payment Timeout
+
+    Verifying --> Paid: Compliance Approved
+    Verifying --> PendingRefund: Compliance Rejected
+    Verifying --> FailedToDeliver: Initial Delivery Failed
+
+    Paid --> [*]: Success
+
+    FailedToDeliver --> Paid: Retry Successful
+    FailedToDeliver --> PendingRefund: Max Retries Exceeded
+
+    PendingRefund --> Refunded: Refund Processed
+    Refunded --> [*]: Complete
+
+    Cancelled --> [*]: Complete
+    Expired --> [*]: Complete
+```
+
+<Card title='API Endpoint' href='/api/transactions/history-data'>
+  Go to transaction history endpoint.
+</Card>
+
+#### Transaction Status Definitions
+
+<AccordionGroup>
+  <Accordion title="WAITING_TO_PAY">
+    **Description**: Transaction created but payment not yet received
+
+    **Duration**: Up to 10 minutes
+
+    **User Actions**:
+    - Complete payment via card or open banking
+    - Cancel transaction
+    - Request new quote if expired
+
+    **Next States**:
+    - `VERIFYING` - Payment received
+    - `CANCELLED` - User cancelled
+    - `EXPIRED` - Quote/payment timeout
+
+  </Accordion>
+
+  <Accordion title="VERIFYING">
+    **Description**: Payment received, undergoing compliance checks
+
+    **Duration**: Typically 1-5 minutes (can be up to 24 hours for manual review)
+
+    **System Actions**:
+    - AML/CFT screening
+    - Sanctions checking
+    - Risk assessment
+    - PEP screening (if applicable)
+
+    **Next States**:
+    - `PAID` - All checks passed
+    - `PENDING_REFUND` - Compliance rejected
+    - `FAILED_TO_DELIVER` - Delivery issues
+
+  </Accordion>
+
+  <Accordion title="PAID">
+    **Description**: Transaction completed successfully, funds delivered
+
+    **System Actions**:
+    - FX conversion executed
+    - Funds disbursed to beneficiary
+    - Confirmations sent
+
+    **Notifications Sent**:
+    - Email receipt to sender
+    - SMS to beneficiary
+    - Push notification (if enabled)
+
+    **Final State**: Transaction complete ✓
+
+  </Accordion>
+
+  <Accordion title="FAILED_TO_DELIVER">
+    **Description**: Delivery attempt failed (wrong account, network issues, etc.)
+
+    **Common Causes**:
+    - Invalid account number
+    - Inactive mobile money account
+    - Bank account closed
+    - Network timeout
+
+    **System Actions**:
+    - Transaction retry (if activated)
+    - Notify compliance team
+    - Contact customer for corrections
+
+    **Next States**:
+    - `PAID` - Retry successful
+    - `PENDING_REFUND` - Max retries exceeded
+
+  </Accordion>
+
+  <Accordion title="PENDING_REFUND">
+    **Description**: Refund initiated, processing back to sender
+
+    **Triggers**:
+    - Compliance rejection
+    - Delivery failure (max retries)
+    - Customer request (within refund window)
+
+    **Processing Time**: 3-5 business days
+
+    **Next State**: `REFUNDED` - Refund complete
+
+  </Accordion>
+
+  <Accordion title="REFUNDED">
+    **Description**: Funds returned to sender's payment method
+
+    **Details**:
+    - Full refund (including fees)
+    - Returns to original payment method
+    - Refund confirmation sent
+
+    **Final State**: Transaction complete (refunded)
+
+  </Accordion>
+
+  <Accordion title="CANCELLED">
+    **Description**: Transaction cancelled before payment
+
+    **Triggers**:
+    - User cancelled during payment
+    - User didn't complete payment
+
+    **No Charges**: No funds were debited
+
+    **Final State**: Transaction complete (cancelled)
+
+  </Accordion>
+
+  <Accordion title="EXPIRED">
+    **Description**: Quote or payment window expired
+
+    **Causes**:
+    - Rate validity exceeded (10 minutes)
+    - Payment not completed in time
+
+    **Final State**: Transaction complete (expired)
+
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## API Integration Checklist
+
+Follow these steps to integrate the complete remittance flow:
+
+<Steps>
+  <Step title="User Management APIs">
+    ### Implement User Registration & Authentication
+
+    **Testing Checklist**:
+    - [ ] User can register with valid details
+    - [ ] Email validation works
+    - [ ] Password strength requirements enforced
+    - [ ] Login returns valid JWT tokens
+    - [ ] KYC document upload successful
+    - [ ] CRA form submission works
+
+    <Card title="API Reference" icon="code" href="/api/users/create-customer">
+      View detailed user management endpoints
+    </Card>
+
+  </Step>
+
+  <Step title="Transaction Flow APIs">
+    ### Build Quote, Beneficiary & Transaction Creation
+
+    **Testing Checklist**:
+    - [ ] Quote returns accurate FX rates
+    - [ ] Rate lock works for 15 minutes
+    - [ ] Beneficiary validation catches errors
+    - [ ] Transaction creation returns correct status
+    - [ ] Multiple payout methods available
+
+    <Card title="API Reference" icon="code" href="/api/transactions/call-quote">
+      View transaction API documentation
+    </Card>
+
+  </Step>
+
+  <Step title="Payment Integration">
+    ### Connect Payment Gateway
+
+    **Implementation**:
+    - Integrate card payment provider (Trustpayment/Paycross)
+    - Implement open banking (Volume/Volt)
+    - Handle 3DS authentication flow
+    - Implement payment webhooks
+
+    **Testing Checklist**:
+    - [ ] Card payments process successfully
+    - [ ] 3DS authentication works
+    - [ ] Open banking redirects correctly
+    - [ ] Payment webhooks received
+    - [ ] Failed payments handled gracefully
+
+    <Card title="Settlement Guide" icon="building-columns" href="/remittance/settlement">
+      Detailed payment integration guide
+    </Card>
+
+  </Step>
+
+  <Step title="Status Tracking">
+    ### Implement Transaction Monitoring
+
+    **Testing Checklist**:
+    - [ ] Status updates reflect in real-time
+    - [ ] Webhooks received and processed
+    - [ ] Polling doesn't exceed rate limits
+    - [ ] All transaction states handled
+    - [ ] Error states trigger appropriate UI
+
+    <Card title="Webhooks" icon="webhook" href="/api/webhooks">
+      Configure webhook endpoints
+    </Card>
+
+  </Step>
+
+  <Step title="Testing & Validation">
+    ### Comprehensive Testing in Sandbox
+
+    **Testing Checklist**:
+    - [ ] All flows tested in sandbox
+    - [ ] Error handling implemented
+    - [ ] User feedback messages clear
+    - [ ] Transaction receipts generated
+    - [ ] Notifications working
+
+    <Card title="Testing Guide" icon="flask" href="/integration/testing">
+      Complete testing documentation
+    </Card>
+
+  </Step>
+</Steps>
+
+## Next Steps
+
+<Card title='Start Building' icon='rocket' href='/api/authentication'>
+  Ready to integrate? Head to the API documentation and start building your
+  remittance application.
+</Card>

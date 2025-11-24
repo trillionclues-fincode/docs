@@ -49,28 +49,20 @@
             "pages": ["remittance/overview", "remittance/process-flows"]
           },
           {
-            "group": "Core Flows",
+            "group": "Transaction Core",
             "pages": [
-              "remittance/transaction-lifecycle",
-              "remittance/fx-conversion",
+              "remittance/transactions",
+              "remittance/fx-rates",
+              "remittance/beneficiaries",
               "remittance/settlement"
             ]
           },
           {
-            "group": "Features",
+            "group": "System & Rules",
             "pages": [
+              "remittance/fees",
               "remittance/corridors",
-              "remittance/compliance",
-              "remittance/error-handling"
-            ]
-          },
-          {
-            "group": "API Reference",
-            "pages": [
-              "remittance/api/transactions",
-              "remittance/api/beneficiaries",
-              "remittance/api/quotes",
-              "remittance/api/rates"
+              "remittance/compliance"
             ]
           }
         ]
