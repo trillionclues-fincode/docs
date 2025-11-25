@@ -50,41 +50,21 @@ The FinCode API is organized into service-based endpoints following a RESTful ar
     User authentication, token management, and session handling
   </Card>
 
-{" "}
-
 <Card
   title='Transactions'
   icon='money-bill-transfer'
-  href='/api/transactions/create'
+  href='/api/transactions/call-quote'
 >
-  Remittance, lending, and investment transaction processing
+  Remittance, and virtual wallet transaction processing
 </Card>
 
-{" "}
-
-<Card title='Compliance' icon='shield-check' href='/api/compliance/kyc'>
+<Card title='Compliance' icon='shield-check' href='/api/compliance/cra-forms'>
   KYC/AML verification, sanctions screening, and regulatory compliance
 </Card>
-
-{" "}
 
 <Card title='Reporting' icon='chart-bar' href='/api/reporting/analytics'>
   Analytics, transaction reports, and business intelligence
 </Card>
-
-{" "}
-
-<Card title='Configuration' icon='gear' href='/api/configuration/tenant'>
-  Tenant settings, plugins, and system configuration
-</Card>
-
-{" "}
-
-<Card title='Cross-Border' icon='globe' href='/api/crossborder/rates'>
-  Exchange rates, corridors, fees, and international transfers
-</Card>
-
-{" "}
 
 <Card
   title='Revenue Sharing'
@@ -351,58 +331,6 @@ Use the sandbox environment for testing without affecting production data:
 ```
 
 </Accordion>
-
----
-
-## Quick Links
-
-<CardGroup cols={3}>
-  <Card title="Authentication" icon="key" href="/api/auth/login">
-    Get started with API authentication
-  </Card>
-
-{" "}
-
-<Card
-  title='Remittance API'
-  icon='money-bill-transfer'
-  href='/api/transactions/remittance'
->
-  Send cross-border transfers
-</Card>
-
-{" "}
-
-<Card
-  title='Lending API'
-  icon='hand-holding-dollar'
-  href='/api/transactions/lending'
->
-  Manage loan applications
-</Card>
-
-{" "}
-
-<Card
-  title='Investment API'
-  icon='chart-line'
-  href='/api/transactions/investment'
->
-  Portfolio management
-</Card>
-
-{" "}
-
-<Card title='Webhooks' icon='webhook' href='/api/webhooks'>
-  Event notifications
-</Card>
-
-  <Card title="Postman Collection" icon="code" href="/api/postman-collection">
-    Import API collection
-  </Card>
-</CardGroup>
-
----
 
 ## Support & Resources
 
