@@ -60,16 +60,8 @@
             "pages": [
               "remittance/transactions",
               "remittance/fx-rates",
-              "remittance/beneficiaries",
-              "remittance/settlement"
-            ]
-          },
-          {
-            "group": "System & Rules",
-            "pages": [
               "remittance/fees",
-              "remittance/corridors",
-              "remittance/compliance"
+              "remittance/settlement"
             ]
           }
         ]

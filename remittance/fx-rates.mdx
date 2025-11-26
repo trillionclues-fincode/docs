@@ -1,0 +1,98 @@
+---
+title: "FX Conversion"
+description: "Understanding exchange rates, and how currency conversion works in remittance."
+icon: "money-bill-transfer"
+---
+
+Exchange rate management is critical to remittance transactions. FinCode provides real-time exchange rates with transparent pricing, and competitive margins to ensure customers know exactly what they're paying and what beneficiaries will receive.
+
+### Complete Quote Process
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant App
+    participant API
+    participant FX Service
+    participant Fee Engine
+    participant Compliance
+
+    Customer->>App: Enter send amount
+    Customer->>App: Select destination country
+    Customer->>App: Choose payout method
+    
+    App->>API: POST /call-quote
+    Note over App,API: Request includes:<br/>amount, currencies,<br/>corridor, method
+    
+    API->>FX Service: Get live rate
+    FX Service->>FX Service: Fetch from liquidity provider
+    FX Service->>FX Service: Apply FX margin
+    FX Service-->>API: Exchange rate
+    
+    API->>Fee Engine: Calculate fees
+    Fee Engine->>Fee Engine: Check corridor fees
+    Fee Engine->>Fee Engine: Apply amount tier
+    Fee Engine->>Fee Engine: Add payment method fee
+    Fee Engine-->>API: Fee breakdown
+    
+    API->>Compliance: Check limits
+    Compliance->>Compliance: Verify against KYC tier
+    Compliance->>Compliance: Check daily/monthly limits
+    Compliance-->>API: Limit validation
+    
+    API->>API: Calculate totals
+    API-->>App: Complete quote
+    
+    App-->>Customer: Display quote details
+    Note over Customer,App: Rate valid realtime
+```
+
+**API Endpoint**: [Call Quote](/api/transactions/call-quote)
+
+### Payment Method Fees
+
+<CardGroup cols={2}>
+  <Card title="Open Banking" icon="building-columns">
+    Recommended for larger amounts
+  </Card>
+  
+  <Card title="Debit Card" icon="credit-card">
+    Instant processing
+  </Card>
+  
+  <Card title="Credit Card" icon="credit-card">
+    For rewards/cashback
+  </Card>
+  
+  <Card title="Bank Transfer" icon="money-bill-transfer">
+    Best for regular transfers
+  </Card>
+</CardGroup>
+
+## Related Documentation
+
+<CardGroup cols={3}>
+  <Card title="Process Flows" icon="diagram-project" href="/remittance/process-flows">
+    See FX in complete transaction flow
+  </Card>
+  
+  <Card title="Settlement" icon="building-columns" href="/remittance/settlement">
+    How funds are delivered after conversion
+  </Card>
+  
+  <Card title="Corridors" icon="globe" href="/remittance/corridors">
+    Rates and fees by corridor
+  </Card>
+  
+  <Card title="API Reference" icon="code" href="/api/transactions/call-quote">
+    Complete API documentation
+  </Card>
+  
+  <Card title="Transaction Lifecycle" icon="timeline" href="/remittance/transaction-lifecycle">
+    Understand transaction states
+  </Card>
+  
+  <Card title="Compliance" icon="shield-check" href="/remittance/compliance">
+    KYC and transaction limits
+  </Card>
+</CardGroup>
