@@ -1,0 +1,205 @@
+---
+title: 'Transaction Lifecycle'
+description: 'Understand transaction states, transitions, and what triggers each status change.'
+icon: 'timeline'
+---
+
+Every remittance transaction moves through a series of well-defined states from creation to completion. Understanding these states helps you build robust integrations and provide clear user feedback.
+
+```mermaid
+stateDiagram-v2
+    [*] --> WaitingToPay: Transaction Created
+    
+    WaitingToPay --> Verifying: Payment Received
+    WaitingToPay --> Cancelled: User Cancelled
+    WaitingToPay --> Expired: Timeout (15 min)
+    
+    Verifying --> Paid: Compliance Passed
+    Verifying --> PendingRefund: Compliance Failed
+    Verifying --> FailedToDeliver: Delivery Issue
+    
+    FailedToDeliver --> Paid: Retry Successful
+    FailedToDeliver --> PendingRefund: Max Retries
+    
+    PendingRefund --> Refunded: Refund Complete
+    
+    Paid --> [*]
+    Refunded --> [*]
+    Cancelled --> [*]
+    Expired --> [*]
+    
+    note right of Verifying
+        AML/Sanctions screening
+        typically 1-5 minutes
+    end note
+    
+    note right of FailedToDeliver
+        Automatic retry
+        up to 3 attempts
+    end note
+```
+
+### Active States
+
+<AccordionGroup>
+  <Accordion title="WAITING_TO_PAY" icon="clock">
+    **Description**: Transaction created, awaiting payment from user
+
+    **What Happens**:
+    - Transaction reference generated
+    - User redirected to payment page
+    - Timer starts for quote validity
+
+    **User Actions Available**:
+    - Complete payment via card or open banking
+    - Cancel the transaction
+    - View transaction details
+
+    **Next Possible States**:
+    - `VERIFYING` - Payment successfully received
+    - `CANCELLED` - User cancelled before payment
+    - `EXPIRED` - Payment not completed within 10 minutes
+  </Accordion>
+
+  <Accordion title="VERIFYING" icon="shield-check">
+    **Description**: Payment received, undergoing compliance checks
+
+    **What Happens**:
+    - AML/CFT screening initiated
+    - Sanctions list checking
+    - Risk score calculation
+    - PEP screening (if applicable)
+    - Transaction pattern analysis
+
+    **System Actions**:
+    - Automated compliance checks run
+    - Manual review triggered if flagged
+    - Compliance team notified (if needed)
+
+    **Next Possible States**:
+    - `PAID` - All checks passed, funds disbursed
+    - `PENDING_REFUND` - Compliance or payment after transaction expiration
+    - `FAILED_TO_DELIVER` - Delivery issues detected
+
+    <Info>
+      Most transactions (95%+) pass automated checks and move to PAID within 0-2 minutes.
+    </Info>
+  </Accordion>
+
+  <Accordion title="FAILED_TO_DELIVER" icon="triangle-exclamation">
+    **Description**: Delivery attempt failed, automatic retry in progress
+
+    **Common Causes**:
+    - Invalid or closed bank account
+    - Inactive mobile money account
+    - Network timeout or provider downtime
+    - Incorrect account details
+    - Beneficiary name mismatch
+
+    **System Actions**:
+    - Exponential backoff between retries
+    - Notify compliance team after 2nd failure
+    - Contact user for corrections if needed
+
+    **Next Possible States**:
+    - `PAID` - Retry successful
+    - `PENDING_REFUND`
+
+    <Warning>
+      Contact your customer to verify beneficiary details if this status persists.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="PENDING_REFUND" icon="rotate-left">
+    **Description**: Refund initiated, processing back to sender
+
+    **Triggers**:
+    - Compliance rejection (AML/sanctions)
+    - Delivery failure after max retries
+    - Customer dispute (within refund window)
+    - Technical error requiring reversal
+
+    **What Happens**:
+    - Refund request submitted to payment processor
+    - Original payment method receives credit
+    - Refund notification sent to user
+    - Transaction marked for closure
+
+    **Refund Amount**:
+    - Full transaction amount (send amount)
+    - All fees included
+    - Same payment method as original
+
+    **Next Possible State**:
+    - `REFUNDED` - Refund completed successfully
+  </Accordion>
+</AccordionGroup>
+
+## State Transition Triggers
+
+Understanding what causes state changes helps you build better error handling.
+
+### Payment-Related Transitions
+
+| From State | To State | Trigger | Action Required |
+|------------|----------|---------|-----------------|
+| `WAITING_TO_PAY` | `VERIFYING` | Payment successful | Automatic |
+| `WAITING_TO_PAY` | `CANCELLED` | User cancelled | None |
+| `WAITING_TO_PAY` | `EXPIRED` | 10 min timeout | Request new quote |
+
+### Compliance-Related Transitions
+
+| From State | To State | Trigger | Action Required |
+|------------|----------|---------|-----------------|
+| `VERIFYING` | `PAID` | All checks passed | None - Automatic |
+| `VERIFYING` | `PENDING_REFUND` | Compliance/Payment failed | Contact support |
+| `VERIFYING` | `FAILED_TO_DELIVER` | Delivery issue | Check beneficiary details |
+
+### Refund Transitions
+
+| From State | To State | Trigger | Action Required |
+|------------|----------|---------|-----------------|
+| `PENDING_REFUND` | `REFUNDED` | Refund processed | Automatic |
+
+<Card title="Webhook Configuration" icon="webhook" href="/api/webhooks">
+  Learn how to set up webhooks for real-time updates
+</Card>
+
+## Common Scenarios
+
+### Scenario 1: Successful Transaction
+
+```mermaid
+graph LR
+    A[WAITING_TO_PAY] -->|Payment received| B[VERIFYING]
+    B -->|Checks passed| C[PAID]
+    
+    style C fill:#d4edda
+```
+### Scenario 2: Compliance Rejection
+
+```mermaid
+graph LR
+    A[WAITING_TO_PAY] -->|Payment received| B[VERIFYING]
+    B -->|Sanctions match/Payment failed| C[PENDING_REFUND]
+    C -->|Refund processed| D[REFUNDED]
+    
+    style D fill:#f8d7da
+```
+
+### Scenario 3: Delivery Failure with Recovery
+
+```mermaid
+graph LR
+    A[WAITING_TO_PAY] -->|Payment received| B[VERIFYING]
+    B -->|Checks passed| C[FAILED_TO_DELIVER]
+    C -->|Retry successful| D[PAID]
+    
+    style D fill:#d4edda
+```
+
+## API Reference
+
+<Card title="Transaction Status Endpoint" icon="code" href="/api/transactions/history-data">
+  View complete API documentation for tracking transaction status
+</Card>

@@ -1,6 +1,5 @@
 ---
 title: 'Process Flows'
-description: 'Detailed visual diagrams and step-by-step explanations of the complete remittance transaction journey.'
 icon: 'diagram-project'
 ---
 
@@ -11,85 +10,85 @@ This guide provides comprehensive visual diagrams and step-by-step explanations 
   Initiation, Payment & Processing, and Post-Transaction.
 </Note>
 
-### Phase 1: User Onboarding & Authentication
+### Phase 1: Sender Onboarding & Authentication
 
-#### 1.1 User Registration
+#### 1.1 Sender Registration
 
-The registration process creates a new user account with required personal information.
+The registration process creates a new sender account with required personal information.
 
 ```mermaid
 sequenceDiagram
-    participant User
+    participant Sender
     participant App
     participant API
     participant Email Service
     participant Admin
 
-    User->>App: Download from App Store
-    User->>App: Click "Register"
-    App->>User: Show registration form
-    User->>App: Submit details
+    Sender->>App: Download from App Store
+    Sender->>App: Click "Register"
+    App->>Sender: Show registration form
+    Sender->>App: Submit details
     App->>API: POST /create-customer
     API->>API: Validate data
-    API->>API: Create user account
+    API->>API: Create sender account
     API->>Email Service: Send welcome email
-    Email Service-->>User: Welcome email
+    Email Service-->>Sender: Welcome email
     API->>Admin: Notify new registration
     API-->>App: Registration successful
-    App-->>User: Navigate to login
+    App-->>Sender: Navigate to login
 ```
 
 <Card title='API Endpoint' href='/api/users/create-customer'>
   Go to create customer endpoint.
 </Card>
 
-#### User Experience Flow
+#### Sender Experience Flow
 
 <Steps>
   <Step title="Download App">
-    User downloads the app from PlayStore (Android) or App Store (iOS)
+    Sender downloads the app from PlayStore (Android) or App Store (iOS)
   </Step>
 
 <Step title='Start Registration'>
-  User taps "Register as New User" on the welcome screen
+  Sender taps "Signup" on the welcome screen
 </Step>
 
 <Step title='Fill Form'>
-  User completes the multi-step registration form with personal details
+  Sender completes the multi-step registration form with personal details
 </Step>
 
 <Step title='Email Verification'>
-  User receives a welcome email with account confirmation
+  Sender receives a welcome email with account confirmation
 </Step>
 
-  <Step title="Admin Notification">
-    Admin dashboard receives notification about the new registration for monitoring
-  </Step>
+<Step title="Admin Notification">
+  Admin dashboard receives notification about the new registration for monitoring
+</Step>
 </Steps>
 
-### 1.2 User Login & Authentication
+### 1.2 Sender Login & Authentication
 
 Secure authentication using email and password with JWT token management.
 
 ```mermaid
 sequenceDiagram
-    participant User
+    participant Sender
     participant App
     participant API
     participant Auth Service
 
-    User->>App: Launch app
-    User->>App: Click "Login"
-    App->>User: Show login form
-    User->>App: Enter email & password
+    Sender->>App: Launch app
+    Sender->>App: Click "Login"
+    App->>Sender: Show login form
+    Sender->>App: Enter email & password
     App->>API: PUT /auth/login
     API->>Auth Service: Validate credentials
-    Auth Service->>Auth Service: Check user role
-    Auth Service-->>API: User authenticated
+    Auth Service->>Auth Service: Check sender role
+    Auth Service-->>API: Sender authenticated
     API->>API: Generate JWT tokens
-    API-->>App: Return tokens + user data
+    API-->>App: Return tokens + sender data
     App->>App: Store tokens securely
-    App-->>User: Navigate to dashboard
+    App-->>Sender: Navigate to dashboard
 ```
 
 <Card title='API Endpoint' href='/api/auth/login'>
@@ -98,11 +97,11 @@ sequenceDiagram
 
 ### 1.3 KYC Verification
 
-Know Your Customer (KYC) verification is required before users can make transactions.
+Know Your Customer (KYC) verification is required before sender's can make transactions.
 
 ```mermaid
 sequenceDiagram
-    participant User
+    participant Sender
     participant App
     participant API
     participant KYC Service
@@ -110,9 +109,9 @@ sequenceDiagram
 
     App->>API: Check KYC requirement
     API-->>App: KYC required
-    App->>User: Show KYC form
-    User->>App: Upload ID documents
-    User->>App: Enter personal details
+    App->>Sender: Show KYC form
+    Sender->>App: Upload ID documents
+    Sender->>App: Enter personal details
     App->>API: POST /submit-kyc-documents
     API->>KYC Service: Process documents
     KYC Service->>KYC Service: Extract data (OCR)
@@ -122,8 +121,8 @@ sequenceDiagram
     Compliance-->>KYC Service: Verification result
     KYC Service-->>API: KYC status updated
     API-->>App: Verification complete
-    App->>User: Send notification
-    App-->>User: Navigate to dashboard
+    App->>Sender: Send notification
+    App-->>Sender: Navigate to dashboard
 ```
 
 <Card title='API Endpoint' href='/api/compliance/submit-kyc-documents'>
@@ -142,10 +141,10 @@ sequenceDiagram
     3. Basic sanctions screening against global watchlists
     4. Identity verification through third-party services
 
-    **5-15 minutes** - Fully automated processing
+    **0-2 minutes** - Fully automated processing
 
     <Tip>
-      Tier 1 is ideal for users who need to send smaller amounts quickly without extensive documentation.
+      Tier 1 is ideal for senders who need to send smaller amounts quickly without extensive documentation.
     </Tip>
 
   </Tab>
@@ -163,10 +162,10 @@ sequenceDiagram
     4. Source of funds verification
     5. Employment verification (if applicable)
 
-    **1-24 hours** - Includes manual review for certain documents
+    **0-1 hour** - Includes manual review for certain documents
 
     <Tip>
-      Tier 2 is required for business users or individuals making large-value transfers regularly.
+      Tier 2 is required for senders who need to send larger amounts regularly.
     </Tip>
 
   </Tab>
@@ -208,7 +207,7 @@ CRA forms collect additional information for regulatory compliance and risk asse
 
 ```mermaid
 sequenceDiagram
-    participant User
+    participant Sender
     participant App
     participant API
     participant Compliance
@@ -217,17 +216,17 @@ sequenceDiagram
     API->>Compliance: Get required forms
     Compliance-->>API: Return form templates
     API-->>App: CRA forms required
-    App->>User: Display dynamic form
-    User->>App: Complete form fields
+    App->>Sender: Display dynamic form
+    Sender->>App: Complete form fields
     App->>API: POST /cra-forms
     API->>Compliance: Store responses
     Compliance->>Compliance: Calculate risk score
     Compliance-->>API: Risk assessment complete
     API-->>App: Proceed to dashboard
-    App-->>User: Dashboard loaded
+    App-->>Sender: Dashboard loaded
 ```
 
-<Card title='API Endpoint' href='/api/compliance/compliance/cra-forms'>
+<Card title='API Endpoint' href='/api/compliance/submit-cra'>
   Go to CRA form endpoint.
 </Card>
 
@@ -235,20 +234,20 @@ sequenceDiagram
 
 <CardGroup cols={2}>
   <Card title="First Transaction">
-    Required when transaction amount exceeds £500/$750 for the first time
+    Required when transaction amount exceeds limit set for the first time.
   </Card>
 
 <Card title='High-Risk Corridors'>
-  Transactions to countries with enhanced due diligence requirements
+  Transactions to countries with enhanced due diligence requirements.
 </Card>
 
 <Card title='Periodic Reviews'>
-  Annual or biennial reviews for active customers
+  Annual or biennial reviews for active customers.
 </Card>
 
-  <Card title="Regulatory Changes">
-    When new regulations require additional information
-  </Card>
+<Card title="Regulatory Changes">
+  When new regulations require additional information.
+</Card>
 </CardGroup>
 
 #### Typical CRA Questions
@@ -268,33 +267,51 @@ sequenceDiagram
   </Accordion>
 
 <Accordion title='Purpose of Transfer'>
-  **Question**: What is the purpose of this transfer? **Options**: - Family
-  support - Education fees - Medical expenses - Business payment - Property
-  purchase - Investment - Gift - Other (specify)
+  **Question**: What is the purpose of this transfer?
+  
+  **Options**:
+  - Family support
+  - Education fees
+  - Medical expenses
+  - Business payment
+  - Property purchase
+  - Investment
+  - Gift
+  - Other (specify)
 </Accordion>
 
 <Accordion title='Beneficiary Relationship'>
-  **Question**: What is your relationship to the beneficiary? **Options**: -
-  Family member (parent, sibling, spouse, child) - Friend - Business partner -
-  Employee - Myself - Other (specify)
+  **Question**: What is your relationship to the beneficiary?
+  
+  **Options**:
+  - Family member (parent, sibling, spouse, child)
+  - Friend
+  - Business partner
+  - Employee
+  - Myself
+  - Other (specify)
 </Accordion>
 
 <Accordion title='Transaction Frequency'>
-  **Question**: How often do you plan to send money? **Options**: - One-time
-  only - Monthly - Quarterly - As needed - Weekly
+  **Question**: How often do you plan to send money?
+  
+  **Options**:
+  - One-time only
+  - Monthly
+  - Quarterly
+  - As needed
+  - Weekly
 </Accordion>
 
-  <Accordion title="Employment Details">
-    **Question**: What is your occupation and employer?
-    
-    **Fields**:
-    - Occupation/Job title
-    - Employer name
-    - Industry sector
-  </Accordion>
+<Accordion title="Employment Details">
+  **Question**: What is your occupation and employer?
+  
+  **Fields**:
+  - Occupation/Job title
+  - Employer name
+  - Industry sector
+</Accordion>
 </AccordionGroup>
-
----
 
 ## Phase 2: Transaction Initiation
 
@@ -322,42 +339,40 @@ graph LR
 
 <CardGroup cols={3}>
   <Card title="Quick Send" icon="paper-plane">
-    One-tap access to start a new transaction
+    One-tap access to start a new transaction.
   </Card>
 
 <Card title='Recent Activity' icon='clock'>
-  Last 5 transactions with status indicators
+  Last 5 transactions with status indicators.
 </Card>
 
 <Card title='KYC Status' icon='id-badge'>
-  Current verification tier and limits
+  Current verification tier and limits.
 </Card>
 
 <Card title='Saved Beneficiaries' icon='user-group'>
-  Quick access to frequent recipients
+  Quick access to frequent recipients.
 </Card>
 
 <Card title='Transaction Limits' icon='gauge'>
-  Remaining daily/monthly limits
+  Remaining daily/monthly limits.
 </Card>
 
-  <Card title="Exchange Rates" icon="chart-line">
-    Live rates for popular corridors
-  </Card>
+<Card title="Exchange Rates" icon="chart-line">
+  Live rates for popular corridors.
+</Card>
 </CardGroup>
-
----
 
 ### 2.2 Transaction Type Selection
 
-Users choose from three or more primary transaction types based on beneficiary preferences.
+Senders choose from three or more primary transaction types based on beneficiary preferences.
 
 <Tabs>
   <Tab title="Bank Transfer">
     ### Overview
     Direct deposit into beneficiary's bank account using SWIFT or local banking rails.
-    ### User Flow
-    1. User selects "Bank Transfer" option
+    ### Sender Flow
+    1. Sender selects "Bank Transfer" option
     2. Choose destination country from list
     3. Enter transfer amount
     4. Get instant quote with FX rate
@@ -366,11 +381,10 @@ Users choose from three or more primary transaction types based on beneficiary p
     - Account number or IBAN
     - SWIFT/BIC code (for international transfers)
     - Beneficiary full name (must match bank records)
-    - Branch details (if required)
+    - Dynamic form details (if required & set by the backend)
 
     ### Settlement Time
-    **1-24 hours** depending on destination country and local banking hours
-
+    **Instant**
     ### Best For
     - Large transfer amounts
     - Regular recipients with bank accounts
@@ -388,8 +402,8 @@ Users choose from three or more primary transaction types based on beneficiary p
     ### Overview
     Instant transfer to mobile wallet providers like MTN, Airtel, Vodafone, M-Pesa, and more.
 
-    ### User Flow
-    1. User selects "Mobile Money" option
+    ### Sender Flow
+    1. Sender selects "Mobile Money" option
     2. Choose destination country
     3. Select mobile network provider from dropdown
     4. Enter transfer amount
@@ -402,7 +416,6 @@ Users choose from three or more primary transaction types based on beneficiary p
 
     ### Settlement Time
     **Instant to 1 hour** - Fastest delivery method
-
     ### Best For
     - Unbanked beneficiaries
     - Urgent transfers
@@ -433,8 +446,8 @@ Users choose from three or more primary transaction types based on beneficiary p
     ### Overview
     Beneficiary collects physical cash at partner agent locations worldwide.
 
-    ### User Flow
-    1. User selects "Cash Pickup" option
+    ### Sender Flow
+    1. Sender selects "Cash Pickup" option
     2. Choose destination country
     3. Select pickup network partner
     4. Enter transfer amount
@@ -445,7 +458,7 @@ Users choose from three or more primary transaction types based on beneficiary p
     - Pickup unique code/secret
 
     ### Settlement Time
-    **Instant availability** - Cash ready within minutes (beneficiary has 24-48 hours to collect)
+    **Instant availability** - Cash ready within minutes
 
     ### Best For
     - Beneficiaries without bank accounts or mobile money
@@ -489,15 +502,15 @@ Real-time exchange rate quotation with rate locking mechanism.
 
 ```mermaid
 sequenceDiagram
-    participant User
+    participant Sender
     participant App
     participant API
     participant FX Service
     participant Compliance
     participant Fee Engine
 
-    User->>App: Enter send/receive amount
-    User->>App: Select destination country
+    Sender->>App: Enter send/receive amount
+    Sender->>App: Select destination country
     App->>API: POST /call-quote
     API->>FX Service: Get live exchange rate
     FX Service-->>API: Current rate
@@ -507,11 +520,11 @@ sequenceDiagram
     Compliance-->>API: Within limits
     API->>API: Calculate total amounts
     API-->>App: Return quote breakdown
-    App-->>User: Display quote
+    App-->>Sender: Display quote
 
-    Note over User,App: Quote valid for 10 minutes
+    Note over Sender,App: Quote valid realtime
 
-    User->>App: Accept quote
+    Sender->>App: Accept quote
     App->>API: POST /lock-rate
     API->>FX Service: Lock rate
     FX Service-->>API: Rate locked
@@ -522,23 +535,9 @@ sequenceDiagram
   Go to transaction types endpoint.
 </Card>
 
-#### Rate Locking
-
-<Info>
-  **Quote Validity**: All quotes are valid for **10 minutes** from creation.
-  After expiration, users must request a new quote.
-</Info>
-
-When a user accepts a quote:
-
-1. Exchange rate is **locked** at the quoted rate
-2. User has 10 minutes to complete payment
-3. If payment is not completed, the transaction expires
-4. Rate lock prevents FX fluctuation risk during payment
-
 ### 2.4 Beneficiary Management
 
-Users can save and manage beneficiaries for faster repeat transactions.
+Senders can save and manage beneficiaries for faster repeat transactions.
 
 ```mermaid
 graph TD
@@ -577,13 +576,13 @@ graph TD
 
 ```mermaid
 sequenceDiagram
-    participant User
+    participant Sender
     participant App
     participant API
     participant Validation Service
     participant Sanctions DB
 
-    User->>App: Enter beneficiary details
+    Sender->>App: Enter beneficiary details
     App->>API: POST /beneficiary-details
     API->>Validation Service: Validate account
     Validation Service->>Validation Service: Check bank/provider exists
@@ -599,14 +598,14 @@ sequenceDiagram
         alt No Sanctions Match
             API->>API: Save beneficiary
             API-->>App: Beneficiary created
-            App-->>User: Show success message
+            App-->>Sender: Show success message
         else Sanctions Match
             API-->>App: Cannot add beneficiary
-            App-->>User: Show compliance message
+            App-->>Sender: Show compliance message
         end
     else Account Invalid
         API-->>App: Validation failed
-        App-->>User: Show error & corrections
+        App-->>Sender: Show error & corrections
     end
 ```
 
@@ -698,29 +697,30 @@ sequenceDiagram
   </Tab>
 </Tabs>
 
----
-
 ## Phase 3: Payment & Processing
 
 ### 3.1 Transaction Review
 
-Before payment, users review all transaction details for accuracy.
+Before payment, senders review all transaction details for accuracy.
 
 #### Review Screen Components
 
 <AccordionGroup>
   <Accordion title="Send Details">
-    - **Send amount**: Amount user is sending
+    - **Send amount**: Amount sender is sending
     - **Send currency**: Source currency (GBP, USD, EUR)
-    - **Exchange rate**: Locked FX rate
+    - **Exchange rate**: FX rate
     - **Rate validity**: Countdown timer (10 minutes)
   </Accordion>
 <Accordion title='Fees & Total'>
     - **Transfer fee**: Platform fee
-    - **Payment method fee**:Card fee if applicable
+    - **Payment method fee**: Card fee if applicable
     - **Total to pay**: Final amount to be charged
     - **Fee breakdown**:
-  Transparent cost structure
+      - Transfer fee
+      - Payment method fee
+      - Exchange rate margin
+      - Other fees (if any)
 </Accordion>
 <Accordion title='Receive Details'>
   - **Receive amount**: Amount beneficiary gets
@@ -743,39 +743,39 @@ Secure payment through card or open banking with 3D Secure authentication.
 
 ```mermaid
 sequenceDiagram
-    participant User
+    participant Sender
     participant App
     participant API
     participant Payment Gateway
     participant Bank
     participant System
 
-    User->>App: Confirm transaction
+    Sender->>App: Confirm transaction
     App->>API: POST /create-transaction
     API->>API: Create transaction record
     API-->>App: Transaction ID (WAITING_TO_PAY)
 
-    App->>User: Choose payment method
-    User->>App: Select card/open banking
+    App->>Sender: Choose payment method
+    Sender->>App: Select card/open banking
     App->>Payment Gateway: Initialize payment
     Payment Gateway->>Payment Gateway: Create session
     Payment Gateway-->>App: Payment session URL
-    App-->>User: Redirect to payment page
+    App-->>Sender: Redirect to payment page
 
     alt Card Payment
-        User->>Payment Gateway: Enter card details
+        Sender->>Payment Gateway: Enter card details
         Payment Gateway->>Bank: Request 3DS authentication
-        Bank-->>User: OTP/2FA prompt
-        User->>Bank: Complete authentication
+        Bank-->>Sender: OTP/2FA prompt
+        Sender->>Bank: Complete authentication
         Bank->>Bank: Validate OTP
         Bank-->>Payment Gateway: Auth successful
         Payment Gateway->>Payment Gateway: Charge card
     else Open Banking
-        User->>Payment Gateway: Select bank
-        Payment Gateway-->>User: Redirect to bank login
-        User->>Bank: Login with credentials
-        Bank-->>User: Show payment authorization
-        User->>Bank: Authorize payment
+        Sender->>Payment Gateway: Select bank
+        Payment Gateway-->>Sender: Redirect to bank login
+        Sender->>Bank: Login with credentials
+        Bank-->>Sender: Show payment authorization
+        Sender->>Bank: Authorize payment
         Bank->>Bank: Process payment
         Bank-->>Payment Gateway: Payment authorized
     end
@@ -785,8 +785,8 @@ sequenceDiagram
     API->>System: Update status to VERIFYING
     API->>System: Trigger compliance checks
     Payment Gateway-->>App: Redirect with success
-    App-->>User: Show success screen
-    App-->>User: Display transaction reference
+    App-->>Sender: Show success screen
+    App-->>Sender: Display transaction reference
 ```
 
 ### 3.3 Compliance Screening
@@ -1033,14 +1033,9 @@ sequenceDiagram
 
 | Payout Method     | Typical Time  | Fastest | Latest   | Availability       |
 | ----------------- | ------------- | ------- | -------- | ------------------ |
-| **Bank Transfer** | 2-6 hours     | 1 hour  | 24 hours | Business days only |
-| **Mobile Money**  | 10-30 minutes | Instant | 1 hour   | 24/7               |
+| **Bank Transfer** | Instant       | Instant | 30secs   | 24/7               |
+| **Mobile Money**  | Instant       | Instant | 1 hour   | 24/7               |
 | **Cash Pickup**   | Instant       | Instant | N/A      | Agent hours        |
-
-<Info>
-  **Business Day Definition**: Monday-Friday, 9 AM - 5 PM local time, excluding
-  public holidays in the destination country.
-</Info>
 
 ## Phase 4: Post-Transaction
 
@@ -1052,7 +1047,7 @@ Transactions move through defined states from creation to completion.
 stateDiagram-v2
     [*] --> WaitingToPay: Transaction Created
     WaitingToPay --> Verifying: Payment Received
-    WaitingToPay --> Cancelled: User Cancelled
+    WaitingToPay --> Cancelled: Sender Cancelled
     WaitingToPay --> Expired: Rate/Payment Timeout
 
     Verifying --> Paid: Compliance Approved
@@ -1081,24 +1076,19 @@ stateDiagram-v2
   <Accordion title="WAITING_TO_PAY">
     **Description**: Transaction created but payment not yet received
 
-    **Duration**: Up to 10 minutes
-
-    **User Actions**:
+    **Sender Actions**:
     - Complete payment via card or open banking
     - Cancel transaction
-    - Request new quote if expired
 
     **Next States**:
     - `VERIFYING` - Payment received
-    - `CANCELLED` - User cancelled
+    - `CANCELLED` - Sender cancelled
     - `EXPIRED` - Quote/payment timeout
 
   </Accordion>
 
   <Accordion title="VERIFYING">
     **Description**: Payment received, undergoing compliance checks
-
-    **Duration**: Typically 1-5 minutes (can be up to 24 hours for manual review)
 
     **System Actions**:
     - AML/CFT screening
@@ -1146,7 +1136,7 @@ stateDiagram-v2
 
     **Next States**:
     - `PAID` - Retry successful
-    - `PENDING_REFUND` - Max retries exceeded
+    - `PENDING_REFUND`
 
   </Accordion>
 
@@ -1157,8 +1147,6 @@ stateDiagram-v2
     - Compliance rejection
     - Delivery failure (max retries)
     - Customer request (within refund window)
-
-    **Processing Time**: 3-5 business days
 
     **Next State**: `REFUNDED` - Refund complete
 
@@ -1180,8 +1168,8 @@ stateDiagram-v2
     **Description**: Transaction cancelled before payment
 
     **Triggers**:
-    - User cancelled during payment
-    - User didn't complete payment
+    - Sender cancelled during payment
+    - Sender didn't complete payment
 
     **No Charges**: No funds were debited
 
@@ -1190,10 +1178,9 @@ stateDiagram-v2
   </Accordion>
 
   <Accordion title="EXPIRED">
-    **Description**: Quote or payment window expired
+    **Description**: Payment window expired
 
     **Causes**:
-    - Rate validity exceeded (10 minutes)
     - Payment not completed in time
 
     **Final State**: Transaction complete (expired)
@@ -1201,18 +1188,16 @@ stateDiagram-v2
   </Accordion>
 </AccordionGroup>
 
----
-
 ## API Integration Checklist
 
 Follow these steps to integrate the complete remittance flow:
 
 <Steps>
   <Step title="User Management APIs">
-    ### Implement User Registration & Authentication
+    ### Implement Sender Registration & Authentication
 
     **Testing Checklist**:
-    - [ ] User can register with valid details
+    - [ ] Sender can register with valid details
     - [ ] Email validation works
     - [ ] Password strength requirements enforced
     - [ ] Login returns valid JWT tokens
@@ -1220,7 +1205,7 @@ Follow these steps to integrate the complete remittance flow:
     - [ ] CRA form submission works
 
     <Card title="API Reference" icon="code" href="/api/users/create-customer">
-      View detailed user management endpoints
+      View detailed sender management endpoints
     </Card>
 
   </Step>
@@ -1285,7 +1270,7 @@ Follow these steps to integrate the complete remittance flow:
     **Testing Checklist**:
     - [ ] All flows tested in sandbox
     - [ ] Error handling implemented
-    - [ ] User feedback messages clear
+    - [ ] Sender feedback messages clear
     - [ ] Transaction receipts generated
     - [ ] Notifications working
 

@@ -15,11 +15,15 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Overview",
+        "tab": "Home",
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["index", "quickstart", "authentication"]
+            "pages": [
+              "index",
+              "quickstart",
+              "authentication"
+            ]
           },
           {
             "group": "Core Concepts",
@@ -46,7 +50,10 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["remittance/overview", "remittance/process-flows"]
+            "pages": [
+              "remittance/overview",
+              "remittance/process-flows"
+            ]
           },
           {
             "group": "Transaction Core",
@@ -72,7 +79,10 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["lending/overview", "lending/loan-lifecycle"]
+            "pages": [
+              "lending/overview",
+              "lending/loan-lifecycle"
+            ]
           },
           {
             "group": "Core Flows",
@@ -85,7 +95,10 @@
           },
           {
             "group": "Credit Assessment",
-            "pages": ["lending/credit-scoring", "lending/risk-models"]
+            "pages": [
+              "lending/credit-scoring",
+              "lending/risk-models"
+            ]
           },
           {
             "group": "API Reference",
@@ -103,7 +116,10 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["investment/overview", "investment/account-opening"]
+            "pages": [
+              "investment/overview",
+              "investment/account-opening"
+            ]
           },
           {
             "group": "Core Flows",
@@ -137,7 +153,9 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": ["api/authentication"]
+            "pages": [
+              "api/authentication"
+            ]
           },
           {
             "group": "Authentication",
@@ -158,7 +176,6 @@
               "api/security/fetch-preference"
             ]
           },
-
           {
             "group": "Compliance & KYC",
             "pages": [
@@ -255,7 +272,11 @@
           },
           {
             "group": "Webhooks & Events",
-            "pages": ["api/webhooks", "api/events", "api/webhook-security"]
+            "pages": [
+              "api/webhooks",
+              "api/events",
+              "api/webhook-security"
+            ]
           },
           {
             "group": "Testing & Tools",
@@ -282,7 +303,13 @@
     }
   },
   "contextual": {
-    "options": ["copy", "view", "chatgpt", "claude", "cursor"]
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "cursor"
+    ]
   },
   "footer": {
     "socials": {

@@ -1,14 +1,12 @@
 ---
 title: 'Overview'
-description: 'Introduction to the remittance platform, core concepts, and getting started guide'
 icon: 'house'
 ---
 
 Welcome to the remittance platform documentation. This guide will help you understand how our international money transfer system works and how to integrate it into your application.
-
 ### What is Remittance?
 
-Our remittance platform enables **fast, secure, and compliant international money transfers**. Users can send money across borders to beneficiaries via:
+Our remittance platform enables **fast, secure, and compliant international money transfers**. Senders can send money across borders to beneficiaries via:
 
 - **Bank transfers** - Direct deposits to bank accounts
 - **Mobile money** - Instant transfers to mobile wallets
@@ -43,35 +41,33 @@ Our remittance platform enables **fast, secure, and compliant international mone
     RESTful APIs with comprehensive documentation and sandbox environment
   </Card>
 </CardGroup>
-
 ### How It Works
 
 The remittance flow consists of four main phases:
-
 <Steps>
-  <Step title='User Onboarding'>
-    Users register, complete KYC verification, and set up their profile with
+  <Step title='Sender Onboarding'>
+    Senders register, complete KYC verification, and set up their profile with
     required compliance documentation.
   </Step>
 
 <Step title='Transaction Initiation'>
-  Users get a quote with live FX rates, select or create beneficiaries, and
+  Senders get a quote with live FX rates, select or create beneficiaries, and
   review transaction details.
 </Step>
 
-<Step title='Payment & Processing'>
+<Step title='Collection'>
   Secure payment via card or open banking, followed by automated compliance
   screening and FX conversion.
 </Step>
 
-  <Step title='Settlement & Notification'>
+  <Step title='Settlement'>
     Funds are disbursed to beneficiaries, and both parties receive confirmation
     notifications.
   </Step>
 </Steps>
 
 <Info>
-  For detailed visual flows, see the [Process Flows](/remittance/process-flows)
+  For detailed visual flow, see the [Process Flows](/remittance/process-flows)
   page.
 </Info>
 
@@ -88,37 +84,39 @@ WAITING_TO_PAY → VERIFYING → PAID
 Transactions can also transition to `CANCELLED`, `EXPIRED`, `FAILED_TO_DELIVER`, `PENDING_REFUND`, or `REFUNDED` based on various conditions.
 
 <Card title='Learn More' href='/remittance/transactions'>
-  See detailed state transitions and what triggers each status change
+  See detailed state transitions and what triggers each status change.
 </Card>
 
 #### Exchange Rates
 
-Exchange rates are fetched in real-time and can be locked for up to **15 minutes** during the transaction process. The final rate includes:
+Exchange rates are fetched in real-time during the transaction process. The final rate includes:
 
-- **Base exchange rate** - Market rate from our liquidity providers
+- **Base exchange rate** - Market rate from our/your liquidity providers
 - **FX margin** - Small markup for sustainability
 - **Transfer fee** - Fixed or percentage-based fee per transaction
 
 <Card title='Learn More' href='/remittance/fx-rates'>
-  Understand how FX rates are calculated and applied
+  Understand how FX rates are calculated and applied.
 </Card>
 
 #### Beneficiaries
 
-Beneficiaries are the recipients of remittance transfers. Users can:
+Beneficiaries are the recipients of remittance transfers. Senders can:
 
 - Save beneficiaries for future transactions
 - Manage multiple beneficiaries
 - Update beneficiary details
-- Each beneficiary undergoes details validation
+- Each beneficiary undergoes details validation:
+  - **Bank transfers**: Account and bank details validation (if supported by payout partner)
+  - **Mobile money**: Phone number validation (if supported by payout partner)
 
 <Card title='Learn More' href='/remittance/beneficiaries'>
-  Explore beneficiary management and validation
+  Explore beneficiary management and validation.
 </Card>
 
 #### Corridors
 
-A corridor represents a **send-receive currency pair** with specific:
+A corridor represents a **send-receive country pair** with specific:
 
 - Supported payout methods
 - Transaction limits
@@ -127,12 +125,12 @@ A corridor represents a **send-receive currency pair** with specific:
 - Regulatory requirements
 
 <Card title='Learn More' href='/remittance/corridors'>
-  View all supported corridors and their specifications
+  View all supported corridors and their specifications.
 </Card>
 
 ### Compliance & Security
 
-We operate a **tiered KYC system** as well as a dynamic compliance system to balance user experience with regulatory requirements as well as custom client integrations:
+We operate a **tiered KYC system** as well as a dynamic compliance system to balance sender experience with regulatory requirements as well as custom client integrations:
 
 #### AML/CFT Screening
 
@@ -144,7 +142,7 @@ Every transaction is screened against:
 - **Risk scoring** - Dynamic risk assessment
 
 <Card title='Learn More' href='/remittance/compliance'>
-  Deep dive into compliance requirements and processes
+  Deep dive into compliance requirements and processes.
 </Card>
 
 ### Integration Quick Start
@@ -162,21 +160,21 @@ Before you begin:
 
   <Step title='Understand the Flow'>
     Read through the [Process Flows](/remittance/process-flows) to understand
-    the complete user journey.
+    the complete senders journey.
   </Step>
 </Steps>
 
 <Card title='Complete API Reference' href='/api/authentication'>
-  Explore all available endpoints with request/response examples
+  Explore all available endpoints with request/response examples.
 </Card>
 
 ### Supported Payout Methods
 
 #### Bank Transfer
 
-Direct deposit to beneficiary's bank account via SWIFT or local rails.
+Direct deposit to beneficiary's bank account via SWIFT or alternative rails.
 
-- **Settlement**: 1hr-24hrs
+- **Settlement Time**: Instant
 - **Coverage**: 100+ countries
 - **Best for**: Large amounts, regular recipients
 
@@ -197,7 +195,7 @@ Beneficiary collects cash at partner agent locations.
 - **Best for**: Recipients without bank accounts or mobile wallets
 
 <Card title='View All Methods' href='/remittance/settlement'>
-  Detailed settlement options and requirements
+  Detailed settlement options and requirements.
 </Card>
 
 ### Fee Structure
@@ -209,10 +207,10 @@ Our transparent fee structure includes:
 - FX Margin
 
 <Card title='Complete Fee Details' href='/remittance/fees'>
-  View detailed fee structure for all corridors
+  View detailed fee structure for all corridors.
 </Card>
 
-## Testing & Sandbox
+### Testing & Sandbox
 
 We provide a full-featured sandbox environment for testing:
 
@@ -226,9 +224,32 @@ We provide a full-featured sandbox environment for testing:
   live.
 </Tip>
 
-### Complete Transaction Journey
+### Integration Models
 
-The diagram below shows the end-to-end flow from app download to transaction completion:
+We support two primary integration approaches to fit your business needs:
+
+<Tabs>
+  <Tab title="Full Customer Journey">
+    ### End-to-End Integration
+    
+    Build the complete remittance experience within your application, managing the entire user journey from registration to transaction completion.
+
+    **Flow**:
+    1. User onboarding and registration
+    2. KYC verification
+    3. Transaction initiation
+    4. Payment collection
+    5. Compliance screening
+    6. Settlement
+
+    **Documentation**:
+    - [Complete Process Flows](/remittance/process-flows)
+    - [User Management APIs](/api/users/create-customer)
+    - [Authentication](/api/auth/login)
+
+    ### Complete Transaction Journey
+
+The diagram below shows the end-to-end flow for **full customer journey** integration:
 
 ```mermaid
 graph TD
@@ -261,6 +282,56 @@ graph TD
     style V fill:#d4edda
     style S fill:#fff3cd
 ```
+  </Tab>
+
+  <Tab title="Transaction-Only Integration (Coming soon)">
+    ### Direct Transaction Submission
+    
+    If you already manage your own customers and KYC processes, you can submit transactions directly with customer and beneficiary details included.
+
+    **Flow**:
+    ```
+    Your System (Customer Management) 
+           ↓
+    Submit Transaction (with customer + beneficiary data)
+           ↓
+    Our System (Compliance + Settlement)
+           ↓
+    Transaction Complete
+    ```
+
+    **What You Provide**:
+    - Customer information (name, email, phone, address)
+    - Beneficiary details (name, account/phone, country)
+    - Transaction amount and currency
+
+    **What We Handle**:
+    - Payment routing
+    - Settlement to beneficiary
+    - Status updates via webhooks
+
+
+For **transaction-only integration**, your flow starts at the "Compliance Check" stage, with customer and beneficiary data already provided:
+
+```mermaid
+graph TD
+    A[Your System] --> B[Submit Transaction with Customer Data]
+    B --> C[Our System: Compliance Check]
+    C --> D[Disbursement]
+    D --> E[Transaction Complete]
+    E --> F[Webhook Notification to Your System]
+
+    style A fill:#e1f5ff
+    style F fill:#d4edda
+    style C fill:#fff3cd
+```
+
+    <Info>
+      Contact our integration team to enable direct transaction submission for your account.
+    </Info>
+  </Tab>
+</Tabs>
+
 
 ## Next Steps
 
