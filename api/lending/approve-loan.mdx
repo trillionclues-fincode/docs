@@ -38,14 +38,6 @@ Approves a loan application that has been processed and reviewed. This endpoint 
   Must be `application/json`.
 </ParamField>
 
-<ParamField header='platform' type='string' required default='fincode'>
-  Platform identifier. Use `fincode`.
-</ParamField>
-
-<ParamField header='uuid' type='string' required default='200'>
-  Unique request identifier.
-</ParamField>
-
 ## Request Body
 
 <ParamField body='loanApplicationId' type='string' required>
@@ -109,8 +101,6 @@ curl --location --request PUT 'https://remitjunction.fincode.software/api/v6/ser
 --header 'x-fapi-customer-ip-address: 192.168.1.1' \
 --header 'x-fapi-interaction-id: interaction-12345' \
 --header 'Content-Type: application/json' \
---header 'platform: fincode' \
---header 'uuid: 200' \
 --data '{
     "loanApplicationId": "123e4567-e89b-12d3-a456-426614174000",
     "approvedAmount": 50000.00,
@@ -144,8 +134,6 @@ async function approveLoan(accessToken, approvalData) {
           'x-fapi-customer-ip-address': '192.168.1.1',
           'x-fapi-interaction-id': `interaction-${Date.now()}`,
           'Content-Type': 'application/json',
-          platform: 'fincode',
-          uuid: '200',
         },
       }
     );

@@ -34,14 +34,6 @@ Fetches comprehensive details of a loan application including customer informati
   Unique identifier for the interaction/session.
 </ParamField>
 
-<ParamField header='platform' type='string' required default='fincode'>
-  Platform identifier. Use `fincode`.
-</ParamField>
-
-<ParamField header='uuid' type='string' required default='200'>
-  Unique request identifier.
-</ParamField>
-
 ## Path Parameters
 
 <ParamField path='loan-application-id' type='string' required>
@@ -108,9 +100,7 @@ curl --location 'https://remitjunction.fincode.software/api/v6/services/admin/lo
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
 --header 'x-fapi-customer-ip-address: 192.168.1.1' \
---header 'x-fapi-interaction-id: interaction-12345' \
---header 'platform: fincode' \
---header 'uuid: 200'
+--header 'x-fapi-interaction-id: interaction-12345'
 ```
 
 ```javascript Node.js
@@ -129,8 +119,6 @@ async function getLoanApplication(accessToken, loanApplicationId) {
           'x-fapi-auth-date': new Date().toISOString(),
           'x-fapi-customer-ip-address': '192.168.1.1',
           'x-fapi-interaction-id': `interaction-${Date.now()}`,
-          platform: 'fincode',
-          uuid: '200',
         },
       }
     );
