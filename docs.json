@@ -205,14 +205,14 @@
           {
             "group": "Lending",
             "pages": [
-              "api/transactions/lending/create-application",
-              "api/transactions/lending/get-application",
-              "api/transactions/lending/list-applications",
-              "api/transactions/lending/approve-loan",
-              "api/transactions/lending/disburse-loan",
-              "api/transactions/lending/create-repayment",
-              "api/transactions/lending/get-loan-schedule",
-              "api/transactions/lending/list-repayments"
+              "api/lending/get-application",
+              "api/lending/loan-request",
+              "api/lending/list-applications",
+              "api/lending/approve-loan",
+              "api/lending/disburse-loan",
+              "api/lending/create-repayment",
+              "api/lending/get-loan-schedule",
+              "api/lending/list-repayments"
             ]
           },
           {
