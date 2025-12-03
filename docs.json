@@ -37,10 +37,11 @@
             "group": "Integration",
             "pages": [
               "integration/api-keys",
+              "integration/payment-methods",
               "integration/webhooks",
               "integration/testing",
               "integration/go-live",
-              "integration/error-handling"
+              "integration/FAQ"
             ]
           }
         ]
@@ -59,6 +60,7 @@
             "group": "Transaction Core",
             "pages": [
               "remittance/transactions",
+              "remittance/beneficiary-lifecycle",
               "remittance/fx-rates",
               "remittance/fees",
               "remittance/settlement"
@@ -191,7 +193,15 @@
               "api/transactions/beneficiary-details",
               "api/transactions/delivery-currencies",
               "api/transactions/destination-countries",
-              "api/transactions/supported-currencies"
+              "api/transactions/destination-countries",
+              "api/transactions/supported-currencies",
+              "api/transactions/payment-methods",
+              "api/transactions/create-beneficiary",
+              "api/transactions/validate-account",
+              "api/transactions/list-supported-banks",
+              "api/transactions/required-bank-fields",
+              "api/transactions/add-bank-details",
+              "api/transactions/list-mobile-operators"
             ]
           },
           {
@@ -274,8 +284,7 @@
             "group": "Testing & Tools",
             "pages": [
               "api/postman-collection",
-              "api/sandbox-environment",
-              "api/rate-limits"
+              "api/sandbox-environment"
             ]
           }
         ]

@@ -1,0 +1,147 @@
+---
+title: 'Payment Methods'
+api: 'POST https://trustremit.fincode.tech/api/v6/services/paymentmanagement/supported-payment-methods'
+description: 'Retrieves available payment methods for a specific transaction context.'
+---
+
+This endpoint returns the supported payment methods (e.g., Card, Open Banking) for a given transaction context. It requires details about the sender's country, transaction amount, and currency to determine the available options and applicable fees.
+
+<RequestExample>
+  ```bash cURL POST
+  [https://trustremit.fincode.tech/api/v6/services/paymentmanagement/supported-payment-methods](https://trustremit.fincode.tech/api/v6/services/paymentmanagement/supported-payment-methods)
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+<ParamField header='Content-Type' type='string' required default='application/json'>
+  Must be `application/json`.
+</ParamField>
+
+## Request Body
+
+<ParamField body='countryIsoCode3' type='string' required>
+  The 3-letter ISO code of the sender's country (e.g., `GBR`). Available from the login response.
+</ParamField>
+
+<ParamField body='transactionType' type='string' required default='PAYMENT_METHOD'>
+  The type of transaction context. Always `PAYMENT_METHOD`.
+</ParamField>
+
+<ParamField body='currency' type='string' required>
+  The source currency code (e.g., `GBP`).
+</ParamField>
+
+<ParamField body='pcn' type='string' required>
+  The Transaction Reference Number (PCN) obtained from the create transaction step.
+</ParamField>
+
+<ParamField body='amount' type='string' required>
+  The transaction amount.
+</ParamField>
+
+<ParamField body='payAbleType' type='string' required default='TRANSACTION'>
+  The type of payable item. Always `TRANSACTION`.
+</ParamField>
+
+<ParamField body='appId' type='string' required>
+  The application identifier (e.g., `com.app.your_app_identifier`).
+</ParamField>
+
+## Response
+
+<ResponseField name='status' type='string'>
+  Request status (e.g., `SUCCESS`).
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Contains the payment method metadata.
+  <Expandable title='data object'>
+    <ResponseField name='paymentMethodsMetadata' type='array'>
+      List of available payment methods.
+      <Expandable title='paymentMethodsMetadata item'>
+        <ResponseField name='provider' type='string'>
+          The payment provider (e.g., `VOLUME`, `SECURE_TRADING`).
+        </ResponseField>
+        <ResponseField name='type' type='string'>
+          The payment type (e.g., `ONLINE_BANK_PAYMENT`, `ONLINE_CARD_PAYMENT`).
+        </ResponseField>
+        <ResponseField name='hosted' type='boolean'>
+          Indicates if the payment flow is hosted.
+        </ResponseField>
+        <ResponseField name='paymentDetails' type='object'>
+          Provider-specific details for the payment flow (e.g., `hosted_gateway_url`, `paymentIntentId`).
+        </ResponseField>
+        <ResponseField name='principalAmount' type='number'>
+          The principal amount to be paid.
+        </ResponseField>
+        <ResponseField name='total-amount' type='number'>
+          The total amount including fees.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name='paymentTermsNConditions' type='string'>
+      URL to the payment terms and conditions.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST 'https://remitjunction.fincode.software/api/v6/services/paymentmanagement/supported-payment-methods' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--header 'Content-Type: application/json' \
+--data '{
+    "countryIsoCode3": "GBR",
+    "transactionType": "PAYMENT_METHOD",
+    "currency": "GBP",
+    "pcn": "TR656516344451",
+    "amount": "2.000",
+    "payAbleType": "TRANSACTION",
+    "appId": "com.app.your_app_identifier"
+}'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const response = await axios.post(
+  'https://remitjunction.fincode.software/api/v6/services/paymentmanagement/supported-payment-methods',
+  {
+    countryIsoCode3: 'GBR',
+    transactionType: 'PAYMENT_METHOD',
+    currency: 'GBP',
+    pcn: 'TR656516344451',
+    amount: '2.000',
+    payAbleType: 'TRANSACTION',
+    appId: 'com.app.your_app_identifier'
+  },
+  {
+    headers: {
+      'X-Auth-Token': 'YOUR_JWT_ACCESS_TOKEN',
+      'platform': 'fincode',
+      'uuid': '200',
+      'Content-Type': 'application/json'
+    }
+  }
+);
+```
+
+</CodeGroup>

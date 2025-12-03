@@ -1,0 +1,42 @@
+---
+title: 'List Supported Banks'
+api: 'GET https://remitjunction.fincode.software/api/v6/services/bankmanagement/list-supported-banks-iso3/{country}'
+description: 'Retrieves the list of supported banks for a specific country.'
+---
+
+This endpoint returns a list of banks supported for payouts in the specified country. The response includes the bank code and name, which are required for validating accounts and creating transactions.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://remitjunction.fincode.software/api/v6/services/bankmanagement/list-supported-banks-iso3/{country}](https://remitjunction.fincode.software/api/v6/services/bankmanagement/list-supported-banks-iso3/{country})
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='country' type='string' required>
+  ISO 3166-1 alpha-3 country code (e.g., `NGA`).
+</ParamField>
+
+## Code Example
+
+```bash cURL
+curl -X GET 'https://remitjunction.fincode.software/api/v6/services/bankmanagement/list-supported-banks-iso3/NGA' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```

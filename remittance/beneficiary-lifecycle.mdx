@@ -1,0 +1,134 @@
+---
+title: 'Beneficiary Lifecycle'
+icon: 'user-plus'
+---
+
+Creating a beneficiary involves a multi-step process to ensure data accuracy and compliance. The flow varies depending on the payout method (Bank Transfer, Cash Pickup, or Mobile Money) but the core process is the same.
+
+<Note>
+  **Payment Type Configuration**: The available payout methods and their specific configuration are managed at the admin level by the principal firm. This is out of scope for the client integration but determines which options are available for your customers.
+</Note>
+
+<Tabs>
+  <Tab title="Bank Transfer">
+    ### Bank Transfer Flow
+
+    For Bank Transfers, the process involves validating the bank account details before creating the beneficiary profile and linking the account.
+
+    #### Step 1: List Supported Banks
+    First, retrieve the list of supported banks for the destination country.
+
+    <Card title="List Banks" href="/api/transactions/list-supported-banks">
+      View list of supported beneficiary banks
+    </Card>
+
+    #### Step 2: Get Required Fields
+    Different countries and banks require different fields (e.g., IBAN vs. Account Number + Sort Code). Fetch the dynamic requirements for the selected country.
+
+    <Card title="Required Bank Fields" href="/api/transactions/required-bank-fields">
+      View required bank fields
+    </Card>
+
+    #### Step 3: Get Dynamic Forms (Optional)
+    Some corridors require additional sender information when creating a beneficiary. Check for any dynamic fields group `REGISTERED_CUSTOMER_CREATE_BENE`.
+
+    <Card title="Dynamic Fields" href="/api/compliance/dynamic-fields">
+      View dynamic fields
+    </Card>
+
+    #### Step 4: Validate Bank Account
+    Before creation, validate the bank account details. This ensures the account exists and matches the beneficiary name (where supported).
+
+    <Card title="Validate Bank Account" href="/api/transactions/validate-account">
+      View validate bank account endpoint
+    </Card>
+
+    **Response:**
+    If validation is supported and successful, the response will contain the `accountName` which should be used to pre-fill the beneficiary name.
+
+    #### Step 5: Create Beneficiary
+    Create the beneficiary profile using the validated details.
+
+    <Card title="Create Beneficiary" href="/api/transactions/create-beneficiary">
+      Create beneficiary endpoint
+    </Card>
+
+    #### Step 6: Add Bank Details
+    Finally, link the validated bank account to the newly created beneficiary. This can be done immediately after creation or at a later time.
+
+    <Card title="Add Bank Details" href="/api/transactions/add-bank-details">
+      Add bank details endpoint
+    </Card>
+  </Tab>
+
+  <Tab title="Cash Pickup">
+    ### Cash Pickup Flow
+
+    For Cash Pickup, no bank account is required. The beneficiary is identified by their name and phone number only.
+
+    #### Step 1: Validate Phone (Optional)
+    If supported for the corridor and the payout partner, validate the phone number using the validation endpoint (similar to bank account validation but for phone).
+
+    <Card title="Validate Mobile Number" href="/api/transactions/validate-account">
+      View validate mobile number endpoint
+    </Card>
+
+    #### Step 2: Create Beneficiary
+    Create the beneficiary profile. Ensure the `phone` field is populated as it is compulsory for Cash Pickup.
+
+    <Card title="Create Beneficiary" href="/api/transactions/create-beneficiary">
+      Create beneficiary endpoint
+    </Card>
+
+    **Note:** Do not call "Add Bank Details" for Cash Pickup beneficiaries.
+  </Tab>
+
+  <Tab title="Mobile Money">
+    ### Mobile Money Flow
+
+    Mobile Money transfers require validating the mobile number with the specific operator(if supported/activated) before creation.
+
+    #### Step 1: List Mobile Operators
+    Retrieve the list of supported mobile money operators for the destination country.
+
+    <Card title="List Mobile Operators" href="/api/transactions/list-mobile-operators">
+      View supported mobile operators
+    </Card>
+
+    #### Step 2: Validate Mobile Number
+    Validate the mobile number and operator code. This checks if the number is active and registered.
+
+    <Card title="Validate Mobile Number" href="/api/transactions/validate-account">
+      Use `transactionType: MOBILE_MONEY` and `mobileOperatorCode`
+    </Card>
+
+
+    **Example Validation Request:**
+    ```json
+    {
+        "mobileOperatorCode": "ORANGE",
+        "transactionType": "MOBILE_MONEY",
+        "topUpMobileNumber": "090382738",
+        "accountNumberCountry": "GIN",
+        "expectedCurrencyCode": "GNF"
+    }
+    ```
+
+    #### Step 3: Create Beneficiary
+    If validation is successful (or if validation is not supported but the format is correct), create the beneficiary profile.
+
+    <Card title="Create Beneficiary" href="/api/transactions/create-beneficiary">
+      Create beneficiary endpoint
+    </Card>
+
+    #### Step 4: Create Transaction
+    When creating the transaction, include the mobile money details in the `creditParty` array.
+
+    ```json
+    "creditParty": [
+        {"key": "mobilemoneynumber", "value": "0903827384"},
+        {"key": "mobileoperatorcode", "value": "ORANGE"}
+    ]
+    ```
+  </Tab>
+</Tabs>

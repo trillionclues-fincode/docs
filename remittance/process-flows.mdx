@@ -788,6 +788,10 @@ sequenceDiagram
     App-->>Sender: Show success screen
     App-->>Sender: Display transaction reference
 ```
+---
+<Card title="Payment Integration Guide" href="/integration/payment-methods">
+  View detailed integration steps for Card and Open Banking payments.
+</Card>
 
 ### 3.3 Compliance Screening
 
@@ -835,7 +839,7 @@ sequenceDiagram
         System->>System: Send rejection notice to customer
     end
 ```
-
+---
 <Card title='API Endpoint' href='/api/compliance/aml-screening'>
   Go to transaction types endpoint.
 </Card>
@@ -1065,7 +1069,7 @@ stateDiagram-v2
     Cancelled --> [*]: Complete
     Expired --> [*]: Complete
 ```
-
+---
 <Card title='API Endpoint' href='/api/transactions/history-data'>
   Go to transaction history endpoint.
 </Card>
@@ -1204,7 +1208,7 @@ Follow these steps to integrate the complete remittance flow:
     - [ ] KYC document upload successful
     - [ ] CRA form submission works
 
-    <Card title="API Reference" icon="code" href="/api/users/create-customer">
+    <Card title="API Reference" href="/api/users/create-customer">
       View detailed sender management endpoints
     </Card>
 
@@ -1219,7 +1223,7 @@ Follow these steps to integrate the complete remittance flow:
     - [ ] Transaction creation returns correct status
     - [ ] Multiple payout methods available
 
-    <Card title="API Reference" icon="code" href="/api/transactions/call-quote">
+    <Card title="API Reference" href="/api/transactions/call-quote">
       View transaction API documentation
     </Card>
 
@@ -1241,7 +1245,7 @@ Follow these steps to integrate the complete remittance flow:
     - [ ] Payment webhooks received
     - [ ] Failed payments handled gracefully
 
-    <Card title="Settlement Guide" icon="building-columns" href="/remittance/settlement">
+    <Card title="Settlement Guide" href="/remittance/settlement">
       Detailed payment integration guide
     </Card>
 
@@ -1253,11 +1257,10 @@ Follow these steps to integrate the complete remittance flow:
     **Testing Checklist**:
     - [ ] Status updates reflect in real-time
     - [ ] Webhooks received and processed
-    - [ ] Polling doesn't exceed rate limits
     - [ ] All transaction states handled
     - [ ] Error states trigger appropriate UI
 
-    <Card title="Webhooks" icon="webhook" href="/api/webhooks">
+    <Card title="Webhooks" href="/api/webhooks">
       Configure webhook endpoints
     </Card>
 
@@ -1273,16 +1276,17 @@ Follow these steps to integrate the complete remittance flow:
     - [ ] Transaction receipts generated
     - [ ] Notifications working
 
-    <Card title="Testing Guide" icon="flask" href="/integration/testing">
+    <Card title="Testing Guide" href="/integration/testing">
       Complete testing documentation
     </Card>
 
   </Step>
 </Steps>
 
+---
 ## Next Steps
 
-<Card title='Start Building' icon='rocket' href='/api/authentication'>
+<Card title='Start Building' href='/api/authentication'>
   Ready to integrate? Head to the API documentation and start building your
   remittance application.
 </Card>

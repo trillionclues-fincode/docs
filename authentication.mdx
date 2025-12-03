@@ -71,7 +71,11 @@ sequenceDiagram
 </Card>
 </CardGroup>
 
----
+## Server-to-Server Authentication
+
+FinCode supports server-to-server authentication using JWT tokens, allowing your systems to interact programmatically with the API. This ensures secure, stateless communication for backend integrations.
+
+For comprehensive details on securing your integration, including best practices for managing credentials, please refer to the [Security](/overview/security) section.
 
 ## Interactive Authentication Testing
 
@@ -559,24 +563,6 @@ async function logout(accessToken) {
       "role": "CASHIER"
     }
     ```
-
-  </Accordion>
-
-  <Accordion title="429 Too Many Requests" icon="clock">
-    **Causes:**
-    - Exceeded rate limits for authentication endpoints
-    - Too many failed login attempts
-
-    **Response:**
-    ```json
-    {
-      "error": "rate_limit_exceeded",
-      "message": "Too many authentication attempts",
-      "retry_after": 300
-    }
-    ```
-
-    **Solution:** Implement exponential backoff and respect the `Retry-After` header.
 
   </Accordion>
 </AccordionGroup>

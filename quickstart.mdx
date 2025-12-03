@@ -100,7 +100,7 @@ Test your authentication by logging in via API. This will verify your setup and 
 
     async function login() {
       try {
-        const response = await axios.post(
+        const response = await axios.put(
           `${BASE_URL}/api/v6/services/securitymanagement/login`,
           {
             email: 'your-email@company.com',
@@ -199,13 +199,11 @@ Test your authentication by logging in via API. This will verify your setup and 
             requestBody.addProperty("currentPassword", currentPassword);
 
             // Build request
-            HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/api/v6/services/securitymanagement/login"))
                 .header("Content-Type", "application/json")
-                .header("X-API-Token", JWT_ACCESS_TOKEN)
-                .header("uuid", 200)
+                .header("uuid", "200")
                 .header("platform", "fincode")
-                .POST(BodyPublishers.ofString(gson.toJson(requestBody)))
+                .PUT(BodyPublishers.ofString(gson.toJson(requestBody)))
                 .build();
 
             HttpResponse<String> response = client.send(
@@ -250,9 +248,10 @@ Test your authentication by logging in via API. This will verify your setup and 
 
   <Accordion icon="terminal" title="cURL Example">
     ```bash
-    curl -X POST "https://{domain}.fincode.software/api/v6/services/securitymanagement/login" \
+    curl -X PUT "https://{domain}.fincode.software/api/v6/services/securitymanagement/login" \
       -H "Content-Type: application/json" \
-      -H "X-API-Token: $JWT_ACCESS_TOKEN" \
+      -H "uuid: 200" \
+      -H "platform: fincode" \
       -d '{
         "email": "your-email@company.com",
         "currentPassword": "your-password"
@@ -274,7 +273,7 @@ Now that you're authenticated, choose your product to continue:
   >
     - Create beneficiary
     - Get FX quote
-    - Process transaction
+    - Send transaction
   </Card>
   
 <Card
@@ -320,7 +319,7 @@ Now that you're authenticated, choose your product to continue:
 
     ```javascript
     const response = await axios.post(
-      `${BASE_URL}/api/v1/auth/refresh`,
+      `${BASE_URL}/api/v6/services/securitymanagement/refresh`,
       {
         refresh_token: refreshToken
       },

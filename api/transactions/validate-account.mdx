@@ -1,0 +1,87 @@
+---
+title: 'Validate Bank Account'
+api: 'GET https://remitjunction.fincode.software/api/v6/services/usermanagement/validate-bank-account'
+description: 'Validates bank account details before beneficiary creation.'
+---
+
+This endpoint validates the recipient bank account details with the destination bank or provider. It is a critical step in the Bank Transfer flow to ensure funds are sent to the correct account.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://remitjunction.fincode.software/api/v6/services/usermanagement/validate-bank-account](https://remitjunction.fincode.software/api/v6/services/usermanagement/validate-bank-account)
+  ```
+</RequestExample>
+
+## Request Body
+
+<ParamField body='bankCode' type='string' required>
+  The unique code of the bank (retrieved from `list-supported-banks`).
+</ParamField>
+
+<ParamField body='transactionType' type='string' required default='ACCOUNTPAYMENT'>
+  The transaction type. Use `ACCOUNTPAYMENT` for bank transfers.
+</ParamField>
+
+<ParamField body='accountNumber' type='string' required>
+  The account number to validate.
+</ParamField>
+
+<ParamField body='accountNumberCountry' type='string' required>
+  ISO 3166-1 alpha-3 country code of the account (e.g., `NGA`).
+</ParamField>
+
+<ParamField body='expectedCurrencyCode' type='string' required>
+  The currency of the account (e.g., `NGN`).
+</ParamField>
+
+## Response
+
+<ResponseField name='status' type='string'>
+  `SUCCESS` if validation passed.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Validation results.
+  <Expandable title='data object'>
+    <ResponseField name='accountName' type='string'>
+      The registered name on the bank account. **Use this to auto-fill the beneficiary name.**
+    </ResponseField>
+    <ResponseField name='accountNumber' type='string'>
+      The validated account number.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Example
+
+```bash cURL
+curl -X GET 'https://remitjunction.fincode.software/api/v6/services/usermanagement/validate-bank-account' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'Content-Type: application/json' \
+--data '{
+    "bankCode": "214",
+    "transactionType": "ACCOUNTPAYMENT",
+    "accountNumber": "8883968718",
+    "accountNumberCountry": "NGA",
+    "expectedCurrencyCode": "NGN"
+}'
+```
+
+**Success Response:**
+```json
+{
+    "status": "SUCCESS",
+    "message": "account validated!",
+    "data": {
+        "data": {
+            "accountName": "ADEBIYI VICTOR ADEYINKA",
+            "receiverMobileNumber": "",
+            "accountCurrency": "NGN",
+            "accountNumber": "8883968718"
+        },
+        "errorCode": 0,
+        "message": "Account number matched",
+        "status": "SUCCESS"
+    }
+}
+```

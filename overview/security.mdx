@@ -1,0 +1,60 @@
+---
+title: 'Security'
+icon: 'shield-check'
+---
+
+At FinCode, we prioritize the security of your data and transactions. This guide outlines our security architecture and provides best practices for securing your integration.
+
+## Authentication & Authorization
+
+FinCode uses a robust **Role-Based Access Control (RBAC)** system powered by **JWT (JSON Web Tokens)**. Most API requests are authenticated and authorized to ensure that users and systems can only access the resources they are permitted to.
+
+For detailed authentication guides, refer to the [Authentication](/authentication) documentation.
+
+## Server-to-Server Security
+
+When integrating your backend systems with FinCode (Server-to-Server), securing your credentials and tokens is critical. Unlike client-side integrations, server-side integrations often have elevated privileges.
+
+### Credential Management
+
+Your authentication credentials (email/password or API secrets) are the keys to your tenant.
+
+<Warning>
+  **Never hardcode credentials** in your source code.
+</Warning>
+
+- **Environment Variables**: Store credentials in environment variables on your server.
+- **Secrets Management**: Use a dedicated secrets manager (e.g., AWS Secrets Manager, HashiCorp Vault, Azure Key Vault) to inject credentials at runtime.
+- **Version Control**: Ensure credentials are never committed to git repositories. Use `.gitignore` to exclude configuration files.
+
+### Token Handling
+
+Since our JWTs are short-lived (typically 1 hour), your server must handle token lifecycle management efficiently:
+
+1.  **In-Memory Caching**: Cache the `access_token` in memory. Do not persist it to disk or databases if possible.
+2.  **Automatic Refresh**: Implement logic to check token expiration before making requests. If the token is expired (or about to expire), use the `refresh_token` to get a new one.
+3.  **Secure Storage**: If you must persist tokens (e.g., `refresh_token`), encrypt them at rest using strong encryption standards (AES-256).
+
+## Data Protection
+
+### Encryption in Transit
+All communication between your systems and FinCode is encrypted using **TLS 1.2+** (Transport Layer Security). We enforce HTTPS for all API endpoints to protect data against interception and tampering.
+
+### Encryption at Rest
+Sensitive data stored within the FinCode platform is encrypted at rest using industry-standard **AES-256** encryption. This includes PII (Personally Identifiable Information) and transaction details.
+
+## Network Security
+
+- **IP Whitelisting**: (If applicable to your plan) Configure IP whitelisting to restrict API access to your known server IP addresses.
+- **DDoS Protection**: Our infrastructure is protected by enterprise-grade DDoS mitigation systems.
+
+## Compliance & Privacy
+
+FinCode adheres to strict financial regulations and data privacy standards.
+
+- **GDPR/NDPR**: We are compliant with data protection regulations, ensuring your user's data is handled with care.
+- **PCI DSS**: Payment processing components are PCI DSS compliant to ensure the security of card data.
+
+## Reporting Vulnerabilities
+
+If you discover a potential security vulnerability, please report it immediately to our security team at [hello@fincode.co.uk](mailto:hello@fincode.co.uk). We appreciate your help in keeping our platform secure.

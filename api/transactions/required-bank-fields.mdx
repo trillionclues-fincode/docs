@@ -1,0 +1,57 @@
+---
+title: 'Required Bank Fields'
+api: 'GET https://remitjunction.fincode.software/api/v6/services/bankmanagement/required-bank-fields/{country}'
+description: 'Retrieves the specific bank fields required for a destination country.'
+---
+
+Different countries have different banking requirements (e.g., some require a Swift Code, others a Branch Code). This endpoint returns the dynamic requirements for the specified country.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://remitjunction.fincode.software/api/v6/services/bankmanagement/required-bank-fields/{country}](https://remitjunction.fincode.software/api/v6/services/bankmanagement/required-bank-fields/{country})
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='country' type='string' required>
+  ISO 3166-1 alpha-3 country code (e.g., `NGA`).
+</ParamField>
+
+## Response
+
+```json
+{
+    "requiredBankFields": {
+        "bankNameRequired": true,
+        "accountNumberRequired": true,
+        "swiftCodeRequired": true,
+        "country": "NGA",
+        "branchCodeRequired": false,
+        "sortCodeRequired": false
+    }
+}
+```
+
+## Code Example
+
+```bash cURL
+curl -X GET 'https://remitjunction.fincode.software/api/v6/services/bankmanagement/required-bank-fields/NGA' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```

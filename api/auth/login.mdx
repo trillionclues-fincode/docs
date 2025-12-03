@@ -204,14 +204,6 @@ public class FinCodeLogin {
   - Contact your administrator to unlock the account
   - Use the "Forgot Password" flow to reset password
 </Accordion>
-<Accordion title='Rate Limit Exceeded (429)' icon='clock'>
-  **Cause**: Too many login attempts in a short period
-  
-  **Solution**:
-  - Wait for the time specified
-  - Implement exponential backoff in your application
-  - Cache tokens instead of re-authenticating frequently
-</Accordion>
 
   <Accordion title="User Not Found (404)" icon="user-xmark">
     **Cause**: Email address not registered in the system
@@ -230,26 +222,21 @@ public class FinCodeLogin {
 <CardGroup cols={2}>
   <Card title="Token Storage" icon="database">
     - Store tokens securely (encrypted storage)
-    - Never log tokens in text
     - Use environment variables for tokens
     - Clear tokens on logout
   </Card>
 <Card title="Token Refresh" icon="rotate">
   - Implement automatic token refresh
   - Refresh before expiration (5 min buffer)
-  - Handle refresh token failures gracefully
 </Card>
 <Card title="Error Handling" icon="shield">
-  - Implement retry logic for network errors
-  - Handle rate limits with exponential backoff
-  - Show user-friendly error messages
+  - Implement retry logic
+  - User-friendly messages
 </Card>
 
   <Card title="Security" icon="lock">
-    - Use HTTPS in production
-    - Implement CSRF protection
+    - CSRF protection
     - Set secure cookie flags
-    - Monitor for suspicious login attempts
   </Card>
 </CardGroup>
 

@@ -1,0 +1,82 @@
+---
+title: 'Add Bank Details'
+api: 'POST https://remitjunction.fincode.software/api/v6/services/bankmanagement/add-bank-details-key-value-pairs'
+description: 'Links a validated bank account to a beneficiary profile.'
+---
+
+After creating a beneficiary, use this endpoint to associate their bank account details.
+
+<RequestExample>
+  ```bash cURL POST
+  [https://remitjunction.fincode.software/api/v6/services/bankmanagement/add-bank-details-key-value-pairs](https://remitjunction.fincode.software/api/v6/services/bankmanagement/add-bank-details-key-value-pairs)
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Request Body
+
+<ParamField body='id' type='string' required>
+  The unique ID of the beneficiary (returned from `new-beneficiary`).
+</ParamField>
+
+<ParamField body='customerId' type='string' required>
+  The unique ID of the customer (sender).
+</ParamField>
+
+<ParamField body='accountOwnerCustomerCode' type='string' required>
+  The sender's customer code.
+</ParamField>
+
+<ParamField body='currencyCode' type='string' required>
+  The currency of the bank account.
+</ParamField>
+
+<ParamField body='country' type='string' required>
+  ISO 3166-1 alpha-3 country code.
+</ParamField>
+
+<ParamField body='bankAccountMetaData' type='array' required>
+  Key-value pairs of the bank details.
+  <Expandable title='bankAccountMetaData item'>
+    <ParamField body='key' type='string' required>
+      Field key (e.g., `bankname`, `bankaccountno`).
+    </ParamField>
+    <ParamField body='value' type='string' required>
+      Field value.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Code Example
+
+```bash cURL
+curl -X POST 'https://remitjunction.fincode.software/api/v6/services/bankmanagement/add-bank-details-key-value-pairs' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'Content-Type: application/json' \
+--data '{
+    "id": "beneficiary_uuid",
+    "customerId": "customer_uuid",
+    "accountOwnerCustomerCode": "RZ0LNK",
+    "currencyCode": "NGN",
+    "country": "NGA",
+    "bankAccountMetaData": [
+        {"key": "bankname", "value": "FCMB"},
+        {"key": "bankaccountno", "value": "8883968718"},
+        {"key": "country", "value": "NGA"},
+        {"key": "accountholdername", "value": "VICTOR ADEBIYI ADEYINKA"}
+    ]
+}'
+```

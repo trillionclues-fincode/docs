@@ -1,0 +1,169 @@
+---
+title: 'Payment Methods'
+icon: 'credit-card'
+---
+
+FinCode supports multiple payment methods to facilitate transaction funding. This guide details the integration flows for **Card Payments (Hosted Checkout)** and **Open Banking**.
+
+## Supported Payment Methods
+
+To retrieve the available payment methods for a specific transaction, use the `supported-payment-methods` endpoint. This endpoint returns the payment options configured for your tenant and the specific corridor.
+
+<Card title="Get Supported Methods" href="/api/transactions/payment-methods">
+Get Supported Payment Methods
+</Card>
+
+### Response Schema
+
+The response includes a list of `paymentMethodsMetadata`, each containing specific details for that provider.
+
+```json
+{
+    "status": "SUCCESS",
+    "data": {
+        "paymentTermsNConditions": "https://your-terms-url.com",
+        "paymentMethodsMetadata": [
+            {
+                "provider": "VOLUME",
+                "type": "ONLINE_BANK_PAYMENT",
+                "paymentDetails": {
+                    "paymentIntentId": "9b9f23a3-d7c8-4cd7-aa18-e3bfd32e4ef6",
+                    "hosted_gateway_url": "https://paybylink.volumepay.io/?paymentIntentId=..."
+                },
+                "hosted": true,
+                "principalAmount": 2.00,
+                "total-amount": 2.47
+            },
+            {
+                "provider": "SECURE_TRADING",
+                "type": "ONLINE_CARD_PAYMENT",
+                "paymentDetails": {
+                    "sitereference": "remitjunction126902",
+                    "orderreference": "TR656516344451",
+                    "allurlnotification": "https://.../webhook/payment/notify",
+                    "mainamount": "2.42",
+                    "currencyiso3a": "GBP",
+                    "version": "2"
+                },
+                "hosted": true,
+                "principalAmount": 2.00,
+                "total-amount": 2.42
+            }
+        ]
+    }
+}
+```
+
+## Card Payments (Hosted Checkout)
+
+We support hosted card checkout flows via providers like **TrustPayments (Secure Trading)** and **PayCross**.
+
+<Warning>
+  **No Card Saving**: FinCode does **NOT** support saving or vaulting card details for these hosted flows. Please do not implement "Save Card" functionality in your UI.
+</Warning>
+
+<Tabs>
+  <Tab title="TrustPayments (Secure Trading)">
+    ### HTML Form Injection
+    TrustPayments requires a hidden HTML form to be constructed and submitted from the client side.
+
+    **Integration Flow:**
+    1.  **Initiate Transaction**: Create a transaction and call `supported-payment-methods`.
+    2.  **Select Provider**: Choose `SECURE_TRADING`.
+    3.  **Construct Form**: Create a hidden HTML form using **all** key-value pairs from the `paymentDetails` object.
+    4.  **Auto-Submit**: POST the form to `https://payments.securetrading.net/process/payments/choice`.
+    5.  **Redirect**: User is redirected to the secure payment page.
+    6.  **Watch for Redirect**: Listen for the callback URL (e.g., `http://remitter.test.remitjunction.io/`) to detect completion.
+
+    **Dart / Flutter Example:**
+    ```dart
+    String _buildTrustPaymentFormHtml() {
+      return '''
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body>
+          <div class="loader">Redirecting to secure payment...</div>
+          
+          <!-- Form submits to the gateway URL -->
+          <form id="paymentForm" method="POST" action="https://payments.securetrading.net/process/payments/choice">
+            ${widget.paymentData?.entries.map((e) => '<input type="hidden" name="${e.key}" value="${e.value}">').join('')}
+          </form>
+
+          <script>
+           document.addEventListener('DOMContentLoaded', function() {
+              const form = document.getElementById('paymentForm');
+              if (form) form.submit();
+            });
+          </script>
+        </body>
+        </html>
+      ''';
+    }
+    ```
+  </Tab>
+
+  <Tab title="Other Providers (e.g. PayCross)">
+    ### Hosted URL Redirect
+    Other providers like PayCross typically provide a direct URL to redirect the user to.
+
+    **Integration Flow:**
+    1.  **Initiate Transaction**: Create a transaction and call `supported-payment-methods`.
+    2.  **Select Provider**: Choose the provider (e.g., `PAYCROSS`).
+    3.  **Redirect User**: Use the `hosted_gateway_url` (or similar field) from `paymentDetails` to redirect the user's browser or webview.
+    4.  **Completion**: Watch for the callback URL to detect when the user returns to your app.
+
+    **Example Response:**
+    ```json
+    {
+        "provider": "PAYCROSS",
+        "type": "ONLINE_CARD_PAYMENT",
+        "paymentDetails": {
+            "hosted_gateway_url": "https://paycross.com/checkout/..."
+        }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Open Banking
+
+Open Banking payments are facilitated via providers like **Volume** and **Volt**. This flow typically uses a deep link or a redirect URL.
+
+### Integration Flow
+
+1.  **Initiate Transaction**: Create a transaction and get the supported payment methods.
+2.  **Select Provider**: Choose the `ONLINE_BANK_PAYMENT` provider (e.g., `VOLUME`).
+3.  **Redirect User**: Use the `hosted_gateway_url` from the `paymentDetails` to redirect the user.
+    *   **Web**: Redirect the browser window.
+    *   **Mobile**: Launch the URL, which may open the user's banking app via deep link.
+4.  **Completion**: After payment, the user is redirected back to your application (configured via the callback URLs).
+
+### Example Response Data
+
+```json
+{
+    "provider": "VOLUME",
+    "type": "ONLINE_BANK_PAYMENT",
+    "paymentDetails": {
+        "paymentIntentId": "9b9f23a3-d7c8-4cd7-aa18-e3bfd32e4ef6",
+        "hosted_gateway_url": "https://paybylink.volumepay.io/?paymentIntentId=9b9f23a3-d7c8-4cd7"
+    }
+}
+```
+
+---
+
+## Webhooks & Status Updates
+
+Since these are hosted flows, your application will not receive the payment result synchronously in the response. You must listen for Webhooks to update the transaction status.
+
+-   **Success**: The provider calls the `allurlnotification` (or configured webhook URL). FinCode processes this and updates the transaction status to `PAID` or `PROCESSING`.
+-   **Failure**: If payment fails, the status will be updated to `FAILED` or `CANCELLED`.
+
+<Card title="Webhooks Guide" href="/integration/webhooks">
+  Learn how to subscribe to transaction status events.
+</Card>

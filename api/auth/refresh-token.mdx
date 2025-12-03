@@ -83,8 +83,5 @@ curl -X PUT "https://remitjunction.fincode.software/api/v6/services/securitymana
   <Accordion title='Token Already Used (403)' icon='rotate-right'>
     - Treat as a security breach. Force the user to log in again.
     - Check if your system correctly overwrites the old refresh token with the new one.
-  </Accordion> <Accordion title='Rate Limit Exceeded (429)' icon='clock'>
-    - Wait for the time specified.
-    - Ensure your client only attempts a refresh when the access token is close to expiration.
   </Accordion>
 </AccordionGroup>
