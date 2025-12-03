@@ -1,0 +1,86 @@
+---
+title: 'Go Live'
+icon: 'rocket'
+---
+
+Congratulations on completing your integration! Before launching to production, follow this checklist to ensure a smooth and secure deployment.
+
+## Pre-Launch Checklist
+
+### Security Review
+- [ ] **Credentials Management**: Confirm API credentials are stored in environment variables
+- [ ] **HTTPS Only**: Ensure all API calls use HTTPS
+- [ ] **Token Security**: Implement secure token storage and automatic refresh
+- [ ] **Webhook Validation**: Verify webhook signature validation is implemented
+- [ ] **Error Logging**: Ensure sensitive data (tokens, passwords) is not logged
+
+### Error Handling
+- [ ] **Network Failures**: Implement retry logic with exponential backoff
+- [ ] **Graceful Degradation**: Handle API downtime gracefully
+- [ ] **User Feedback**: Provide clear error messages to users
+- [ ] **Monitoring**: Set up alerts for critical errors
+
+### Webhook Setup
+- [ ] **Endpoint Configured**: Production webhook URL is registered
+- [ ] **Idempotency**: Handle duplicate webhook deliveries
+- [ ] **Async Processing**: Process webhooks asynchronously to avoid timeouts
+- [ ] **Retry Handling**: Implement retry logic for failed webhook processing
+
+### Compliance
+- [ ] **Data Privacy**: Ensure GDPR/NDPR compliance for user data
+- [ ] **Terms & Conditions**: Display payment terms to users
+- [ ] **Record Keeping**: Implement transaction audit logging
+
+## Production Credentials
+
+To obtain production API credentials:
+
+1. **Complete Integration Testing**: Ensure all test scenarios pass
+2. **Submit Go-Live Request**: Email [hello@fincode.co.uk](mailto:hello@fincode.co.uk) with:
+   - Company name and registration details
+   - Integration completion confirmation
+   - Expected transaction volume
+3. **Receive Production Access**: You'll receive:
+   - Production API credentials
+   - Production base URL: `https://${domain}.fincode.tech`
+   - Production webhook configuration
+
+## Monitoring & Logging
+
+### Recommended Metrics
+Track these key metrics to monitor your integration health:
+
+- **Transaction Success Rate**: Percentage of successful transactions
+- **API Response Times**: Monitor for degradation
+- **Error Rates**: Track 4xx and 5xx errors
+- **Webhook Delivery**: Monitor webhook receipt and processing times
+
+### Logging Best Practices
+- Log all API requests and responses (excluding sensitive data)
+- Include correlation IDs for tracing
+- Set up alerts for:
+  - High error rates (>5%)
+  - Slow response times (>3 seconds)
+  - Failed webhook deliveries
+
+## Support
+
+### Production Support
+For production issues, contact our support team:
+
+- **Email**: [hello@fincode.co.uk](mailto:hello@fincode.co.uk)
+
+### What to Include in Support Requests
+- Transaction ID or Customer Code
+- Timestamp of the issue
+- Error message or response
+- Steps to reproduce
+
+## Launch Day
+
+On launch day:
+
+1. **Monitor Closely**: Watch logs and metrics for the first few hours
+2. **Have Rollback Plan**: Be prepared to revert if critical issues arise
+3. **Communicate**: Keep your team and stakeholders informed
+4. **Celebrate**: You've successfully integrated with FinCode! 🎉

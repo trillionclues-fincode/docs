@@ -28,17 +28,15 @@
           {
             "group": "Core Concepts",
             "pages": [
-              "overview/architecture",
+              "overview/security",
               "overview/multitenancy",
-              "overview/security"
+              "overview/architecture"
             ]
           },
           {
             "group": "Integration",
             "pages": [
-              "integration/api-keys",
               "integration/payment-methods",
-              "integration/webhooks",
               "integration/testing",
               "integration/go-live",
               "integration/FAQ"

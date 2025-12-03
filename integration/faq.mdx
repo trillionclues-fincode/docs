@@ -1,0 +1,145 @@
+---
+title: 'Frequently Asked Questions'
+icon: 'circle-question'
+---
+
+Common questions and answers about integrating with FinCode.
+
+## Authentication & Security
+
+<AccordionGroup>
+  <Accordion title="How long do access tokens last?">
+    Access tokens are valid for **1 hour**. After expiration, use the refresh token to obtain a new access token without requiring the user to log in again.
+  </Accordion>
+
+  <Accordion title="Should I store tokens in the database?">
+    **Access tokens** should be cached in memory only. **Refresh tokens** can be stored in a database if needed, but must be encrypted at rest using strong encryption (AES-256).
+  </Accordion>
+
+  <Accordion title="How do I secure my API credentials?">
+    - Store credentials in environment variables, never hardcode them
+    - Use HTTPS for all API requests
+    - Implement proper token refresh logic
+    - Never log sensitive data (tokens, passwords)
+  </Accordion>
+</AccordionGroup>
+
+## Transactions
+
+<AccordionGroup>
+  <Accordion title="What transaction types are supported?">
+    FinCode supports:
+    - **ACCOUNTPAYMENT**: Bank transfers
+    - **CASHPICKUP**: Cash collection at agent locations
+    - **MOBILE_MONEY**: Mobile wallet transfers
+  </Accordion>
+
+  <Accordion title="How do I know when a transaction is complete?">
+    Monitor the transaction status via:
+    1. **Webhooks** (recommended): Receive real-time notifications when status changes
+    2. **Polling**: Call the transaction history endpoint periodically
+    
+    A transaction is complete when the status is `PAID` or `REFUNDED`.
+  </Accordion>
+
+  <Accordion title="What does VERIFYING status mean?">
+    `VERIFYING` means the payment has been received and the transaction is undergoing compliance checks (AML/KYC screening). Most compliance checks on transactions are completed instantly.
+  </Accordion>
+
+  <Accordion title="Can I cancel a transaction?">
+    Transactions can only be cancelled while in `WAITING_TO_PAY` status (before payment is received). Once payment is processed, the transaction cannot be cancelled, but may be refunded if compliance checks fail.
+  </Accordion>
+</AccordionGroup>
+
+## Beneficiaries
+
+<AccordionGroup>
+  <Accordion title="Do I need to validate bank accounts before creating a beneficiary?">
+    Validation is **recommended but not required**. If the payout partner supports validation for the corridor, you'll receive the account holder's name to verify against the beneficiary details. If validation is not supported, you can still create the beneficiary by supplying the beneficiary's details.
+  </Accordion>
+
+  <Accordion title="Can I save card details for beneficiaries?">
+    **No**. FinCode does not support card vaulting or saving card details. Each payment requires the user to enter their card information via the hosted checkout flow.
+  </Accordion>
+
+  <Accordion title="What's the difference between a beneficiary and a recipient?">
+    These terms are used interchangeably. A beneficiary/recipient is the person or entity receiving the funds in a remittance transaction.
+  </Accordion>
+</AccordionGroup>
+
+## Payment Methods
+
+<AccordionGroup>
+  <Accordion title="Which payment methods are available?">
+    Available payment methods depend on the sender's country and the transaction amount. Use the [Payment Methods](/api/transactions/payment-methods) endpoint to get the available options for a specific transaction context.
+  </Accordion>
+
+  <Accordion title="How do I handle the hosted card payment flow?">
+    For providers like TrustPayments (Secure Trading):
+    1. Call [Payment Methods](/api/transactions/payment-methods)
+    2. Extract the `paymentDetails` object
+    3. Build an HTML form with all key-value pairs
+    4. Auto-submit the form to redirect the user to the payment gateway
+    
+    See the [Payment Methods](/integration/payment-methods) guide for detailed examples.
+  </Accordion>
+
+  <Accordion title="What happens if a payment fails?">
+    Failed payments will move the transaction to `CANCELLED` or `PENDING_REFUND` status. You'll receive a webhook notification with the failure reason. The user can then retry with a different payment method.
+  </Accordion>
+</AccordionGroup>
+
+## Testing
+
+<AccordionGroup>
+  <Accordion title="How do I access the test environment?">
+    Contact [hello@fincode.co.uk](mailto:hello@fincode.co.uk) to request sandbox credentials. You'll receive test API credentials and access to the test environment at `https://${domain}.fincode.software`.
+  </Accordion>
+
+  <Accordion title="Are there test cards I can use?">
+    Yes, use these test card numbers:
+    - `4111 1111 1111 1111` - Success
+    - `4000 0000 0000 0002` - Declined
+    
+    Use any future expiry date and any 123 as CVV.
+  </Accordion>
+
+  <Accordion title="Does the test environment process real money?">
+    **No**. The sandbox environment uses test credentials and does not process real transactions or charge real money.
+  </Accordion>
+</AccordionGroup>
+
+## Technical Issues
+
+<AccordionGroup>
+  <Accordion title="I'm getting 401 Unauthorized errors">
+    This typically means:
+    - Your access token has expired (tokens last 1 hour)
+    - You're using invalid credentials
+    
+    **Solution**: Implement automatic token refresh using the refresh token before the access token expires.
+  </Accordion>
+
+  <Accordion title="Account validation returns 'not supported' error">
+    This means the payout partner for the selected corridor doesn't support real-time account validation. This is normal for some corridors.
+    
+    **Solution**: Allow users to proceed without validation and manually enter beneficiary details.
+  </Accordion>
+
+  <Accordion title="My webhooks aren't being received">
+    Common causes:
+    - Webhook URL is not publicly accessible
+    - Firewall blocking FinCode's requests
+    - Webhook endpoint returning errors
+    
+    **Solution**: 
+    - Verify your webhook URL is publicly accessible
+    - Check firewall rules
+    - Test with a service like webhook.site first
+  </Accordion>
+
+</AccordionGroup>
+
+## Still Need Help?
+
+If your question isn't answered here, contact our support team at [hello@fincode.co.uk](mailto:hello@fincode.co.uk).

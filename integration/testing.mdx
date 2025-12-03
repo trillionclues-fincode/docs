@@ -1,0 +1,89 @@
+---
+title: 'Testing'
+icon: 'flask'
+---
+
+Before deploying to production, it's critical to thoroughly test your integration in our sandbox environment. This ensures a smooth launch and helps identify potential issues early.
+
+## Test Environment
+
+Our sandbox environment mirrors production functionality but uses test credentials and does not process real money.
+
+**Base URL**: `https://${domain}.fincode.software`
+
+### Getting Test Credentials
+
+1. Contact your account manager or email [hello@fincode.co.uk](mailto:hello@fincode.co.uk)
+2. You'll receive:
+   - Test API credentials (email/password)
+   - Test customer/payment codes
+   - Sandbox domain
+
+### Test Payment Methods
+
+#### Test Cards (Hosted Checkout)
+Use these test card numbers with any future expiry date and any 3-digit CVV:
+
+| Card Number | Expected Result |
+|-------------|-----------------|
+| `4111 1111 1111 1111` | Success |
+| `4000 0000 0000 0002` | Declined |
+
+#### Test Bank Accounts
+For bank transfer testing:
+
+| Country | Bank Code | Account Number | Expected Result |
+|---------|-----------|----------------|-----------------|
+| NGA | `214` | `1234567890` | Validation supported, success |
+| NGA | `214` | `0000000000` | Validation fails |
+
+## Testing Checklist
+
+Work through these scenarios to ensure your integration is robust:
+
+### Core Flows
+- [ ] **Successful Transaction**: Create and complete a full transaction from quote to payment
+- [ ] **Failed Payment**: Handle declined card or failed bank transfer
+- [ ] **Compliance Rejection**: Test with flagged customer data (contact support for test cases)
+- [ ] **Beneficiary Creation**: Create beneficiaries for all types (Bank, Cash, Mobile Money)
+- [ ] **Account Validation**: Test both supported and unsupported validation scenarios
+
+### Error Handling
+- [ ] **Invalid Credentials**: Verify proper handling of 401 errors
+- [ ] **Expired Token**: Test token refresh flow
+- [ ] **Network Timeout**: Simulate slow/failed requests
+- [ ] **Invalid Input**: Test validation errors (e.g., invalid country code)
+
+### Webhooks
+- [ ] **Webhook Receipt**: Confirm your server receives webhook events
+- [ ] **Signature Validation**: Verify webhook authenticity
+- [ ] **Idempotency**: Handle duplicate webhook deliveries
+
+## Common Issues
+
+<AccordionGroup>
+  <Accordion title="401 Unauthorized errors">
+    **Cause**: Expired or invalid access token.
+    
+    **Solution**: Implement automatic token refresh using the refresh token before it expires.
+  </Accordion>
+
+  <Accordion title="Validation not supported error">
+    **Cause**: The payout partner for the selected corridor doesn't support account validation.
+    
+    **Solution**: Allow users to proceed without validation and manually enter beneficiary details.
+  </Accordion>
+
+  <Accordion title="Webhooks not received">
+    **Cause**: Webhook URL not configured or firewall blocking requests.
+    
+    **Solution**: 
+    - Verify webhook URL is publicly accessible
+    - Check firewall rules allow FinCode IPs
+    - Test with a tool like webhook.site first
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+Once you've completed testing, proceed to the [Go-Live](/integration/go-live) checklist.
