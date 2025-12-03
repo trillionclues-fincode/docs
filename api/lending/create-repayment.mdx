@@ -1,0 +1,213 @@
+---
+title: 'Create Repayment'
+api: 'POST https://remitjunction.fincode.software/api/v6/services/admin/repayments/create'
+description: 'Creates a new repayment record for a loan, recording a payment made by the customer.'
+---
+
+Creates a repayment record for a loan, recording a payment transaction. This endpoint is used to log repayments made by customers, which can then be verified and processed by managers or cashiers.
+
+<RequestExample>
+  ```bash cURL POST
+  [https://remitjunction.fincode.software/api/v6/services/admin/repayments/create](https://remitjunction.fincode.software/api/v6/services/admin/repayments/create)
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+<ParamField header='Content-Type' type='string' required default='application/json'>
+  Must be `application/json`.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Request Body
+
+<ParamField body='loanApplicationId' type='string' required>
+  The unique identifier (UUID) of the loan application for which repayment is being made.
+</ParamField>
+
+<ParamField body='repaymentAmount' type='number' required>
+  The amount being repaid. Must be greater than 0.
+</ParamField>
+
+<ParamField body='paymentMethod' type='string' required>
+  Method of payment. Options: `WALLET`, `BANK_TRANSFER`, `CASH`, `CARD`, `MOBILE_MONEY`.
+</ParamField>
+
+<ParamField body='paymentReference' type='string' required>
+  Unique reference number for the payment transaction (e.g., bank transfer reference, transaction ID).
+</ParamField>
+
+<ParamField body='paymentDate' type='string' required>
+  Date and time when the payment was made (ISO 8601 format).
+</ParamField>
+
+<ParamField body='repaymentType' type='string'>
+  Type of repayment. Options: `FULL`, `PARTIAL`, `INSTALLMENT`. Defaults to `PARTIAL` if not specified.
+</ParamField>
+
+<ParamField body='description' type='string'>
+  Optional description or notes about the repayment.
+</ParamField>
+
+<ParamField body='receiptNumber' type='string'>
+  Optional receipt number or proof of payment reference.
+</ParamField>
+
+## Response
+
+Returns confirmation of the repayment record creation with repayment details.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Repayment record details.
+  <Expandable title='data object'>
+    <ResponseField name='repaymentId' type='string'>
+      Unique identifier for the repayment record.
+    </ResponseField>
+    <ResponseField name='loanApplicationId' type='string'>
+      Identifier of the loan application.
+    </ResponseField>
+    <ResponseField name='repaymentAmount' type='number'>
+      The amount that was repaid.
+    </ResponseField>
+    <ResponseField name='paymentMethod' type='string'>
+      Method used for payment.
+    </ResponseField>
+    <ResponseField name='paymentReference' type='string'>
+      Reference number for the payment.
+    </ResponseField>
+    <ResponseField name='status' type='string' default='PENDING_VERIFICATION'>
+      Status of the repayment (e.g., `PENDING_VERIFICATION`, `VERIFIED`, `REJECTED`).
+    </ResponseField>
+    <ResponseField name='paymentDate' type='string'>
+      Date and time when the payment was made.
+    </ResponseField>
+    <ResponseField name='createdDate' type='string'>
+      Date and time when the repayment record was created.
+    </ResponseField>
+    <ResponseField name='remainingBalance' type='number'>
+      Remaining loan balance after this repayment (if verified).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location --request POST 'https://remitjunction.fincode.software/api/v6/services/admin/repayments/create' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345' \
+--header 'Content-Type: application/json' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--data '{
+    "loanApplicationId": "123e4567-e89b-12d3-a456-426614174000",
+    "repaymentAmount": 5000.00,
+    "paymentMethod": "BANK_TRANSFER",
+    "paymentReference": "TXN-20240115-001234",
+    "paymentDate": "2024-01-15T14:30:00Z",
+    "repaymentType": "PARTIAL",
+    "description": "Monthly installment payment",
+    "receiptNumber": "RCP-20240115-001"
+}'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://remitjunction.fincode.software/api/v6/services/admin/repayments';
+
+async function createRepayment(accessToken, repaymentData) {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/create`,
+      {
+        loanApplicationId: repaymentData.loanApplicationId,
+        repaymentAmount: repaymentData.repaymentAmount,
+        paymentMethod: repaymentData.paymentMethod,
+        paymentReference: repaymentData.paymentReference,
+        paymentDate: repaymentData.paymentDate,
+        repaymentType: repaymentData.repaymentType || 'PARTIAL',
+        description: repaymentData.description || '',
+        receiptNumber: repaymentData.receiptNumber || '',
+      },
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+          'Content-Type': 'application/json',
+          platform: 'fincode',
+          uuid: '200',
+        },
+      }
+    );
+
+    console.log('Repayment created successfully!');
+    console.log('Repayment ID:', response.data.data.repaymentId);
+    console.log('Status:', response.data.data.status);
+    console.log('Remaining Balance:', response.data.data.remainingBalance);
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      'Failed to create repayment:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+createRepayment(accessToken, {
+  loanApplicationId: '123e4567-e89b-12d3-a456-426614174000',
+  repaymentAmount: 5000.00,
+  paymentMethod: 'BANK_TRANSFER',
+  paymentReference: 'TXN-20240115-001234',
+  paymentDate: '2024-01-15T14:30:00Z',
+  repaymentType: 'PARTIAL',
+  description: 'Monthly installment payment',
+  receiptNumber: 'RCP-20240115-001',
+});
+```
+
+</CodeGroup>
+
+

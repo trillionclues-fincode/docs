@@ -1,0 +1,333 @@
+---
+title: 'Overview'
+icon: 'house'
+---
+
+Welcome to the lending platform documentation. This guide will help you understand how our digital lending system works and how to integrate it into your application.
+
+### What is Digital Lending?
+
+Our lending platform enables **fast, secure, and automated loan processing** for customers. The system supports:
+
+- **Loan Applications** - Customers can apply for loans through multiple channels
+- **Automated Underwriting** - Automated credit assessment and risk evaluation
+- **Flexible Disbursement** - Funds can be disbursed to wallets, bank accounts, or cash
+- **Repayment Management** - Automated repayment tracking and collection
+
+### Key Features
+
+<CardGroup cols={2}>
+  <Card title='Automated Credit Assessment'>
+    Automated credit scoring and risk evaluation using multiple data sources including credit bureaus, transaction history, and alternative data.
+  </Card>
+
+  <Card title='Multiple Loan Products'>
+    Configure different loan products with varying interest rates, tenures, and eligibility criteria.
+  </Card>
+
+  <Card title='Flexible Disbursement'>
+    Disburse loans to customer wallets, bank accounts, or cash pickup locations.
+  </Card>
+
+  <Card title='Automated Repayment Tracking'>
+    Track repayments, generate schedules, and manage collections automatically.
+  </Card>
+
+  <Card title='Real-Time Processing'>
+    Fast loan application processing with automated eligibility checks and instant decisions where applicable.
+  </Card>
+
+  <Card title='API-First Design'>
+    RESTful APIs with comprehensive documentation and sandbox environment for seamless integration.
+  </Card>
+</CardGroup>
+
+### How It Works
+
+The lending flow consists of five main phases:
+
+<Steps>
+  <Step title='Loan Application'>
+    Customers apply for loans by selecting a product, providing required information, and answering eligibility questions.
+  </Step>
+
+  <Step title='Application Processing'>
+    System processes the application, performs eligibility checks, and may trigger automated credit assessment.
+  </Step>
+
+  <Step title='Underwriting & Approval'>
+    Loan officers review applications, approve or reject based on risk assessment, and set loan terms.
+  </Step>
+
+  <Step title='Disbursement'>
+    Approved loans are disbursed to customer wallets, bank accounts, or cash pickup locations.
+  </Step>
+
+  <Step title='Repayment & Collection'>
+    Customers make repayments according to schedule, with automated tracking and collection management.
+  </Step>
+</Steps>
+
+<Info>
+  For detailed visual flow, see the [Application Flow](/lending/application-flow) and [Loan Lifecycle](/lending/loan-lifecycle) pages.
+</Info>
+
+### Core Concepts
+
+#### Loan Application Lifecycle
+
+Every loan application moves through defined states from submission to completion:
+
+```
+REQUESTED → APPROVED → OFFER_SENT → ACCEPTED → DISBURSED
+```
+
+Applications can also transition to `REJECTED` or `CANCELLED` at various stages.
+
+<Card title='Learn More' href='/lending/loan-lifecycle'>
+  See detailed state transitions and what triggers each status change.
+</Card>
+
+#### Loan Products
+
+Loan products define the terms and conditions for different types of loans:
+
+- **Interest Rates** - Fixed or variable rates
+- **Tenure Options** - Available loan periods (e.g., 3, 6, 12, 24 months)
+- **Eligibility Criteria** - Requirements customers must meet
+- **Fee Structure** - Processing fees, late fees, etc.
+- **Min/Max Amounts** - Loan amount limits
+
+<Card title='Learn More' href='/lending/application-flow'>
+  Understand how loan products are configured and selected.
+</Card>
+
+#### Credit Assessment
+
+The platform uses multiple data sources for credit assessment:
+
+- **Credit Bureau Integration** - Access to credit history and scores
+- **Transaction Analysis** - Analysis of customer transaction patterns
+- **Alternative Data** - Employment, income, and other verification data
+- **Risk Models** - Custom risk scoring algorithms
+
+<Card title='Learn More' href='/lending/credit-scoring'>
+  Explore credit assessment methods and risk models.
+</Card>
+
+#### Repayment Schedules
+
+Repayment schedules are automatically generated based on:
+
+- **Loan Amount** - Principal amount disbursed
+- **Interest Rate** - Annual interest rate
+- **Tenure** - Loan period in months
+- **Repayment Frequency** - Monthly, weekly, or custom intervals
+
+<Card title='Learn More' href='/lending/repayment'>
+  Understand repayment calculation and schedule generation.
+</Card>
+
+### Integration Quick Start
+
+Before you begin:
+
+<Steps>
+  <Step title='Get API Credentials'>
+    Contact our team to receive your sandbox API keys and base URL.
+  </Step>
+
+  <Step title='Review API Documentation'>
+    Familiarize yourself with our [Lending API Reference](/api/lending/loan-request).
+  </Step>
+
+  <Step title='Understand the Flow'>
+    Read through the [Application Flow](/lending/application-flow) to understand the complete loan journey.
+  </Step>
+</Steps>
+
+<Card title='Complete API Reference' href='/api/lending/loan-request'>
+  Explore all available lending endpoints with request/response examples.
+</Card>
+
+### Loan Application Process
+
+#### 1. Customer Applies for Loan
+
+Customers select a loan product and submit an application with:
+- Requested loan amount
+- Preferred tenure (if applicable)
+- Eligibility question answers
+- Additional documentation (if required)
+
+#### 2. System Processing
+
+The system automatically:
+- Validates application data
+- Checks eligibility criteria
+- Performs initial credit assessment
+- Routes to appropriate workflow
+
+#### 3. Underwriting Review
+
+Loan officers review applications and:
+- Assess creditworthiness
+- Verify customer information
+- Make approval/rejection decisions
+- Set final loan terms (amount, rate, tenure)
+
+#### 4. Offer & Acceptance
+
+Once approved:
+- System sends loan offer to customer with terms
+- Customer reviews and accepts the offer
+- Application status updates to ACCEPTED
+
+#### 5. Loan Disbursement
+
+Once the offer is accepted, funds are disbursed via:
+- **Wallet Transfer** - Instant credit to customer wallet
+- **Bank Transfer** - Direct deposit to bank account
+- **Cash Pickup** - Customer collects at agent location
+
+#### 6. Repayment Management
+
+Customers make repayments and the system:
+- Tracks payment history
+- Updates loan balance
+- Manages overdue accounts
+- Generates reports
+
+<Card title='View Complete Flow' href='/lending/application-flow'>
+  Detailed step-by-step application process.
+</Card>
+
+### Supported Features
+
+#### Automated Eligibility Checks
+
+- Product-specific eligibility rules
+- Dynamic field requirements
+- Real-time validation
+- Automated decision making (where applicable)
+
+#### Credit Bureau Integration
+
+- Real-time credit checks
+- Credit score retrieval
+- Credit report analysis
+- Risk assessment
+
+#### Flexible Repayment Options
+
+- Multiple payment methods (wallet, bank transfer, cash)
+- Partial repayments
+- Early settlement
+- Payment rescheduling (with approval)
+
+<Card title='Learn More' href='/lending/repayment'>
+  Explore repayment options and processes.
+</Card>
+
+### Testing & Sandbox
+
+We provide a full-featured sandbox environment for testing:
+
+- **Sandbox URL**: `https://{domain}.fincode.software`
+- **Test credentials**: Provided upon registration
+- **Mock credit bureau**: Simulate credit checks
+- **No real money**: All transactions are simulated
+
+<Tip>
+  Use the sandbox to test all flows, edge cases, and error handling before going live.
+</Tip>
+
+### Integration Models
+
+We support flexible integration approaches:
+
+<Tabs>
+  <Tab title="Full Customer Journey">
+    ### End-to-End Integration
+    
+    Build the complete lending experience within your application, managing the entire customer journey from application to repayment.
+
+    **Flow**:
+    1. Customer registration and KYC
+    2. Loan product selection
+    3. Application submission
+    4. Underwriting and approval
+    5. Disbursement
+    6. Repayment management
+
+    **Documentation**:
+    - [Complete Application Flow](/lending/application-flow)
+    - [Loan Request API](/api/lending/loan-request)
+    - [Authentication](/api/auth/login)
+  </Tab>
+
+  <Tab title="API-Only Integration">
+    ### Direct API Integration
+    
+    If you manage your own customer interface, you can integrate our lending APIs directly into your system.
+
+    **Flow**:
+    ```
+    Your System (Customer Interface) 
+           ↓
+    Submit Loan Application (via API)
+           ↓
+    Our System (Processing + Underwriting)
+           ↓
+    Your System (Receive Status Updates via Webhooks)
+           ↓
+    Loan Disbursed / Rejected
+    ```
+
+    **What You Handle**:
+    - Customer interface and experience
+    - Application data collection
+    - Status display and notifications
+
+    **What We Handle**:
+    - Eligibility checks
+    - Credit assessment
+    - Underwriting workflow
+    - Disbursement
+    - Repayment tracking
+
+    <Info>
+      All loan operations are accessible via our REST APIs. See the [API Reference](/api/lending/loan-request) for details.
+    </Info>
+  </Tab>
+</Tabs>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title='Application Flow'
+    icon='diagram-project'
+    href='/lending/application-flow'
+  >
+    Visualize the complete loan application journey with detailed diagrams
+  </Card>
+
+  <Card
+    title='Loan Lifecycle'
+    icon='timeline'
+    href='/lending/loan-lifecycle'
+  >
+    Understand loan states and transitions from application to completion
+  </Card>
+
+  <Card title='Credit Scoring' icon='chart-line' href='/lending/credit-scoring'>
+    Learn about credit assessment and risk evaluation
+  </Card>
+
+  <Card title='Start Integrating' icon='rocket' href='/api/lending/loan-request'>
+    Jump into the API documentation and begin building
+  </Card>
+</CardGroup>
+
+
