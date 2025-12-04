@@ -67,7 +67,7 @@
         ]
       },
       {
-        "tab": "Lending",
+        "tab": "Digital Lending",
         "groups": [
           {
             "group": "Getting Started",
@@ -82,17 +82,13 @@
               "lending/loan-lifecycle",
               "lending/underwriting",
               "lending/disbursement",
-              "lending/repayment-flow",
-              "lending/credit-scoring",
-              "lending/risk-models",
-              "lending/loan-products",
-              "lending/risk-models"
+              "lending/repayment-flow"
             ]
           }
         ]
       },
       {
-        "tab": "Investment",
+        "tab": "Savings & Investment",
         "groups": [
           {
             "group": "Getting Started",

@@ -1,5 +1,5 @@
 ---
-title: 'FAQ'
+title: 'Frequently Asked Questions'
 icon: 'question-circle'
 ---
 
@@ -86,6 +86,30 @@ Common frequently asked questions and answers about integrating with FinCode API
 
   <Accordion title="What happens if a payment fails?">
     Failed payments will move the transaction to `CANCELLED` or `PENDING_REFUND` status. You'll receive a webhook notification with the failure reason. The user can then retry with a different payment method.
+  </Accordion>
+</AccordionGroup>
+
+## Digital Lending
+
+<AccordionGroup>
+  <Accordion title="How long does loan approval take?">
+    Approval time depends on the loan product configuration. Automated underwriting decisions are instant, while applications requiring manual review are processed by loan officers within standard business hours.
+  </Accordion>
+
+  <Accordion title="How are funds disbursed?">
+    Funds are disbursed instantly to a dedicated **customer wallet** created automatically upon loan approval. From there, customers can withdraw funds to their bank accounts.
+  </Accordion>
+
+  <Accordion title="Can customers withdraw funds immediately?">
+    Yes. Once the loan is disbursed to the wallet, customers can immediately initiate a withdrawal to any verified bank account linked to their profile.
+  </Accordion>
+
+  <Accordion title="Is there a fee for withdrawals?">
+    Yes, a standard processing fee (e.g., 10 Naira) is applied to each withdrawal transaction to cover payment processor charges.
+  </Accordion>
+
+  <Accordion title="What happens if a customer rejects an offer?">
+    If a customer rejects a loan offer, the application status changes to `REJECTED` and the process ends. The customer would need to submit a new application to request another loan.
   </Accordion>
 </AccordionGroup>
 

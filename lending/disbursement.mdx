@@ -1,0 +1,71 @@
+---
+title: 'Disbursement & Withdrawal'
+icon: 'money-bill-transfer'
+---
+
+Disbursement is the final stage of the loan origination process where funds are released to the customer. Our platform utilizes a wallet-based disbursement model to ensure speed and control.
+
+## The Disbursement Process
+
+Once a customer accepts a loan offer, the application is queued for disbursement.
+
+### 1. Wallet Creation
+Upon the admin triggering disbursement:
+- The system automatically creates a **virtual wallet account** for the customer if one does not already exist.
+- This wallet serves as the destination for the loan proceeds.
+
+### 2. Fund Crediting
+- The approved loan amount is credited to the customer's wallet.
+- The loan status changes to `DISBURSED`.
+- The repayment schedule is activated.
+
+<Card title='Check Balance' href='/api/lending/get-total-loan'>
+  Customers can view their total approved/disbursed loan amount.
+</Card>
+
+## Withdrawal Process
+
+Customers cannot spend directly from the loan wallet; they must withdraw the funds to their personal bank account.
+
+### Step 1: Add Bank Account
+The customer must link a valid bank account to their profile.
+1.  **Select Bank**: Choose from a list of supported banks.
+2.  **Enter Account Number**: Input the 10-digit NUBAN.
+3.  **Verification**: The system verifies the account name against the customer's profile name to prevent fraud.
+
+<CardGroup cols={2}>
+  <Card title='Get Banks' href='/api/lending/get-available-banks'>
+    List supported banks
+  </Card>
+  <Card title='Verify Account' href='/api/lending/verify-bank-account'>
+    Verify account details
+  </Card>
+</CardGroup>
+
+### Step 2: Initiate Withdrawal
+The customer initiates a transfer from their wallet to their verified bank account.
+
+- **Source**: Disbursed Loan Wallet.
+- **Destination**: Verified Bank Account.
+- **Amount**: Any amount up to the available balance.
+
+<Note>
+  **Withdrawal Fee**: A processing fee (e.g., 10 Naira) is automatically deducted from the withdrawal amount or the remaining wallet balance.
+</Note>
+
+### Step 3: Processing
+The transfer is processed via our payment partners (e.g., Remita).
+- **Instant**: Most transfers are instant.
+- **Status Tracking**: Customers can track the status of their transfer.
+
+<Card title='Track Transfer' href='/api/lending/transfer-history'>
+  View the history and status of withdrawal transfers.
+</Card>
+
+## Post-Disbursement
+
+After disbursement, the focus shifts to repayment. The system will automatically track due dates and can initiate auto-debits if configured.
+
+<Card title='Manage Loans' href='/api/lending/manage-loans'>
+  Customers can view their active loans and repayment schedules.
+</Card>
