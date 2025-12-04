@@ -1,0 +1,322 @@
+---
+title: 'Overview'
+icon: 'house'
+---
+
+Welcome to the investment platform documentation. This guide will help you understand how our investment management system works and how to integrate it into your application.
+
+### What is Investment Management?
+
+Our investment platform enables **secure, flexible, and automated investment processing** for customers. The system supports:
+
+- **Investment Applications** - Customers can invest in various products through multiple channels
+- **Portfolio Management** - Track and manage multiple investment portfolios
+- **Interest Accrual** - Automated interest calculation and accrual
+- **Real-Time Tracking** - Monitor investments, returns, and performance
+
+### Key Features
+
+<CardGroup cols={2}>
+  <Card title='Multiple Investment Products'>
+    Support for various investment products including fixed deposits, mutual funds, and corporate bonds with different risk profiles.
+  </Card>
+
+  <Card title='Flexible Investment Options'>
+    Customers can invest in units, with flexible amounts and product selection based on their risk tolerance.
+  </Card>
+
+  <Card title='Automated Interest Calculation'>
+    Automatic interest accrual and calculation based on product terms and Annual Percentage Yield (APY).
+  </Card>
+
+  <Card title='Portfolio Tracking'>
+    Comprehensive portfolio management with real-time tracking of investments, returns, and maturity dates.
+  </Card>
+
+  <Card title='Wallet Integration'>
+    Secure wallet system for funding investments and receiving returns with multi-currency support.
+  </Card>
+
+  <Card title='API-First Design'>
+    RESTful APIs with comprehensive documentation and sandbox environment for seamless integration.
+  </Card>
+</CardGroup>
+
+### How It Works
+
+The investment flow consists of five main phases:
+
+<Steps>
+  <Step title='Wallet Creation'>
+    Customers create a wallet account to hold funds for investments. Wallets support multiple currencies and are required before making investments.
+  </Step>
+
+  <Step title='Fund Wallet'>
+    Customers fund their wallet with the desired investment amount. Funds can be added through various payment methods.
+  </Step>
+
+  <Step title='Product Selection & Quote'>
+    Customers browse available investment products, get quotes for specific unit purchases, and review investment terms including fees and expected returns.
+  </Step>
+
+  <Step title='Investment Application'>
+    Customers submit investment applications specifying the product, number of units, and other required details. The system processes and creates the investment portfolio.
+  </Step>
+
+  <Step title='Portfolio Management & Returns'>
+    Customers can track their portfolios, view total investments, monitor interest accrual, and manage multiple investments through a unified dashboard.
+  </Step>
+</Steps>
+
+<Info>
+  For detailed visual flow, see the [Account Opening](/investment/account-opening) and [Portfolio Management](/investment/portfolio-management) pages.
+</Info>
+
+### Core Concepts
+
+#### Investment Products
+
+Investment products define the terms and conditions for different types of investments:
+
+- **Product Types** - Fixed deposits (corporate bonds) and Dynamic investments (mutual funds)
+- **Risk Profiles** - Conservative, Moderate, and Aggressive investment options
+- **Interest Rates** - Annual Percentage Yield (APY) for each product
+- **Unit-Based Pricing** - Investments are made in units with per-unit pricing
+- **Maturity Terms** - Fixed investment periods with maturity dates
+
+<Card title='Learn More' href='/investment/account-opening'>
+  Understand how investment products are structured and selected.
+</Card>
+
+#### Investment Wallets
+
+Wallets are required for all investment operations:
+
+- **Multi-Currency Support** - Wallets can be created in different currencies (NGN, USD, GBP, etc.)
+- **Funding** - Funds can be added to wallets before making investments
+- **Secure Storage** - Funds are securely held until invested or withdrawn
+- **Transaction History** - Complete audit trail of all wallet operations
+
+<Card title='Learn More' href='/investment/account-opening'>
+  Explore wallet creation and management processes.
+</Card>
+
+#### Portfolio Management
+
+Portfolios track customer investments:
+
+- **Multiple Portfolios** - Customers can have multiple investment portfolios
+- **Investment Details** - Track amount invested, total payable, APY, and product information
+- **Maturity Tracking** - Monitor request dates and due dates for each investment
+- **Performance Metrics** - View total investments and accrued interest across all portfolios
+
+<Card title='Learn More' href='/investment/portfolio-management'>
+  Understand portfolio tracking and management features.
+</Card>
+
+#### Interest Accrual
+
+The platform automatically calculates and accrues interest:
+
+- **APY-Based Calculation** - Interest calculated based on Annual Percentage Yield
+- **Automatic Accrual** - Interest accrues automatically based on product terms
+- **Total Tracking** - View total interest accrued across all investments
+- **Currency-Specific** - Interest tracked per currency
+
+<Card title='Learn More' href='/investment/performance'>
+  Explore interest calculation and performance tracking.
+</Card>
+
+### Investment Application Process
+
+#### 1. Create Investment Wallet
+
+Customers first create a wallet account:
+- Select currency (NGN, USD, GBP, etc.)
+- Provide account name
+- Wallet is created and ready for funding
+
+#### 2. Fund the Wallet
+
+Customers add funds to their wallet:
+- Specify the amount to add
+- Funds are credited to the wallet
+- Wallet balance is updated in real-time
+
+#### 3. Browse Products & Get Quote
+
+Customers explore available investment products:
+- View product details, APY, and terms
+- Get quotes for specific number of units
+- Review total amount, fees, and investing amount
+- Compare different products
+
+#### 4. Submit Investment Application
+
+Customers submit investment applications:
+- Select investment product
+- Specify number of units to purchase
+- Provide customer information
+- Application is processed and portfolio created
+
+#### 5. Portfolio Management
+
+Customers can:
+- View all their investment portfolios
+- Track total investments across all products
+- Monitor interest accrued
+- View individual portfolio details (amount invested, total payable, APY, maturity dates)
+
+<Card title='View Complete Flow' href='/investment/account-opening'>
+  Detailed step-by-step investment process flow.
+</Card>
+
+### Supported Features
+
+#### Product Types
+
+- **Fixed Investments** - Corporate bonds with fixed terms and returns
+- **Dynamic Investments** - Mutual funds with variable returns
+- **Risk-Based Options** - Conservative, Moderate, and Aggressive investment profiles
+
+#### Quote System
+
+- Real-time quote calculation
+- Fee transparency
+- Unit-based pricing
+- Total cost breakdown
+
+#### Dashboard & Analytics
+
+- Total investments tracking
+- Interest accrued monitoring
+- Portfolio performance metrics
+- Multi-currency support
+
+<Card title='Learn More' href='/investment/performance'>
+  Explore investment analytics and performance tracking.
+</Card>
+
+### Integration Quick Start
+
+Before you begin:
+
+<Steps>
+  <Step title='Get API Credentials'>
+    Contact our team to receive your sandbox API keys and base URL.
+  </Step>
+
+  <Step title='Review API Documentation'>
+    Familiarize yourself with our [Investment API Reference](/api/investment/create-investment-application).
+  </Step>
+
+  <Step title='Understand the Flow'>
+    Read through the [Account Opening](/investment/account-opening) process to understand the complete investment journey.
+  </Step>
+</Steps>
+
+<Card title='Complete API Reference' href='/api/investment/create-investment-application'>
+  Explore all available investment endpoints with request/response examples.
+</Card>
+
+### Testing & Sandbox
+
+We provide a full-featured sandbox environment for testing:
+
+- **Sandbox URL**: `https://test-investment-products-service.fincode.software`
+- **Test credentials**: Provided upon registration
+- **Mock transactions**: Simulate investment operations
+- **No real money**: All transactions are simulated
+
+<Tip>
+  Use the sandbox to test all flows, edge cases, and error handling before going live.
+</Tip>
+
+### Integration Models
+
+We support flexible integration approaches:
+
+<Tabs>
+  <Tab title="Full Customer Journey">
+    ### End-to-End Integration
+    
+    Build the complete investment experience within your application, managing the entire customer journey from wallet creation to portfolio management.
+
+    **Flow**:
+    1. Customer registration and KYC
+    2. Wallet creation and funding
+    3. Product selection and quote
+    4. Investment application submission
+    5. Portfolio management and tracking
+
+    **Documentation**:
+    - [Account Opening Process](/investment/account-opening)
+    - [Create Investment Application API](/api/investment/create-investment-application)
+    - [Authentication](/api/auth/login)
+  </Tab>
+
+  <Tab title="API-Only Integration">
+    ### Direct API Integration
+    
+    If you manage your own customer interface, you can integrate our investment APIs directly into your system.
+
+    **Flow**:
+    ```
+    Your System (Customer Interface) 
+           ↓
+    Create Wallet & Fund (via API)
+           ↓
+    Get Quote & Submit Application (via API)
+           ↓
+    Our System (Processing & Portfolio Creation)
+           ↓
+    Your System (Receive Updates via Webhooks)
+           ↓
+    Portfolio Created / Investment Active
+    ```
+
+    **What You Handle**:
+    - Customer interface and experience
+    - Product selection and display
+    - Application data collection
+    - Portfolio display and notifications
+
+    **What We Handle**:
+    - Wallet management
+    - Investment processing
+    - Interest calculation
+    - Portfolio tracking
+    - Interest accrual
+
+    <Info>
+      All investment operations are accessible via our REST APIs. See the [API Reference](/api/investment/create-investment-application) for details.
+    </Info>
+  </Tab>
+</Tabs>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title='Account Opening'
+    href='/investment/account-opening'
+  >
+    Understand the complete investment account opening process
+  </Card>
+
+  <Card
+    title='Portfolio Management'
+    href='/investment/portfolio-management'
+  >
+    Learn how to manage and track investment portfolios
+  </Card>
+
+  <Card title='Performance Tracking' href='/investment/performance'>
+    Explore investment performance metrics and analytics
+  </Card>
+
+  <Card title='Start Integrating' href='/api/investment/create-investment-application'>
+    Jump into the API documentation and begin building
+  </Card>
+</CardGroup>
+

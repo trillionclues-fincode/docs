@@ -231,13 +231,12 @@
           {
             "group": "Savings & Investment",
             "pages": [
-              "api/investment/create-account",
-              "api/investment/get-account",
-              "api/investment/create-portfolio",
-              "api/investment/buy-asset",
-              "api/investment/sell-asset",
-              "api/investment/get-holdings",
-              "api/investment/get-performance"
+              "api/investment/create-investment-application",
+              "api/investment/get-total-investments",
+              "api/investment/list-portfolios",
+              "api/investment/get-quote",
+              "api/investment/create-wallet",
+              "api/investment/fund-wallet"
             ]
           },
           {
