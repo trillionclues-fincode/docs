@@ -1,0 +1,134 @@
+---
+title: 'Repayment Instructions'
+api: 'GET https://finlend.fincode.software/api/v1/services/user/repayment-instructions/{loan-application-id}'
+description: 'Retrieves detailed repayment instructions for a loan, including payment methods and account details.'
+---
+
+Fetches comprehensive repayment instructions for a loan, including bank account details, payment reference numbers, and step-by-step instructions for making repayments.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://finlend.fincode.software/api/v1/services/user/repayment-instructions/{loan-application-id}](https://finlend.fincode.software/api/v1/services/user/repayment-instructions/{loan-application-id})
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='loan-application-id' type='string' required>
+  The unique identifier (UUID) of the loan application for which to get repayment instructions.
+</ParamField>
+
+## Response
+
+Returns detailed repayment instructions.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Repayment instructions details.
+  <Expandable title='data object'>
+    <ResponseField name='loanApplicationId' type='string'>
+      Unique identifier of the loan application.
+    </ResponseField>
+    <ResponseField name='paymentMethods' type='array'>
+      Available payment methods for repayment.
+    </ResponseField>
+    <ResponseField name='bankAccountDetails' type='object'>
+      Bank account details for bank transfer payments.
+      <Expandable title='bankAccountDetails object'>
+        <ResponseField name='accountNumber' type='string'>
+          Bank account number for repayments.
+        </ResponseField>
+        <ResponseField name='accountName' type='string'>
+          Account name.
+        </ResponseField>
+        <ResponseField name='bankCode' type='string'>
+          Bank code.
+        </ResponseField>
+        <ResponseField name='bankName' type='string'>
+          Bank name.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name='paymentReference' type='string'>
+      Payment reference number to include in transfers.
+    </ResponseField>
+    <ResponseField name='instructions' type='array'>
+      Step-by-step instructions for making repayments.
+    </ResponseField>
+    <ResponseField name='contactInformation' type='object'>
+      Contact details for repayment support.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://finlend.fincode.software/api/v1/services/user/repayment-instructions/123e4567-e89b-12d3-a456-426614174000' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+
+async function getRepaymentInstructions(accessToken, loanApplicationId) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/repayment-instructions/${loanApplicationId}`,
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+        },
+      }
+    );
+
+    instructions.instructions.forEach((instruction, index) => {
+      console.log(`${index + 1}. ${instruction}`);
+    });
+    return instructions;
+  } catch (error) {
+    console.error(
+      'Failed to fetch repayment instructions:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+const loanApplicationId = '123e4567-e89b-12d3-a456-426614174000';
+getRepaymentInstructions(accessToken, loanApplicationId);
+```
+</CodeGroup>

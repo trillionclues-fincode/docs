@@ -112,14 +112,24 @@
               "investment/performance",
               "investment/rebalancing"
             ]
+          }
+        ]
+      },
+      {
+        "tab": "Deposit Engine",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "deposit-engine/overview",
+              "deposit-engine/process-flow"
+            ]
           },
           {
-            "group": "API Reference",
+            "group": "Core Flows",
             "pages": [
-              "investment/api/accounts",
-              "investment/api/portfolios",
-              "investment/api/transactions",
-              "investment/api/holdings"
+              "deposit-engine/holdings",
+              "deposit-engine/wallet-accounts"
             ]
           }
         ]
@@ -204,19 +214,37 @@
               "api/lending/list-customer-bank-accounts",
               "api/lending/transfer-history",
               "api/lending/manage-loans",
-              "api/lending/list-repayments"
+              "api/lending/list-repayments",
+              "api/lending/calculate-apr",
+              "api/lending/transfer-status",
+              "api/lending/add-bank-account",
+              "api/lending/transaction-pin",
+              "api/lending/get-loan-terms",
+              "api/lending/payoff-loan",
+              "api/lending/pending-repayments",
+              "api/lending/repaid-transactions",
+              "api/lending/repayment-instructions",
+              "api/lending/transfer-funds",
+              "api/lending/view-bank-account"
             ]
           },
           {
-            "group": "Investment",
+            "group": "Savings & Investment",
             "pages": [
-              "api/transactions/investment/create-account",
-              "api/transactions/investment/get-account",
-              "api/transactions/investment/create-portfolio",
-              "api/transactions/investment/buy-asset",
-              "api/transactions/investment/sell-asset",
-              "api/transactions/investment/get-holdings",
-              "api/transactions/investment/get-performance"
+              "api/investment/create-account",
+              "api/investment/get-account",
+              "api/investment/create-portfolio",
+              "api/investment/buy-asset",
+              "api/investment/sell-asset",
+              "api/investment/get-holdings",
+              "api/investment/get-performance"
+            ]
+          },
+          {
+            "group": "Deposit Engine",
+            "pages": [
+              "api/deposit-engine/get-account",
+              "api/deposit-engine/list-wallet-accounts"
             ]
           },
           {

@@ -1,10 +1,10 @@
 ---
 title: 'Accept Loan Terms'
 api: 'PUT https://finlend.fincode.software/api/v1/services/user/accept-terms-and-conditions/{loanApplicationId}'
-description: 'Accepts the terms and conditions for the loan.'
+description: 'Allows customers to accept loan terms and conditions, which triggers automatic loan disbursement.'
 ---
 
-Allows the customer to accept the specific terms and conditions associated with the loan application.
+This endpoint runs when customers accept the terms and conditions for an approved loan offer. Upon acceptance, the loan is automatically disbursed to the customer.
 
 <RequestExample>
   ```bash cURL
@@ -41,16 +41,82 @@ Allows the customer to accept the specific terms and conditions associated with 
 
 ## Path Parameters
 
-<ParamField path="loanApplicationId" type="string" required>
-  The unique identifier of the loan application.
+<ParamField path='loanApplicationId' type='string' required>
+  The unique identifier (UUID) of the loan application for which terms are being accepted.
 </ParamField>
 
 ## Response
 
-<ResponseField name="status" type="string">
-  The status of the request.
+Returns confirmation of terms acceptance and loan disbursement.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
 </ResponseField>
 
-<ResponseField name="message" type="string">
-  Confirmation message (e.g., "Terms accepted successfully").
+<ResponseField name='data' type='object'>
+  Confirmation details.
+  <Expandable title='data object'>
+    <ResponseField name='loanApplicationId' type='string'>
+      Unique identifier of the loan application.
+    </ResponseField>
+    <ResponseField name='status' type='string' default='DISBURSED'>
+      Updated status of the application (should be `DISBURSED`).
+    </ResponseField>
+    <ResponseField name='message' type='string'>
+      Confirmation message indicating successful acceptance and disbursement.
+    </ResponseField>
+    <ResponseField name='disbursementDate' type='string'>
+      Date and time when the loan was disbursed.
+    </ResponseField>
+  </Expandable>
 </ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location --request PUT 'https://remitjunction.fincode.software/api/v1/services/user/accept-terms-and-conditions/123e4567-e89b-12d3-a456-426614174000' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
+
+async function acceptTermsAndConditions(accessToken, loanApplicationId) {
+  try {
+    const response = await axios.put(
+      `${BASE_URL}/accept-terms-and-conditions/${loanApplicationId}`,
+      {},
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+        },
+      }
+    );
+
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      'Failed to accept terms and conditions:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+acceptTermsAndConditions(accessToken, '123e4567-e89b-12d3-a456-426614174000');
+```
+</CodeGroup>

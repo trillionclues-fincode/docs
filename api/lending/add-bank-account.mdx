@@ -1,0 +1,184 @@
+---
+title: 'Add Bank Account'
+api: 'POST https://finlend.fincode.software/api/v1/services/user/create-bank-account'
+description: 'Allows customers to add a bank account to their profile for loan disbursements and repayments.'
+---
+
+Customers can use this endpoint to register a bank account that can be used for loan disbursements, repayments, and fund transfers.
+
+<RequestExample>
+  ```bash cURL POST
+  [https://finlend.fincode.software/api/v1/services/user/create-bank-account](https://finlend.fincode.software/api/v1/services/user/create-bank-account)
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+<ParamField header='Content-Type' type='string' required default='application/json'>
+  Must be `application/json`.
+</ParamField>
+
+## Request Body
+
+<ParamField body='customerId' type='string' required>
+  The unique identifier (UUID) of the customer adding the bank account.
+</ParamField>
+
+<ParamField body='accountNumber' type='string' required>
+  Bank account number.
+</ParamField>
+
+<ParamField body='accountName' type='string' required>
+  Name of the account holder as it appears on the bank account.
+</ParamField>
+
+<ParamField body='bankCode' type='string' required>
+  Code identifying the bank.
+</ParamField>
+
+<ParamField body='bankName' type='string' required>
+  Name of the bank.
+</ParamField>
+
+<ParamField body='accountType' type='string'>
+  Type of account (e.g., `SAVINGS`, `CURRENT`, `CHECKING`).
+</ParamField>
+
+<ParamField body='isDefault' type='boolean'>
+  Whether this should be set as the default bank account.
+</ParamField>
+
+## Response
+
+Returns confirmation of bank account creation with account details.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Bank account details.
+  <Expandable title='data object'>
+    <ResponseField name='accountId' type='string'>
+      Unique identifier for the bank account.
+    </ResponseField>
+    <ResponseField name='customerId' type='string'>
+      Identifier of the customer.
+    </ResponseField>
+    <ResponseField name='accountNumber' type='string'>
+      Bank account number (may be masked for security).
+    </ResponseField>
+    <ResponseField name='accountName' type='string'>
+      Account holder name.
+    </ResponseField>
+    <ResponseField name='bankCode' type='string'>
+      Bank code.
+    </ResponseField>
+    <ResponseField name='bankName' type='string'>
+      Bank name.
+    </ResponseField>
+    <ResponseField name='isDefault' type='boolean'>
+      Whether this is the default account.
+    </ResponseField>
+    <ResponseField name='isVerified' type='boolean'>
+      Whether the account has been verified.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location --request POST 'https://finlend.fincode.software/api/v1/services/user/create-bank-account' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345' \
+--header 'Content-Type: application/json' \
+--data '{
+    "customerId": "123e4567-e89b-12d3-a456-426614174000",
+    "accountNumber": "1234567890",
+    "accountName": "John Doe",
+    "bankCode": "058",
+    "bankName": "Guaranty Trust Bank",
+    "accountType": "SAVINGS",
+    "isDefault": true
+}'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+
+async function createBankAccount(accessToken, accountData) {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/create-bank-account`,
+      {
+        customerId: accountData.customerId,
+        accountNumber: accountData.accountNumber,
+        accountName: accountData.accountName,
+        bankCode: accountData.bankCode,
+        bankName: accountData.bankName,
+        accountType: accountData.accountType || 'SAVINGS',
+        isDefault: accountData.isDefault || false,
+      },
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      'Failed to create bank account:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+createBankAccount(accessToken, {
+  customerId: '123e4567-e89b-12d3-a456-426614174000',
+  accountNumber: '1234567890',
+  accountName: 'John Doe',
+  bankCode: '058',
+  bankName: 'Guaranty Trust Bank',
+  accountType: 'SAVINGS',
+  isDefault: true,
+});
+```
+</CodeGroup>

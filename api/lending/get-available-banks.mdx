@@ -1,10 +1,10 @@
 ---
 title: 'Available Banks'
 api: 'GET https://finlend.fincode.software/api/v1/services/user/get-available-banks/'
-description: 'Retrieves a list of supported banks for the system.'
+description: 'Retrieves a list of all available banks that customers can use for transfers and account registration.'
 ---
 
-Returns a list of available banks (e.g., Nigerian banks) that can be used when adding a new customer bank account.
+Fetches all banks that are supported for bank account registration, fund transfers, and loan disbursements.
 
 <RequestExample>
   ```bash cURL
@@ -37,18 +37,26 @@ Returns a list of available banks (e.g., Nigerian banks) that can be used when a
 
 ## Response
 
-<ResponseField name="status" type="string">
-  The status of the request.
+Returns a list of all available banks.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
 </ResponseField>
 
-<ResponseField name="data" type="array">
-  List of supported banks.
-  <Expandable title="Bank Object">
-    <ResponseField name="code" type="string">
-      The bank code.
+<ResponseField name='data' type='array'>
+  Array of bank objects.
+  <Expandable title='data array item'>
+    <ResponseField name='bankCode' type='string'>
+      Unique code identifying the bank.
     </ResponseField>
-    <ResponseField name="name" type="string">
-      The name of the bank.
+    <ResponseField name='bankName' type='string'>
+      Name of the bank.
+    </ResponseField>
+    <ResponseField name='country' type='string'>
+      Country where the bank operates.
+    </ResponseField>
+    <ResponseField name='isActive' type='boolean'>
+      Whether the bank is currently active and accepting transfers.
     </ResponseField>
   </Expandable>
 </ResponseField>

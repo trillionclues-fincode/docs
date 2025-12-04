@@ -1,10 +1,10 @@
 ---
 title: 'Customers Total Loan'
 api: 'GET https://finlend.fincode.software/api/v1/services/user/get-total/{customerId}'
-description: 'Retrieves the total borrowed loan amount for a specific customer.'
+description: 'Retrieves dashboard summary information including total borrowed amounts for a user.'
 ---
 
-Gets the total amount of loans borrowed by the customer identified by the `customerId`.
+Fetches aggregated loan information for the user's dashboard, including total amounts borrowed, outstanding balances, and other summary statistics.
 
 <RequestExample>
   ```bash cURL
@@ -37,23 +37,38 @@ Gets the total amount of loans borrowed by the customer identified by the `custo
 
 ## Path Parameters
 
-<ParamField path="customerId" type="string" required>
-  The unique identifier of the customer.
+<ParamField path='user-id' type='string' required>
+  The unique identifier (UUID) of the user whose dashboard totals to retrieve.
 </ParamField>
 
 ## Response
 
-<ResponseField name="status" type="string">
-  The status of the request.
+Returns dashboard summary information.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
 </ResponseField>
 
-<ResponseField name="data" type="object">
-  <Expandable title="Total Loan Data">
-    <ResponseField name="totalBorrowed" type="number">
-      The total amount borrowed by the customer.
+<ResponseField name='data' type='array'>
+  Array of total borrowed information objects.
+  <Expandable title='data array item'>
+    <ResponseField name='totalBorrowed' type='number'>
+      Total amount borrowed across all loans.
     </ResponseField>
-    <ResponseField name="currency" type="string">
-      The currency code (e.g., NGN).
+    <ResponseField name='totalOutstanding' type='number'>
+      Total outstanding balance across all active loans.
+    </ResponseField>
+    <ResponseField name='totalRepaid' type='number'>
+      Total amount repaid across all loans.
+    </ResponseField>
+    <ResponseField name='activeLoans' type='number'>
+      Number of active loans.
+    </ResponseField>
+    <ResponseField name='completedLoans' type='number'>
+      Number of completed loans.
+    </ResponseField>
+    <ResponseField name='currency' type='string'>
+      Currency code for the amounts.
     </ResponseField>
   </Expandable>
 </ResponseField>

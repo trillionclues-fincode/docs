@@ -1,10 +1,10 @@
 ---
 title: 'Loan History'
 api: 'GET https://finlend.fincode.software/api/v1/services/user/get-loan-history/{customerId}'
-description: 'Retrieves the loan application history for a customer.'
+description: 'Retrieves a paginated history of all loans for a customer, including active, completed, and cancelled loans.'
 ---
 
-Returns a list of all loan applications made by the customer, including their current status.
+Fetches a comprehensive, paginated history of all loans associated with a customer, providing detailed information about each loan's status, amounts, and timeline.
 
 <RequestExample>
   ```bash cURL
@@ -38,7 +38,17 @@ Returns a list of all loan applications made by the customer, including their cu
 ## Path Parameters
 
 <ParamField path="customerId" type="string" required>
-  The unique identifier of the customer.
+The unique identifier (UUID) of the customer whose loan history to retrieve.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query='page' type='number' default='1'>
+  Page number for pagination (starts from 1).
+</ParamField>
+
+<ParamField query='size' type='number' default='10'>
+  Number of items per page (maximum recommended: 50).
 </ParamField>
 
 ## Response
@@ -64,3 +74,64 @@ Returns a list of all loan applications made by the customer, including their cu
     </ResponseField>
   </Expandable>
 </ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://finlend.fincode.software/api/v1/services/user/loan-history/123e4567-e89b-12d3-a456-426614174000?page=1&size=10' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+
+async function getCustomerLoanHistory(accessToken, customerId, page = 1, size = 10) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/loan-history/${customerId}`,
+      {
+        params: {
+          page,
+          size,
+        },
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+        },
+      }
+    );
+
+    loans.forEach((loan) => {
+      console.log(
+        `- ${loan.loanApplicationId}: ${loan.loanProductName} - ` +
+        `${loan.loanAmount} (Status: ${loan.status})`
+      );
+    });
+
+    return history;
+  } catch (error) {
+    console.error(
+      'Failed to fetch customer loan history:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+const customerId = '123e4567-e89b-12d3-a456-426614174000';
+getCustomerLoanHistory(accessToken, customerId, 1, 20);
+```
+</CodeGroup>

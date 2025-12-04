@@ -1,11 +1,10 @@
 ---
 title: 'Eligibility Questions'
 api: 'GET https://finlend.fincode.software/api/v1/services/user/loan-eligibility-questions/{productId}'
-description: 'Retrieves dynamic eligibility questions for a specific loan product.'
+description: 'Retrieves the eligibility questions required for a specific loan product.'
 ---
 
-Returns a list of questions that the customer must answer to determine their eligibility for the selected loan product.
-
+Fetches all eligibility questions that customers need to answer when applying for a specific loan product. These questions are used to determine if the customer meets the product's eligibility criteria.
 <RequestExample>
   ```bash cURL
   curl --request GET 'https://finlend.fincode.software/api/v1/services/user/loan-eligibility-questions/11d936b5-f6db-45d6-b35e-2ce24791997f' \
@@ -37,27 +36,38 @@ Returns a list of questions that the customer must answer to determine their eli
 
 ## Path Parameters
 
-<ParamField path="productId" type="string" required>
-  The unique identifier of the loan product.
+<ParamField path='loan-product-id' type='string' required>
+  The unique identifier (UUID) of the loan product whose eligibility questions to retrieve.
 </ParamField>
 
 ## Response
 
-<ResponseField name="status" type="string">
-  The status of the request.
+Returns a list of eligibility questions for the loan product.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
 </ResponseField>
 
-<ResponseField name="data" type="array">
-  List of questions.
-  <Expandable title="Question Object">
-    <ResponseField name="id" type="string">
+<ResponseField name='data' type='array'>
+  Array of eligibility question objects.
+  <Expandable title='data array item'>
+    <ResponseField name='questionId' type='string'>
       Unique identifier for the question.
     </ResponseField>
-    <ResponseField name="question" type="string">
-      The text of the question.
+    <ResponseField name='questionText' type='string'>
+      The question text to display to the customer.
     </ResponseField>
-    <ResponseField name="type" type="string">
-      The type of answer expected (e.g., TEXT, NUMBER, BOOLEAN).
+    <ResponseField name='questionType' type='string'>
+      Type of question (e.g., `TEXT`, `NUMBER`, `BOOLEAN`, `SELECT`, `DATE`).
+    </ResponseField>
+    <ResponseField name='isRequired' type='boolean'>
+      Whether this question is mandatory.
+    </ResponseField>
+    <ResponseField name='options' type='array'>
+      Available options for select-type questions.
+    </ResponseField>
+    <ResponseField name='validationRules' type='object'>
+      Validation rules for the answer (e.g., min/max values, format requirements).
     </ResponseField>
   </Expandable>
 </ResponseField>
