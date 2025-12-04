@@ -1,14 +1,14 @@
 ---
-title: 'Get Application'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/admin/loan-application/loan-application/{loan-application-id}'
-description: 'Retrieves detailed information about a specific loan application by its ID.'
+title: 'Get Loan Application Details'
+api: 'GET https://remitjunction.fincode.software/api/v1/services/user/loan-application-details/{loan-application-id}'
+description: 'Retrieves detailed information about a specific loan application including payment history and installments.'
 ---
 
-Fetches comprehensive details of a loan application including customer information, loan terms, status, eligibility answers, and related data.
+Fetches comprehensive details of a loan application including customer information, loan terms, status, payment history, and installment schedule.
 
 <RequestExample>
   ```bash cURL GET
-  [https://remitjunction.fincode.software/api/v6/services/admin/loan-application/loan-application/{loan-application-id}](https://remitjunction.fincode.software/api/v6/services/admin/loan-application/loan-application/{loan-application-id})
+  [https://remitjunction.fincode.software/api/v1/services/user/loan-application-details/{loan-application-id}](https://remitjunction.fincode.software/api/v1/services/user/loan-application-details/{loan-application-id})
   ```
 </RequestExample>
 
@@ -42,14 +42,14 @@ Fetches comprehensive details of a loan application including customer informati
 
 ## Response
 
-Returns detailed loan application information including status, customer details, loan terms, and eligibility information.
+Returns detailed loan application information including status, customer details, loan terms, payment history, and installment schedule.
 
 <ResponseField name='status' type='string' default='SUCCESS'>
   Overall status of the API request.
 </ResponseField>
 
 <ResponseField name='data' type='object'>
-  The loan application details.
+  The loan application details with payment history and installments.
   <Expandable title='data object'>
     <ResponseField name='loanApplicationId' type='string'>
       Unique identifier for the loan application.
@@ -67,7 +67,7 @@ Returns detailed loan application information including status, customer details
       The loan amount approved (if approved).
     </ResponseField>
     <ResponseField name='status' type='string'>
-      Current status of the application (e.g., `REQUESTED`, `PROCESSING`, `APPROVED`, `REJECTED`, `DISBURSED`).
+      Current status of the application (e.g., `REQUESTED`, `APPROVED`, `OFFER_SENT`, `ACCEPTED`, `DISBURSED`).
     </ResponseField>
     <ResponseField name='interestRate' type='number'>
       Interest rate applicable to the loan.
@@ -75,17 +75,14 @@ Returns detailed loan application information including status, customer details
     <ResponseField name='tenure' type='number'>
       Loan tenure in months.
     </ResponseField>
+    <ResponseField name='paymentHistory' type='array'>
+      Array of payment transactions made for this loan.
+    </ResponseField>
+    <ResponseField name='installments' type='array'>
+      Array of scheduled installment payments with due dates and amounts.
+    </ResponseField>
     <ResponseField name='createdDate' type='string'>
       Date and time when the application was created.
-    </ResponseField>
-    <ResponseField name='updatedDate' type='string'>
-      Date and time when the application was last updated.
-    </ResponseField>
-    <ResponseField name='customerDetails' type='object'>
-      Customer information associated with the application.
-    </ResponseField>
-    <ResponseField name='eligibilityAnswers' type='array'>
-      Array of eligibility questions and answers provided during application.
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -95,7 +92,7 @@ Returns detailed loan application information including status, customer details
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v6/services/admin/loan-application/loan-application/123e4567-e89b-12d3-a456-426614174000' \
+curl --location 'https://remitjunction.fincode.software/api/v1/services/user/loan-application-details/123e4567-e89b-12d3-a456-426614174000' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -106,12 +103,12 @@ curl --location 'https://remitjunction.fincode.software/api/v6/services/admin/lo
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://remitjunction.fincode.software/api/v6/services/admin/loan-application';
+const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
 
-async function getLoanApplication(accessToken, loanApplicationId) {
+async function getLoanApplicationDetails(accessToken, loanApplicationId) {
   try {
     const response = await axios.get(
-      `${BASE_URL}/loan-application/${loanApplicationId}`,
+      `${BASE_URL}/loan-application-details/${loanApplicationId}`,
       {
         headers: {
           'X-Auth-Token': accessToken,
@@ -127,7 +124,7 @@ async function getLoanApplication(accessToken, loanApplicationId) {
     return response.data.data;
   } catch (error) {
     console.error(
-      'Failed to fetch loan application:',
+      'Failed to fetch loan application details:',
       error.response?.data || error.message
     );
     throw error;
@@ -137,9 +134,7 @@ async function getLoanApplication(accessToken, loanApplicationId) {
 // Usage Example
 const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
 const loanApplicationId = '123e4567-e89b-12d3-a456-426614174000';
-getLoanApplication(accessToken, loanApplicationId);
+getLoanApplicationDetails(accessToken, loanApplicationId);
 ```
 
 </CodeGroup>
-
-

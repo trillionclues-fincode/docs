@@ -1,0 +1,138 @@
+---
+title: 'Get Transfer History'
+api: 'GET https://remitjunction.fincode.software/api/v1/services/user/transfer-history/{customer-id}'
+description: 'Retrieves the complete fund transfer history for a customer.'
+---
+
+Fetches all fund transfer transactions that a customer has made from their loan wallet to bank accounts.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://remitjunction.fincode.software/api/v1/services/user/transfer-history/{customer-id}](https://remitjunction.fincode.software/api/v1/services/user/transfer-history/{customer-id})
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='customer-id' type='string' required>
+  The unique identifier (UUID) of the customer whose transfer history to retrieve.
+</ParamField>
+
+## Response
+
+Returns a list of all fund transfer transactions.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='array'>
+  Array of transfer transaction objects.
+  <Expandable title='data array item'>
+    <ResponseField name='transactionReference' type='string'>
+      Unique reference number for the transfer.
+    </ResponseField>
+    <ResponseField name='transferId' type='string'>
+      Unique identifier for the transfer.
+    </ResponseField>
+    <ResponseField name='amount' type='number'>
+      Amount transferred.
+    </ResponseField>
+    <ResponseField name='status' type='string'>
+      Status of the transfer.
+    </ResponseField>
+    <ResponseField name='transferDate' type='string'>
+      Date and time when the transfer was initiated.
+    </ResponseField>
+    <ResponseField name='completedDate' type='string'>
+      Date and time when the transfer was completed.
+    </ResponseField>
+    <ResponseField name='bankName' type='string'>
+      Name of the destination bank.
+    </ResponseField>
+    <ResponseField name='accountNumber' type='string'>
+      Destination account number (may be masked).
+    </ResponseField>
+    <ResponseField name='description' type='string'>
+      Description or reference for the transfer.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v1/services/user/transfer-history/123e4567-e89b-12d3-a456-426614174000' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
+
+async function getTransferHistory(accessToken, customerId) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/transfer-history/${customerId}`,
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+        },
+      }
+    );
+
+    const transfers = response.data.data;
+    console.log(`Found ${transfers.length} transfer transactions`);
+    
+    transfers.forEach((transfer) => {
+      console.log(
+        `- ${transfer.transactionReference}: ${transfer.amount} ` +
+        `to ${transfer.bankName} - Status: ${transfer.status}`
+      );
+    });
+
+    return transfers;
+  } catch (error) {
+    console.error(
+      'Failed to fetch transfer history:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+const customerId = '123e4567-e89b-12d3-a456-426614174000';
+getTransferHistory(accessToken, customerId);
+```
+
+</CodeGroup>
+

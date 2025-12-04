@@ -1,14 +1,14 @@
 ---
-title: 'List Customer Repayments'
-api: 'GET https://remitjunction.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id}'
-description: 'Retrieves a list of all repayments made by a customer across all their loans.'
+title: 'List Customer Bank Accounts'
+api: 'GET https://remitjunction.fincode.software/api/v1/services/user/list-customer-bank-accounts/{customer-id}'
+description: 'Retrieves all bank accounts registered by a customer.'
 ---
 
-Fetches all repayment records for a specific customer, allowing them to view their complete repayment history across all loans.
+Fetches a list of all bank accounts that a customer has registered in the system.
 
 <RequestExample>
   ```bash cURL GET
-  [https://remitjunction.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id}](https://remitjunction.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id})
+  [https://remitjunction.fincode.software/api/v1/services/user/list-customer-bank-accounts/{customer-id}](https://remitjunction.fincode.software/api/v1/services/user/list-customer-bank-accounts/{customer-id})
   ```
 </RequestExample>
 
@@ -33,40 +33,43 @@ Fetches all repayment records for a specific customer, allowing them to view the
 ## Path Parameters
 
 <ParamField path='customer-id' type='string' required>
-  The unique identifier (UUID) of the customer whose repayments to retrieve.
+  The unique identifier (UUID) of the customer whose bank accounts to retrieve.
 </ParamField>
 
 ## Response
 
-Returns a list of all repayments made by the customer.
+Returns a list of all bank accounts for the customer.
 
 <ResponseField name='status' type='string' default='SUCCESS'>
   Overall status of the API request.
 </ResponseField>
 
 <ResponseField name='data' type='array'>
-  Array of repayment records.
+  Array of bank account objects.
   <Expandable title='data array item'>
-    <ResponseField name='repaymentId' type='string'>
-      Unique identifier for the repayment record.
+    <ResponseField name='accountId' type='string'>
+      Unique identifier for the bank account.
     </ResponseField>
-    <ResponseField name='loanApplicationId' type='string'>
-      Identifier of the loan application.
+    <ResponseField name='accountNumber' type='string'>
+      Bank account number (may be masked).
     </ResponseField>
-    <ResponseField name='repaymentAmount' type='number'>
-      The amount that was repaid.
+    <ResponseField name='accountName' type='string'>
+      Account holder name.
     </ResponseField>
-    <ResponseField name='paymentMethod' type='string'>
-      Method used for payment.
+    <ResponseField name='bankCode' type='string'>
+      Bank code.
     </ResponseField>
-    <ResponseField name='paymentDate' type='string'>
-      Date and time when the payment was made.
+    <ResponseField name='bankName' type='string'>
+      Bank name.
     </ResponseField>
-    <ResponseField name='status' type='string'>
-      Status of the repayment.
+    <ResponseField name='accountType' type='string'>
+      Type of account.
     </ResponseField>
-    <ResponseField name='transactionReference' type='string'>
-      Reference number for the payment transaction.
+    <ResponseField name='isDefault' type='boolean'>
+      Whether this is the default account.
+    </ResponseField>
+    <ResponseField name='isVerified' type='boolean'>
+      Whether the account has been verified.
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -76,7 +79,7 @@ Returns a list of all repayments made by the customer.
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v1/services/user/list-customer-repayments/123e4567-e89b-12d3-a456-426614174000' \
+curl --location 'https://remitjunction.fincode.software/api/v1/services/user/list-customer-bank-accounts/123e4567-e89b-12d3-a456-426614174000' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
 --header 'x-fapi-customer-ip-address: 192.168.1.1' \
@@ -88,10 +91,10 @@ const axios = require('axios');
 
 const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
 
-async function listCustomerRepayments(accessToken, customerId) {
+async function listCustomerBankAccounts(accessToken, customerId) {
   try {
     const response = await axios.get(
-      `${BASE_URL}/list-customer-repayments/${customerId}`,
+      `${BASE_URL}/list-customer-bank-accounts/${customerId}`,
       {
         headers: {
           'X-Auth-Token': accessToken,
@@ -102,20 +105,20 @@ async function listCustomerRepayments(accessToken, customerId) {
       }
     );
 
-    const repayments = response.data.data;
-    console.log(`Found ${repayments.length} repayments`);
-
-    repayments.forEach((repayment) => {
+    const accounts = response.data.data;
+    console.log(`Found ${accounts.length} bank accounts`);
+    
+    accounts.forEach((account) => {
       console.log(
-        `- ${repayment.repaymentId}: ${repayment.repaymentAmount} ` +
-        `(${repayment.paymentMethod}) - ${repayment.paymentDate}`
+        `- ${account.bankName}: ${account.accountNumber} ` +
+        `(${account.accountName}) - Default: ${account.isDefault}`
       );
     });
 
-    return repayments;
+    return accounts;
   } catch (error) {
     console.error(
-      'Failed to list repayments:',
+      'Failed to fetch bank accounts:',
       error.response?.data || error.message
     );
     throw error;
@@ -125,7 +128,8 @@ async function listCustomerRepayments(accessToken, customerId) {
 // Usage Example
 const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
 const customerId = '123e4567-e89b-12d3-a456-426614174000';
-listCustomerRepayments(accessToken, customerId);
+listCustomerBankAccounts(accessToken, customerId);
 ```
 
 </CodeGroup>
+

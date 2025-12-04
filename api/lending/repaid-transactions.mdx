@@ -1,14 +1,14 @@
 ---
-title: 'List Customer Repayments'
-api: 'GET https://remitjunction.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id}'
-description: 'Retrieves a list of all repayments made by a customer across all their loans.'
+title: 'Get Repaid Transactions'
+api: 'GET https://remitjunction.fincode.software/api/v1/services/user/repaid-transactions/{user-id}'
+description: 'Retrieves a list of all repaid transactions for a user.'
 ---
 
-Fetches all repayment records for a specific customer, allowing them to view their complete repayment history across all loans.
+Fetches all repayment transactions that have been completed by the user across all their loans.
 
 <RequestExample>
   ```bash cURL GET
-  [https://remitjunction.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id}](https://remitjunction.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id})
+  [https://remitjunction.fincode.software/api/v1/services/user/repaid-transactions/{user-id}](https://remitjunction.fincode.software/api/v1/services/user/repaid-transactions/{user-id})
   ```
 </RequestExample>
 
@@ -16,6 +16,10 @@ Fetches all repayment records for a specific customer, allowing them to view the
 
 <ParamField header='X-Auth-Token' type='string' required>
   The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
 </ParamField>
 
 <ParamField header='x-fapi-auth-date' type='string' required>
@@ -32,41 +36,38 @@ Fetches all repayment records for a specific customer, allowing them to view the
 
 ## Path Parameters
 
-<ParamField path='customer-id' type='string' required>
-  The unique identifier (UUID) of the customer whose repayments to retrieve.
+<ParamField path='user-id' type='string' required>
+  The unique identifier (UUID) of the user whose repaid transactions to retrieve.
 </ParamField>
 
 ## Response
 
-Returns a list of all repayments made by the customer.
+Returns a list of all repaid transactions.
 
 <ResponseField name='status' type='string' default='SUCCESS'>
   Overall status of the API request.
 </ResponseField>
 
 <ResponseField name='data' type='array'>
-  Array of repayment records.
+  Array of repayment transaction objects.
   <Expandable title='data array item'>
     <ResponseField name='repaymentId' type='string'>
-      Unique identifier for the repayment record.
+      Unique identifier for the repayment.
     </ResponseField>
     <ResponseField name='loanApplicationId' type='string'>
       Identifier of the loan application.
     </ResponseField>
     <ResponseField name='repaymentAmount' type='number'>
-      The amount that was repaid.
+      Amount that was repaid.
+    </ResponseField>
+    <ResponseField name='paymentDate' type='string'>
+      Date when the payment was made.
     </ResponseField>
     <ResponseField name='paymentMethod' type='string'>
       Method used for payment.
     </ResponseField>
-    <ResponseField name='paymentDate' type='string'>
-      Date and time when the payment was made.
-    </ResponseField>
     <ResponseField name='status' type='string'>
-      Status of the repayment.
-    </ResponseField>
-    <ResponseField name='transactionReference' type='string'>
-      Reference number for the payment transaction.
+      Status of the repayment (typically `VERIFIED` or `PAID`).
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -76,8 +77,9 @@ Returns a list of all repayments made by the customer.
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v1/services/user/list-customer-repayments/123e4567-e89b-12d3-a456-426614174000' \
+curl --location 'https://remitjunction.fincode.software/api/v1/services/user/repaid-transactions/123e4567-e89b-12d3-a456-426614174000' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
 --header 'x-fapi-customer-ip-address: 192.168.1.1' \
 --header 'x-fapi-interaction-id: interaction-12345'
@@ -88,13 +90,14 @@ const axios = require('axios');
 
 const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
 
-async function listCustomerRepayments(accessToken, customerId) {
+async function getRepaidTransactions(accessToken, userId) {
   try {
     const response = await axios.get(
-      `${BASE_URL}/list-customer-repayments/${customerId}`,
+      `${BASE_URL}/repaid-transactions/${userId}`,
       {
         headers: {
           'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
           'x-fapi-auth-date': new Date().toISOString(),
           'x-fapi-customer-ip-address': '192.168.1.1',
           'x-fapi-interaction-id': `interaction-${Date.now()}`,
@@ -102,20 +105,12 @@ async function listCustomerRepayments(accessToken, customerId) {
       }
     );
 
-    const repayments = response.data.data;
-    console.log(`Found ${repayments.length} repayments`);
-
-    repayments.forEach((repayment) => {
-      console.log(
-        `- ${repayment.repaymentId}: ${repayment.repaymentAmount} ` +
-        `(${repayment.paymentMethod}) - ${repayment.paymentDate}`
-      );
-    });
-
-    return repayments;
+    const transactions = response.data.data;
+    console.log(`Found ${transactions.length} repaid transactions`);
+    return transactions;
   } catch (error) {
     console.error(
-      'Failed to list repayments:',
+      'Failed to fetch repaid transactions:',
       error.response?.data || error.message
     );
     throw error;
@@ -124,8 +119,9 @@ async function listCustomerRepayments(accessToken, customerId) {
 
 // Usage Example
 const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const customerId = '123e4567-e89b-12d3-a456-426614174000';
-listCustomerRepayments(accessToken, customerId);
+const userId = '123e4567-e89b-12d3-a456-426614174000';
+getRepaidTransactions(accessToken, userId);
 ```
 
 </CodeGroup>
+

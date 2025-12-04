@@ -1,0 +1,178 @@
+---
+title: 'Calculate APR'
+api: 'POST https://remitjunction.fincode.software/api/v1/services/user/calculate-apr'
+description: 'Calculates the Annual Percentage Rate (APR) for a loan application based on the loan amount, interest rate, and fees.'
+---
+
+Calculates the APR for a loan application, providing customers with a clear understanding of the total cost of borrowing including interest and fees.
+
+<RequestExample>
+  ```bash cURL POST
+  [https://remitjunction.fincode.software/api/v1/services/user/calculate-apr](https://remitjunction.fincode.software/api/v1/services/user/calculate-apr)
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+<ParamField header='Content-Type' type='string' required default='application/json'>
+  Must be `application/json`.
+</ParamField>
+
+## Request Body
+
+<ParamField body='loanAmount' type='number' required>
+  The loan amount for which to calculate APR.
+</ParamField>
+
+<ParamField body='interestRate' type='number' required>
+  Annual interest rate (as a percentage, e.g., 12.5 for 12.5%).
+</ParamField>
+
+<ParamField body='tenure' type='number' required>
+  Loan tenure in months.
+</ParamField>
+
+<ParamField body='processingFee' type='number'>
+  Processing fee amount (if applicable).
+</ParamField>
+
+<ParamField body='otherFees' type='array'>
+  Array of other fees applicable to the loan.
+</ParamField>
+
+<ParamField body='loanProductId' type='string'>
+  Optional loan product ID to use product-specific fee structure.
+</ParamField>
+
+## Response
+
+Returns the calculated APR and related cost information.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  APR calculation results.
+  <Expandable title='data object'>
+    <ResponseField name='apr' type='number'>
+      Calculated Annual Percentage Rate.
+    </ResponseField>
+    <ResponseField name='totalInterest' type='number'>
+      Total interest amount over the loan tenure.
+    </ResponseField>
+    <ResponseField name='totalFees' type='number'>
+      Total fees applicable to the loan.
+    </ResponseField>
+    <ResponseField name='totalAmountPayable' type='number'>
+      Total amount to be repaid (principal + interest + fees).
+    </ResponseField>
+    <ResponseField name='monthlyPayment' type='number'>
+      Estimated monthly payment amount.
+    </ResponseField>
+    <ResponseField name='breakdown' type='object'>
+      Detailed breakdown of costs and payments.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location --request POST 'https://remitjunction.fincode.software/api/v1/services/user/calculate-apr' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345' \
+--header 'Content-Type: application/json' \
+--data '{
+    "loanAmount": 50000,
+    "interestRate": 12.5,
+    "tenure": 12,
+    "processingFee": 500,
+    "loanProductId": "123e4567-e89b-12d3-a456-426614174000"
+}'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
+
+async function calculateAPR(accessToken, aprData) {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/calculate-apr`,
+      {
+        loanAmount: aprData.loanAmount,
+        interestRate: aprData.interestRate,
+        tenure: aprData.tenure,
+        processingFee: aprData.processingFee || 0,
+        otherFees: aprData.otherFees || [],
+        loanProductId: aprData.loanProductId,
+      },
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const result = response.data.data;
+    console.log('APR Calculation Results:');
+    console.log(`APR: ${result.apr}%`);
+    console.log(`Total Interest: ${result.totalInterest}`);
+    console.log(`Total Fees: ${result.totalFees}`);
+    console.log(`Total Amount Payable: ${result.totalAmountPayable}`);
+    console.log(`Monthly Payment: ${result.monthlyPayment}`);
+    return result;
+  } catch (error) {
+    console.error(
+      'Failed to calculate APR:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+calculateAPR(accessToken, {
+  loanAmount: 50000,
+  interestRate: 12.5,
+  tenure: 12,
+  processingFee: 500,
+  loanProductId: '123e4567-e89b-12d3-a456-426614174000',
+});
+```
+
+</CodeGroup>
+

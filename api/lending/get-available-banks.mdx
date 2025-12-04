@@ -1,0 +1,113 @@
+---
+title: 'Get Available Banks'
+api: 'GET https://remitjunction.fincode.software/api/v1/services/user/get-available-banks'
+description: 'Retrieves a list of all available banks that customers can use for transfers and account registration.'
+---
+
+Fetches all banks that are supported for bank account registration, fund transfers, and loan disbursements.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://remitjunction.fincode.software/api/v1/services/user/get-available-banks](https://remitjunction.fincode.software/api/v1/services/user/get-available-banks)
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Response
+
+Returns a list of all available banks.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='array'>
+  Array of bank objects.
+  <Expandable title='data array item'>
+    <ResponseField name='bankCode' type='string'>
+      Unique code identifying the bank.
+    </ResponseField>
+    <ResponseField name='bankName' type='string'>
+      Name of the bank.
+    </ResponseField>
+    <ResponseField name='country' type='string'>
+      Country where the bank operates.
+    </ResponseField>
+    <ResponseField name='isActive' type='boolean'>
+      Whether the bank is currently active and accepting transfers.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v1/services/user/get-available-banks' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
+
+async function getAvailableBanks(accessToken) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/get-available-banks`,
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+        },
+      }
+    );
+
+    const banks = response.data.data;
+    console.log(`Found ${banks.length} available banks`);
+    
+    banks.forEach((bank) => {
+      console.log(`- ${bank.bankName} (${bank.bankCode}) - ${bank.country}`);
+    });
+
+    return banks;
+  } catch (error) {
+    console.error(
+      'Failed to fetch available banks:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+getAvailableBanks(accessToken);
+```
+
+</CodeGroup>
+

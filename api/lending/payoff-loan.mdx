@@ -1,14 +1,14 @@
 ---
-title: 'Repay Loan'
-api: 'POST https://remitjunction.fincode.software/api/v1/services/user/repay-loan/{user-id}'
-description: 'Allows customers to make a repayment towards their loan.'
+title: 'Payoff Loan'
+api: 'POST https://remitjunction.fincode.software/api/v1/services/user/payoff-loan'
+description: 'Allows customers to pay off their entire loan balance in a single transaction.'
 ---
 
-Customers can use this endpoint to make repayments towards their active loans. The payment is processed and applied to the loan balance.
+Customers can use this endpoint to settle their loan completely by paying the remaining outstanding balance in one transaction.
 
 <RequestExample>
   ```bash cURL POST
-  [https://remitjunction.fincode.software/api/v1/services/user/repay-loan/{user-id}](https://remitjunction.fincode.software/api/v1/services/user/repay-loan/{user-id})
+  [https://remitjunction.fincode.software/api/v1/services/user/payoff-loan](https://remitjunction.fincode.software/api/v1/services/user/payoff-loan)
   ```
 </RequestExample>
 
@@ -38,20 +38,10 @@ Customers can use this endpoint to make repayments towards their active loans. T
   Must be `application/json`.
 </ParamField>
 
-## Path Parameters
-
-<ParamField path='user-id' type='string' required>
-  The unique identifier (UUID) of the user making the repayment.
-</ParamField>
-
 ## Request Body
 
 <ParamField body='loanApplicationId' type='string' required>
-  The unique identifier (UUID) of the loan application for which repayment is being made.
-</ParamField>
-
-<ParamField body='repaymentAmount' type='number' required>
-  The amount being repaid. Must be greater than 0.
+  The unique identifier (UUID) of the loan application to pay off.
 </ParamField>
 
 <ParamField body='paymentMethod' type='string' required>
@@ -62,34 +52,41 @@ Customers can use this endpoint to make repayments towards their active loans. T
   Transaction PIN for authorization (if required).
 </ParamField>
 
+<ParamField body='payoffAmount' type='number'>
+  Optional payoff amount. If not provided, the system will calculate the full outstanding balance.
+</ParamField>
+
 ## Response
 
-Returns confirmation of the repayment with updated loan balance.
+Returns confirmation of the loan payoff with final settlement details.
 
 <ResponseField name='status' type='string' default='SUCCESS'>
   Overall status of the API request.
 </ResponseField>
 
 <ResponseField name='data' type='object'>
-  Repayment confirmation details.
+  Payoff confirmation details.
   <Expandable title='data object'>
     <ResponseField name='repaymentId' type='string'>
-      Unique identifier for the repayment transaction.
+      Unique identifier for the payoff transaction.
     </ResponseField>
     <ResponseField name='loanApplicationId' type='string'>
       Identifier of the loan application.
     </ResponseField>
-    <ResponseField name='repaymentAmount' type='number'>
-      The amount that was repaid.
+    <ResponseField name='payoffAmount' type='number'>
+      The amount that was paid to settle the loan.
     </ResponseField>
-    <ResponseField name='remainingBalance' type='number'>
-      Remaining loan balance after this repayment.
+    <ResponseField name='remainingBalance' type='number' default='0'>
+      Remaining balance after payoff (should be 0).
+    </ResponseField>
+    <ResponseField name='loanStatus' type='string' default='PAID_OFF'>
+      Updated status of the loan (should be `PAID_OFF` or `COMPLETED`).
     </ResponseField>
     <ResponseField name='transactionReference' type='string'>
-      Reference number for the repayment transaction.
+      Reference number for the payoff transaction.
     </ResponseField>
-    <ResponseField name='status' type='string'>
-      Status of the repayment transaction.
+    <ResponseField name='payoffDate' type='string'>
+      Date and time when the loan was paid off.
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -99,7 +96,7 @@ Returns confirmation of the repayment with updated loan balance.
 <CodeGroup>
 
 ```bash cURL
-curl --location --request POST 'https://remitjunction.fincode.software/api/v1/services/user/repay-loan/123e4567-e89b-12d3-a456-426614174000' \
+curl --location --request POST 'https://remitjunction.fincode.software/api/v1/services/user/payoff-loan' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -108,7 +105,6 @@ curl --location --request POST 'https://remitjunction.fincode.software/api/v1/se
 --header 'Content-Type: application/json' \
 --data '{
     "loanApplicationId": "123e4567-e89b-12d3-a456-426614174000",
-    "repaymentAmount": 5000.00,
     "paymentMethod": "WALLET",
     "transactionPin": "1234"
 }'
@@ -119,15 +115,15 @@ const axios = require('axios');
 
 const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
 
-async function repayLoan(accessToken, userId, repaymentData) {
+async function payoffLoan(accessToken, payoffData) {
   try {
     const response = await axios.post(
-      `${BASE_URL}/repay-loan/${userId}`,
+      `${BASE_URL}/payoff-loan`,
       {
-        loanApplicationId: repaymentData.loanApplicationId,
-        repaymentAmount: repaymentData.repaymentAmount,
-        paymentMethod: repaymentData.paymentMethod,
-        transactionPin: repaymentData.transactionPin,
+        loanApplicationId: payoffData.loanApplicationId,
+        paymentMethod: payoffData.paymentMethod,
+        transactionPin: payoffData.transactionPin,
+        payoffAmount: payoffData.payoffAmount,
       },
       {
         headers: {
@@ -141,13 +137,14 @@ async function repayLoan(accessToken, userId, repaymentData) {
       }
     );
 
-    console.log('Repayment successful!');
-    console.log('Repayment ID:', response.data.data.repaymentId);
+    console.log('Loan paid off successfully!');
+    console.log('Payoff Amount:', response.data.data.payoffAmount);
     console.log('Remaining Balance:', response.data.data.remainingBalance);
+    console.log('Loan Status:', response.data.data.loanStatus);
     return response.data.data;
   } catch (error) {
     console.error(
-      'Failed to make repayment:',
+      'Failed to payoff loan:',
       error.response?.data || error.message
     );
     throw error;
@@ -156,13 +153,12 @@ async function repayLoan(accessToken, userId, repaymentData) {
 
 // Usage Example
 const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const userId = '123e4567-e89b-12d3-a456-426614174000';
-repayLoan(accessToken, userId, {
+payoffLoan(accessToken, {
   loanApplicationId: '123e4567-e89b-12d3-a456-426614174000',
-  repaymentAmount: 5000.00,
   paymentMethod: 'WALLET',
   transactionPin: '1234',
 });
 ```
 
 </CodeGroup>
+

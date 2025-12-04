@@ -1,0 +1,183 @@
+---
+title: 'Get Customer Loan History'
+api: 'GET https://remitjunction.fincode.software/api/v1/services/user/loan-history/{customerId}'
+description: 'Retrieves a paginated history of all loans for a customer, including active, completed, and cancelled loans.'
+---
+
+Fetches a comprehensive, paginated history of all loans associated with a customer, providing detailed information about each loan's status, amounts, and timeline.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://remitjunction.fincode.software/api/v1/services/user/loan-history/{customerId}](https://remitjunction.fincode.software/api/v1/services/user/loan-history/{customerId})
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='customerId' type='string' required>
+  The unique identifier (UUID) of the customer whose loan history to retrieve.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query='page' type='number' default='1'>
+  Page number for pagination (starts from 1).
+</ParamField>
+
+<ParamField query='size' type='number' default='10'>
+  Number of items per page (maximum recommended: 50).
+</ParamField>
+
+## Response
+
+Returns a paginated list of loan history records.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Paginated response containing loan history.
+  <Expandable title='data object (PaginatedResponse)'>
+    <ResponseField name='content' type='array'>
+      Array of loan history objects.
+      <Expandable title='content array item'>
+        <ResponseField name='loanApplicationId' type='string'>
+          Unique identifier for the loan application.
+        </ResponseField>
+        <ResponseField name='loanProductName' type='string'>
+          Name of the loan product.
+        </ResponseField>
+        <ResponseField name='loanAmount' type='number'>
+          The loan amount.
+        </ResponseField>
+        <ResponseField name='status' type='string'>
+          Current status of the loan.
+        </ResponseField>
+        <ResponseField name='applicationDate' type='string'>
+          Date when the loan was applied for.
+        </ResponseField>
+        <ResponseField name='disbursementDate' type='string'>
+          Date when the loan was disbursed (if disbursed).
+        </ResponseField>
+        <ResponseField name='completionDate' type='string'>
+          Date when the loan was completed (if completed).
+        </ResponseField>
+        <ResponseField name='totalRepaid' type='number'>
+          Total amount repaid on this loan.
+        </ResponseField>
+        <ResponseField name='outstandingBalance' type='number'>
+          Current outstanding balance (if any).
+        </ResponseField>
+        <ResponseField name='interestRate' type='number'>
+          Interest rate for the loan.
+        </ResponseField>
+        <ResponseField name='tenure' type='number'>
+          Loan tenure in months.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name='totalElements' type='number'>
+      Total number of loans across all pages.
+    </ResponseField>
+    <ResponseField name='totalPages' type='number'>
+      Total number of pages available.
+    </ResponseField>
+    <ResponseField name='currentPage' type='number'>
+      Current page number (1-indexed).
+    </ResponseField>
+    <ResponseField name='pageSize' type='number'>
+      Number of items per page.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v1/services/user/loan-history/123e4567-e89b-12d3-a456-426614174000?page=1&size=10' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
+
+async function getCustomerLoanHistory(accessToken, customerId, page = 1, size = 10) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/loan-history/${customerId}`,
+      {
+        params: {
+          page,
+          size,
+        },
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+        },
+      }
+    );
+
+    const history = response.data.data;
+    const loans = history.content;
+    console.log(`Found ${loans.length} loans (Page ${history.currentPage} of ${history.totalPages})`);
+    console.log(`Total: ${history.totalElements} loans`);
+    
+    loans.forEach((loan) => {
+      console.log(
+        `- ${loan.loanApplicationId}: ${loan.loanProductName} - ` +
+        `${loan.loanAmount} (Status: ${loan.status})`
+      );
+    });
+
+    return history;
+  } catch (error) {
+    console.error(
+      'Failed to fetch customer loan history:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+const customerId = '123e4567-e89b-12d3-a456-426614174000';
+getCustomerLoanHistory(accessToken, customerId, 1, 20);
+```
+
+</CodeGroup>
+

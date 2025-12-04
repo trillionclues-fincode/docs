@@ -1,14 +1,14 @@
 ---
-title: 'Accept Loan Offer'
-api: 'PUT https://remitjunction.fincode.software/api/v1/services/user/accept-loan-offer/{loanApplicationId}/{status}'
-description: 'Allows customers to accept or reject a loan offer that has been sent to them.'
+title: 'Accept Terms and Conditions'
+api: 'PUT https://remitjunction.fincode.software/api/v1/services/user/accept-terms-and-conditions/{loanApplicationId}'
+description: 'Allows customers to accept loan terms and conditions, which triggers automatic loan disbursement.'
 ---
 
-Customers can use this endpoint to accept or reject a loan offer after reviewing the terms. When accepted, the loan application status is updated accordingly.
+Customers can use this endpoint to accept the terms and conditions for an approved loan offer. Upon acceptance, the loan is automatically disbursed to the customer.
 
 <RequestExample>
   ```bash cURL PUT
-  [https://remitjunction.fincode.software/api/v1/services/user/accept-loan-offer/{loanApplicationId}/{status}](https://remitjunction.fincode.software/api/v1/services/user/accept-loan-offer/{loanApplicationId}/{status})
+  [https://remitjunction.fincode.software/api/v1/services/user/accept-terms-and-conditions/{loanApplicationId}](https://remitjunction.fincode.software/api/v1/services/user/accept-terms-and-conditions/{loanApplicationId})
   ```
 </RequestExample>
 
@@ -37,16 +37,12 @@ Customers can use this endpoint to accept or reject a loan offer after reviewing
 ## Path Parameters
 
 <ParamField path='loanApplicationId' type='string' required>
-  The unique identifier (UUID) of the loan application with the offer.
-</ParamField>
-
-<ParamField path='status' type='string' required>
-  The action to take on the offer. Use `ACCEPT` to accept the offer or `REJECT` to reject it.
+  The unique identifier (UUID) of the loan application for which terms are being accepted.
 </ParamField>
 
 ## Response
 
-Returns confirmation of the offer acceptance or rejection.
+Returns confirmation of terms acceptance and loan disbursement.
 
 <ResponseField name='status' type='string' default='SUCCESS'>
   Overall status of the API request.
@@ -58,11 +54,14 @@ Returns confirmation of the offer acceptance or rejection.
     <ResponseField name='loanApplicationId' type='string'>
       Unique identifier of the loan application.
     </ResponseField>
-    <ResponseField name='status' type='string'>
-      Updated status of the application (should be `ACCEPTED` if accepted).
+    <ResponseField name='status' type='string' default='DISBURSED'>
+      Updated status of the application (should be `DISBURSED`).
     </ResponseField>
     <ResponseField name='message' type='string'>
-      Confirmation message indicating successful action.
+      Confirmation message indicating successful acceptance and disbursement.
+    </ResponseField>
+    <ResponseField name='disbursementDate' type='string'>
+      Date and time when the loan was disbursed.
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -72,7 +71,7 @@ Returns confirmation of the offer acceptance or rejection.
 <CodeGroup>
 
 ```bash cURL
-curl --location --request PUT 'https://remitjunction.fincode.software/api/v1/services/user/accept-loan-offer/123e4567-e89b-12d3-a456-426614174000/ACCEPT' \
+curl --location --request PUT 'https://remitjunction.fincode.software/api/v1/services/user/accept-terms-and-conditions/123e4567-e89b-12d3-a456-426614174000' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -85,11 +84,10 @@ const axios = require('axios');
 
 const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
 
-async function acceptLoanOffer(accessToken, loanApplicationId, accept = true) {
+async function acceptTermsAndConditions(accessToken, loanApplicationId) {
   try {
-    const status = accept ? 'ACCEPT' : 'REJECT';
     const response = await axios.put(
-      `${BASE_URL}/accept-loan-offer/${loanApplicationId}/${status}`,
+      `${BASE_URL}/accept-terms-and-conditions/${loanApplicationId}`,
       {},
       {
         headers: {
@@ -102,13 +100,14 @@ async function acceptLoanOffer(accessToken, loanApplicationId, accept = true) {
       }
     );
 
-    console.log('Loan offer action completed successfully!');
-    console.log('Application ID:', response.data.data.loanApplicationId);
+    console.log('Terms and conditions accepted successfully!');
+    console.log('Loan Application ID:', response.data.data.loanApplicationId);
     console.log('Status:', response.data.data.status);
+    console.log('Disbursement Date:', response.data.data.disbursementDate);
     return response.data.data;
   } catch (error) {
     console.error(
-      'Failed to process loan offer:',
+      'Failed to accept terms and conditions:',
       error.response?.data || error.message
     );
     throw error;
@@ -117,7 +116,8 @@ async function acceptLoanOffer(accessToken, loanApplicationId, accept = true) {
 
 // Usage Example
 const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-acceptLoanOffer(accessToken, '123e4567-e89b-12d3-a456-426614174000', true);
+acceptTermsAndConditions(accessToken, '123e4567-e89b-12d3-a456-426614174000');
 ```
 
 </CodeGroup>
+

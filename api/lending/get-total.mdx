@@ -1,0 +1,135 @@
+---
+title: 'Get Dashboard Total'
+api: 'GET https://remitjunction.fincode.software/api/v1/services/user/get-total/{user-id}'
+description: 'Retrieves dashboard summary information including total borrowed amounts for a user.'
+---
+
+Fetches aggregated loan information for the user's dashboard, including total amounts borrowed, outstanding balances, and other summary statistics.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://remitjunction.fincode.software/api/v1/services/user/get-total/{user-id}](https://remitjunction.fincode.software/api/v1/services/user/get-total/{user-id})
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='user-id' type='string' required>
+  The unique identifier (UUID) of the user whose dashboard totals to retrieve.
+</ParamField>
+
+## Response
+
+Returns dashboard summary information.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='array'>
+  Array of total borrowed information objects.
+  <Expandable title='data array item'>
+    <ResponseField name='totalBorrowed' type='number'>
+      Total amount borrowed across all loans.
+    </ResponseField>
+    <ResponseField name='totalOutstanding' type='number'>
+      Total outstanding balance across all active loans.
+    </ResponseField>
+    <ResponseField name='totalRepaid' type='number'>
+      Total amount repaid across all loans.
+    </ResponseField>
+    <ResponseField name='activeLoans' type='number'>
+      Number of active loans.
+    </ResponseField>
+    <ResponseField name='completedLoans' type='number'>
+      Number of completed loans.
+    </ResponseField>
+    <ResponseField name='currency' type='string'>
+      Currency code for the amounts.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v1/services/user/get-total/123e4567-e89b-12d3-a456-426614174000' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
+
+async function getDashboardTotal(accessToken, userId) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/get-total/${userId}`,
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+        },
+      }
+    );
+
+    const totals = response.data.data;
+    console.log('Dashboard Totals:');
+    totals.forEach((total) => {
+      console.log(`Total Borrowed: ${total.totalBorrowed} ${total.currency}`);
+      console.log(`Total Outstanding: ${total.totalOutstanding} ${total.currency}`);
+      console.log(`Total Repaid: ${total.totalRepaid} ${total.currency}`);
+      console.log(`Active Loans: ${total.activeLoans}`);
+      console.log(`Completed Loans: ${total.completedLoans}`);
+    });
+
+    return totals;
+  } catch (error) {
+    console.error(
+      'Failed to fetch dashboard totals:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+const userId = '123e4567-e89b-12d3-a456-426614174000';
+getDashboardTotal(accessToken, userId);
+```
+
+</CodeGroup>
+

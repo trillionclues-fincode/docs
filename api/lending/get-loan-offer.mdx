@@ -1,14 +1,14 @@
 ---
-title: 'Manage Loans'
-api: 'GET https://remitjunction.fincode.software/api/v1/services/user/manage-loans/{customer-id}'
-description: 'Retrieves a paginated list of all loans for a customer, allowing them to view and manage their loan portfolio.'
+title: 'Get Loan Offer'
+api: 'GET https://remitjunction.fincode.software/api/v1/services/user/get-loan-offer'
+description: 'Retrieves all loan offers available to the authenticated customer.'
 ---
 
-Fetches a paginated list of all loans associated with a customer, including active loans, completed loans, and their current status.
+Fetches a list of all loan offers that have been sent to the customer and are awaiting their response.
 
 <RequestExample>
   ```bash cURL GET
-  [https://remitjunction.fincode.software/api/v1/services/user/manage-loans/{customer-id}](https://remitjunction.fincode.software/api/v1/services/user/manage-loans/{customer-id})
+  [https://remitjunction.fincode.software/api/v1/services/user/get-loan-offer](https://remitjunction.fincode.software/api/v1/services/user/get-loan-offer)
   ```
 </RequestExample>
 
@@ -34,32 +34,16 @@ Fetches a paginated list of all loans associated with a customer, including acti
   Unique identifier for the interaction/session.
 </ParamField>
 
-## Path Parameters
-
-<ParamField path='customer-id' type='string' required>
-  The unique identifier (UUID) of the customer whose loans to retrieve.
-</ParamField>
-
-## Query Parameters
-
-<ParamField query='page' type='number' default='0'>
-  Page number for pagination (starts from 0).
-</ParamField>
-
-<ParamField query='size' type='number' default='10'>
-  Number of items per page (maximum recommended: 50).
-</ParamField>
-
 ## Response
 
-Returns a list of loans with details about each loan in the customer's portfolio.
+Returns a list of loan offers available to the customer.
 
 <ResponseField name='status' type='string' default='SUCCESS'>
   Overall status of the API request.
 </ResponseField>
 
 <ResponseField name='data' type='array'>
-  Array of loan objects.
+  Array of loan offer objects.
   <Expandable title='data array item'>
     <ResponseField name='loanApplicationId' type='string'>
       Unique identifier for the loan application.
@@ -67,20 +51,26 @@ Returns a list of loans with details about each loan in the customer's portfolio
     <ResponseField name='loanProductName' type='string'>
       Name of the loan product.
     </ResponseField>
-    <ResponseField name='loanAmount' type='number'>
-      The loan amount.
+    <ResponseField name='offeredAmount' type='number'>
+      The loan amount being offered.
+    </ResponseField>
+    <ResponseField name='interestRate' type='number'>
+      Interest rate for the loan offer.
+    </ResponseField>
+    <ResponseField name='tenure' type='number'>
+      Loan tenure in months.
+    </ResponseField>
+    <ResponseField name='monthlyPayment' type='number'>
+      Estimated monthly payment amount.
+    </ResponseField>
+    <ResponseField name='totalAmountPayable' type='number'>
+      Total amount to be repaid over the loan tenure.
+    </ResponseField>
+    <ResponseField name='offerExpiryDate' type='string'>
+      Date when the offer expires.
     </ResponseField>
     <ResponseField name='status' type='string'>
-      Current status of the loan.
-    </ResponseField>
-    <ResponseField name='outstandingBalance' type='number'>
-      Remaining balance on the loan.
-    </ResponseField>
-    <ResponseField name='nextPaymentDate' type='string'>
-      Date of the next scheduled payment.
-    </ResponseField>
-    <ResponseField name='nextPaymentAmount' type='number'>
-      Amount of the next scheduled payment.
+      Status of the offer (e.g., `OFFER_SENT`, `PENDING_ACCEPTANCE`).
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -90,7 +80,7 @@ Returns a list of loans with details about each loan in the customer's portfolio
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v1/services/user/manage-loans/123e4567-e89b-12d3-a456-426614174000?page=0&size=10' \
+curl --location 'https://remitjunction.fincode.software/api/v1/services/user/get-loan-offer' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -103,15 +93,11 @@ const axios = require('axios');
 
 const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
 
-async function manageLoans(accessToken, customerId, page = 0, size = 10) {
+async function getLoanOffer(accessToken) {
   try {
     const response = await axios.get(
-      `${BASE_URL}/manage-loans/${customerId}`,
+      `${BASE_URL}/get-loan-offer`,
       {
-        params: {
-          page,
-          size,
-        },
         headers: {
           'X-Auth-Token': accessToken,
           'x-idempotency-key': `key-${Date.now()}`,
@@ -122,17 +108,17 @@ async function manageLoans(accessToken, customerId, page = 0, size = 10) {
       }
     );
 
-    const loans = response.data.data;
-    console.log(`Found ${loans.length} loans`);
+    const offers = response.data.data;
+    console.log(`Found ${offers.length} loan offers`);
     
-    loans.forEach((loan) => {
-      console.log(`- ${loan.loanApplicationId}: ${loan.status} - Balance: ${loan.outstandingBalance}`);
+    offers.forEach((offer) => {
+      console.log(`- ${offer.loanApplicationId}: ${offer.offeredAmount} at ${offer.interestRate}%`);
     });
 
-    return loans;
+    return offers;
   } catch (error) {
     console.error(
-      'Failed to fetch loans:',
+      'Failed to fetch loan offers:',
       error.response?.data || error.message
     );
     throw error;
@@ -141,8 +127,8 @@ async function manageLoans(accessToken, customerId, page = 0, size = 10) {
 
 // Usage Example
 const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const customerId = '123e4567-e89b-12d3-a456-426614174000';
-manageLoans(accessToken, customerId, 0, 20);
+getLoanOffer(accessToken);
 ```
 
 </CodeGroup>
+

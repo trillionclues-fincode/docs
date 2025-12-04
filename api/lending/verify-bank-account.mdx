@@ -1,0 +1,128 @@
+---
+title: 'Verify Bank Account'
+api: 'GET https://remitjunction.fincode.software/api/v1/services/user/verify-bank-account/{bankCode}/{accountNumber}'
+description: 'Verifies a bank account by checking the account number and retrieving the account holder name.'
+---
+
+Allows customers to verify a bank account before adding it or making transfers. This endpoint checks if the account number is valid and returns the account holder name for confirmation.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://remitjunction.fincode.software/api/v1/services/user/verify-bank-account/{bankCode}/{accountNumber}](https://remitjunction.fincode.software/api/v1/services/user/verify-bank-account/{bankCode}/{accountNumber})
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='bankCode' type='string' required>
+  Code identifying the bank.
+</ParamField>
+
+<ParamField path='accountNumber' type='string' required>
+  Bank account number to verify.
+</ParamField>
+
+## Response
+
+Returns account verification details including the account holder name.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Account verification details.
+  <Expandable title='data object'>
+    <ResponseField name='accountNumber' type='string'>
+      The account number that was verified.
+    </ResponseField>
+    <ResponseField name='accountName' type='string'>
+      Name of the account holder as it appears on the bank account.
+    </ResponseField>
+    <ResponseField name='bankCode' type='string'>
+      Bank code.
+    </ResponseField>
+    <ResponseField name='bankName' type='string'>
+      Name of the bank.
+    </ResponseField>
+    <ResponseField name='isValid' type='boolean'>
+      Whether the account number is valid.
+    </ResponseField>
+    <ResponseField name='accountType' type='string'>
+      Type of account (if available).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v1/services/user/verify-bank-account/058/1234567890' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
+
+async function verifyBankAccount(accessToken, bankCode, accountNumber) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/verify-bank-account/${bankCode}/${accountNumber}`,
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+        },
+      }
+    );
+
+    const verification = response.data.data;
+    console.log('Bank Account Verification:');
+    console.log(`Account Number: ${verification.accountNumber}`);
+    console.log(`Account Name: ${verification.accountName}`);
+    console.log(`Bank: ${verification.bankName}`);
+    console.log(`Is Valid: ${verification.isValid}`);
+    return verification;
+  } catch (error) {
+    console.error(
+      'Failed to verify bank account:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+verifyBankAccount(accessToken, '058', '1234567890');
+```
+
+</CodeGroup>
+
