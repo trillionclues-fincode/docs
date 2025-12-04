@@ -1,6 +1,6 @@
 ---
 title: 'Get Application'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/admin/loan-application/loan-application/{loan-application-id}'
+api: 'GET https://finlend.fincode.software/api/v6/services/admin/loan-application/{loan-application-id}'
 description: 'Retrieves detailed information about a specific loan application by its ID.'
 ---
 
@@ -8,7 +8,7 @@ Fetches comprehensive details of a loan application including customer informati
 
 <RequestExample>
   ```bash cURL GET
-  [https://remitjunction.fincode.software/api/v6/services/admin/loan-application/loan-application/{loan-application-id}](https://remitjunction.fincode.software/api/v6/services/admin/loan-application/loan-application/{loan-application-id})
+  [https://finlend.fincode.software/api/v6/services/admin/loan-application/{loan-application-id}](https://finlend.fincode.software/api/v6/services/admin/loan-application/loan-application/{loan-application-id})
   ```
 </RequestExample>
 
@@ -95,7 +95,7 @@ Returns detailed loan application information including status, customer details
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v6/services/admin/loan-application/loan-application/123e4567-e89b-12d3-a456-426614174000' \
+curl --location 'https://finlend.fincode.software/api/v6/services/admin/loan-application/123e4567-e89b-12d3-a456-426614174000' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -106,12 +106,12 @@ curl --location 'https://remitjunction.fincode.software/api/v6/services/admin/lo
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://remitjunction.fincode.software/api/v6/services/admin/loan-application';
+const BASE_URL = 'https://finlend.fincode.software/api/v6/services/admin/loan-application';
 
 async function getLoanApplication(accessToken, loanApplicationId) {
   try {
     const response = await axios.get(
-      `${BASE_URL}/loan-application/${loanApplicationId}`,
+      `${BASE_URL}/${loanApplicationId}`,
       {
         headers: {
           'X-Auth-Token': accessToken,

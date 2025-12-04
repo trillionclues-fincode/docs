@@ -1,0 +1,62 @@
+---
+title: 'Get Loan Offer'
+api: 'GET https://finlend.fincode.software/api/v1/services/user/get-loan-offer'
+description: 'Retrieves the current loan offer for the customer.'
+---
+
+Returns the loan offer details made to the customer after the underwriting process. The offer may differ from the requested amount.
+
+<RequestExample>
+  ```bash cURL
+  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/get-loan-offer' \
+  --header 'Authorization: Bearer <token>'
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="string">
+  The status of the request.
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Offer Details">
+    <ResponseField name="offerId" type="string">
+      Unique identifier for the offer.
+    </ResponseField>
+    <ResponseField name="approvedAmount" type="number">
+      The amount approved for the loan.
+    </ResponseField>
+    <ResponseField name="interestRate" type="number">
+      The interest rate applied.
+    </ResponseField>
+    <ResponseField name="tenure" type="number">
+      The loan tenure.
+    </ResponseField>
+    <ResponseField name="terms" type="string">
+      Terms and conditions of the offer.
+    </ResponseField>
+  </Expandable>
+</ResponseField>

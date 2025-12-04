@@ -1,0 +1,63 @@
+---
+title: 'List Bank Accounts'
+api: 'GET https://finlend.fincode.software/api/v1/services/user/list-customer-bank-accounts/{customerId}'
+description: 'Retrieves a list of saved bank accounts for the customer.'
+---
+
+Returns the list of bank accounts associated with the customer, which can be used for withdrawing disbursed loans.
+
+<RequestExample>
+  ```bash cURL
+  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/list-customer-bank-accounts/8ecca811-607f-44e1-a57e-cd856c50437d' \
+  --header 'Authorization: Bearer <token>'
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="customerId" type="string" required>
+  The unique identifier of the customer.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="string">
+  The status of the request.
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  List of bank accounts.
+  <Expandable title="Bank Account Object">
+    <ResponseField name="accountNumber" type="string">
+      The bank account number.
+    </ResponseField>
+    <ResponseField name="bankName" type="string">
+      Name of the bank.
+    </ResponseField>
+    <ResponseField name="accountName" type="string">
+      Name on the account.
+    </ResponseField>
+  </Expandable>
+</ResponseField>

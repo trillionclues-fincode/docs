@@ -1,0 +1,63 @@
+---
+title: 'Verify Bank Account'
+api: 'GET https://finlend.fincode.software/api/v1/services/user/verify-bank-account/{bankCode}/{accountNumber}'
+description: 'Verifies a bank account number against a bank code.'
+---
+
+Verifies the provided bank account details and returns the account holder's name if valid. This is used before adding a bank account for withdrawals.
+
+<RequestExample>
+  ```bash cURL
+  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/verify-bank-account/000014/0710013264' \
+  --header 'Authorization: Bearer <token>'
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="bankCode" type="string" required>
+  The code of the bank (retrieved from Get Available Banks).
+</ParamField>
+
+<ParamField path="accountNumber" type="string" required>
+  The account number to verify.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="string">
+  The status of the request.
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  <Expandable title="Account Details">
+    <ResponseField name="accountName" type="string">
+      The name associated with the bank account.
+    </ResponseField>
+    <ResponseField name="accountNumber" type="string">
+      The verified account number.
+    </ResponseField>
+  </Expandable>
+</ResponseField>

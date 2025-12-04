@@ -1,0 +1,63 @@
+---
+title: 'List Loan Products'
+api: 'GET https://finlend.fincode.software/api/v1/services/user/list-products'
+description: 'Retrieves a list of available loan products for the customer.'
+---
+
+Returns a list of active loan products that customers can apply for, including details like interest rates, tenure, and limits.
+
+<RequestExample>
+  ```bash cURL
+  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/list-products' \
+  --header 'Authorization: Bearer <token>'
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="string">
+  The status of the request (e.g., "SUCCESS").
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  List of available loan products.
+  <Expandable title="Product Object">
+    <ResponseField name="id" type="string">
+      Unique identifier for the loan product.
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Name of the loan product.
+    </ResponseField>
+    <ResponseField name="interestRate" type="number">
+      Interest rate percentage.
+    </ResponseField>
+    <ResponseField name="minAmount" type="number">
+      Minimum loan amount allowed.
+    </ResponseField>
+    <ResponseField name="maxAmount" type="number">
+      Maximum loan amount allowed.
+    </ResponseField>
+  </Expandable>
+</ResponseField>

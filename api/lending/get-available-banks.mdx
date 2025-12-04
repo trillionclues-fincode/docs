@@ -1,0 +1,54 @@
+---
+title: 'Available Banks'
+api: 'GET https://finlend.fincode.software/api/v1/services/user/get-available-banks/'
+description: 'Retrieves a list of supported banks for the system.'
+---
+
+Returns a list of available banks (e.g., Nigerian banks) that can be used when adding a new customer bank account.
+
+<RequestExample>
+  ```bash cURL
+  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/get-available-banks/' \
+  --header 'Authorization: Bearer <token>'
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="string">
+  The status of the request.
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  List of supported banks.
+  <Expandable title="Bank Object">
+    <ResponseField name="code" type="string">
+      The bank code.
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      The name of the bank.
+    </ResponseField>
+  </Expandable>
+</ResponseField>

@@ -40,24 +40,72 @@ Creates a new loan application request. Customers or agents can use this endpoin
 
 ## Request Body
 
-<ParamField body='customerId' type='string' required>
-  The unique identifier (UUID) of the customer applying for the loan.
+<ParamField body='currencyCode' type='string' required>
+  The currency code for the loan (e.g., "NGN").
+</ParamField>
+
+<ParamField body='dateOfBirth' type='string' required>
+  Customer's date of birth (YYYY-MM-DD).
+</ParamField>
+
+<ParamField body='durationCounter' type='number' required>
+  The numeric value of the duration (e.g., 12).
+</ParamField>
+
+<ParamField body='loanApplicationStatusEnum' type='string' required default='REQUESTED'>
+  Initial status of the application. Must be "REQUESTED".
+</ParamField>
+
+<ParamField body='employmentStatus' type='string' required>
+  Customer's employment status (e.g., "EMPLOYED", "SELF_EMPLOYED").
+</ParamField>
+
+<ParamField body='loanAmount' type='number' required>
+  The requested loan amount.
+</ParamField>
+
+<ParamField body='bvn' type='string' required>
+  Bank Verification Number of the customer.
+</ParamField>
+
+<ParamField body='firstName' type='string' required>
+  Customer's first name.
+</ParamField>
+
+<ParamField body='lastName' type='string' required>
+  Customer's last name.
+</ParamField>
+
+<ParamField body='accountNumber' type='string' required>
+  Bank account number for disbursement/repayment.
+</ParamField>
+
+<ParamField body='bankCode' type='string' required>
+  Code of the bank associated with the account number.
+</ParamField>
+
+<ParamField body='phoneNumber' type='string' required>
+  Customer's phone number.
+</ParamField>
+
+<ParamField body='loanDuration' type='number' required>
+  Duration of the loan.
 </ParamField>
 
 <ParamField body='loanProductId' type='string' required>
-  The unique identifier of the loan product being applied for.
+  The unique identifier of the loan product.
 </ParamField>
 
-<ParamField body='requestedAmount' type='number' required>
-  The loan amount being requested. Must be within the product's min/max limits.
+<ParamField body='loanRepaymentMethodEnum' type='string' required>
+  Method of repayment (e.g., "DIRECT_DEBIT").
 </ParamField>
 
-<ParamField body='purpose' type='string'>
-  Purpose of the loan (e.g., `BUSINESS`, `PERSONAL`, `EDUCATION`, `MEDICAL`).
+<ParamField body='monthlyIncome' type='number' required>
+  Customer's monthly income.
 </ParamField>
 
 <ParamField body='eligibilityAnswers' type='array'>
-  Array of answers to eligibility questions required by the loan product.
+  Array of answers to eligibility questions.
   <Expandable title='eligibilityAnswers array item'>
     <ParamField body='eligibilityAnswers[].questionId' type='string' required>
       Unique identifier of the eligibility question.
@@ -66,14 +114,6 @@ Creates a new loan application request. Customers or agents can use this endpoin
       Answer to the eligibility question.
     </ParamField>
   </Expandable>
-</ParamField>
-
-<ParamField body='tenurePreference' type='number'>
-  Preferred loan tenure in months (optional, may be overridden by product terms).
-</ParamField>
-
-<ParamField body='additionalNotes' type='string'>
-  Optional additional notes or comments about the loan application.
 </ParamField>
 
 ## Response
@@ -127,22 +167,28 @@ curl --location --request POST 'https://remitjunction.fincode.software/api/v6/se
 --header 'x-fapi-interaction-id: interaction-12345' \
 --header 'Content-Type: application/json' \
 --data '{
-    "customerId": "123e4567-e89b-12d3-a456-426614174000",
+    "currencyCode": "NGN",
+    "dateOfBirth": "1990-01-01",
+    "durationCounter": 12,
+    "loanApplicationStatusEnum": "REQUESTED",
+    "employmentStatus": "EMPLOYED",
+    "loanAmount": 50000.00,
+    "bvn": "12345678901",
+    "firstName": "John",
+    "lastName": "Doe",
+    "accountNumber": "0123456789",
+    "bankCode": "044",
+    "phoneNumber": "08012345678",
+    "loanDuration": 12,
     "loanProductId": "product-123",
-    "requestedAmount": 50000.00,
-    "purpose": "BUSINESS",
-    "tenurePreference": 12,
+    "loanRepaymentMethodEnum": "DIRECT_DEBIT",
+    "monthlyIncome": 150000.00,
     "eligibilityAnswers": [
         {
             "questionId": "q1",
             "answer": "Yes"
-        },
-        {
-            "questionId": "q2",
-            "answer": "50000"
         }
-    ],
-    "additionalNotes": "Need funds for business expansion"
+    ]
 }'
 ```
 

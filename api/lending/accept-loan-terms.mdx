@@ -1,0 +1,56 @@
+---
+title: 'Accept Loan Terms'
+api: 'PUT https://finlend.fincode.software/api/v1/services/user/accept-terms-and-conditions/{loanApplicationId}'
+description: 'Accepts the terms and conditions for the loan.'
+---
+
+Allows the customer to accept the specific terms and conditions associated with the loan application.
+
+<RequestExample>
+  ```bash cURL
+  curl --request PUT 'https://finlend.fincode.software/api/v1/services/user/accept-terms-and-conditions/a1df2e04-62c5-431a-9c20-455c66280b1d' \
+  --header 'Authorization: Bearer <token>'
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+<ParamField header='Content-Type' type='string' required default='application/json'>
+  Must be `application/json`.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="loanApplicationId" type="string" required>
+  The unique identifier of the loan application.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="string">
+  The status of the request.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message (e.g., "Terms accepted successfully").
+</ResponseField>
