@@ -1,0 +1,439 @@
+---
+title: 'Application Flow'
+icon: 'diagram-project'
+---
+
+This guide provides comprehensive visual diagrams and step-by-step explanations of the complete loan application flow, from customer application through loan disbursement and repayment.
+
+<Note>
+  The complete journey has **5 main phases**: Application, Processing, Underwriting, Disbursement, and Repayment.
+</Note>
+
+### Phase 1: Loan Application
+
+#### 1.1 Customer Initiates Loan Application
+
+The customer starts the loan application process by selecting a loan product and providing required information.
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant App
+    participant API
+    participant LoanService
+
+    Customer->>App: Browse loan products
+    App->>API: GET /list-products
+    API->>LoanService: Fetch active loan products
+    LoanService-->>API: Return product list
+    API-->>App: Product details (rates, tenure, amounts)
+    App-->>Customer: Display available products
+    Customer->>App: Select product & amount
+    App->>App: Show eligibility questions
+    Customer->>App: Answer questions & submit
+    App->>API: POST /request-loan
+    API->>API: Validate application data
+    API->>LoanService: Create loan application
+    LoanService-->>API: Application created
+    API-->>App: Application ID & status
+    App-->>Customer: Application submitted confirmation
+```
+
+<Card title='API Endpoint' href='/api/lending/loan-request'>
+  Go to loan request endpoint.
+</Card>
+
+#### Customer Experience Flow
+
+<Steps>
+  <Step title="Browse Products">
+    Customer views available loan products with interest rates, tenure options, and amount limits
+  </Step>
+
+  <Step title='Select Product'>
+    Customer selects a loan product and enters requested loan amount
+  </Step>
+
+  <Step title='Answer Eligibility Questions'>
+    Customer answers product-specific eligibility questions
+  </Step>
+
+  <Step title='Submit Application'>
+    Customer reviews and submits the loan application
+  </Step>
+
+  <Step title="Receive Confirmation">
+    Customer receives confirmation with application ID and next steps
+  </Step>
+</Steps>
+
+### Phase 2: Application Processing
+
+#### 2.1 System Processing & Eligibility Check
+
+The system automatically processes the application, validates data, and performs eligibility checks.
+
+```mermaid
+sequenceDiagram
+    participant System
+    participant EligibilityService
+    participant CreditBureau
+    participant NotificationService
+
+    System->>System: Validate application data
+    System->>EligibilityService: Check eligibility rules
+    EligibilityService->>EligibilityService: Evaluate answers
+    EligibilityService-->>System: Eligibility result
+    alt Eligible
+        System->>CreditBureau: Request credit check
+        CreditBureau-->>System: Credit score & report
+        System->>System: Calculate risk score
+        System->>System: Update status to PROCESSING
+        System->>NotificationService: Notify customer
+        NotificationService-->>Customer: Application under review
+    else Not Eligible
+        System->>System: Update status to REJECTED
+        System->>NotificationService: Notify customer
+        NotificationService-->>Customer: Application rejected
+    end
+```
+
+<Card title='API Endpoint' href='/api/lending/get-application'>
+  Check application status and details.
+</Card>
+
+#### Processing Steps
+
+<Steps>
+  <Step title="Data Validation">
+    System validates all application data for completeness and accuracy
+  </Step>
+
+  <Step title='Eligibility Check'>
+    System evaluates eligibility based on product rules and customer answers
+  </Step>
+
+  <Step title='Credit Assessment'>
+    System performs credit bureau check and calculates risk score
+  </Step>
+
+  <Step title='Status Update'>
+    Application status updated to PROCESSING or REJECTED based on initial checks
+  </Step>
+
+  <Step title="Customer Notification">
+    Customer receives notification about application status
+  </Step>
+</Steps>
+
+### Phase 3: Underwriting & Approval
+
+#### 3.1 Loan Officer Review
+
+Loan officers review applications, assess risk, and make approval decisions.
+
+```mermaid
+sequenceDiagram
+    participant LoanOfficer
+    participant Dashboard
+    participant API
+    participant LoanService
+    participant NotificationService
+
+    LoanOfficer->>Dashboard: View pending applications
+    Dashboard->>API: GET /list-applications?status=PROCESSING
+    API->>LoanService: Fetch applications
+    LoanService-->>API: Application list
+    API-->>Dashboard: Display applications
+    LoanOfficer->>Dashboard: Select application to review
+    Dashboard->>API: GET /get-application/{id}
+    API->>LoanService: Fetch application details
+    LoanService-->>API: Full application data
+    API-->>Dashboard: Display details
+    LoanOfficer->>LoanOfficer: Review credit report & risk score
+    LoanOfficer->>LoanOfficer: Make decision
+    alt Approve
+        LoanOfficer->>Dashboard: Enter approval terms
+        Dashboard->>API: PUT /approve-loan
+        API->>LoanService: Approve application
+        LoanService->>LoanService: Update status to APPROVED
+        LoanService->>LoanService: Generate loan offer
+        LoanService->>LoanService: Update status to OFFER_SENT
+        LoanService-->>API: Approval confirmation
+        API-->>Dashboard: Success
+        LoanService->>NotificationService: Send offer to customer
+        NotificationService-->>Customer: Loan offer notification with terms
+        Customer->>Customer: Review offer terms
+        Customer->>App: Accept/Reject offer
+        App->>API: PUT /update-application/{id}?status=true
+        API->>LoanService: Update application
+        LoanService->>LoanService: Update status to ACCEPTED
+        LoanService-->>API: Acceptance confirmation
+        API-->>App: Offer accepted
+        App-->>Customer: Confirmation message
+    else Reject
+        LoanOfficer->>Dashboard: Enter rejection reason
+        Dashboard->>API: PUT /reject-application/{id}
+        API->>LoanService: Reject application
+        LoanService->>LoanService: Update status to REJECTED
+        LoanService-->>API: Rejection confirmation
+        API-->>Dashboard: Success
+        LoanService->>NotificationService: Notify customer
+        NotificationService-->>Customer: Loan rejected notification
+    end
+```
+
+<Card title='API Endpoints' href='/api/lending/approve-loan'>
+  Approve or reject loan applications.
+</Card>
+
+#### Underwriting Steps
+
+<Steps>
+  <Step title="Application Review">
+    Loan officer reviews application details, credit report, and risk assessment
+  </Step>
+
+  <Step title='Risk Assessment'>
+    Loan officer evaluates creditworthiness and repayment capacity
+  </Step>
+
+  <Step title='Decision Making'>
+    Loan officer makes approval or rejection decision
+  </Step>
+
+  <Step title='Set Loan Terms'>
+    If approved, loan officer sets final terms (amount, interest rate, tenure)
+  </Step>
+
+  <Step title='Send Offer'>
+    System generates loan offer and sends it to customer with terms
+  </Step>
+
+  <Step title='Customer Accepts Offer'>
+    Customer reviews and accepts the loan offer
+  </Step>
+
+  <Step title="Customer Notification">
+    Customer receives notification about approval, offer, or rejection
+  </Step>
+</Steps>
+
+### Phase 4: Loan Disbursement
+
+#### 4.1 Disburse Accepted Loan
+
+Once the customer accepts the loan offer, the loan is disbursed to the customer's chosen method.
+
+```mermaid
+sequenceDiagram
+    participant LoanOfficer
+    participant Dashboard
+    participant API
+    participant LoanService
+    participant WalletService
+    participant BankService
+    participant NotificationService
+
+    LoanOfficer->>Dashboard: View accepted loans
+    Dashboard->>API: GET /list-applications?status=ACCEPTED
+    API->>LoanService: Fetch accepted applications
+    LoanService-->>API: Accepted loans list
+    API-->>Dashboard: Display loans
+    LoanOfficer->>Dashboard: Select loan to disburse
+    LoanOfficer->>Dashboard: Select disbursement method
+    Dashboard->>API: GET /disburse-loan
+    API->>LoanService: Initiate disbursement
+    alt Wallet Disbursement
+        LoanService->>WalletService: Credit customer wallet
+        WalletService-->>LoanService: Wallet credited
+    else Bank Transfer
+        LoanService->>BankService: Transfer to bank account
+        BankService-->>LoanService: Transfer initiated
+    else Cash Pickup
+        LoanService->>LoanService: Generate pickup code
+    end
+    LoanService->>LoanService: Update status to DISBURSED (from ACCEPTED)
+    LoanService->>LoanService: Generate repayment schedule
+    LoanService-->>API: Disbursement confirmation
+    API-->>Dashboard: Success
+    LoanService->>NotificationService: Notify customer
+    NotificationService-->>Customer: Loan disbursed notification
+```
+
+<Card title='API Endpoint' href='/api/lending/disburse-loan'>
+  Disburse approved loans.
+</Card>
+
+#### Disbursement Steps
+
+<Steps>
+  <Step title="Select Loan">
+    Loan officer selects an approved loan for disbursement
+  </Step>
+
+  <Step title='Choose Disbursement Method'>
+    Loan officer selects disbursement method (wallet, bank, cash)
+  </Step>
+
+  <Step title='Initiate Disbursement'>
+    System processes the disbursement based on selected method
+  </Step>
+
+  <Step title='Generate Schedule'>
+    System automatically generates repayment schedule
+  </Step>
+
+  <Step title="Customer Notification">
+    Customer receives notification with disbursement details and repayment schedule
+  </Step>
+</Steps>
+
+### Phase 5: Repayment & Collection
+
+#### 5.1 Customer Makes Repayment
+
+Customers make repayments according to the schedule, and the system tracks and verifies payments.
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant App
+    participant API
+    participant RepaymentService
+    participant PaymentGateway
+    participant LoanService
+    participant NotificationService
+
+    Customer->>App: View loan details
+    App->>API: GET /get-loan-schedule/{id}
+    API->>LoanService: Fetch schedule
+    LoanService-->>API: Repayment schedule
+    API-->>App: Display schedule
+    Customer->>App: Initiate repayment
+    App->>API: POST /create-repayment
+    API->>RepaymentService: Create repayment record
+    RepaymentService->>RepaymentService: Update status to PENDING_VERIFICATION
+    RepaymentService-->>API: Repayment created
+    API-->>App: Repayment ID
+    Customer->>App: Make payment
+    App->>PaymentGateway: Process payment
+    PaymentGateway-->>App: Payment confirmation
+    App->>API: Update repayment with payment reference
+    API->>RepaymentService: Update repayment record
+    RepaymentService->>LoanOfficer: Notify pending verification
+    LoanOfficer->>API: POST /verify-repayment
+    API->>RepaymentService: Verify payment
+    RepaymentService->>LoanService: Update loan balance
+    LoanService->>LoanService: Update schedule
+    RepaymentService->>RepaymentService: Update status to VERIFIED
+    RepaymentService-->>API: Verification confirmation
+    API-->>LoanOfficer: Success
+    RepaymentService->>NotificationService: Notify customer
+    NotificationService-->>Customer: Repayment verified notification
+```
+
+<Card title='API Endpoints' href='/api/lending/create-repayment'>
+  Create repayments and view schedules.
+</Card>
+
+#### Repayment Steps
+
+<Steps>
+  <Step title="View Schedule">
+    Customer views repayment schedule with due dates and amounts
+  </Step>
+
+  <Step title='Initiate Repayment'>
+    Customer initiates repayment and provides payment details
+  </Step>
+
+  <Step title='Make Payment'>
+    Customer makes payment via selected method (wallet, bank transfer, etc.)
+  </Step>
+
+  <Step title='Verification'>
+    Loan officer verifies payment and updates loan balance
+  </Step>
+
+  <Step title="Schedule Update">
+    System updates repayment schedule and remaining balance
+  </Step>
+</Steps>
+
+### Complete Flow Diagram
+
+The complete loan lifecycle from application to repayment completion:
+
+```mermaid
+graph TD
+    A[Customer Applies for Loan] --> B[REQUESTED]
+    B --> C[System Processing & Eligibility Check]
+    C --> D{Check Result}
+    D -->|Eligible| E[Loan Officer Review]
+    D -->|Not Eligible| F[REJECTED]
+    E --> G{Approval Decision}
+    G -->|Approve| H[APPROVED]
+    G -->|Reject| F
+    H --> I[Send Loan Offer to Customer]
+    I --> J[OFFER_SENT]
+    J --> K{Customer Response}
+    K -->|Accept| L[ACCEPTED]
+    K -->|Reject| M[CANCELLED]
+    L --> N[Loan Disbursement]
+    N --> O[DISBURSED]
+    O --> P[Generate Repayment Schedule]
+    P --> Q[Customer Makes Repayments]
+    
+    style A fill:#e1f5ff
+    style B fill:#e1f5ff
+    style H fill:#d1ecf1
+    style J fill:#fff3cd
+    style L fill:#d4edda
+    style O fill:#d4edda
+    style F fill:#f8d7da
+    style M fill:#f8d7da
+```
+
+### Key Status Transitions
+
+<AccordionGroup>
+  <Accordion title="Application Statuses" icon="list">
+    - **REQUESTED**: Initial application submitted by customer
+    - **APPROVED**: Application approved by loan officer
+    - **OFFER_SENT**: Loan offer sent to customer with terms
+    - **ACCEPTED**: Customer accepted the loan offer
+    - **DISBURSED**: Funds have been disbursed to customer
+    - **REJECTED**: Application rejected during review
+    - **CANCELLED**: Application cancelled by customer or system
+  </Accordion>
+
+  <Accordion title="Repayment Statuses" icon="money-bill">
+    - **PENDING_VERIFICATION**: Payment made, awaiting verification
+    - **VERIFIED**: Payment verified and applied to loan
+    - **REJECTED**: Payment verification failed
+    - **OVERDUE**: Payment past due date
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title='Loan Lifecycle' icon='timeline' href='/lending/loan-lifecycle'>
+    Understand detailed state transitions and lifecycle management
+  </Card>
+
+  <Card title='Underwriting' icon='user-check' href='/lending/underwriting'>
+    Learn about the underwriting process and decision making
+  </Card>
+
+  <Card title='Repayment' icon='money-bill' href='/lending/repayment'>
+    Explore repayment processes and collection management
+  </Card>
+
+  <Card title='API Reference' icon='code' href='/api/lending/loan-request'>
+    Start integrating with our lending APIs
+  </Card>
+</CardGroup>
+
+

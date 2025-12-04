@@ -1,0 +1,220 @@
+---
+title: 'List Repayments'
+api: 'GET https://remitjunction.fincode.software/api/v6/services/admin/repayments/list'
+description: 'Retrieves a paginated list of all repayments for a loan or across all loans.'
+---
+
+Fetches a paginated list of repayment records, allowing managers to view and track all loan repayments. Can be filtered by loan application ID to show repayments for a specific loan.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://remitjunction.fincode.software/api/v6/services/admin/repayments/list](https://remitjunction.fincode.software/api/v6/services/admin/repayments/list)
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query='loanApplicationId' type='string'>
+  Optional filter to show repayments for a specific loan application.
+</ParamField>
+
+<ParamField query='status' type='string'>
+  Optional filter by repayment status. Options: `PENDING_VERIFICATION`, `VERIFIED`, `REJECTED`, `ALL`.
+</ParamField>
+
+<ParamField query='page' type='number' default='1'>
+  Page number for pagination (starts from 1).
+</ParamField>
+
+<ParamField query='size' type='number' default='10'>
+  Number of items per page (maximum recommended: 50).
+</ParamField>
+
+<ParamField query='startDate' type='string'>
+  Optional start date filter (ISO 8601 format) to show repayments from a specific date.
+</ParamField>
+
+<ParamField query='endDate' type='string'>
+  Optional end date filter (ISO 8601 format) to show repayments up to a specific date.
+</ParamField>
+
+## Response
+
+Returns a paginated list of repayment records with metadata.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Paginated response containing repayment records.
+  <Expandable title='data object (PaginatedResponse)'>
+    <ResponseField name='content' type='array'>
+      Array of repayment objects.
+      <Expandable title='content array item'>
+        <ResponseField name='repaymentId' type='string'>
+          Unique identifier for the repayment record.
+        </ResponseField>
+        <ResponseField name='loanApplicationId' type='string'>
+          Identifier of the loan application.
+        </ResponseField>
+        <ResponseField name='repaymentAmount' type='number'>
+          The amount that was repaid.
+        </ResponseField>
+        <ResponseField name='paymentMethod' type='string'>
+          Method used for payment.
+        </ResponseField>
+        <ResponseField name='paymentReference' type='string'>
+          Reference number for the payment.
+        </ResponseField>
+        <ResponseField name='status' type='string'>
+          Status of the repayment.
+        </ResponseField>
+        <ResponseField name='paymentDate' type='string'>
+          Date and time when the payment was made.
+        </ResponseField>
+        <ResponseField name='createdDate' type='string'>
+          Date and time when the repayment record was created.
+        </ResponseField>
+        <ResponseField name='verifiedDate' type='string'>
+          Date and time when the repayment was verified (if verified).
+        </ResponseField>
+        <ResponseField name='customerName' type='string'>
+          Name of the customer who made the repayment.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name='totalElements' type='number'>
+      Total number of repayments across all pages.
+    </ResponseField>
+    <ResponseField name='totalPages' type='number'>
+      Total number of pages available.
+    </ResponseField>
+    <ResponseField name='currentPage' type='number'>
+      Current page number (1-indexed).
+    </ResponseField>
+    <ResponseField name='pageSize' type='number'>
+      Number of items per page.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v6/services/admin/repayments/list?page=1&size=10&status=VERIFIED' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://remitjunction.fincode.software/api/v6/services/admin/repayments';
+
+async function listRepayments(accessToken, filters = {}) {
+  try {
+    const params = {
+      page: filters.page || 1,
+      size: filters.size || 10,
+    };
+
+    if (filters.loanApplicationId) {
+      params.loanApplicationId = filters.loanApplicationId;
+    }
+    if (filters.status) {
+      params.status = filters.status;
+    }
+    if (filters.startDate) {
+      params.startDate = filters.startDate;
+    }
+    if (filters.endDate) {
+      params.endDate = filters.endDate;
+    }
+
+    const response = await axios.get(`${BASE_URL}/list`, {
+      params,
+      headers: {
+        'X-Auth-Token': accessToken,
+        'x-idempotency-key': `key-${Date.now()}`,
+        'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+      },
+    });
+
+    const repayments = response.data.data.content;
+    console.log(`Found ${repayments.length} repayments`);
+    console.log(`Total: ${response.data.data.totalElements} repayments`);
+    console.log(`Page ${response.data.data.currentPage} of ${response.data.data.totalPages}`);
+
+    repayments.forEach((repayment) => {
+      console.log(
+        `- ${repayment.repaymentId}: ${repayment.repaymentAmount} ` +
+        `(${repayment.paymentMethod}) - Status: ${repayment.status}`
+      );
+    });
+
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      'Failed to list repayments:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Examples
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+
+// List all repayments
+listRepayments(accessToken);
+
+// List repayments for a specific loan
+listRepayments(accessToken, {
+  loanApplicationId: '123e4567-e89b-12d3-a456-426614174000',
+  page: 1,
+  size: 20,
+});
+
+// List verified repayments in a date range
+listRepayments(accessToken, {
+  status: 'VERIFIED',
+  startDate: '2024-01-01T00:00:00Z',
+  endDate: '2024-01-31T23:59:59Z',
+  page: 1,
+  size: 50,
+});
+```
+
+</CodeGroup>
+
+

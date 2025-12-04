@@ -1,0 +1,196 @@
+---
+title: 'Get Loan Schedule'
+api: 'GET https://remitjunction.fincode.software/api/v6/services/admin/loans/{loan-application-id}/schedule'
+description: 'Retrieves the repayment schedule for a loan, showing all scheduled installments and payment dates.'
+---
+
+Fetches the complete repayment schedule for a loan, including all installments, due dates, amounts, and payment status. This helps customers and managers track upcoming payments and repayment progress.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://remitjunction.fincode.software/api/v6/services/admin/loans/{loan-application-id}/schedule](https://remitjunction.fincode.software/api/v6/services/admin/loans/{loan-application-id}/schedule)
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='loan-application-id' type='string' required>
+  The unique identifier (UUID) of the loan application to retrieve the schedule for.
+</ParamField>
+
+## Response
+
+Returns the complete repayment schedule with installment details.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Loan schedule information.
+  <Expandable title='data object'>
+    <ResponseField name='loanApplicationId' type='string'>
+      Unique identifier of the loan application.
+    </ResponseField>
+    <ResponseField name='totalLoanAmount' type='number'>
+      Total loan amount disbursed.
+    </ResponseField>
+    <ResponseField name='totalInterest' type='number'>
+      Total interest amount over the loan tenure.
+    </ResponseField>
+    <ResponseField name='totalAmountDue' type='number'>
+      Total amount to be repaid (principal + interest).
+    </ResponseField>
+    <ResponseField name='tenure' type='number'>
+      Loan tenure in months.
+    </ResponseField>
+    <ResponseField name='interestRate' type='number'>
+      Annual interest rate.
+    </ResponseField>
+    <ResponseField name='installments' type='array'>
+      Array of scheduled installment payments.
+      <Expandable title='installments array item'>
+        <ResponseField name='installmentNumber' type='number'>
+          Sequential number of the installment (1, 2, 3, etc.).
+        </ResponseField>
+        <ResponseField name='dueDate' type='string'>
+          Date when this installment is due (ISO 8601 format).
+        </ResponseField>
+        <ResponseField name='principalAmount' type='number'>
+          Principal portion of this installment.
+        </ResponseField>
+        <ResponseField name='interestAmount' type='number'>
+          Interest portion of this installment.
+        </ResponseField>
+        <ResponseField name='totalAmount' type='number'>
+          Total installment amount (principal + interest).
+        </ResponseField>
+        <ResponseField name='status' type='string'>
+          Payment status: `PENDING`, `PAID`, `OVERDUE`, `PARTIAL`.
+        </ResponseField>
+        <ResponseField name='paidAmount' type='number'>
+          Amount paid against this installment (if any).
+        </ResponseField>
+        <ResponseField name='paidDate' type='string'>
+          Date when payment was made (if paid).
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name='summary' type='object'>
+      Summary of repayment status.
+      <Expandable title='summary object'>
+        <ResponseField name='totalPaid' type='number'>
+          Total amount paid so far.
+        </ResponseField>
+        <ResponseField name='totalPending' type='number'>
+          Total amount still pending.
+        </ResponseField>
+        <ResponseField name='paidInstallments' type='number'>
+          Number of installments paid.
+        </ResponseField>
+        <ResponseField name='pendingInstallments' type='number'>
+          Number of installments remaining.
+        </ResponseField>
+        <ResponseField name='overdueInstallments' type='number'>
+          Number of overdue installments.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v6/services/admin/loans/123e4567-e89b-12d3-a456-426614174000/schedule' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://remitjunction.fincode.software/api/v6/services/admin/loans';
+
+async function getLoanSchedule(accessToken, loanApplicationId) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/${loanApplicationId}/schedule`,
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+        },
+      }
+    );
+
+    const schedule = response.data.data;
+    console.log('Loan Schedule:');
+    console.log(`Total Amount Due: ${schedule.totalAmountDue}`);
+    console.log(`Tenure: ${schedule.tenure} months`);
+    console.log(`Interest Rate: ${schedule.interestRate}%`);
+    console.log(`\nInstallments (${schedule.installments.length}):`);
+    
+    schedule.installments.forEach((installment) => {
+      console.log(
+        `  Installment ${installment.installmentNumber}: ` +
+        `${installment.totalAmount} due ${installment.dueDate} - ` +
+        `Status: ${installment.status}`
+      );
+    });
+
+    console.log(`\nSummary:`);
+    console.log(`  Paid: ${schedule.summary.totalPaid}`);
+    console.log(`  Pending: ${schedule.summary.totalPending}`);
+    console.log(`  Paid Installments: ${schedule.summary.paidInstallments}`);
+    console.log(`  Pending Installments: ${schedule.summary.pendingInstallments}`);
+
+    return schedule;
+  } catch (error) {
+    console.error(
+      'Failed to fetch loan schedule:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+const loanApplicationId = '123e4567-e89b-12d3-a456-426614174000';
+getLoanSchedule(accessToken, loanApplicationId);
+```
+
+</CodeGroup>
+
+
