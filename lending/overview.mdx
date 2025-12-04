@@ -11,14 +11,14 @@ Our lending platform enables **fast, secure, and automated loan processing** for
 
 - **Loan Applications** - Customers can apply for loans through multiple channels
 - **Automated Underwriting** - Automated credit assessment and risk evaluation
-- **Flexible Disbursement** - Funds can be disbursed to wallets, bank accounts, or cash
+- **Fast Disbursement** - Funds are electronically disbursed to customer wallets
 - **Repayment Management** - Automated repayment tracking and collection
 
 ### Key Features
 
 <CardGroup cols={2}>
   <Card title='Automated Credit Assessment'>
-    Automated credit scoring and risk evaluation using multiple data sources including credit bureaus, transaction history, and alternative data.
+    Automated credit scoring and risk evaluation using credit bureaus, history and alternative data.
   </Card>
 
   <Card title='Multiple Loan Products'>
@@ -26,7 +26,7 @@ Our lending platform enables **fast, secure, and automated loan processing** for
   </Card>
 
   <Card title='Flexible Disbursement'>
-    Disburse loans to customer wallets, bank accounts, or cash pickup locations.
+    Disburse loans to customer wallets or bank accounts.
   </Card>
 
   <Card title='Automated Repayment Tracking'>
@@ -56,11 +56,11 @@ The lending flow consists of five main phases:
   </Step>
 
   <Step title='Underwriting & Approval'>
-    Loan officers review applications, approve or reject based on risk assessment, and set loan terms.
+    Loan officers can manually review applications, approve or reject based on risk assessment, and set loan terms.
   </Step>
 
   <Step title='Disbursement'>
-    Approved loans are disbursed to customer wallets, bank accounts, or cash pickup locations.
+    Approved loans are disbursed to customer wallets, which can then be transferred to bank accounts, or cash pickup locations.
   </Step>
 
   <Step title='Repayment & Collection'>
@@ -168,7 +168,7 @@ The system automatically:
 - Performs initial credit assessment
 - Routes to appropriate workflow
 
-#### 3. Underwriting Review
+#### 3. Manual/Automatic Underwriting Review
 
 Loan officers review applications and:
 - Assess creditworthiness
@@ -181,14 +181,15 @@ Loan officers review applications and:
 Once approved:
 - System sends loan offer to customer with terms
 - Customer reviews and accepts the offer
+- And then proceeds to also accept the loan terms
 - Application status updates to ACCEPTED
 
 #### 5. Loan Disbursement
 
 Once the offer is accepted, funds are disbursed via:
 - **Wallet Transfer** - Instant credit to customer wallet
-- **Bank Transfer** - Direct deposit to bank account
-- **Cash Pickup** - Customer collects at agent location
+- **Bank Transfer** - Direct deposit can then be initiated to bank account
+- **Cash Pickup** - Customer can also collect at agent location
 
 #### 6. Repayment Management
 
@@ -307,7 +308,6 @@ We support flexible integration approaches:
 <CardGroup cols={2}>
   <Card
     title='Application Flow'
-    icon='diagram-project'
     href='/lending/application-flow'
   >
     Visualize the complete loan application journey with detailed diagrams
@@ -315,17 +315,16 @@ We support flexible integration approaches:
 
   <Card
     title='Loan Lifecycle'
-    icon='timeline'
     href='/lending/loan-lifecycle'
   >
     Understand loan states and transitions from application to completion
   </Card>
 
-  <Card title='Credit Scoring' icon='chart-line' href='/lending/credit-scoring'>
+  <Card title='Credit Scoring' href='/lending/credit-scoring'>
     Learn about credit assessment and risk evaluation
   </Card>
 
-  <Card title='Start Integrating' icon='rocket' href='/api/lending/loan-request'>
+  <Card title='Start Integrating' href='/api/lending/loan-request'>
     Jump into the API documentation and begin building
   </Card>
 </CardGroup>

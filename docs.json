@@ -73,32 +73,20 @@
             "group": "Getting Started",
             "pages": [
               "lending/overview",
-              "lending/loan-lifecycle"
+              "lending/process-flow"
             ]
           },
           {
             "group": "Core Flows",
             "pages": [
-              "lending/application-flow",
+              "lending/loan-lifecycle",
               "lending/underwriting",
               "lending/disbursement",
-              "lending/repayment-flow"
-            ]
-          },
-          {
-            "group": "Credit Assessment",
-            "pages": [
+              "lending/repayment-flow",
               "lending/credit-scoring",
+              "lending/risk-models",
+              "lending/loan-products",
               "lending/risk-models"
-            ]
-          },
-          {
-            "group": "API Reference",
-            "pages": [
-              "lending/api/applications",
-              "lending/api/loans",
-              "lending/api/repayments",
-              "lending/api/collections"
             ]
           }
         ]
