@@ -1,0 +1,158 @@
+---
+title: 'Repayment Flow'
+icon: 'money-bill-transfer'
+---
+
+This guide details the complete repayment flow for digital lending, from viewing repayment information to making payments and tracking repayment history.
+
+<Note>
+  The repayment flow covers **Viewing Repayment Information**, **Making Repayments**, **Payoff**, and **Tracking History**.
+</Note>
+
+## Phase 1: View Repayment Information
+
+### Check Pending Repayments
+
+Customers can view all their pending repayments across all active loans.
+
+<CardGroup cols={2}>
+  <Card title='Pending Repayments' href='/api/lending/pending-repayments'>
+    View all pending repayments
+  </Card>
+  <Card title='Manage Loans' href='/api/lending/manage-loans'>
+    View loan details and manage loans
+  </Card>
+</CardGroup>
+
+### Get Repayment Instructions
+
+Before making a repayment, customers can retrieve detailed repayment instructions including bank account details and payment reference.
+
+<Card title='Repayment Instructions' href='/api/lending/repayment-instructions'>
+  Get detailed repayment instructions
+</Card>
+
+## Phase 2: Make Repayment
+
+### Partial Repayment
+
+Customers can make partial repayments (installments or custom amounts) for their loans.
+
+<CardGroup cols={2}>
+  <Card title='Repay Loan' href='/api/lending/repay-loan'>
+    Make a partial repayment
+  </Card>
+  <Card title='Repaid Transactions' href='/api/lending/repaid-transactions'>
+    View repayment history
+  </Card>
+</CardGroup>
+
+### Full Payoff
+
+Customers can pay off their entire loan balance in a single transaction.
+
+<Card title='Payoff Loan' href='/api/lending/payoff-loan'>
+  Pay off entire loan balance
+</Card>
+
+### Repayment Process
+
+1. **Choose Repayment Type**: Customer selects either partial repayment or full payoff.
+
+2. **Provide Payment Details**: For partial repayment:
+   - **Repayment Amount**: Amount to pay
+   - **Customer ID**: Customer identifier
+   - **Account ID**: Loan account identifier
+   - **Bank Account ID**: Source bank account
+   - **Repayment Reference**: Payment reference (if paid externally)
+   - **Payment Date**: Date payment was made
+   - **Payment Narration**: Optional description
+
+3. **Submit Repayment**: System processes the repayment:
+   - Validates loan status (must not be CLOSED)
+   - Checks if manual repayment is allowed
+   - Records the repayment
+   - Updates loan balance
+   - Returns confirmation with repayment details
+
+4. **Verification**: Repayments are recorded with status `PENDING_VERIFICATION`:
+   - System verifies the payment
+   - Once verified, loan balance is updated
+   - Customer receives confirmation
+
+<Info>
+  Some loans may use third-party collection services (e.g., Remita). In such cases, manual repayments through the API may not be allowed. Customers should use the designated third-party channel for repayments.
+</Info>
+
+## Phase 3: Repayment Methods
+
+### Manual Bank Transfer
+
+For loans that allow manual repayment:
+
+1. **Get Repayment Instructions**: Retrieve bank account details and payment reference
+2. **Make Bank Transfer**: Transfer funds to the provided account with the reference
+3. **Record Repayment**: Submit repayment details via API
+4. **Verification**: System verifies the payment and updates loan balance
+
+<Note>
+  Always include the repayment reference in your bank transfer narration to ensure proper matching and verification.
+</Note>
+
+### Third-Party Collection
+
+For loans configured with third-party collection:
+
+1. **Check Collection Channel**: System indicates if third-party collection is required
+2. **Use Designated Channel**: Make payments through the specified third-party service
+3. **Automatic Verification**: Third-party service verifies and updates the loan automatically
+
+<Warning>
+  If a loan uses third-party collection, manual repayments via the API will be rejected. Always check the loan's repayment collection configuration.
+</Warning>
+
+## Phase 4: Track Repayment History
+
+### View Repayment History
+
+Customers can view their complete repayment history for all loans.
+
+<CardGroup cols={2}>
+  <Card title='Repaid Transactions' href='/api/lending/repaid-transactions'>
+    View all repaid transactions
+  </Card>
+  <Card title='Loan History' href='/api/lending/get-loan-history'>
+    View loan history
+  </Card>
+</CardGroup>
+
+### View Loan Details with Installment Schedule
+
+Customers can view detailed loan information including payment history and complete installment schedule.
+
+<Card title='Loan Details with Payment History' href='/api/lending/loan-details-with-payment-history'>
+  View loan details with installment schedule and payment history
+</Card>
+
+## Key Concepts
+
+### Repayment Status
+
+Repayments go through different statuses:
+
+- **PENDING_VERIFICATION**: Repayment has been recorded but not yet verified
+- **VERIFIED**: Repayment has been verified and loan balance updated
+- **REJECTED**: Repayment verification failed (e.g., incorrect reference, insufficient funds)
+
+### Payment Allocation
+
+When a repayment is made, the system allocates the payment in the following order (based on loan product configuration):
+
+1. **Penalties** (if any)
+2. **Fees** (if any)
+3. **Interest**
+4. **Principal**
+
+<Card title='Learn More' href='/lending/overview'>
+  Return to lending overview
+</Card>

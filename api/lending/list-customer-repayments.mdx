@@ -1,0 +1,157 @@
+---
+title: 'List Customer Repayments'
+api: 'GET https://finlend.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id}'
+description: 'Retrieves a list of all repayments for a specific customer across all their loans.'
+---
+
+Fetches all repayment records associated with a customer, providing details about each repayment including amounts, due dates, installment information, and balances.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://finlend.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id}](https://finlend.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id})
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='customer-id' type='string' required>
+  The unique identifier (UUID) of the customer whose repayments to retrieve.
+</ParamField>
+
+## Response
+
+Returns a list of all repayments for the customer.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='array'>
+  List of repayment records.
+  <Expandable title='data array item'>
+    <ResponseField name='id' type='string'>
+      Unique identifier of the repayment record.
+    </ResponseField>
+    <ResponseField name='loanRepaymentMethodEnum' type='string'>
+      Repayment method (e.g., `External Bank Transfer`, `Internal Bank Transfer`).
+    </ResponseField>
+    <ResponseField name='accountProductName' type='string'>
+      Name of the account product.
+    </ResponseField>
+    <ResponseField name='customerName' type='string'>
+      Name of the customer.
+    </ResponseField>
+    <ResponseField name='email' type='string'>
+      Customer's email address.
+    </ResponseField>
+    <ResponseField name='repaymentAmount' type='number'>
+      Amount of the repayment.
+    </ResponseField>
+    <ResponseField name='loanProductName' type='string'>
+      Name of the loan product.
+    </ResponseField>
+    <ResponseField name='principalBalance' type='number'>
+      Outstanding principal balance.
+    </ResponseField>
+    <ResponseField name='totalBalance' type='number'>
+      Total outstanding balance.
+    </ResponseField>
+    <ResponseField name='loanAmountPaid' type='boolean'>
+      Whether the loan amount has been fully paid.
+    </ResponseField>
+    <ResponseField name='creationDate' type='string'>
+      Date when the repayment record was created.
+    </ResponseField>
+    <ResponseField name='paymentDueDate' type='string'>
+      Date when the payment is due.
+    </ResponseField>
+    <ResponseField name='installmentCount' type='number'>
+      Installment number for this repayment.
+    </ResponseField>
+    <ResponseField name='accountId' type='string'>
+      Unique identifier of the loan account.
+    </ResponseField>
+    <ResponseField name='loanApplicationId' type='string'>
+      Unique identifier of the loan application.
+    </ResponseField>
+    <ResponseField name='totalPayable' type='number'>
+      Total amount payable for this repayment.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://finlend.fincode.software/api/v1/services/user/list-customer-repayments/123e4567-e89b-12d3-a456-426614174000' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+
+async function getCustomerRepayments(accessToken, customerId) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/list-customer-repayments/${customerId}`,
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+        },
+      }
+    );
+
+    console.log(`Found ${response.data.data.length} repayments:`);
+    response.data.data.forEach((repayment) => {
+      console.log(
+        `- ${repayment.loanProductName}: ${repayment.repaymentAmount} ` +
+        `(Due: ${repayment.paymentDueDate}, Installment: ${repayment.installmentCount})`
+      );
+    });
+
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      'Failed to fetch customer repayments:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+const customerId = '123e4567-e89b-12d3-a456-426614174000';
+getCustomerRepayments(accessToken, customerId);
+```
+
+</CodeGroup>
+

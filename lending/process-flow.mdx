@@ -212,8 +212,86 @@ Customers can view the history and status of their transfers.
 </CardGroup>
 
 
-### Phase 6: Repayment (Coming Soon)
+### Phase 6: Repayment
+
+After loan disbursement, customers need to make repayments according to their loan schedule. The system supports both partial repayments and full payoff.
+
+#### 6.1 View Repayment Information
+
+Customers can view their pending repayments and get detailed repayment instructions.
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant App
+    participant API
+    participant LoanService
+
+    Customer->>App: Check Repayments
+    App->>API: GET /pending-repayments/{user-id}
+    API->>LoanService: Fetch Pending Repayments
+    LoanService-->>API: Return Repayments
+    API-->>App: List of Pending Repayments
+    
+    Customer->>App: Get Instructions
+    App->>API: GET /repayment-instructions/{loan-application-id}
+    API->>LoanService: Fetch Instructions
+    LoanService-->>API: Return Instructions
+    API-->>App: Bank Account & Reference
+    App-->>Customer: Display Instructions
+```
+
+<CardGroup cols={2}>
+  <Card title='Pending Repayments' href='/api/lending/pending-repayments'>
+    View pending repayments
+  </Card>
+  <Card title='Repayment Instructions' href='/api/lending/repayment-instructions'>
+    Get repayment instructions
+  </Card>
+</CardGroup>
+
+#### 6.2 Make Repayment
+
+Customers can make partial repayments or pay off the entire loan.
+
+**Partial Repayment**:
+1. Customer makes a bank transfer to the provided account with repayment reference
+2. Customer records the repayment via API: `POST /repay-loan/{user-id}`
+3. System records repayment with status `PENDING_VERIFICATION`
+4. System verifies payment and updates loan balance
+
+**Full Payoff**:
+1. Customer initiates payoff: `POST /payoff-loan`
+2. System calculates total balance (principal + accrued interest)
+3. Customer makes payment and records it
+4. System verifies and closes the loan
+
+<CardGroup cols={2}>
+  <Card title='Repay Loan' href='/api/lending/repay-loan'>
+    Make partial repayment
+  </Card>
+  <Card title='Payoff Loan' href='/api/lending/payoff-loan'>
+    Pay off entire loan
+  </Card>
+</CardGroup>
+
+#### 6.3 Track Repayment History
+
+Customers can view their complete repayment history and loan details.
+
+<CardGroup cols={2}>
+  <Card title='List Repayments' href='/api/lending/list-customer-repayments'>
+    View repayment history
+  </Card>
+  <Card title='Loan Details' href='/api/lending/loan-details-with-payment-history'>
+    View loan with payment history
+  </Card>
+</CardGroup>
+
+<Card title='Complete Repayment Flow' href='/lending/repayment-flow'>
+  See detailed repayment flow documentation with diagrams and examples.
+</Card>
 
 <Note>
-  Repayment features including payoff and automated collections are currently under development.
+  Some loans may use third-party collection services. In such cases, manual repayments via API may not be allowed. Always check the loan's repayment collection configuration.
 </Note>

@@ -1,0 +1,178 @@
+---
+title: 'Loan Application Details'
+api: 'GET https://finlend.fincode.software/api/v1/services/user/loan-application-details/{loan-application-id}'
+description: 'Retrieves comprehensive details of a loan application including full application information and loan product name.'
+---
+
+Fetches detailed information about a loan application including all application fields, customer information, loan terms, and the associated loan product name.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://finlend.fincode.software/api/v1/services/user/loan-application-details/{loan-application-id}](https://finlend.fincode.software/api/v1/services/user/loan-application-details/{loan-application-id})
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='loan-application-id' type='string' required>
+  The unique identifier (UUID) of the loan application to retrieve.
+</ParamField>
+
+## Response
+
+Returns comprehensive loan application details including full application information and loan product name.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Response object containing loan details and product name.
+  <Expandable title='data object'>
+    <ResponseField name='loanDetails' type='object'>
+      Complete loan application details.
+      <Expandable title='loanDetails object'>
+        <ResponseField name='id' type='string'>
+          Unique identifier of the loan application.
+        </ResponseField>
+        <ResponseField name='dateOfRequest' type='string'>
+          Date when the loan application was created.
+        </ResponseField>
+        <ResponseField name='loanRequestUserId' type='string'>
+          Unique identifier of the user who requested the loan.
+        </ResponseField>
+        <ResponseField name='loanProduct' type='string'>
+          Unique identifier of the loan product.
+        </ResponseField>
+        <ResponseField name='organisation' type='string'>
+          Unique identifier of the organisation.
+        </ResponseField>
+        <ResponseField name='loanApplicationStatusEnum' type='string'>
+          Current status of the loan application (e.g., `REQUESTED`, `APPROVED`, `OFFER_SENT`, `ACCEPTED`, `DISBURSED`).
+        </ResponseField>
+        <ResponseField name='requestedLoanAmount' type='number'>
+          The loan amount requested by the customer.
+        </ResponseField>
+        <ResponseField name='loanDuration' type='number'>
+          Loan duration.
+        </ResponseField>
+        <ResponseField name='loanRepaymentMethodEnum' type='string'>
+          Repayment method (e.g., `External Bank Transfer`, `Internal Bank Transfer`).
+        </ResponseField>
+        <ResponseField name='customerCreditAccountId' type='string'>
+          Unique identifier of the customer's credit account.
+        </ResponseField>
+        <ResponseField name='employmentStatus' type='string'>
+          Customer's employment status.
+        </ResponseField>
+        <ResponseField name='monthlyIncome' type='number'>
+          Customer's monthly income.
+        </ResponseField>
+        <ResponseField name='currencyCode' type='string'>
+          Currency code with symbol (e.g., `NGN (₦)`).
+        </ResponseField>
+        <ResponseField name='durationCounter' type='string'>
+          Duration counter unit (e.g., `MONTH`, `WEEK`, `DAY`).
+        </ResponseField>
+        <ResponseField name='customerName' type='string'>
+          Customer's name.
+        </ResponseField>
+        <ResponseField name='email' type='string'>
+          Customer's email address.
+        </ResponseField>
+        <ResponseField name='loanApplicationId' type='string'>
+          Loan application identifier.
+        </ResponseField>
+        <ResponseField name='phoneNumber' type='string'>
+          Customer's phone number.
+        </ResponseField>
+        <ResponseField name='dateOfBirth' type='string'>
+          Customer's date of birth.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name='loanProductName' type='string'>
+      Name of the loan product associated with this application.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://finlend.fincode.software/api/v1/services/user/loan-application-details/123e4567-e89b-12d3-a456-426614174000' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+
+async function getLoanApplicationDetails(accessToken, loanApplicationId) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/loan-application-details/${loanApplicationId}`,
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+        },
+      }
+    );
+
+    const { loanDetails, loanProductName } = response.data.data;
+    console.log('Loan Product:', loanProductName);
+    console.log('Application Status:', loanDetails.loanApplicationStatusEnum);
+    console.log('Requested Amount:', loanDetails.requestedLoanAmount);
+    console.log('Customer:', loanDetails.customerName);
+
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      'Failed to fetch loan application details:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+const loanApplicationId = '123e4567-e89b-12d3-a456-426614174000';
+getLoanApplicationDetails(accessToken, loanApplicationId);
+```
+
+</CodeGroup>
+

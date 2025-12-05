@@ -1,0 +1,331 @@
+---
+title: 'Trading Flow'
+icon: 'chart-line'
+---
+
+This guide details the trading and investment execution flow, from quote generation to portfolio creation and interest accrual.
+
+<Note>
+  The trading flow covers **Quote Generation**, **Application Submission**, **Execution**, **Portfolio Creation**, and **Interest Accrual**.
+</Note>
+
+## Trading Flow Overview
+
+The investment trading flow enables customers to execute investments seamlessly through a quote-based system that provides transparency and real-time pricing.
+
+```mermaid
+flowchart LR
+    A[Get Quote] --> B[Review Quote]
+    B --> C[Submit Application]
+    C --> D[Validate & Execute]
+    D --> E[Create Portfolio]
+    E --> F[Start Interest Accrual]
+    F --> G[Track Performance]
+```
+
+## Phase 1: Quote Generation
+
+### 1.1 Request Investment Quote
+
+Customers request quotes for specific investment products and unit quantities.
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant App
+    participant API
+    participant QuoteService
+    participant ProductService
+
+    Customer->>App: Select Product & Units
+    App->>API: GET /quote/get-quote/{product-id}/{units}
+    API->>ProductService: Get Product Details
+    ProductService-->>API: Product Information
+    API->>QuoteService: Calculate Quote
+    QuoteService->>QuoteService: Calculate Fees
+    QuoteService->>QuoteService: Calculate Total
+    QuoteService-->>API: Quote Details
+    API-->>App: Return Quote
+    App-->>Customer: Display Quote
+```
+
+<Card title='Get Quote' href='/api/investment/get-quote'>
+  Get real-time investment quote
+</Card>
+
+### Quote Components
+
+The quote includes:
+
+- **Product Information**: Product name, type, and details
+- **Unit Price**: Price per unit of the investment
+- **Number of Units**: Quantity requested
+- **Fees**: Applicable fees for the investment
+- **Total Amount**: Total cost including fees
+- **Investing Amount**: Net amount to be invested
+
+<Info>
+  Quotes are calculated in real-time based on current product pricing and fee structures. Quote validity may vary by product.
+</Info>
+
+## Phase 2: Application Submission
+
+### 2.1 Submit Investment Application
+
+After reviewing the quote, customers submit their investment application.
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant App
+    participant API
+    participant InvestmentService
+    participant WalletService
+
+    Customer->>App: Confirm Investment
+    App->>API: POST /apply
+    API->>InvestmentService: Process Application
+    InvestmentService->>InvestmentService: Validate Application
+    InvestmentService->>WalletService: Create Wallet Automatically
+    WalletService->>WalletService: Generate Account Number
+    WalletService-->>InvestmentService: Wallet Created
+    InvestmentService-->>API: Application Received
+    API-->>App: Wallet Created
+    App-->>Customer: Fund Wallet Required
+```
+
+<Card title='Create Investment Application' href='/api/investment/create-investment-application'>
+  Submit investment application
+</Card>
+
+### Application Validation
+
+The system validates:
+
+1. **Product Availability**: Product is active and available
+2. **Unit Quantity**: Valid number of units requested
+3. **Customer Eligibility**: Customer meets product requirements
+4. **Quote Accuracy**: Application matches recent quote
+
+<Info>
+  After validation, a wallet is automatically created for the customer. The customer then needs to fund the wallet to complete the investment.
+</Info>
+
+<Warning>
+  If wallet balance is insufficient, the application will be rejected. Ensure the wallet is funded before submitting the application.
+</Warning>
+
+## Phase 3: Wallet Funding & Execution
+
+### 3.1 Fund Wallet
+
+After the wallet is automatically created, the customer funds it to complete the investment.
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant App
+    participant API
+    participant WalletService
+    participant InvestmentService
+    participant PortfolioService
+    participant InterestService
+
+    Customer->>App: Fund Wallet
+    App->>API: PUT /wallet/fund-wallet/{wallet-id}/{amount}
+    API->>WalletService: Process Funding
+    WalletService->>WalletService: Credit Wallet
+    WalletService-->>API: Funding Confirmed
+    API->>InvestmentService: Process Investment
+    InvestmentService->>WalletService: Debit Wallet
+    WalletService->>WalletService: Process Debit
+    WalletService-->>InvestmentService: Debit Confirmed
+    InvestmentService->>PortfolioService: Create Portfolio
+    PortfolioService->>PortfolioService: Record Investment Details
+    PortfolioService->>PortfolioService: Set Maturity Date
+    PortfolioService-->>InvestmentService: Portfolio Created
+    InvestmentService->>InterestService: Initialize Interest Accrual
+    InterestService-->>InvestmentService: Accrual Started
+    InvestmentService-->>API: Investment Complete
+    API-->>App: Portfolio Created
+    App-->>Customer: Investment Active
+```
+
+### Execution Steps
+
+<Steps>
+  <Step title="Wallet Created">
+    A wallet account is automatically created when the investment application is submitted.
+  </Step>
+
+  <Step title='Fund Wallet'>
+    Customer funds the wallet with the investment amount (including fees).
+  </Step>
+
+  <Step title="Debit Wallet">
+    System debits the investment amount (including fees) from the customer's wallet.
+  </Step>
+
+  <Step title='Create Portfolio Record'>
+    System creates a portfolio entry with:
+    - Investment amount
+    - Number of units
+    - Product details
+    - APY (Annual Percentage Yield)
+    - Request date
+    - Maturity date
+    - Total payable
+  </Step>
+
+  <Step title='Initialize Interest Accrual'>
+    System sets up automatic interest calculation and accrual based on product APY.
+  </Step>
+
+  <Step title='Confirmation'>
+    Customer receives confirmation with portfolio ID and investment details.
+  </Step>
+</Steps>
+
+## Phase 4: Interest Accrual
+
+### 4.1 Automatic Interest Calculation
+
+The system automatically calculates and accrues interest based on product terms.
+
+```mermaid
+sequenceDiagram
+    participant InterestService
+    participant PortfolioService
+    participant Database
+
+    loop Daily/Periodic Accrual
+        InterestService->>PortfolioService: Get Active Portfolios
+        PortfolioService-->>InterestService: Portfolio List
+        InterestService->>InterestService: Calculate Interest
+        InterestService->>InterestService: Apply APY Formula
+        InterestService->>Database: Update Accrued Interest
+        Database-->>InterestService: Updated
+    end
+```
+
+### Interest Calculation
+
+Interest accrual follows these principles:
+
+- **APY-Based**: Uses Annual Percentage Yield for calculation
+- **Automatic**: Accrues automatically based on product terms
+- **Periodic**: Calculated at defined intervals (daily, monthly, etc.)
+- **Compounding**: May compound based on product configuration
+- **Currency-Specific**: Tracked per currency
+
+<Info>
+  Interest accrual is automatic and requires no customer action. Customers can view accrued interest through the dashboard or portfolio details.
+</Info>
+
+## Phase 5: Performance Tracking
+
+### 5.1 Monitor Investment Performance
+
+Customers can track their investment performance through portfolios and dashboard.
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant App
+    participant API
+    participant PortfolioService
+    participant InterestService
+
+    Customer->>App: View Portfolios
+    App->>API: GET /portfolios/{customer-id}
+    API->>PortfolioService: Fetch Portfolios
+    PortfolioService->>InterestService: Get Accrued Interest
+    InterestService-->>PortfolioService: Interest Data
+    PortfolioService-->>API: Portfolio with Interest
+    API-->>App: Return Data
+    App-->>Customer: Display Performance
+
+    Customer->>App: View Dashboard
+    App->>API: GET /get-total/{user-id}
+    API->>PortfolioService: Calculate Totals
+    PortfolioService-->>API: Total Investments
+    API->>InterestService: Get Total Interest
+    InterestService-->>API: Total Interest Accrued
+    API-->>App: Dashboard Summary
+    App-->>Customer: Display Summary
+```
+
+<CardGroup cols={2}>
+  <Card title='List Portfolios' href='/api/investment/list-portfolios'>
+    View investment portfolios
+  </Card>
+  <Card title='Get Total Investments' href='/api/investment/get-total-investments'>
+    View dashboard summary
+  </Card>
+</CardGroup>
+
+### Performance Metrics
+
+Customers can track:
+
+- **Investment Amount**: Original amount invested
+- **Accrued Interest**: Total interest earned to date
+- **Total Payable**: Total amount including principal and interest
+- **APY**: Annual Percentage Yield of the investment
+- **Maturity Date**: When the investment matures
+- **Performance**: Return on investment percentage
+
+## Complete Trading Flow Diagram
+
+```mermaid
+flowchart TD
+    Start([Customer Ready to Invest]) --> GetQuote[Get Quote]
+    GetQuote --> ReviewQuote{Review Quote}
+    ReviewQuote -->|Accept| SubmitApp[Submit Application]
+    ReviewQuote -->|Reject| GetQuote
+    SubmitApp --> Validate{Validate Application}
+    Validate -->|Valid| CreateWallet[Create Wallet Automatically]
+    Validate -->|Invalid| Error[Return Error]
+    CreateWallet --> FundWallet[Fund Wallet]
+    FundWallet --> CheckBalance{Wallet Balance<br/>Sufficient?}
+    CheckBalance -->|Yes| DebitWallet[Debit Wallet]
+    CheckBalance -->|No| FundWallet
+    DebitWallet --> CreatePortfolio[Create Portfolio]
+    CreatePortfolio --> StartAccrual[Start Interest Accrual]
+    StartAccrual --> Confirm[Send Confirmation]
+    Confirm --> Track[Track Performance]
+    Track --> End([Investment Active])
+    Error --> GetQuote
+```
+
+## Key Trading Concepts
+
+### Quote Validity
+
+- Quotes are calculated in real-time
+- Quote prices may change based on market conditions
+- Customers should submit applications promptly after receiving quotes
+- System validates quote accuracy during application processing
+
+### Execution Timing
+
+- Applications are processed immediately upon submission
+- Portfolio creation happens synchronously
+- Interest accrual begins immediately after portfolio creation
+- No manual approval required for standard investments
+
+### Fee Structure
+
+- Fees are included in the quote
+- Fees are deducted from wallet along with investment amount
+- Fee structure varies by product type
+- Total amount includes all applicable fees
+
+<Card title='Learn More' href='/investment/portfolio-management'>
+  Explore portfolio management and tracking features.
+</Card>
+
+<Card title='View Process Flow' href='/investment/process-flow'>
+  See the complete investment process flow.
+</Card>
+

@@ -94,6 +94,7 @@
             "group": "Getting Started",
             "pages": [
               "investment/overview",
+              "investment/process-flow",
               "investment/account-opening"
             ]
           },
@@ -218,12 +219,16 @@
               "api/lending/calculate-apr",
               "api/lending/transfer-status",
               "api/lending/add-bank-account",
-              "api/lending/transaction-pin",
               "api/lending/get-loan-terms",
               "api/lending/payoff-loan",
+              "api/lending/repay-loan",
               "api/lending/pending-repayments",
               "api/lending/repaid-transactions",
               "api/lending/repayment-instructions",
+              "api/lending/loan-details-with-payment-history",
+              "api/lending/update-application",
+              "api/lending/loan-application-details",
+              "api/lending/list-customer-repayments",
               "api/lending/transfer-funds",
               "api/lending/view-bank-account"
             ]
@@ -235,7 +240,6 @@
               "api/investment/get-total-investments",
               "api/investment/list-portfolios",
               "api/investment/get-quote",
-              "api/investment/create-wallet",
               "api/investment/fund-wallet"
             ]
           },

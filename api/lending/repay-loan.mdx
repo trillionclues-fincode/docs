@@ -1,0 +1,239 @@
+---
+title: 'Repay Loan'
+api: 'POST https://finlend.fincode.software/api/v1/services/user/repay-loan/{user-id}'
+description: 'Allows customers to make a partial repayment for their loan.'
+---
+
+Customers can use this endpoint to record a partial repayment for their loan. This is typically used after making a bank transfer to the repayment account.
+
+<RequestExample>
+  ```bash cURL POST
+  [https://finlend.fincode.software/api/v1/services/user/repay-loan/{user-id}](https://finlend.fincode.software/api/v1/services/user/repay-loan/{user-id})
+  ```
+</RequestExample>
+
+<Note>
+  Before making a repayment, customers should:
+  1. Get repayment instructions using `GET /repayment-instructions/{loan-application-id}`
+  2. Make a bank transfer to the provided account with the repayment reference
+  3. Record the repayment using this endpoint
+</Note>
+
+<Warning>
+  Some loans use third-party collection services. Manual repayments via this API may not be allowed for such loans. The system will return an error if manual repayment is not permitted.
+</Warning>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+<ParamField header='Content-Type' type='string' required default='application/json'>
+  Must be `application/json`.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='user-id' type='string' required>
+  The unique identifier (UUID) of the user making the repayment. This must match the authenticated user.
+</ParamField>
+
+## Request Body
+
+<ParamField body='repaymentAmount' type='number' required>
+  The amount to be repaid. Must be greater than zero and cannot exceed the total payable amount.
+</ParamField>
+
+<ParamField body='customerId' type='string' required>
+  The unique identifier (UUID) of the customer making the repayment. Must match the authenticated user.
+</ParamField>
+
+<ParamField body='accountId' type='string' required>
+  The unique identifier (UUID) of the loan account being repaid.
+</ParamField>
+
+<ParamField body='bankAccountId' type='string' required>
+  The unique identifier (UUID) of the bank account from which the payment was made. This must be a bank account that belongs to the customer.
+</ParamField>
+
+<ParamField body='repaymentReference' type='string'>
+  The payment reference number from the bank transfer. This should match the reference provided in the repayment instructions.
+</ParamField>
+
+<ParamField body='paymentDate' type='string'>
+  The date when the payment was made (ISO 8601 format). If not provided, the current date is used.
+</ParamField>
+
+<ParamField body='paymentNarration' type='string'>
+  Optional description or narration for the payment.
+</ParamField>
+
+## Response
+
+Returns confirmation of the repayment submission with details.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Repayment confirmation details.
+  <Expandable title='data object'>
+    <ResponseField name='id' type='string'>
+      Unique identifier for the repayment record.
+    </ResponseField>
+    <ResponseField name='repaymentAmount' type='number'>
+      The amount that was repaid.
+    </ResponseField>
+    <ResponseField name='customerName' type='string'>
+      Name of the customer who made the repayment.
+    </ResponseField>
+    <ResponseField name='email' type='string'>
+      Email address of the customer.
+    </ResponseField>
+    <ResponseField name='loanProductName' type='string'>
+      Name of the loan product.
+    </ResponseField>
+    <ResponseField name='repaymentReference' type='string'>
+      Payment reference number for the repayment.
+    </ResponseField>
+    <ResponseField name='verificationStatus' type='string' default='PENDING_VERIFICATION'>
+      Status of the repayment verification. Options: `PENDING_VERIFICATION`, `VERIFIED`, `REJECTED`.
+    </ResponseField>
+    <ResponseField name='message' type='string'>
+      Message confirming the repayment submission.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location --request POST 'https://finlend.fincode.software/api/v1/services/user/repay-loan/123e4567-e89b-12d3-a456-426614174000' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345' \
+--header 'Content-Type: application/json' \
+--data '{
+    "repaymentAmount": 50000,
+    "customerId": "123e4567-e89b-12d3-a456-426614174000",
+    "accountId": "223e4567-e89b-12d3-a456-426614174001",
+    "bankAccountId": "323e4567-e89b-12d3-a456-426614174002",
+    "repaymentReference": "REF-2024-01-15-001",
+    "paymentDate": "2024-01-15T10:00:00Z",
+    "paymentNarration": "Monthly installment payment"
+}'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+
+async function repayLoan(accessToken, userId, repaymentData) {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/repay-loan/${userId}`,
+      {
+        repaymentAmount: repaymentData.amount,
+        customerId: repaymentData.customerId,
+        accountId: repaymentData.accountId,
+        bankAccountId: repaymentData.bankAccountId,
+        repaymentReference: repaymentData.reference,
+        paymentDate: repaymentData.paymentDate || new Date().toISOString(),
+        paymentNarration: repaymentData.narration,
+      },
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const repayment = response.data.data;
+    console.log('Repayment submitted successfully:');
+    console.log(`- Repayment ID: ${repayment.id}`);
+    console.log(`- Amount: ${repayment.repaymentAmount}`);
+    console.log(`- Status: ${repayment.verificationStatus}`);
+    console.log(`- Message: ${repayment.message}`);
+
+    return repayment;
+  } catch (error) {
+    console.error(
+      'Failed to submit repayment:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+const userId = '123e4567-e89b-12d3-a456-426614174000';
+
+// First, get repayment instructions
+// Then make bank transfer
+// Finally, record the repayment
+repayLoan(accessToken, userId, {
+  amount: 50000,
+  customerId: '123e4567-e89b-12d3-a456-426614174000',
+  accountId: '223e4567-e89b-12d3-a456-426614174001',
+  bankAccountId: '323e4567-e89b-12d3-a456-426614174002',
+  reference: 'REF-2024-01-15-001',
+  paymentDate: '2024-01-15T10:00:00Z',
+  narration: 'Monthly installment payment',
+});
+```
+
+</CodeGroup>
+
+## Error Responses
+
+<ResponseField name='status' type='string' default='FAILED'>
+  Status will be `FAILED` if an error occurs.
+</ResponseField>
+
+<ResponseField name='message' type='string'>
+  Error message describing what went wrong.
+</ResponseField>
+
+### Common Error Scenarios
+
+- **Loan Not Found**: No active loan found for the provided customer ID
+- **Loan Closed**: The loan is already closed and cannot be repaid
+- **Unauthorized**: The customer ID does not match the authenticated user
+- **Manual Repayment Not Allowed**: The loan uses third-party collection and manual repayments are not permitted
+- **Invalid Amount**: Repayment amount is zero, negative, or exceeds total payable
+- **Bank Account Mismatch**: The bank account does not belong to the customer
+- **Missing Loan Application**: Loan application ID is missing for the customer loan record
+
+<Card title='Repayment Flow' href='/lending/repayment-flow'>
+  See the complete repayment flow documentation
+</Card>
+
