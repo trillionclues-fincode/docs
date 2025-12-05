@@ -1,0 +1,59 @@
+---
+title: 'Wallet Payments'
+icon: 'credit-card'
+---
+
+Wallet payments allow customers to pay instantly using their wallet balance. This is typically the fastest payment method and is fully integrated within the platform.
+
+## Wallet Payment Flow
+
+```mermaid
+flowchart TD
+    A[PENDING_PAYMENT] --> B[CONFIRMED]
+    B --> C[PAID]
+    C --> D[PAID_OUT]
+    B --> E[FAILED]
+````
+
+### Key Features
+
+* **Instant Payment**: Wallet balance is debited immediately.
+* **No Third-Party Gateway Required**: Fully internal processing.
+* **Integrated Tracking**: Payment status updates in real-time.
+* **Fallback Options**: Customer can top up wallet if insufficient balance.
+
+### API Endpoints
+
+* **Make Payment from Wallet**
+
+```http
+POST /makepaymentfromwalletaccount
+```
+
+* **Get Wallet Balance**
+
+```http
+GET /wallet/balance
+```
+
+### Integration Example
+
+```json
+{
+  "pcn": "PCN123456",
+  "payAbleType": "WALLET",
+  "amount": "100.00",
+  "currency": "USD"
+}
+```
+
+### Best Practices
+
+* Ensure the customer has sufficient balance before initiating payment.
+* Handle `FAILED` status by prompting the customer to top up.
+* Poll or subscribe to wallet transaction webhooks for real-time updates.
+
+<Card title='Create Payable & Make Payment' href='/api/deposit-engine/supported-payment-methods'>
+  Learn how to create a payable item and pay via wallet.
+</Card>
+```

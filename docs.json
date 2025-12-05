@@ -123,14 +123,18 @@
             "group": "Getting Started",
             "pages": [
               "deposit-engine/overview",
-              "deposit-engine/process-flow"
+              "deposit-engine/process-flows"
             ]
           },
           {
             "group": "Core Flows",
             "pages": [
               "deposit-engine/holdings",
-              "deposit-engine/wallet-accounts"
+              "deposit-engine/wallet-accounts",
+              "deposit-engine/payment-lifecycle",
+              "deposit-engine/wallet-payments",
+              "deposit-engine/bank-transfers",
+              "deposit-engine/card-payments"
             ]
           }
         ]
@@ -247,7 +251,16 @@
             "group": "Deposit Engine",
             "pages": [
               "api/deposit-engine/get-account",
-              "api/deposit-engine/list-wallet-accounts"
+              "api/deposit-engine/list-wallet-accounts",
+              "api/deposit-engine/awaiting-payments",
+              "api/deposit-engine/awaiting-payment-actions",
+              "api/deposit-engine/bank-iwillpaylater",
+              "api/deposit-engine/payment-methods-charges",
+              "api/deposit-engine/notify-bank-transfer-payment",
+              "api/deposit-engine/supported-payment-methods",
+              "api/deposit-engine/make-payment-from-wallet",
+              "api/deposit-engine/process-payment-with-token",
+              "api/deposit-engine/process-card-payment"
             ]
           },
           {

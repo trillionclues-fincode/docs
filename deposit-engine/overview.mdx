@@ -1,0 +1,324 @@
+---
+title: 'Overview'
+icon: 'house'
+---
+
+Welcome to the deposit platform documentation. This guide will help you understand how our digital payment system works and how to integrate it into your application.
+
+### What is Deposit Management?
+
+Our deposit platform enables **secure, flexible, and automated payment processing** for customers. The system supports:
+
+- **Multiple Payment Methods** - Wallet, bank transfer, card payments, and more
+- **Automated Payment Processing** - Real-time payment verification and confirmation
+- **Payment Tracking** - Comprehensive payment history and status monitoring
+- **Flexible Payment Options** - Support for various payment gateways and methods
+
+### Key Features
+
+<CardGroup cols={2}>
+  <Card title='Multi-Payment Support'>
+    Accept payments via wallet, bank transfer, card, PayPal, mobile money, and cryptocurrency.
+  </Card>
+
+  <Card title='Real-Time Processing'>
+    Instant payment verification with automated status updates and notifications.
+  </Card>
+
+  <Card title='Awaiting Payments'>
+    Track and manage payments that customers commit to making later via bank transfer.
+  </Card>
+
+  <Card title='Payment Gateway Integration'>
+    Seamless integration with multiple payment gateways including Flutterwave, Stripe, and more.
+  </Card>
+
+  <Card title='Wallet Integration'>
+    Built-in wallet system for instant payments with balance management.
+  </Card>
+
+  <Card title='API-First Design'>
+    RESTful APIs with comprehensive documentation for seamless integration.
+  </Card>
+</CardGroup>
+
+### How It Works
+
+The payment flow consists of four main phases:
+
+<Steps>
+  <Step title='Payment Method Selection'>
+    Customer selects their preferred payment method from available options based on currency and amount.
+  </Step>
+
+  <Step title='Payment Initiation'>
+    System creates a payable item and processes payment through the selected method (wallet, card, bank transfer).
+  </Step>
+
+  <Step title='Payment Processing'>
+    Payment is processed via the appropriate gateway or internal system with real-time status updates.
+  </Step>
+
+  <Step title='Payment Confirmation'>
+    System confirms payment receipt and updates transaction status, completing the payment lifecycle.
+  </Step>
+</Steps>
+
+<Info>
+  For detailed visual flow, see the [Process Flow](/deposit-engine/process-flows) and [Payment Lifecycle](/deposit-engine/payment-lifecycle) pages.
+</Info>
+
+### Core Concepts
+
+#### Payment Lifecycle
+
+Every payment moves through defined states from initiation to completion:
+
+```
+PENDING_PAYMENT → CONFIRMED → PAID → COMPLETED
+```
+
+Payments can also transition to `CANCELLED`, `FAILED`, or `REFUNDED` at various stages.
+
+<Card title='Learn More' href='/deposit-engine/payment-lifecycle'>
+  See detailed state transitions and what triggers each status change.
+</Card>
+
+#### Payable Items
+
+Payable items represent different types of transactions that can be paid for:
+
+- **TRANSACTION** - Remittance/money transfer
+- **WALLET** - Wallet funding or generic wallet payment
+- **BILL** - Bill payment
+- **MERCHANT** - Product/merchant payment
+- **VOUCHER** - Voucher purchase
+- **WITHDRAWAL** - Wallet withdrawal
+
+<Card title='Learn More' href='/deposit-engine/process-flow'>
+  Understand how different payable types are processed.
+</Card>
+
+#### Payment Methods
+
+The platform supports multiple payment methods:
+
+- **E_WALLET** - Pay from customer wallet balance
+- **ONLINE_CARD_PAYMENT** - Credit/debit card payments via payment gateway
+- **BANK_TRANSFER** - Offline bank transfer with confirmation
+- **ONLINE_BANK_TRANSFER** - Direct online bank transfer
+- **PAYPAL** - PayPal payments
+- **MOBILE_MONEY** - Mobile money payments
+- **CRYPTO_CURRENCY_PAYMENT** - Cryptocurrency payments
+- **CASH** - Cash payments at branches
+
+<Card title='Learn More' href='/deposit-engine/wallet-payments'>
+  Explore payment methods in detail.
+</Card>
+
+#### Awaiting Payments
+
+The "awaiting payments" system allows customers to notify the platform that they will pay via bank transfer:
+
+- Customer initiates transaction
+- Selects "I will pay later" option
+- Makes bank transfer offline
+- Notifies system of payment completion
+- Admin verifies and confirms payment
+
+<Card title='Learn More' href='/deposit-engine/bank-transfers'>
+  Understand the bank transfer workflow.
+</Card>
+
+### Integration Quick Start
+
+Before you begin:
+
+<Steps>
+  <Step title='Get API Credentials'>
+    Contact our team to receive your sandbox API keys and base URL.
+  </Step>
+
+  <Step title='Review API Documentation'>
+    Familiarize yourself with our [Payment API Reference](/api/deposit-engine/supported-payment-methods).
+  </Step>
+
+  <Step title='Understand the Flow'>
+    Read through the [Payment Flow](/deposit-engine/process-flow) to understand the complete payment journey.
+  </Step>
+</Steps>
+
+<Card title='Complete API Reference' href='/api/deposit-engine/supported-payment-methods'>
+  Explore all available payment endpoints with request/response examples.
+</Card>
+
+### Payment Process
+
+#### 1. Get Supported Payment Methods
+
+First, retrieve available payment methods for the transaction:
+
+```
+POST /supported-payment-methods
+```
+
+This returns available payment methods with their charges, fees, and metadata.
+
+#### 2. Customer Selects Payment Method
+
+Customer reviews options and selects their preferred payment method.
+
+#### 3. Process Payment
+
+Depending on the selected method:
+
+**Wallet Payment:**
+```
+POST /makepaymentfromwalletaccount
+```
+
+**Card Payment:**
+```
+POST /process-card-payment
+```
+
+**Bank Transfer:**
+```
+PUT /bank-iwillpaylater-wallet/{pcn}/{payableType}
+```
+
+#### 4. Track Payment Status
+
+Monitor payment status through:
+```
+GET /awaiting-payments
+```
+
+<Card title='View Complete Flow' href='/deposit-engine/process-flow'>
+  Detailed step-by-step payment processing flow.
+</Card>
+
+### Supported Features
+
+#### Multi-Currency Support
+
+- Process payments in multiple currencies
+- Automatic currency conversion where applicable
+- Currency-specific payment method availability
+
+#### Payment Gateway Integration
+
+- Flutterwave (Rave)
+- Stripe
+- SecureTrading
+- PayPal
+- Custom payment gateways
+
+#### Charge Calculation
+
+- Automatic fee calculation based on payment method
+- Tax calculation
+- Payment method fees
+- Currency conversion fees
+
+<Card title='Learn More' href='/api/deposit-engine/payment-methods-charges'>
+  View payment method charges.
+</Card>
+
+### Testing & Sandbox
+
+We provide a full-featured sandbox environment for testing:
+
+- **Sandbox URL**: `https://{domain}.fincode.software`
+- **Test credentials**: Provided upon registration
+- **Mock payment gateways**: Simulate payment processing
+- **No real money**: All transactions are simulated
+
+<Tip>
+  Use the sandbox to test all payment flows, edge cases, and error handling before going live.
+</Tip>
+
+### Integration Models
+
+We support flexible integration approaches:
+
+<Tabs>
+  <Tab title="Full Payment Journey">
+    ### End-to-End Integration
+    
+    Build the complete payment experience within your application, managing the entire customer journey from payment initiation to confirmation.
+
+    **Flow**:
+    1. Create payable item
+    2. Fetch supported payment methods
+    3. Customer selects payment method
+    4. Process payment
+    5. Confirm payment
+    6. Complete transaction
+
+    **Documentation**:
+    - [Complete Payment Flow](/deposit-engine/process-flow)
+    - [Supported Payment Methods API](/api/deposit-engine/supported-payment-methods)
+    - [Authentication](/api/authentication)
+  </Tab>
+
+  <Tab title="API-Only">
+    ### Direct API Integration
+    
+    If you manage your own payment interface, you can integrate our payment APIs directly into your system.
+
+    **Flow**:
+    ```
+    Your System (Payment Interface) 
+           ↓
+    Submit Payment Request (via API)
+           ↓
+    Our System (Payment Processing)
+           ↓
+    Your System (Receive Status Updates)
+           ↓
+    Payment Completed / Failed
+    ```
+
+    **What You Handle**:
+    - Payment interface and experience
+    - Payment method selection UI
+    - Status display and notifications
+
+    **What We Handle**:
+    - Payment gateway integration
+    - Payment processing
+    - Payment verification
+    - Transaction tracking
+
+    <Info>
+      All payment operations are accessible via our REST APIs. See the [API Reference](/api/deposit-engine/supported-payment-methods) for details.
+    </Info>
+  </Tab>
+</Tabs>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title='Payment Flow'
+    href='/deposit-engine/process-flow'
+  >
+    Visualize the complete payment journey with detailed diagrams
+  </Card>
+
+  <Card
+    title='Payment Lifecycle'
+    href='/deposit-engine/payment-lifecycle'
+  >
+    Understand payment states and transitions from initiation to completion
+  </Card>
+
+  <Card title='Wallet Payments' href='/deposit-engine/wallet-payments'>
+    Learn about wallet-based payment processing
+  </Card>
+
+  <Card title='Start Integrating' href='/api/deposit-engine/supported-payment-methods'>
+    Jump into the API documentation and begin building
+  </Card>
+</CardGroup>
