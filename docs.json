@@ -117,6 +117,26 @@
         ]
       },
       {
+        "tab": "Ledger Engine",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "ledger/overview",
+              "ledger/process-flow"
+            ]
+          },
+          {
+            "group": "Core Flows",
+            "pages": [
+              "ledger/double-entry-posting",
+              "ledger/balance-management",
+              "ledger/transaction-history"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Deposit Engine",
         "groups": [
           {
@@ -235,6 +255,18 @@
               "api/lending/list-customer-repayments",
               "api/lending/transfer-funds",
               "api/lending/view-bank-account"
+            ]
+          },
+          {
+            "group": "Ledger Engine",
+            "pages": [
+              "api/ledger/account-balance",
+              "api/ledger/post-account",
+              "api/ledger/ledger-history",
+              "api/ledger/ledger-history-interaction-id",
+              "api/ledger/ledger-history-idempotency-key",
+              "api/ledger/list-accounts",
+              "api/ledger/change-account-permission"
             ]
           },
           {
