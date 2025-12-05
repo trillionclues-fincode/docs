@@ -1,0 +1,431 @@
+---
+title: 'Get Supported Payment Methods'
+api: 'POST https://remitjunction.fincode.software/api/v6/services/paymentmanagement/supported-payment-methods'
+description: 'Retrieve available payment methods with charges, fees, and metadata for a specific transaction or payment amount.'
+---
+
+## Overview
+
+This endpoint returns all supported payment methods available for a transaction based on the customer's country, currency, amount, and payable type. It calculates fees, taxes, and exchange rates for each payment method.
+
+<Note>
+  This is typically the first API call when processing a payment - use it to display payment options to your customers.
+</Note>
+
+## Authentication
+
+<ParamField header="X-Auth-Token" type="string" required>
+  Authentication token obtained from login
+</ParamField>
+
+<ParamField header="uuid" type="string" required>
+  Device UUID for request tracking
+</ParamField>
+
+<ParamField header="platform" type="string" required>
+  Platform identifier (e.g., "WEB", "MOBILE", "IOS", "ANDROID")
+</ParamField>
+
+## Request Body
+
+<ParamField body="pcn" type="string" required>
+  Payment Control Number - unique identifier for the payable item
+</ParamField>
+
+<ParamField body="payAbleType" type="enum" required>
+  Type of payable item
+  
+  **Options:**
+  - `TRANSACTION` - Remittance/money transfer
+  - `WALLET` - Generic wallet payment
+  - `WALLET_CUSTOMER` - Personal wallet payment
+  - `WALLET_PAYCENTER` - Agent wallet payment
+  - `BILL` - Bill payment
+  - `MERCHANT` - Product payment
+  - `VOUCHER` - Voucher purchase
+  - `WITHDRAWAL` - Wallet withdrawal
+</ParamField>
+
+<ParamField body="countryIsoCode3" type="string" required>
+  Three-letter ISO country code (e.g., "USA", "GBR", "NGA")
+</ParamField>
+
+<ParamField body="currency" type="string">
+  Three-letter currency code (e.g., "USD", "GBP", "NGN"). Required if PCN is not provided.
+</ParamField>
+
+<ParamField body="amount" type="string">
+  Payment amount as string. Required if PCN is not provided.
+</ParamField>
+
+<ParamField body="appId" type="string">
+  Application identifier for specific integrations
+</ParamField>
+
+<ParamField body="transactionType" type="enum">
+  Specific transaction type filter
+  
+  **Options:**
+  - `ACCOUNTPAYMENT` - Bank transfer
+  - `CASHPICKUP` - Cash pickup
+  - `MOBILE_MONEY` - Mobile money
+  - `WALLET` - Wallet payment
+  - `BILL_PAYMENT` - Bill payment
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="status" type="enum" required>
+  Response status: `SUCCESS` or `FAILED`
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Error message if status is FAILED
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Payment methods response data
+
+  <Expandable title="data properties">
+    <ResponseField name="paymentTermsNConditions" type="string">
+      Organization's payment terms and conditions text
+    </ResponseField>
+
+    <ResponseField name="principal_amount" type="number">
+      Original amount to be paid (before fees)
+    </ResponseField>
+
+    <ResponseField name="derive_amount" type="number">
+      Amount that will be received (after exchange rate conversion)
+    </ResponseField>
+
+    <ResponseField name="principal_amount_currency" type="string">
+      Currency code for principal amount
+    </ResponseField>
+
+    <ResponseField name="derive_amount_currency" type="string">
+      Currency code for derived/receiving amount
+    </ResponseField>
+
+    <ResponseField name="fee" type="number">
+      Transaction fee amount
+    </ResponseField>
+
+    <ResponseField name="tax" type="number">
+      Tax/VAT amount
+    </ResponseField>
+
+    <ResponseField name="fx_rate" type="number">
+      Foreign exchange rate applied
+    </ResponseField>
+
+    <ResponseField name="inclusive" type="boolean">
+      Whether fees are inclusive in the amount
+    </ResponseField>
+
+    <ResponseField name="currency" type="string">
+      Primary currency code
+    </ResponseField>
+
+    <ResponseField name="paymentMethodsMetadata" type="array">
+      Array of available payment methods with their details
+      
+      <Expandable title="Payment method object">
+        <ResponseField name="paymentMethod" type="string">
+          Payment method identifier (e.g., "E_WALLET", "ONLINE_CARD_PAYMENT")
+        </ResponseField>
+
+        <ResponseField name="paymentMethodLabel" type="string">
+          Display label for payment method
+        </ResponseField>
+
+        <ResponseField name="paymentMethodFee" type="number">
+          Fee specific to this payment method
+        </ResponseField>
+
+        <ResponseField name="totalAmount" type="number">
+          Total amount including all fees for this method
+        </ResponseField>
+
+        <ResponseField name="gatewayProvider" type="string">
+          Payment gateway provider name (e.g., "RAVE_FLUTTERWAVE", "STRIPE")
+        </ResponseField>
+
+        <ResponseField name="supported" type="boolean">
+          Whether this payment method is currently available
+        </ResponseField>
+
+        <ResponseField name="metadata" type="object">
+          Additional payment method specific data
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Request Example
+
+<CodeGroup>
+
+```bash cURL
+curl --request POST \
+  --url https://remitjunction.fincode.software/api/v6/services/paymentmanagement/supported-payment-methods \
+  --header 'Content-Type: application/json' \
+  --header 'X-Auth-Token: your_auth_token' \
+  --header 'uuid: device_uuid' \
+  --header 'platform: WEB' \
+  --data '{
+    "pcn": "PCN123456789",
+    "payAbleType": "TRANSACTION",
+    "countryIsoCode3": "USA"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://remitjunction.fincode.software/api/v6/services/paymentmanagement/supported-payment-methods', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Auth-Token': 'your_auth_token',
+    'uuid': 'device_uuid',
+    'platform': 'WEB'
+  },
+  body: JSON.stringify({
+    pcn: 'PCN123456789',
+    payAbleType: 'TRANSACTION',
+    countryIsoCode3: 'USA'
+  })
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/supported-payment-methods"
+headers = {
+    "Content-Type": "application/json",
+    "X-Auth-Token": "your_auth_token",
+    "uuid": "device_uuid",
+    "platform": "WEB"
+}
+payload = {
+    "pcn": "PCN123456789",
+    "payAbleType": "TRANSACTION",
+    "countryIsoCode3": "USA"
+}
+
+response = requests.post(url, json=payload, headers=headers)
+data = response.json()
+```
+
+</CodeGroup>
+
+## Response Example
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "status": "SUCCESS",
+  "data": {
+    "paymentTermsNConditions": "All payments are subject to verification...",
+    "principal_amount": 100.00,
+    "derive_amount": 73500.00,
+    "principal_amount_currency": "USD",
+    "derive_amount_currency": "NGN",
+    "fee": 2.50,
+    "tax": 0.38,
+    "fx_rate": 735.00,
+    "inclusive": false,
+    "currency": "USD",
+    "paymentMethodsMetadata": [
+      {
+        "paymentMethod": "E_WALLET",
+        "paymentMethodLabel": "Pay with Wallet",
+        "paymentMethodFee": 0.00,
+        "totalAmount": 102.88,
+        "gatewayProvider": "INTERNAL",
+        "supported": true,
+        "metadata": {
+          "availableBalance": 500.00,
+          "sufficient": true
+        }
+      },
+      {
+        "paymentMethod": "ONLINE_CARD_PAYMENT",
+        "paymentMethodLabel": "Pay with Card",
+        "paymentMethodFee": 1.50,
+        "totalAmount": 104.38,
+        "gatewayProvider": "RAVE_FLUTTERWAVE",
+        "supported": true,
+        "metadata": {
+          "acceptedCards": ["VISA", "MASTERCARD", "VERVE"]
+        }
+      },
+      {
+        "paymentMethod": "BANK_TRANSFER",
+        "paymentMethodLabel": "Bank Transfer",
+        "paymentMethodFee": 0.00,
+        "totalAmount": 102.88,
+        "gatewayProvider": "MANUAL",
+        "supported": true,
+        "metadata": {
+          "bankName": "First Bank",
+          "accountNumber": "1234567890",
+          "accountName": "Company Ltd"
+        }
+      }
+    ]
+  },
+  "responseCode": 200
+}
+```
+
+```json 401 Unauthorized
+{
+  "status": "FAILED",
+  "message": "Invalid device info.",
+  "responseCode": 401
+}
+```
+
+```json 500 Error
+{
+  "status": "FAILED",
+  "message": "Invalid pcn code for [pcn = PCN123456789,payAbleType = TRANSACTION]",
+  "responseCode": 500
+}
+```
+
+</CodeGroup>
+
+## Use Cases
+
+### 1. Display Payment Options
+
+Use this endpoint to show customers all available payment methods:
+
+```javascript
+// Fetch payment methods
+const methods = await getPaymentMethods(pcn, 'TRANSACTION');
+
+// Display to user
+methods.data.paymentMethodsMetadata.forEach(method => {
+  console.log(`${method.paymentMethodLabel}: ${method.totalAmount}`);
+});
+```
+
+### 2. Pre-calculate Total Amount
+
+Calculate the total amount before payment:
+
+```javascript
+const response = await getPaymentMethods(pcn);
+const { principal_amount, fee, tax, fx_rate } = response.data;
+
+console.log(`Amount: ${principal_amount}`);
+console.log(`Fee: ${fee}`);
+console.log(`Tax: ${tax}`);
+console.log(`Total: ${principal_amount + fee + tax}`);
+console.log(`You will receive: ${principal_amount * fx_rate}`);
+```
+
+### 3. Check Wallet Balance
+
+Determine if customer has sufficient wallet balance:
+
+```javascript
+const methods = await getPaymentMethods(pcn);
+const walletMethod = methods.data.paymentMethodsMetadata
+  .find(m => m.paymentMethod === 'E_WALLET');
+
+if (walletMethod && walletMethod.metadata.sufficient) {
+  // Show wallet as primary option
+  showWalletPayment(walletMethod);
+} else {
+  // Show alternative methods
+  showOtherMethods(methods.data.paymentMethodsMetadata);
+}
+```
+
+## Error Handling
+
+<ResponseExample>
+
+```javascript Error Handling
+try {
+  const response = await fetch('/supported-payment-methods', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Auth-Token': token,
+      'uuid': deviceId,
+      'platform': 'WEB'
+    },
+    body: JSON.stringify({
+      pcn: paymentControlNumber,
+      payAbleType: 'TRANSACTION',
+      countryIsoCode3: 'USA'
+    })
+  });
+
+  const data = await response.json();
+
+  if (data.status === 'FAILED') {
+    // Handle specific errors
+    if (data.message.includes('Invalid pcn')) {
+      console.error('Payment item not found');
+    } else if (data.message.includes('Invalid device')) {
+      console.error('Authentication failed');
+    }
+  }
+
+  // Check if any payment methods available
+  if (!data.data.paymentMethodsMetadata.length) {
+    console.warn('No payment methods available for this transaction');
+  }
+
+} catch (error) {
+  console.error('Network or server error:', error);
+}
+```
+
+</ResponseExample>
+
+## Important Notes
+
+<Warning>
+  - This endpoint requires valid authentication
+  - PCN must be from an existing, active payable item
+  - Payment methods returned depend on organization configuration
+  - Some payment gateways may be temporarily unavailable
+</Warning>
+
+<Info>
+  - Exchange rates are fetched in real-time and may change
+  - Fees vary by payment method and amount
+  - Wallet payment requires sufficient balance
+  - Bank transfer details are organization-specific
+</Info>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Make Wallet Payment" href="/api/deposit-engine/make-payment-from-wallet">
+    Process payment using customer wallet
+  </Card>
+  
+  <Card title="Process Card Payment" href="/api/deposit-engine/process-card-payment">
+    Process payment using credit/debit card
+  </Card>
+  
+  <Card title="Bank Transfer" href="/api/deposit-engine/bank-iwillpaylater">
+    Initiate bank transfer payment
+  </Card>
+  
+  <Card title="Payment Charges" href="/api/deposit-engine/payment-methods-charges">
+    Calculate payment method charges
+  </Card>
+</CardGroup>

@@ -1,0 +1,50 @@
+---
+title: 'Bank Transfers'
+icon: 'bank'
+---
+
+Bank transfers allow customers to pay offline and notify the system when payment is made. Admin approval is required to complete the transaction.
+
+## Bank Transfer Flow
+
+```mermaid
+flowchart TD
+    A[PENDING_PAYMENT] --> B[AWAITING_APPROVAL]
+    B --> C[PAID]
+    B --> D[CANCELLED]
+    C --> E[PAID_OUT]
+    C --> F[CANCELLED]
+````
+
+### Key Features
+
+* **Offline Payment**: Customer transfers money via their bank.
+* **Admin Verification**: Payment requires confirmation by system admin.
+* **Notifications**: Alerts sent to admin and customer when payment is made.
+* **Flexible Timing**: Customer can pay later using `bank_pay_later` option.
+
+### API Endpoints
+
+* **Notify Bank Transfer Payment**
+
+```http
+POST /notify-bank-transfer-payment
+```
+
+* **Mark I Will Pay Later**
+
+```http
+PUT /bank-iwillpaylater-wallet/{pcn}/{payableType}
+```
+
+### Best Practices
+
+* Use `AWAITING_APPROVAL` to track payments waiting for verification.
+* Admin should verify bank transfer before marking as `PAID`.
+* Ensure notifications are triggered for both customer and admin.
+* Handle `CANCELLED` state if payment is not received.
+
+<Card title='Notify Payment' href='/api/deposit-engine/notify-bank-transfer-payment'>
+  Learn how to notify and confirm bank transfer payments.
+</Card>
+```

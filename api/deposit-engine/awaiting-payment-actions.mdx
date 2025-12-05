@@ -1,0 +1,387 @@
+---
+title: "Awaiting Payment Actions"
+api: "POST https://remitjunction.fincode.software/api/v6/services/paymentmanagement/awaiting-payment-actions"
+description: "Perform actions on an awaiting payment record such as marking it as 'paid' or 'cancel'. Returns the updated list of awaiting payments based on filters."
+---
+
+## Overview
+
+This endpoint allows a user (excluding cashiers) to **perform actions** on an existing awaiting bank transfer payment.  
+
+Supported actions include:
+
+- Marking a payment as **paid**  
+- Marking a payment as **cancelled**  
+- Returning an **updated list of awaiting payments** using optional date and currency filters  
+
+This API is used by dashboards, finance teams, or back-office operations to confirm or cancel bank transfer payments initiated by customers.
+
+<Note>
+  Use this endpoint to update the status of an awaiting payment and refresh the awaiting payments list.
+</Note>
+
+---
+
+## Authentication
+
+<ParamField header="X-Auth-Token" type="string" required>
+  Authentication token obtained after login.
+</ParamField>
+
+<ParamField header="uuid" type="string" required>
+  Device UUID used for request tracking.
+</ParamField>
+
+<ParamField header="platform" type="string" required>
+  Platform identifier (e.g., "WEB", "ANDROID", "IOS").
+</ParamField>
+
+---
+
+## Request Body
+
+<ParamField body="awaitingPaymentId" type="string" required>
+  Unique ID of the awaiting payment to update.
+</ParamField>
+
+<ParamField body="subAction" type="string" required>
+  Action to perform. Accepted values:  
+  - `"paid"`  
+  - `"cancel"`
+</ParamField>
+
+<ParamField body="selectedCurrency" type="string">
+  Currency used to filter updated list results (e.g., `"USD"`, `"NGN"`).
+</ParamField>
+
+<ParamField body="fromDate" type="string">
+  Start date (`dd/MM/yyyy`) for fetching updated awaiting payments.
+</ParamField>
+
+<ParamField body="toDate" type="string">
+  End date (`dd/MM/yyyy`) for fetching updated awaiting payments.
+</ParamField>
+
+---
+
+## Response Fields
+
+<ResponseField name="status" type="enum" required>
+  API request status: `SUCCESS` or `FAILED`
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Error description if request failed.
+</ResponseField>
+
+<ResponseField name="responseCode" type="number">
+  HTTP-style response code: `200`, `401`, `500`, etc.
+</ResponseField>
+
+<ResponseField name="data" type="object" required>
+
+  <Expandable title="data properties">
+
+  <ResponseField name="awaitingPayments" type="array">
+    Updated awaiting payments list after action execution.
+
+  <Expandable title="Awaiting Payment Object">
+
+<ResponseField name="id" type="string">
+  Unique ID of the awaiting payment entry.
+</ResponseField>
+
+<ResponseField name="payableType" type="enum">
+  Category of payable item (transaction, bill, voucher, wallet operations, etc.)
+</ResponseField>
+
+<ResponseField name="bankTransferFollowupActionType" type="enum">
+  Indicates what follow-up action applies to the item.
+</ResponseField>
+
+<ResponseField name="bankTransferLifeCycle" type="enum">
+  Indicates payment lifecycle stage.
+</ResponseField>
+
+<ResponseField name="mtoPaymentConfirmtionType" type="enum">
+  Type of confirmation from MTO.
+</ResponseField>
+
+<ResponseField name="customerConfirmedPaymentDate" type="date">
+  When customer confirmed the payment.
+</ResponseField>
+
+<ResponseField name="mtoPaymentReceivedDate" type="date">
+  When MTO confirmed receiving funds.
+</ResponseField>
+
+<ResponseField name="creationDate" type="date">
+  When the waiting record was created.
+</ResponseField>
+
+<ResponseField name="cancellationDate" type="date">
+  When the item was cancelled.
+</ResponseField>
+
+<ResponseField name="followupActionExecutionDate" type="date">
+  Timestamp when follow-up action occurred.
+</ResponseField>
+
+<ResponseField name="customerIwillPayLater" type="boolean">
+  Whether customer selected “I will pay later”.
+</ResponseField>
+
+<ResponseField name="customerConfirmedPayment" type="boolean">
+  Customer confirmation status.
+</ResponseField>
+
+<ResponseField name="mtoConfirmedPaymentReceived" type="boolean">
+  Whether MTO confirmed payment.
+</ResponseField>
+
+<ResponseField name="cancelled" type="boolean">
+  Whether payment entry is cancelled.
+</ResponseField>
+
+<ResponseField name="payableitemId" type="string">
+  Reference to the payable item.
+</ResponseField>
+
+<ResponseField name="currency" type="string">
+  Currency used.
+</ResponseField>
+
+<ResponseField name="walletFundingAmount" type="number">
+  Amount intended for wallet funding.
+</ResponseField>
+
+<ResponseField name="requestedBankTransferAmount" type="number">
+  Expected transfer amount.
+</ResponseField>
+
+<ResponseField name="searchablePaymentReference" type="string">
+  Reference used for lookup.
+</ResponseField>
+
+<ResponseField name="payerBankTransferReference" type="string">
+  Payer’s bank transfer reference.
+</ResponseField>
+
+  </Expandable>
+  </ResponseField>
+
+  </Expandable>
+</ResponseField>
+
+---
+
+## Request Example
+
+<CodeGroup>
+
+```bash cURL
+curl --request POST \
+  --url "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/awaiting-payment-actions" \
+  --header 'Content-Type: application/json' \
+  --header 'X-Auth-Token: your_auth_token' \
+  --header 'uuid: your_device_uuid' \
+  --header 'platform: WEB' \
+  --data '{
+    "awaitingPaymentId": "AP12345",
+    "subAction": "paid",
+    "selectedCurrency": "USD",
+    "fromDate": "01/01/2024",
+    "toDate": "31/01/2024"
+  }'
+````
+
+```javascript JavaScript
+const response = await fetch(
+  "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/awaiting-payment-actions",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Auth-Token": authToken,
+      "uuid": deviceUuid,
+      "platform": "WEB"
+    },
+    body: JSON.stringify({
+      awaitingPaymentId: "AP12345",
+      subAction: "paid",
+      selectedCurrency: "USD",
+      fromDate: "01/01/2024",
+      toDate: "31/01/2024"
+    })
+  }
+);
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/awaiting-payment-actions"
+headers = {
+    "Content-Type": "application/json",
+    "X-Auth-Token": "your_auth_token",
+    "uuid": "your_device_uuid",
+    "platform": "WEB"
+}
+
+payload = {
+    "awaitingPaymentId": "AP12345",
+    "subAction": "paid",
+    "selectedCurrency": "USD",
+    "fromDate": "01/01/2024",
+    "toDate": "31/01/2024"
+}
+
+response = requests.post(url, json=payload, headers=headers)
+data = response.json()
+```
+
+</CodeGroup>
+
+---
+
+## Response Example
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "status": "SUCCESS",
+  "responseCode": 200,
+  "data": {
+    "awaitingPayments": [
+      {
+        "id": "AP12345",
+        "bankTransferLifeCycle": "RECEIVED_BANK_TRANSFER_PAYMENT",
+        "currency": "USD",
+        "requestedBankTransferAmount": 150,
+        "searchablePaymentReference": "TRX-90832",
+        "payerBankTransferReference": "BTREF983",
+        "customerConfirmedPayment": true
+      }
+    ]
+  }
+}
+```
+
+```json 401 Unauthorized
+{
+  "status": "FAILED",
+  "message": "Invalid device info.",
+  "responseCode": 401
+}
+```
+
+```json 500 Error
+{
+  "status": "FAILED",
+  "message": "Please send awaitingPaymentId !",
+  "responseCode": 500
+}
+```
+
+</CodeGroup>
+
+---
+
+## Use Cases
+
+### 1. Mark a Payment as Paid
+
+```javascript
+await awaitingPaymentActions({
+  awaitingPaymentId: "AP12345",
+  subAction: "paid"
+});
+```
+
+---
+
+### 2. Cancel an Awaiting Payment
+
+```javascript
+await awaitingPaymentActions({
+  awaitingPaymentId: "AP12345",
+  subAction: "cancel"
+});
+```
+
+---
+
+### 3. Refresh Awaiting Payments List After Action
+
+```javascript
+await awaitingPaymentActions({
+  awaitingPaymentId: "AP67890",
+  subAction: "paid",
+  selectedCurrency: "GBP",
+  fromDate: "01/02/2024",
+  toDate: "10/02/2024"
+});
+```
+
+---
+
+## Error Handling
+
+<ResponseExample>
+
+```javascript
+try {
+  const res = await fetch("/awaiting-payment-actions", { ...config });
+  const data = await res.json();
+
+  if (data.status === "FAILED") {
+    console.error("Error:", data.message);
+  }
+} catch (err) {
+  console.error("Network/server error:", err);
+}
+```
+
+</ResponseExample>
+
+---
+
+## Important Notes
+
+<Warning>
+  - Authentication is mandatory  
+  - Users with role `CASHIER` are not allowed  
+  - `awaitingPaymentId` and `subAction` are required  
+</Warning>
+
+<Info>
+  - Valid `subAction` values: `"paid"` or `"cancel"`  
+  - Date format must be `dd/MM/yyyy` if used  
+  - Updated awaiting payments list is returned only when currency + date range are provided  
+</Info>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="List Awaiting Payments" href="/api/deposit-engine/awaiting-payments">
+    Retrieve all awaiting payments with filters.
+  </Card>
+
+  <Card title="Bank I Will Pay Later" href="/api/deposit-engine/bank-iwillpaylater">
+    Mark a payment as 'I will pay later'.
+  </Card>
+
+  <Card title="Payment Method Charges" href="/api/deposit-engine/payment-methods-charges">
+    Retrieve applicable charges for payments.
+  </Card>
+
+  <Card title="Supported Payment Methods" href="/api/deposit-engine/supported-payment-methods">
+    View available payment methods.
+  </Card>
+</CardGroup>
+```

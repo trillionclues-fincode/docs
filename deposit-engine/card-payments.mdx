@@ -1,0 +1,57 @@
+---
+title: 'Card Payments'
+icon: 'credit-card'
+---
+
+Card payments allow customers to pay using debit or credit cards through integrated payment gateways. Payment may succeed or fail based on gateway verification.
+
+## Card Payment Flow
+
+```mermaid
+flowchart TD
+    A[PENDING_PAYMENT] --> B[CONFIRMED]
+    B --> C[PAID]
+    B --> D[FAILED]
+    C --> E[PAID_OUT]
+````
+
+### Key Features
+
+* **Secure Payment Gateway**: Process payments using PCI-compliant gateways.
+* **Instant Verification**: Payment status confirmed immediately by gateway.
+* **Error Handling**: Manage declined transactions with proper feedback.
+* **Multi-Currency Support**: Process payments in supported currencies.
+
+### API Endpoint
+
+* **Process Card Payment**
+
+```http
+POST /process-card-payment
+```
+
+### Request Example
+
+```json
+{
+  "currencyiso3a": "USD",
+  "pan": "4111111111111111",
+  "expirydate": "12/2026",
+  "securitycode": "123",
+  "requesttypedescriptions": "wallet funding",
+  "baseamount": "100.00",
+  "pcn": "PCN123456"
+}
+```
+
+### Best Practices
+
+* Validate card details before sending to gateway.
+* Handle `FAILED` transactions with retries or alternative payment methods.
+* Log transaction reference for reconciliation and auditing.
+* Implement webhooks or polling to monitor payment status.
+
+<Card title='Process Card Payment' href='/api/deposit-engine/process-card-payment'>
+  Learn how to process card payments via API.
+</Card>
+```

@@ -1,0 +1,247 @@
+---
+title: "Bank I Will Pay Later (Wallet)"
+api: "PUT https://remitjunction.fincode.software/api/v6/services/paymentmanagement/bank-iwillpaylater-wallet/{pcn}/{payableType_String}"
+description: "Notify the system that a customer will pay later via bank transfer. Creates an awaiting payment entry for the given PCN and payable type."
+---
+
+## Overview
+
+This endpoint allows a user to **mark a payment as ‘I will pay later’**.  
+
+It is typically used when a customer cannot pay immediately but wants the payment recorded in the **Awaiting Payments List** for follow-up.  
+
+This API is used by dashboards, finance teams, or back-office operations to:
+
+- Record a payment intent without actual funds transfer  
+- Generate an awaiting payment entry tied to the PCN and payable type  
+- Allow subsequent operations to track or confirm the payment  
+
+<Note>
+  Use this endpoint to flag bank transfer payments as “will pay later” and make them visible in awaiting payments.
+</Note>
+
+---
+
+## Authentication
+
+<ParamField header="X-Auth-Token" type="string" required>
+  Authentication token obtained after login.
+</ParamField>
+
+<ParamField header="uuid" type="string" required>
+  Device UUID used for request tracking.
+</ParamField>
+
+<ParamField header="platform" type="string" required>
+  Platform identifier (e.g., "WEB", "ANDROID", "IOS").
+</ParamField>
+
+---
+
+## Path Parameters
+
+<ParamField path="pcn" type="string" required>
+  Payment code number (PCN) of the payable item. Minimum length: 3.
+</ParamField>
+
+<ParamField path="payableType_String" type="string" required>
+  Payable type associated with the PCN. Minimum length: 5. Supported values correspond to the `PayableType` enum.
+</ParamField>
+
+---
+
+## Response Fields
+
+<ResponseField name="status" type="enum" required>
+  API request status: `SUCCESS` or `FAILED`
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Error description if request failed.
+</ResponseField>
+
+<ResponseField name="responseCode" type="number">
+  HTTP-style response code: `200`, `401`, `500`, etc.
+</ResponseField>
+
+<ResponseField name="data" type="object" required>
+
+  <Expandable title="data properties">
+
+  <ResponseField name="ref" type="string">
+    Unique reference ID of the newly created awaiting payment entry.
+  </ResponseField>
+
+  <ResponseField name="payableType" type="string">
+    Payable type associated with the PCN.
+  </ResponseField>
+
+  <ResponseField name="payableItemId" type="string">
+    Internal reference to the payable item.
+  </ResponseField>
+
+  </Expandable>
+</ResponseField>
+
+---
+
+## Request Example
+
+<CodeGroup>
+
+```bash cURL
+curl --request PUT \
+  --url "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/bank-iwillpaylater-wallet/PCN123/TRANSACTION" \
+  --header 'Content-Type: application/json' \
+  --header 'X-Auth-Token: your_auth_token' \
+  --header 'uuid: your_device_uuid' \
+  --header 'platform: WEB'
+````
+
+```javascript JavaScript
+const response = await fetch(
+  "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/bank-iwillpaylater-wallet/PCN123/TRANSACTION",
+  {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Auth-Token": authToken,
+      "uuid": deviceUuid,
+      "platform": "WEB"
+    }
+  }
+);
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/bank-iwillpaylater-wallet/PCN123/TRANSACTION"
+headers = {
+    "Content-Type": "application/json",
+    "X-Auth-Token": "your_auth_token",
+    "uuid": "your_device_uuid",
+    "platform": "WEB"
+}
+
+response = requests.put(url, headers=headers)
+data = response.json()
+```
+
+</CodeGroup>
+
+---
+
+## Response Example
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "status": "SUCCESS",
+  "responseCode": 200,
+  "data": {
+    "ref": "AP12345",
+    "payableType": "TRANSACTION",
+    "payableItemId": "PAYITEM98765"
+  }
+}
+```
+
+```json 401 Unauthorized
+{
+  "status": "FAILED",
+  "message": "Invalid device info or token.",
+  "responseCode": 401
+}
+```
+
+```json 500 Error
+{
+  "status": "FAILED",
+  "message": "Invalid PCN or payable type.",
+  "responseCode": 500
+}
+```
+
+</CodeGroup>
+
+---
+
+## Use Cases
+
+### 1. Mark a Payment as “I Will Pay Later”
+
+```javascript
+await bankIWillPayLater("PCN123", "TRANSACTION");
+```
+
+---
+
+### 2. Track Payments Awaiting Customer Action
+
+```javascript
+const response = await bankIWillPayLater("PCN678", "BILL");
+console.log(response.data.ref, response.data.payableItemId);
+```
+
+---
+
+## Error Handling
+
+<ResponseExample>
+
+```javascript
+try {
+  const res = await fetch("/bank-iwillpaylater-wallet/PCN123/TRANSACTION", { ...config });
+  const data = await res.json();
+
+  if (data.status === "FAILED") {
+    console.error("Error:", data.message);
+  }
+} catch (err) {
+  console.error("Network/server error:", err);
+}
+```
+
+</ResponseExample>
+
+---
+
+## Important Notes
+
+<Warning>
+  - Authentication is mandatory  
+  - `pcn` and `payableType_String` are required  
+  - Users must belong to an organisation  
+</Warning>
+
+<Info>
+  - Payable types correspond to internal `PayableType` enum values  
+  - The entry is added to awaiting payments for follow-up only; no funds are transferred  
+</Info>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Awaiting Payment Actions" href="/api/deposit-engine/awaiting-payment-actions">
+    Perform actions on existing awaiting payments.
+  </Card>
+
+  <Card title="List Awaiting Payments" href="/api/deposit-engine/awaiting-payments">
+    Retrieve all awaiting payments with filters.
+  </Card>
+
+  <Card title="Payment Method Charges" href="/api/deposit-engine/payment-methods-charges">
+    Retrieve applicable charges for payments.
+  </Card>
+
+  <Card title="Supported Payment Methods" href="/api/deposit-engine/supported-payment-methods">
+    View available payment methods.
+  </Card>
+</CardGroup>
+````

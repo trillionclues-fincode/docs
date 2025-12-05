@@ -1,0 +1,383 @@
+---
+title: "Fund Customer Wallet by Payment Token"
+api: "POST https://remitjunction.fincode.software/api/v6/services/paymentmanagement/processpaymentwithpaymenttoken"
+description: "Verify a payment token and process a payment request. If a token is provided, the payment gateway is used; otherwise, the wallet is used."
+---
+
+## Overview
+
+This endpoint allows a customer to **fund their wallet account** either via a **payment token** or directly from the wallet.  
+
+Supported payment flows include:
+
+- Using an **online card payment token** from a supported payment gateway  
+- Funding via the **customer wallet** if no token is provided  
+
+This API is primarily used by dashboards, mobile apps, and self-service portals to add funds to a customer’s wallet.
+
+<Note>
+  Ensure that the payable item exists before attempting payment, and that the payment gateway or wallet has sufficient setup.
+</Note>
+
+---
+
+## Authentication
+
+<ParamField header="X-Auth-Token" type="string" required>
+  Authentication token obtained after login.
+</ParamField>
+
+<ParamField header="uuid" type="string" required>
+  Device UUID used for request tracking.
+</ParamField>
+
+<ParamField header="platform" type="string" required>
+  Platform identifier (e.g., "WEB", "ANDROID", "IOS").
+</ParamField>
+
+---
+
+## Request Body
+
+<ParamField body="payableType" type="enum" required>
+  Type of payable item.
+</ParamField>
+
+<ParamField body="payAbleId" type="string" required>
+  Unique ID of the payable item to fund.
+</ParamField>
+
+<ParamField body="paymentGatewayRef" type="string" required>
+  Payment gateway token reference when using card payment.
+</ParamField>
+
+<ParamField body="supportedPaymentGateWayProvider" type="enum" required>
+  Payment gateway provider. Options:  
+  - `STRIPE_ACH`  
+  - `COINBASE_PAYMENT_API`  
+  - `POLI_PAYMENT_API`  
+  - `SECURE_TRADING`  
+  - `RAVE_FLUTTERWAVE`  
+  - `CUSTOM_POINT_OF_SALE`
+</ParamField>
+
+<ParamField body="paymentMethod" type="enum" required>
+  Method of payment. Options include:  
+  - `ONLINE_CARD_PAYMENT`  
+  - `E_WALLET`
+</ParamField>
+
+<ParamField body="totalCheckOutAmount" type="number" required>
+  Total amount to process for checkout.
+</ParamField>
+
+<ParamField body="beneficiaryLookUpPhoneNumber" type="string">
+  Optional beneficiary phone number for payment processing.
+</ParamField>
+
+<ParamField body="passWord" type="string">
+  Optional password required for certain wallet payments.
+</ParamField>
+
+<ParamField body="accountNumber" type="string">
+  Optional account number for wallet or bank account payment.
+</ParamField>
+
+<ParamField body="paymentAccountNumbeCurrencyCode" type="enum">
+  Currency code for the payment account, if applicable.
+</ParamField>
+
+---
+
+## Response Fields
+
+<ResponseField name="status" type="enum" required>
+  API request status: `SUCCESS` or `FAILED`
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Error description if request failed.
+</ResponseField>
+
+<ResponseField name="responseCode" type="number">
+  HTTP-style response code: `200`, `401`, `500`, etc.
+</ResponseField>
+
+<ResponseField name="data" type="object" required>
+
+  <Expandable title="data properties">
+
+  <ResponseField name="amount" type="number" required>
+    Amount credited to the wallet.
+  </ResponseField>
+
+  <ResponseField name="currency" type="string" required>
+    Currency of the credited amount.
+  </ResponseField>
+
+  <ResponseField name="responseCode" type="string" required>
+    Response code of the request.
+  </ResponseField>
+
+  <ResponseField name="response" type="string">
+    Optional response message from the payment gateway.
+  </ResponseField>
+
+  <ResponseField name="payableType" type="enum">
+    Payable type associated with this transaction.
+  </ResponseField>
+
+  <ResponseField name="payAbleId" type="string">
+    ID of the payable item processed.
+  </ResponseField>
+
+  <ResponseField name="taxAmount" type="number">
+    Tax amount applied to the transaction.
+  </ResponseField>
+
+  <ResponseField name="transactionFeeAmount" type="number">
+    Fee applied to the transaction.
+  </ResponseField>
+
+  <ResponseField name="paymentMethodFeeAmount" type="number">
+    Fee for the selected payment method.
+  </ResponseField>
+
+  <ResponseField name="totalCheckOutAmount" type="number">
+    Total amount including fees and taxes.
+  </ResponseField>
+
+  <ResponseField name="paymentStatus" type="enum">
+    Status of the transaction. Options include `PAID`, `FAILED`, `PENDING_PAYMENT`, `AWAITING_APPROVAL`, etc.
+  </ResponseField>
+
+  <ResponseField name="countryIsoCode3" type="string" required>
+    Customer's country ISO code.
+  </ResponseField>
+
+  <ResponseField name="pcn" type="string" required>
+    Payment code number associated with the transaction.
+  </ResponseField>
+
+  <ResponseField name="transactionType" type="enum" required>
+    Type of transaction performed.
+  </ResponseField>
+
+  </Expandable>
+</ResponseField>
+
+---
+
+## Request Example
+
+<CodeGroup>
+
+```bash cURL
+curl --request POST \
+  --url "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/processpaymentwithpaymenttoken" \
+  --header 'Content-Type: application/json' \
+  --header 'X-Auth-Token: your_auth_token' \
+  --header 'uuid: your_device_uuid' \
+  --header 'platform: WEB' \
+  --data '{
+    "payableType": "TRANSACTION",
+    "payAbleId": "PAY12345",
+    "paymentGatewayRef": "TOKEN_98765",
+    "supportedPaymentGateWayProvider": "RAVE_FLUTTERWAVE",
+    "paymentMethod": "ONLINE_CARD_PAYMENT",
+    "totalCheckOutAmount": 150.00,
+    "accountNumber": "1234567890",
+    "paymentAccountNumbeCurrencyCode": "USD"
+  }'
+````
+
+```javascript JavaScript
+const response = await fetch(
+  "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/processpaymentwithpaymenttoken",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Auth-Token": authToken,
+      "uuid": deviceUuid,
+      "platform": "WEB"
+    },
+    body: JSON.stringify({
+      payableType: "TRANSACTION",
+      payAbleId: "PAY12345",
+      paymentGatewayRef: "TOKEN_98765",
+      supportedPaymentGateWayProvider: "RAVE_FLUTTERWAVE",
+      paymentMethod: "ONLINE_CARD_PAYMENT",
+      totalCheckOutAmount: 150.00,
+      accountNumber: "1234567890",
+      paymentAccountNumbeCurrencyCode: "USD"
+    })
+  }
+);
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/processpaymentwithpaymenttoken"
+headers = {
+    "Content-Type": "application/json",
+    "X-Auth-Token": "your_auth_token",
+    "uuid": "your_device_uuid",
+    "platform": "WEB"
+}
+payload = {
+    "payableType": "TRANSACTION",
+    "payAbleId": "PAY12345",
+    "paymentGatewayRef": "TOKEN_98765",
+    "supportedPaymentGateWayProvider": "RAVE_FLUTTERWAVE",
+    "paymentMethod": "ONLINE_CARD_PAYMENT",
+    "totalCheckOutAmount": 150.00,
+    "accountNumber": "1234567890",
+    "paymentAccountNumbeCurrencyCode": "USD"
+}
+
+response = requests.post(url, json=payload, headers=headers)
+data = response.json()
+```
+
+</CodeGroup>
+
+---
+
+## Response Example
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "status": "SUCCESS",
+  "responseCode": 200,
+  "data": {
+    "amount": 150.00,
+    "currency": "USD",
+    "responseCode": "200",
+    "response": "Payment successful",
+    "payableType": "TRANSACTION",
+    "payAbleId": "PAY12345",
+    "taxAmount": 0.00,
+    "transactionFeeAmount": 0.00,
+    "paymentMethodFeeAmount": 0.00,
+    "totalCheckOutAmount": 150.00,
+    "paymentStatus": "PAID",
+    "countryIsoCode3": "USA",
+    "pcn": "PCN12345",
+    "transactionType": "WALLET_TOP_UP"
+  }
+}
+```
+
+```json 401 Unauthorized
+{
+  "status": "FAILED",
+  "message": "Invalid device info.",
+  "responseCode": 401
+}
+```
+
+```json 500 Error
+{
+  "status": "FAILED",
+  "message": "Invalid payment token.",
+  "responseCode": 500
+}
+```
+
+</CodeGroup>
+
+---
+
+## Use Cases
+
+### 1. Fund Wallet Using Payment Token
+
+```javascript
+await processPaymentWithToken({
+  payableType: "TRANSACTION",
+  payAbleId: "PAY12345",
+  paymentGatewayRef: "TOKEN_98765",
+  supportedPaymentGateWayProvider: "RAVE_FLUTTERWAVE",
+  paymentMethod: "ONLINE_CARD_PAYMENT",
+  totalCheckOutAmount: 150.00
+});
+```
+
+---
+
+### 2. Fund Wallet Directly From E-Wallet
+
+```javascript
+await processPaymentWithToken({
+  payableType: "TRANSACTION",
+  payAbleId: "PAY12345",
+  paymentMethod: "E_WALLET",
+  totalCheckOutAmount: 150.00
+});
+```
+
+---
+
+## Error Handling
+
+<ResponseExample>
+
+```javascript
+try {
+  const res = await fetch("/processpaymentwithpaymenttoken", { ...config });
+  const data = await res.json();
+
+  if (data.status === "FAILED") {
+    console.error("Error:", data.message);
+  }
+} catch (err) {
+  console.error("Network/server error:", err);
+}
+```
+
+</ResponseExample>
+
+---
+
+## Important Notes
+
+<Warning>
+  - Authentication is mandatory  
+  - `payableType`, `payAbleId`, `paymentMethod`, and `totalCheckOutAmount` are required  
+  - Payment token is optional if funding via wallet  
+</Warning>
+
+<Info>
+  - Supported payment methods: `ONLINE_CARD_PAYMENT`, `E_WALLET`  
+  - Supported payment gateways: `STRIPE_ACH`, `COINBASE_PAYMENT_API`, `POLI_PAYMENT_API`, `SECURE_TRADING`, `RAVE_FLUTTERWAVE`, `CUSTOM_POINT_OF_SALE`  
+  - Ensure payable item exists before attempting payment  
+</Info>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Bank I Will Pay Later" href="/api/deposit-engine/bank-iwillpaylater">
+    Mark a payment as 'I will pay later'.
+  </Card>
+
+  <Card title="Payment Method Charges" href="/api/deposit-engine/payment-methods-charges">
+    Retrieve applicable charges for payments.
+  </Card>
+
+  <Card title="Notify Bank Transfer Payment" href="/api/deposit-engine/notify-bank-transfer-payment">
+    Alert system about customer bank transfer.
+  </Card>
+
+  <Card title="Supported Payment Methods" href="/api/deposit-engine/supported-payment-methods">
+    View available payment methods.
+  </Card>
+</CardGroup>
+````

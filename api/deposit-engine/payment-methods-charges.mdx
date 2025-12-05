@@ -1,0 +1,307 @@
+---
+title: "Payment Methods Charges"
+api: "POST https://remitjunction.fincode.software/api/v6/services/paymentmanagement/payment-methods-charges"
+description: "Retrieve applicable charges for a selected payment method based on transaction or transfer details."
+---
+
+## Overview
+
+This endpoint allows a user to **calculate payment charges** associated with different payment methods.  
+
+It supports scenarios including:
+
+- Customer transactions (`subAction = "transaction"`)  
+- Money transfers (`subAction = "transfer"`)  
+
+Charges are determined based on:
+
+- Selected payment method  
+- Amount and currency  
+- Organisation and customer country  
+
+This API is used by dashboards, checkout systems, or back-office operations to display fees before confirming a payment.
+
+<Note>
+  Use this endpoint to display applicable charges for a payment method prior to completing a transaction or transfer.
+</Note>
+
+---
+
+## Authentication
+
+<ParamField header="X-Auth-Token" type="string" required>
+  Authentication token obtained after login.
+</ParamField>
+
+<ParamField header="uuid" type="string" required>
+  Device UUID used for request tracking.
+</ParamField>
+
+<ParamField header="platform" type="string" required>
+  Platform identifier (e.g., "WEB", "ANDROID", "IOS").
+</ParamField>
+
+---
+
+## Request Body
+
+<ParamField body="pcn" type="string">
+  Payment code number. Required if `subAction = "transaction"`.
+</ParamField>
+
+<ParamField body="subAction" type="string" required>
+  Action type. Accepted values:  
+  - `"transaction"`  
+  - `"transfer"`
+</ParamField>
+
+<ParamField body="payment_method" type="string" required>
+  Selected payment method. Must match `PaymentMethod` enum, e.g., `"ONLINE_CARD_PAYMENT"`, `"BANK_TRANSFER"`.
+</ParamField>
+
+<ParamField body="currency" type="string">
+  Currency code for the transfer (required if `subAction = "transfer"`).
+</ParamField>
+
+<ParamField body="amount" type="string">
+  Amount for the transfer (required if `subAction = "transfer"`).
+</ParamField>
+
+---
+
+## Response Fields
+
+<ResponseField name="status" type="enum" required>
+  API request status: `SUCCESS` or `FAILED`
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Error description if request failed.
+</ResponseField>
+
+<ResponseField name="responseCode" type="number">
+  HTTP-style response code: `200`, `401`, `500`, etc.
+</ResponseField>
+
+<ResponseField name="data" type="object" required>
+
+  <Expandable title="data properties">
+
+  <ResponseField name="paymentCharges" type="number">
+    Calculated charge amount for the selected payment method.
+  </ResponseField>
+
+  <ResponseField name="paymentMethod" type="enum">
+    Selected payment method used for the calculation. Options include:  
+    - `POS`  
+    - `TELEPHONE_BANK_TRANSFER`  
+    - `BANK_TRANSFER`  
+    - `MOBILE_MONEY`  
+    - `ONLINE_BANK_TRANSFER`  
+    - `ACH_PAYMENT`  
+    - `ONLINE_CARD_PAYMENT`  
+    - `ONLINE_BANK_PAYMENT`  
+    - `PAYPAL`  
+    - `CHEQUE`  
+    - `CASH`  
+    - `OFFLINE_CARD_PAYMENT`  
+    - `E_WALLET`  
+    - `CASHIER_PAY_FROM_CUSTOMER_E_WALLET`  
+    - `CRYPTO_CURRENCY_PAYMENT`  
+    - `STANDING_ORDER`  
+    - `PREPAID_VOUCHER_IN`  
+    - `BILL_PAYMENT`
+  </ResponseField>
+
+  </Expandable>
+</ResponseField>
+
+---
+
+## Request Example
+
+<CodeGroup>
+
+```bash cURL
+curl --request POST \
+  --url "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/payment-methods-charges" \
+  --header 'Content-Type: application/json' \
+  --header 'X-Auth-Token: your_auth_token' \
+  --header 'uuid: your_device_uuid' \
+  --header 'platform: WEB' \
+  --data '{
+    "subAction": "transfer",
+    "payment_method": "BANK_TRANSFER",
+    "currency": "USD",
+    "amount": "150"
+  }'
+````
+
+```javascript JavaScript
+const response = await fetch(
+  "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/payment-methods-charges",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Auth-Token": authToken,
+      "uuid": deviceUuid,
+      "platform": "WEB"
+    },
+    body: JSON.stringify({
+      subAction: "transfer",
+      payment_method: "BANK_TRANSFER",
+      currency: "USD",
+      amount: "150"
+    })
+  }
+);
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+url = "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/payment-methods-charges"
+headers = {
+    "Content-Type": "application/json",
+    "X-Auth-Token": "your_auth_token",
+    "uuid": "your_device_uuid",
+    "platform": "WEB"
+}
+payload = {
+    "subAction": "transfer",
+    "payment_method": "BANK_TRANSFER",
+    "currency": "USD",
+    "amount": "150"
+}
+
+response = requests.post(url, json=payload, headers=headers)
+data = response.json()
+```
+
+</CodeGroup>
+
+---
+
+## Response Example
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "status": "SUCCESS",
+  "responseCode": 200,
+  "data": {
+    "paymentCharges": 2.50,
+    "paymentMethod": "BANK_TRANSFER"
+  }
+}
+```
+
+```json 401 Unauthorized
+{
+  "status": "FAILED",
+  "message": "Invalid device info or token.",
+  "responseCode": 401
+}
+```
+
+```json 500 Error
+{
+  "status": "FAILED",
+  "message": "Invalid payment method.",
+  "responseCode": 500
+}
+```
+
+</CodeGroup>
+
+---
+
+## Use Cases
+
+### 1. Retrieve Charges for a Transfer
+
+```javascript
+await paymentMethodsCharges({
+  subAction: "transfer",
+  payment_method: "BANK_TRANSFER",
+  currency: "USD",
+  amount: "150"
+});
+```
+
+---
+
+### 2. Retrieve Charges for a Transaction
+
+```javascript
+await paymentMethodsCharges({
+  subAction: "transaction",
+  pcn: "PCN123",
+  payment_method: "ONLINE_CARD_PAYMENT"
+});
+```
+
+---
+
+## Error Handling
+
+<ResponseExample>
+
+```javascript
+try {
+  const res = await fetch("/payment-methods-charges", { ...config });
+  const data = await res.json();
+
+  if (data.status === "FAILED") {
+    console.error("Error:", data.message);
+  }
+} catch (err) {
+  console.error("Network/server error:", err);
+}
+```
+
+</ResponseExample>
+
+---
+
+## Important Notes
+
+<Warning>
+  - Authentication is mandatory  
+  - `subAction` and `payment_method` are required  
+  - For `transaction` subAction, `pcn` is required  
+  - For `transfer` subAction, `currency` and `amount` are required  
+</Warning>
+
+<Info>
+  - Payment method must match the `PaymentMethod` enum  
+  - Charges are calculated based on organisation, country, currency, and amount  
+  - If no applicable charge is found, the returned value is `0`
+</Info>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Awaiting Payment Actions" href="/api/deposit-engine/awaiting-payment-actions">
+    Perform actions on existing awaiting payments.
+  </Card>
+
+  <Card title="Bank I Will Pay Later" href="/api/deposit-engine/bank-iwillpaylater">
+    Mark a payment as 'I will pay later'.
+  </Card>
+
+  <Card title="List Awaiting Payments" href="/api/deposit-engine/awaiting-payments">
+    Retrieve all awaiting payments with filters.
+  </Card>
+
+  <Card title="Supported Payment Methods" href="/api/deposit-engine/supported-payment-methods">
+    View available payment methods.
+  </Card>
+</CardGroup>
+````
