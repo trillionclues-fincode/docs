@@ -1,0 +1,163 @@
+---
+title: 'Create Investment Application'
+api: 'POST https://test-investment-products-service.fincode.software/api/v1/user/apply'
+description: 'Creates a new investment application for a customer.'
+---
+
+Creates a new investment application allowing customers to invest in a specific investment product with a specified number of units.
+
+<RequestExample>
+  ```bash cURL
+  curl --request POST 'https://test-investment-products-service.fincode.software/api/v1/user/apply' \
+  --header 'Authorization: Bearer <token>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "investmentProductId": "123e4567-e89b-12d3-a456-426614174000",
+    "numberOfUnitsToPurchase": 100,
+    "userWalletId": "123e4567-e89b-12d3-a456-426614174001",
+    "customerId": "123e4567-e89b-12d3-a456-426614174002",
+    "customerName": "John Doe"
+  }'
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+<ParamField header='Content-Type' type='string' required default='application/json'>
+  Must be `application/json`.
+</ParamField>
+
+## Request Body
+
+<ParamField body='investmentProductId' type='string' required>
+  The unique identifier (UUID) of the investment product to invest in.
+</ParamField>
+
+<ParamField body='numberOfUnitsToPurchase' type='number' required>
+  The number of units to purchase for this investment.
+</ParamField>
+
+<ParamField body='userWalletId' type='string' required>
+  The unique identifier (UUID) of the user wallet to use for the investment.
+</ParamField>
+
+<ParamField body='customerId' type='string' required>
+  The unique identifier (UUID) of the customer making the investment.
+</ParamField>
+
+<ParamField body='customerName' type='string' required>
+  The full name of the customer making the investment.
+</ParamField>
+
+## Response
+
+Returns the created investment application details.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Investment application details.
+  <Expandable title='data object'>
+    <ResponseField name='InvestmentApplicationId' type='string'>
+      Unique identifier for the created investment application.
+    </ResponseField>
+    <ResponseField name='numberOfUnitsToPurchase' type='number'>
+      Number of units purchased in this application.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location --request POST 'https://test-investment-products-service.fincode.software/api/v1/user/apply' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345' \
+--header 'Content-Type: application/json' \
+--data '{
+    "investmentProductId": "123e4567-e89b-12d3-a456-426614174000",
+    "numberOfUnitsToPurchase": 100,
+    "userWalletId": "123e4567-e89b-12d3-a456-426614174001",
+    "customerId": "123e4567-e89b-12d3-a456-426614174002",
+    "customerName": "John Doe"
+}'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://test-investment-products-service.fincode.software/api/v1/user';
+
+async function createInvestmentApplication(accessToken, applicationData) {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/apply`,
+      {
+        investmentProductId: applicationData.investmentProductId,
+        numberOfUnitsToPurchase: applicationData.numberOfUnitsToPurchase,
+        userWalletId: applicationData.userWalletId,
+        customerId: applicationData.customerId,
+        customerName: applicationData.customerName,
+      },
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      'Failed to create investment application:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+createInvestmentApplication(accessToken, {
+  investmentProductId: '123e4567-e89b-12d3-a456-426614174000',
+  numberOfUnitsToPurchase: 100,
+  userWalletId: '123e4567-e89b-12d3-a456-426614174001',
+  customerId: '123e4567-e89b-12d3-a456-426614174002',
+  customerName: 'John Doe',
+});
+```
+
+</CodeGroup>
+

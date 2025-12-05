@@ -1,0 +1,153 @@
+---
+title: 'List Customer Portfolios'
+api: 'GET https://test-investment-products-service.fincode.software/api/v1/user/portfolios/{customer-id}'
+description: 'Retrieves a paginated list of all investment portfolios for a customer.'
+---
+
+Fetches all investment portfolios associated with a customer, including details about each investment such as amount invested, total payable, and product information.
+
+<RequestExample>
+  ```bash cURL
+  curl --request GET 'https://test-investment-products-service.fincode.software/api/v1/user/portfolios/8ecca811-607f-44e1-a57e-cd856c50437d?page=1&size=10' \
+  --header 'Authorization: Bearer <token>'
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='customer-id' type='string' required>
+  The unique identifier (UUID) of the customer whose portfolios to retrieve.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query='page' type='number' default='1'>
+  Page number for pagination (starts from 1).
+</ParamField>
+
+<ParamField query='size' type='number' default='10'>
+  Number of items per page (maximum recommended: 50).
+</ParamField>
+
+## Response
+
+Returns a paginated list of portfolio entities.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='array'>
+  Array of portfolio entity objects.
+  <Expandable title='data array item'>
+    <ResponseField name='requestDate' type='string'>
+      Date when the investment was requested.
+    </ResponseField>
+    <ResponseField name='dueDate' type='string'>
+      Date when the investment matures or is due.
+    </ResponseField>
+    <ResponseField name='amountInvested' type='number'>
+      Amount that was invested in this portfolio.
+    </ResponseField>
+    <ResponseField name='totalPayable' type='number'>
+      Total amount payable at maturity (principal + interest).
+    </ResponseField>
+    <ResponseField name='annualPercentageYield' type='number'>
+      Annual Percentage Yield (APY) for this investment.
+    </ResponseField>
+    <ResponseField name='productName' type='string'>
+      Name of the investment product.
+    </ResponseField>
+    <ResponseField name='investmentCategoryName' type='string'>
+      Category name of the investment product.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://test-investment-products-service.fincode.software/api/v1/user/portfolios/123e4567-e89b-12d3-a456-426614174000?page=1&size=10' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://test-investment-products-service.fincode.software/api/v1/user';
+
+async function listPortfolios(accessToken, customerId, page = 1, size = 10) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/portfolios/${customerId}`,
+      {
+        params: {
+          page,
+          size,
+        },
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+        },
+      }
+    );
+
+    const portfolios = response.data.data;
+    console.log(`Found ${portfolios.length} portfolios`);
+    
+    portfolios.forEach((portfolio) => {
+      console.log(
+        `- ${portfolio.productName}: ${portfolio.amountInvested} ` +
+        `(APY: ${portfolio.annualPercentageYield}%)`
+      );
+    });
+
+    return portfolios;
+  } catch (error) {
+    console.error(
+      'Failed to fetch portfolios:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+const customerId = '123e4567-e89b-12d3-a456-426614174000';
+listPortfolios(accessToken, customerId, 1, 20);
+```
+
+</CodeGroup>
+
