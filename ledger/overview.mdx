@@ -1,0 +1,168 @@
+---
+title: 'Overview'
+icon: 'house'
+---
+
+Welcome to the Ledger Engine documentation. This guide will help you understand how our double-entry accounting system works and how to integrate it into your application.
+
+### What is the Ledger Engine?
+
+The Ledger Engine is a **double-entry accounting system** that records every financial movement across the platform. It provides:
+
+- **Account Management** - Create and manage wallet accounts with balance tracking
+- **Double-Entry Posting** - Debit and credit transactions with automatic balance updates
+- **Transaction History** - Complete audit trail of all account movements
+- **Balance Queries** - Real-time account balance and transaction history retrieval
+
+### Key Features
+
+<CardGroup cols={2}>
+  <Card title='Double-Entry Accounting'>
+    Every transaction is recorded as both a debit and credit entry, ensuring financial data integrity and accuracy.
+  </Card>
+
+  <Card title='Real-Time Balance Tracking'>
+    Account balances are updated in real-time with every transaction, providing instant balance queries.
+  </Card>
+
+  <Card title='Complete Transaction History'>
+    Full audit trail of all account movements with detailed ledger entries including amounts, dates, and references.
+  </Card>
+
+  <Card title='Multi-Currency Support'>
+    Support for multiple currencies (NGN, USD, GBP, etc.) with currency-specific account balances.
+  </Card>
+
+  <Card title='Idempotency Protection'>
+    Built-in idempotency key support to prevent duplicate transaction processing.
+  </Card>
+
+  <Card title='API-First Design'>
+    RESTful APIs with comprehensive documentation for seamless integration.
+  </Card>
+</CardGroup>
+
+### How It Works
+
+The ledger engine flow consists of three main operations:
+
+<Steps>
+  <Step title='Account Balance Query'>
+    Query account balances to get real-time available balance, account balance, and account details.
+  </Step>
+
+  <Step title='Post to Account'>
+    Execute double-entry transactions by debiting one account and crediting another account with automatic balance updates.
+  </Step>
+
+  <Step title='Transaction History'>
+    Retrieve complete transaction history for accounts with pagination support and filtering by interaction ID or idempotency key.
+  </Step>
+</Steps>
+
+<Info>
+  For detailed visual flow, see the [Process Flow](/ledger/process-flow) page.
+</Info>
+
+### Core Concepts
+
+#### Double-Entry Accounting
+
+Every financial transaction is recorded using double-entry bookkeeping principles:
+
+- **Debit Entry**: Records money going out of an account
+- **Credit Entry**: Records money coming into an account
+- **Balance**: Automatically calculated as the difference between debits and credits
+- **Immutability**: Once recorded, ledger entries cannot be modified, ensuring data integrity
+
+<Card title='Learn More' href='/ledger/process-flow'>
+  Understand how double-entry posting works in detail.
+</Card>
+
+#### Account Structure
+
+Accounts in the ledger engine have the following structure:
+
+- **Account ID**: Unique identifier for the account
+- **Account Number**: Human-readable account number
+- **Account Balance**: Total balance including all transactions
+- **Available Balance**: Balance available for transactions (excluding liens and holds)
+- **Currency**: Account currency (NGN, USD, GBP, etc.)
+- **Status**: Account status (ACTIVATED, DEACTIVATED, etc.)
+
+#### Transaction Posting
+
+When posting to accounts:
+
+- **Primary Account**: The main account involved in the transaction
+- **Counterparty Accounts**: One or more accounts that receive or send funds
+- **Amount**: Transaction amount
+- **Direction**: Whether to debit or credit the primary account
+- **Narration**: Optional description of the transaction
+
+<Card title='Learn More' href='/ledger/process-flow'>
+  Explore the complete posting flow and transaction processing.
+</Card>
+
+#### Ledger History
+
+Ledger history provides a complete audit trail:
+
+- **Transaction Details**: Amount, date, type, and reference
+- **Balance Changes**: Previous balance and new balance after transaction
+- **Correlation IDs**: Internal and external correlation IDs for tracking
+- **Pagination**: Support for paginated retrieval of large transaction histories
+
+### Integration Quick Start
+
+Before you begin:
+
+<Steps>
+  <Step title='Get API Credentials'>
+    Contact our team to receive your sandbox API keys and base URL.
+  </Step>
+
+  <Step title='Review API Documentation'>
+    Familiarize yourself with our [Ledger Engine API Reference](/api/ledger/account-balance).
+  </Step>
+
+  <Step title='Understand the Flow'>
+    Read through the [Process Flow](/ledger/process-flow) to understand how transactions are processed.
+  </Step>
+</Steps>
+
+<Card title='Complete API Reference' href='/api/ledger/account-balance'>
+  Explore all available ledger endpoints with request/response examples.
+</Card>
+
+### Testing & Sandbox
+
+We provide a full-featured sandbox environment for testing:
+
+- **Sandbox URL**: `https://{domain}.fincode.software`
+- **Test credentials**: Provided upon registration
+- **Mock transactions**: Simulate account operations
+- **No real money**: All transactions are simulated
+
+<Tip>
+  Use the sandbox to test all flows, edge cases, and error handling before going live.
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title='Process Flow'
+    href='/ledger/process-flow'
+  >
+    Visualize the complete ledger transaction flow with detailed diagrams
+  </Card>
+
+  <Card
+    title='Start Integrating'
+    href='/api/ledger/account-balance'
+  >
+    Jump into the API documentation and begin building
+  </Card>
+</CardGroup>
+

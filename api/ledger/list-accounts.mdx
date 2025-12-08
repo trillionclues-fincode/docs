@@ -1,0 +1,139 @@
+---
+title: 'List Accounts'
+api: 'GET https://{domain}.fincode.software/api/v6/services/account-maintenance/list-accounts/{account-owner-id}'
+description: 'Retrieves a list of all accounts owned by a specific account owner (customer).'
+---
+
+Fetches all accounts associated with a specific account owner, allowing customers to view all their accounts in one place.
+
+<RequestExample>
+  ```bash cURL GET
+  [https://{domain}.fincode.software/api/v6/services/account-maintenance/list-accounts/{account-owner-id}](https://{domain}.fincode.software/api/v6/services/account-maintenance/list-accounts/{account-owner-id})
+  ```
+</RequestExample>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token` endpoint.
+</ParamField>
+
+<ParamField header='x-idempotency-key' type='string' required>
+  Unique idempotency key for the request to prevent duplicate processing.
+</ParamField>
+
+<ParamField header='x-fapi-auth-date' type='string' required>
+  The date and time at which the request was initiated (ISO 8601 format).
+</ParamField>
+
+<ParamField header='x-fapi-customer-ip-address' type='string' required>
+  The IP address of the customer making the request.
+</ParamField>
+
+<ParamField header='x-fapi-interaction-id' type='string' required>
+  Unique identifier for the interaction/session.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='account-owner-id' type='string' required>
+  The unique identifier (UUID) of the account owner (customer) whose accounts to retrieve.
+</ParamField>
+
+## Response
+
+Returns a list of all accounts owned by the specified account owner.
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='data' type='array'>
+  List of account information objects.
+  <Expandable title='data array item'>
+    <ResponseField name='accountId' type='string'>
+      Unique identifier of the account.
+    </ResponseField>
+    <ResponseField name='accountNumber' type='string'>
+      Account number.
+    </ResponseField>
+    <ResponseField name='accountName' type='string'>
+      Name of the account.
+    </ResponseField>
+    <ResponseField name='accountStatus' type='string'>
+      Current account status (e.g., `ACTIVATED`, `DEACTIVATED`).
+    </ResponseField>
+    <ResponseField name='currencyCode' type='string'>
+      Account currency code (e.g., `NGN`, `USD`, `GBP`).
+    </ResponseField>
+    <ResponseField name='accountBalance' type='number'>
+      Current account balance.
+    </ResponseField>
+    <ResponseField name='availableBalance' type='number'>
+      Available balance for transactions.
+    </ResponseField>
+    <ResponseField name='accountOwnerId' type='string'>
+      Unique identifier of the account owner.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://{domain}.fincode.software/api/v6/services/account-maintenance/list-accounts/123e4567-e89b-12d3-a456-426614174000' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'x-idempotency-key: unique-key-12345' \
+--header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
+--header 'x-fapi-customer-ip-address: 192.168.1.1' \
+--header 'x-fapi-interaction-id: interaction-12345'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const BASE_URL = 'https://{domain}.fincode.software/api/v6/services/account-maintenance';
+
+async function listAccounts(accessToken, accountOwnerId) {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/list-accounts/${accountOwnerId}`,
+      {
+        headers: {
+          'X-Auth-Token': accessToken,
+          'x-idempotency-key': `key-${Date.now()}`,
+          'x-fapi-auth-date': new Date().toISOString(),
+          'x-fapi-customer-ip-address': '192.168.1.1',
+          'x-fapi-interaction-id': `interaction-${Date.now()}`,
+        },
+      }
+    );
+
+    console.log(`Found ${response.data.data.length} accounts:`);
+    response.data.data.forEach((account) => {
+      console.log(
+        `${account.accountNumber}: ${account.accountName} ` +
+        `(${account.currencyCode}) - Balance: ${account.accountBalance}`
+      );
+    });
+
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      'Failed to list accounts:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+const accountOwnerId = '123e4567-e89b-12d3-a456-426614174000';
+listAccounts(accessToken, accountOwnerId);
+```
+
+</CodeGroup>
+
