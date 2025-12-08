@@ -1,200 +1,461 @@
 ---
 title: 'Process Flow'
-icon: 'flow-arrow'
+icon: 'diagram-project'
 ---
 
-This guide details the **step-by-step overview of how a payment is processed** in the Deposit Engine. It includes all supported payment methods: **Wallet, Card, and Bank Transfer**.
+This guide details the complete payment processing flow, from payment method selection to transaction completion.
 
----
+<Note>
+  The flow covers **Payment Method Selection**, **Wallet Payments**, **Bank Transfers**, and **Card Payments**.
+</Note>
 
-## Overview
+## Phase 1: Payment Initiation & Method Selection
 
-The payment process consists of four main phases:
+### 1.1 Get Supported Payment Methods
 
-1. **Payment Method Selection** – Customer selects their preferred method (Wallet, Card, Bank Transfer) based on amount, currency, and availability.
-2. **Payment Initiation** – System creates a payable item and prepares for processing.
-3. **Payment Processing** – Payment is executed via the chosen method, with real-time verification where applicable.
-4. **Payment Confirmation** – Payment status is updated and customer is notified.
-
-<Info>
-  This flow applies to all payment types and ensures compliance, tracking, and status consistency.
-</Info>
-
----
-
-## Visual Flow
+Before processing any payment, retrieve available payment methods for the transaction.
 
 ```mermaid
-flowchart TD
-    A[Customer Initiates Payment] --> B{Select Payment Method}
-    B -->|Wallet| C[Wallet Balance Check]
-    B -->|Card| D[Card Validation & Payment Gateway]
-    B -->|Bank Transfer| E[Customer Selects 'I Will Pay Later']
-    
-    C --> F{Sufficient Balance?}
-    F -->|Yes| G[Debit Wallet & Confirm Payment]
-    F -->|No| H[Payment Failed / Retry]
-    
-    D --> I[Authorize Card Payment via Gateway]
-    I -->|Success| J[Confirm Payment]
-    I -->|Failure| H
-    
-    E --> K[System Creates Awaiting Payment Record]
-    K --> L[Customer Makes Bank Transfer Offline]
-    L --> M[Notify System of Payment]
-    M --> N{Admin Verification}
-    N -->|Confirmed| J
-    N -->|Not Received| H
-
-    J --> O[Update Payment Status: PAID]
-    O --> P[Payment Completed / PAID_OUT]
-    H --> Q[Payment Failed / CANCELLED]
-````
-
----
-
-## Step-by-Step Flow
-
-### 1. Customer Initiates Payment
-
-* Customer selects items or service to pay for.
-* System generates a **Payable Item**.
-* Payment enters `PENDING_PAYMENT` state.
-
-<Card title='Learn More' href='/api/deposit-engine/supported-payment-methods'>
-  See how to create payable items.
-</Card>
-
----
-
-### 2. Select Payment Method
-
-* Customer chooses from available methods:
-
-  * **Wallet**
-  * **Card**
-  * **Bank Transfer**
-* Availability depends on **currency, country, and transaction type**.
-
-<CardGroup cols={3}>
-  <Card title='Wallet Payment' href='/deposit-engine/wallet-payments'>
-    Instant payment using wallet balance.
-  </Card>
-  <Card title='Card Payment' href='/deposit-engine/card-payments'>
-    Authorize payment via card gateway.
-  </Card>
-  <Card title='Bank Transfer' href='/deposit-engine/bank-transfers'>
-    Notify system of offline bank transfer payment.
-  </Card>
-</CardGroup>
-
----
-
-### 3. Payment Processing
-
-#### Wallet
-
-1. System checks wallet balance.
-2. If sufficient:
-
-   * Wallet debited
-   * Payment status updated to `PAID`
-3. If insufficient:
-
-   * Payment fails
-   * Customer notified
-
-#### Card
-
-1. Card details sent to **payment gateway**.
-2. Gateway authorizes payment.
-3. If approved:
-
-   * Transaction marked `PAID`
-4. If declined:
-
-   * Transaction marked `FAILED`
-
-#### Bank Transfer
-
-1. Customer selects "I will pay later".
-2. System creates `AWAITING_APPROVAL` record.
-3. Customer completes bank transfer offline.
-4. Customer notifies system via `POST /notify-bank-transfer-payment`.
-5. Admin verifies payment.
-6. Transaction marked `PAID` if verified, else `CANCELLED`.
-
----
-
-### 4. Payment Confirmation
-
-* Payment status updated in system (`PAID`, `PAID_OUT`, `FAILED`, `CANCELLED`).
-* Notifications sent to customer via email/SMS.
-* Ledger updated for accounting and reconciliation.
-
-<Card title='Payment Lifecycle' href='/deposit-engine/payment-lifecycle'>
-  Track state transitions for all payment types.
-</Card>
-
----
-
-## Payment Method Flowcharts
-
-### Wallet Payment
-
-```mermaid
-flowchart TD
-    PENDING_PAYMENT --> CONFIRMED --> PAID --> PAID_OUT
-    CONFIRMED --> FAILED
+sequenceDiagram
+    participant Customer
+    participant App
+    participant API
+    participant PaymentService
+    Customer->>App: Initiate Payment
+    App->>API: POST /supported-payment-methods
+    API->>PaymentService: Query Payment Methods
+    PaymentService->>PaymentService: Get Transaction Details
+    PaymentService->>PaymentService: Check Available Gateways
+    PaymentService->>PaymentService: Calculate Fees & Charges
+    PaymentService-->>API: Return Payment Options
+    API-->>App: Payment Methods with Charges
+    App-->>Customer: Display Payment Options
 ```
-
-### Card Payment
-
-```mermaid
-flowchart TD
-    PENDING_PAYMENT --> CONFIRMED --> PAID --> PAID_OUT
-    CONFIRMED --> FAILED
-```
-
-### Bank Transfer
-
-```mermaid
-flowchart TD
-    A[PENDING_PAYMENT] --> B[AWAITING_APPROVAL]
-    B --> C[PAID]
-    B --> D[CANCELLED]
-    C --> E[PAID_OUT]
-    C --> F[CANCELLED]
-```
-
----
-
-## Integration Notes
-
-* Wallet payments are **instant** if balance is sufficient.
-* Card payments depend on **gateway approval** and may fail.
-* Bank transfers require **manual confirmation by admin**.
-* All payments are logged and traceable via `PCN` or transaction ID.
-
----
-
-## Next Steps
 
 <CardGroup cols={2}>
-  <Card title='Payment Lifecycle' href='/deposit-engine/payment-lifecycle'>
-    Understand state transitions for all payment methods.
-  </Card>
   <Card title='Supported Payment Methods' href='/api/deposit-engine/supported-payment-methods'>
-    Explore API endpoints to fetch available methods.
+    Get available payment methods and charges
   </Card>
-  <Card title='Wallet Payments' href='/deposit-engine/wallet-payments'>
-    Learn wallet-specific flow details.
-  </Card>
-  <Card title='Card Payments' href='/deposit-engine/card-payments'>
-    Learn card-specific flow details.
-  </Card>
-  <Card title='Bank Transfers' href='/deposit-engine/bank-transfers'>
-    Learn bank transfer workflow.
+  <Card title='Payment Method Charges' href='/api/deposit-engine/payment-methods-charges'>
+    Calculate payment method charges
   </Card>
 </CardGroup>
+
+#### Payment Method Selection Steps
+
+<Steps>
+  <Step title="Request Payment Methods">
+    Customer provides transaction details (PCN, amount, currency, payable type).
+  </Step>
+
+  <Step title='Retrieve Available Methods'>
+    System returns available payment methods based on:
+    - **Country**: Customer's country and currency
+    - **Amount**: Transaction amount and applicable limits
+    - **Gateway**: Available payment gateway integrations
+    - **Payable Type**: Type of transaction (TRANSACTION, WALLET, BILL, etc.)
+  </Step>
+
+  <Step title='Calculate Charges'>
+    System calculates for each method:
+    - **Principal Amount**: Base transaction amount
+    - **Fee**: Transaction fee
+    - **Tax**: Applicable taxes
+    - **Exchange Rate**: For currency conversions
+    - **Total Checkout Amount**: Complete amount customer will pay
+  </Step>
+
+  <Step title='Display Options'>
+    Customer reviews payment options with transparent pricing and selects preferred method.
+  </Step>
+</Steps>
+
+## Phase 2: Wallet Payments
+
+### 2.1 Pay from Wallet Account
+
+Process payments directly from customer's wallet balance.
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant App
+    participant API
+    participant WalletService
+    participant LedgerService
+    Customer->>App: Select Wallet Payment
+    App->>API: POST /makepaymentfromwalletaccount
+    API->>WalletService: Process Wallet Payment
+    WalletService->>WalletService: Validate Payable Item
+    WalletService->>WalletService: Check Wallet Balance
+    WalletService->>WalletService: Verify OTP/PIN (if required)
+    WalletService->>LedgerService: Debit Wallet Account
+    LedgerService-->>WalletService: Debit Successful
+    WalletService->>WalletService: Update Payment Status
+    WalletService-->>API: Payment Complete
+    API-->>App: Payment Confirmation
+    App-->>Customer: Transaction Success
 ```
+
+<CardGroup cols={2}>
+  <Card title='Wallet Payment' href='/api/deposit-engine/make-payment-from-wallet'>
+    Process payment from wallet
+  </Card>
+  <Card title='Wallet Details' href='/deposit-engine/wallet-payments'>
+    Learn about wallet payments
+  </Card>
+</CardGroup>
+
+#### Wallet Payment Steps
+
+<Steps>
+  <Step title="Initiate Wallet Payment">
+    Customer provides:
+    - **Payable ID**: Transaction identifier
+    - **Payable Type**: Type of payment
+    - **Account Number**: Wallet account (optional)
+    - **Password**: Customer password
+    - **OTP/PIN**: One-time password or PIN (if enabled)
+  </Step>
+
+  <Step title='Validate Payment'>
+    System validates:
+    - Payable item exists and is pending
+    - Customer authentication
+    - Strong customer authentication (if enabled)
+    - Transaction PIN (if required)
+  </Step>
+
+  <Step title='Check Balance'>
+    System verifies:
+    - Sufficient wallet balance
+    - Account is active
+    - No holds or restrictions
+  </Step>
+
+  <Step title='Process Payment'>
+    System executes:
+    - Debits wallet account
+    - Updates payable status to PAID
+    - Records transaction in ledger
+    - Triggers payment completion workflow
+  </Step>
+
+  <Step title='Confirmation'>
+    Customer receives confirmation with updated wallet balance.
+  </Step>
+</Steps>
+
+## Phase 3: Bank Transfer Payments
+
+### 3.1 Bank Transfer ("I Will Pay Later")
+
+Handle offline bank transfer payments with manual confirmation.
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant App
+    participant API
+    participant PaymentService
+    participant Admin
+    Customer->>App: Select Bank Transfer
+    App->>API: PUT /bank-iwillpaylater-wallet/{pcn}/{payableType}
+    API->>PaymentService: Create Awaiting Payment
+    PaymentService->>PaymentService: Record Payment Intent
+    PaymentService-->>API: Awaiting Payment ID
+    API-->>App: Bank Details + Reference
+    App-->>Customer: Display Bank Details
+    Customer->>Customer: Make Bank Transfer Offline
+    Customer->>App: Notify Payment Made
+    App->>API: POST /notify-bank-transfer-payment
+    API->>PaymentService: Update Payment Status
+    PaymentService->>Admin: Notify Admin for Verification
+    Admin->>PaymentService: Verify & Confirm Payment
+    PaymentService->>PaymentService: Update Status to PAID
+    PaymentService-->>Customer: Payment Confirmed
+```
+
+<CardGroup cols={2}>
+  <Card title='I Will Pay Later' href='/api/deposit-engine/bank-iwillpaylater'>
+    Notify intent to pay via bank transfer
+  </Card>
+  <Card title='Notify Payment' href='/api/deposit-engine/notify-bank-transfer-payment'>
+    Confirm bank transfer completed
+  </Card>
+  <Card title='Bank Transfer Details' href='/deposit-engine/bank-transfers'>
+    Learn about bank transfer workflow
+  </Card>
+</CardGroup>
+
+#### Bank Transfer Steps
+
+<Steps>
+  <Step title="Initiate Bank Transfer">
+    Customer selects "I Will Pay Later" option, providing PCN and payable type.
+  </Step>
+
+  <Step title='Create Awaiting Payment'>
+    System creates awaiting payment record with:
+    - **Status**: AWAITING_BANK_TRANSFER_PAYMENT
+    - **Payment Reference**: Unique reference for bank transfer
+    - **Bank Details**: Organization's bank account details
+    - **Amount**: Total amount to transfer
+  </Step>
+
+  <Step title='Customer Makes Transfer'>
+    Customer completes bank transfer offline using provided:
+    - Bank account number
+    - Payment reference
+    - Exact amount
+  </Step>
+
+  <Step title='Notify Payment Completion'>
+    Customer notifies system via one of three options:
+    - **bank_paid_now**: Payment already made
+    - **bank_pay_later**: Will pay and notify later
+    - **mistake**: Accidentally selected this method
+  </Step>
+
+  <Step title='Admin Verification'>
+    Admin reviews bank statement and verifies:
+    - Payment received
+    - Correct amount
+    - Correct reference
+    - Updates status to PAID
+  </Step>
+
+  <Step title='Complete Transaction'>
+    System completes the transaction and processes the payable item.
+  </Step>
+</Steps>
+
+### 3.2 View Awaiting Payments
+
+Admins can view and manage payments awaiting confirmation.
+
+```mermaid
+sequenceDiagram
+    participant Admin
+    participant App
+    participant API
+    participant PaymentService
+    Admin->>App: View Awaiting Payments
+    App->>API: GET /awaiting-payments
+    API->>PaymentService: Query Awaiting Payments
+    PaymentService->>PaymentService: Filter by Date/Currency
+    PaymentService-->>API: Payment List
+    API-->>App: Display Awaiting Payments
+    App-->>Admin: Show Payment Details
+    Admin->>App: Take Action (Confirm/Cancel)
+    App->>API: POST /awaiting-payment-actions
+    API->>PaymentService: Update Payment Status
+    PaymentService-->>API: Action Complete
+    API-->>App: Status Updated
+```
+
+<CardGroup cols={2}>
+  <Card title='Awaiting Payments' href='/api/deposit-engine/awaiting-payments'>
+    View payments awaiting confirmation
+  </Card>
+  <Card title='Payment Actions' href='/api/deposit-engine/awaiting-payment-actions'>
+    Manage awaiting payments
+  </Card>
+</CardGroup>
+
+## Phase 4: Card Payments
+
+### 4.1 Process Card Payment
+
+Process payments using credit or debit cards through payment gateways.
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant App
+    participant API
+    participant PaymentGateway
+    participant PaymentService
+    Customer->>App: Enter Card Details
+    App->>API: POST /process-card-payment
+    API->>PaymentGateway: Submit Payment Request
+    PaymentGateway->>PaymentGateway: Validate Card
+    PaymentGateway->>PaymentGateway: Process Payment
+    PaymentGateway-->>API: Payment Response
+    API->>PaymentService: Update Payment Status
+    PaymentService->>PaymentService: Record Transaction
+    PaymentService-->>API: Payment Confirmed
+    API-->>App: Payment Result
+    App-->>Customer: Show Success/Failure
+```
+
+<CardGroup cols={2}>
+  <Card title='Process Card Payment' href='/api/deposit-engine/process-card-payment'>
+    Process credit/debit card payment
+  </Card>
+  <Card title='Card Payment Details' href='/deposit-engine/card-payments'>
+    Learn about card payment processing
+  </Card>
+</CardGroup>
+
+#### Card Payment Steps
+
+<Steps>
+  <Step title="Enter Card Details">
+    Customer provides:
+    - **Card Number (PAN)**: Primary account number
+    - **Expiry Date**: Card expiration (MM/yyyy)
+    - **Security Code**: CVV/CVC
+    - **Amount**: Payment amount
+    - **Currency**: Transaction currency
+  </Step>
+
+  <Step title='Process Payment'>
+    System submits to payment gateway (e.g., SecureTrading):
+    - Validates card details
+    - Checks available balance
+    - Performs fraud checks
+    - Processes authorization
+  </Step>
+
+  <Step title='Gateway Response'>
+    Payment gateway returns:
+    - **Transaction Reference**: Gateway transaction ID
+    - **Status**: Success, failed, or requires 3DS
+    - **Auth Code**: Authorization code
+    - **Error Details**: If payment failed
+  </Step>
+
+  <Step title='Update Payment Status'>
+    System updates payable item status based on gateway response:
+    - **Success**: Status → PAID
+    - **Failed**: Status → FAILED
+    - **3DS Required**: Redirect for authentication
+  </Step>
+
+  <Step title='Confirmation'>
+    Customer receives payment confirmation or error details.
+  </Step>
+</Steps>
+
+### 4.2 Process with Payment Token
+
+For returning customers, process payments using saved payment tokens.
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant App
+    participant API
+    participant PaymentGateway
+    participant PaymentService
+    Customer->>App: Select Saved Card
+    App->>API: POST /processpaymentwithpaymenttoken
+    API->>PaymentGateway: Verify Payment Token
+    PaymentGateway-->>API: Token Valid
+    API->>PaymentGateway: Process Payment
+    PaymentGateway-->>API: Payment Response
+    API->>PaymentService: Update Status
+    PaymentService-->>API: Complete
+    API-->>App: Payment Confirmed
+    App-->>Customer: Success
+```
+
+<Card title='Token Payment' href='/api/deposit-engine/process-payment-with-token'>
+  Process payment with saved token
+</Card>
+
+## Complete Payment Flow
+
+```mermaid
+flowchart TD
+    Start([Start Payment]) --> GetMethods[Get Supported Payment Methods]
+    GetMethods --> SelectMethod{Select Payment Method}
+    
+    SelectMethod -->|Wallet| CheckBalance{Sufficient Balance?}
+    CheckBalance -->|Yes| ProcessWallet[Process Wallet Payment]
+    CheckBalance -->|No| Error1[Insufficient Balance]
+    ProcessWallet --> Success1[Payment Complete]
+    
+    SelectMethod -->|Bank Transfer| CreateAwaiting[Create Awaiting Payment]
+    CreateAwaiting --> ShowBankDetails[Display Bank Details]
+    ShowBankDetails --> CustomerTransfer[Customer Makes Transfer]
+    CustomerTransfer --> NotifyPayment[Notify Payment Made]
+    NotifyPayment --> AdminVerify{Admin Verifies?}
+    AdminVerify -->|Confirmed| Success2[Payment Complete]
+    AdminVerify -->|Rejected| Error2[Payment Rejected]
+    
+    SelectMethod -->|Card| ValidateCard{Card Valid?}
+    ValidateCard -->|Yes| ProcessCard[Process Card Payment]
+    ValidateCard -->|No| Error3[Invalid Card]
+    ProcessCard --> GatewayResponse{Gateway Response?}
+    GatewayResponse -->|Success| Success3[Payment Complete]
+    GatewayResponse -->|Failed| Error4[Payment Failed]
+    GatewayResponse -->|3DS| Authenticate[3DS Authentication]
+    Authenticate --> Success3
+    
+    Success1 --> End([End])
+    Success2 --> End
+    Success3 --> End
+    Error1 --> Retry{Retry?}
+    Error2 --> Retry
+    Error3 --> Retry
+    Error4 --> Retry
+    Retry -->|Yes| GetMethods
+    Retry -->|No| End
+```
+
+## Key Concepts
+
+### Payment Methods
+
+The system supports multiple payment methods:
+- **E_WALLET**: Instant payment from wallet balance
+- **BANK_TRANSFER**: Offline bank transfer with confirmation
+- **ONLINE_CARD_PAYMENT**: Credit/debit card via gateway
+- **ONLINE_BANK_TRANSFER**: Direct online banking
+- **MOBILE_MONEY**: Mobile money payments
+- **CRYPTO_CURRENCY**: Cryptocurrency payments
+
+### Payable Types
+
+Different transaction types that can be paid:
+- **TRANSACTION**: Money transfer/remittance
+- **WALLET**: Wallet funding
+- **WALLET_CUSTOMER**: Personal wallet payment
+- **BILL**: Bill payment
+- **MERCHANT**: Product purchase
+- **VOUCHER**: Voucher purchase
+
+### Payment Status Flow
+
+```
+PENDING_PAYMENT → CONFIRMED → PAID → PAID_OUT
+```
+
+For bank transfers:
+```
+PENDING_PAYMENT → AWAITING_APPROVAL → PAID → PAID_OUT
+```
+
+### Charges & Fees
+
+Every payment includes:
+- **Principal Amount**: Base transaction amount
+- **Fee**: Service/transaction fee
+- **Tax**: Applicable taxes (VAT, etc.)
+- **Payment Method Fee**: Gateway/method specific fee
+- **Exchange Rate Fee**: For currency conversions
+- **Total Checkout Amount**: Complete amount charged
+
+### Security Features
+
+- **Strong Customer Authentication (SCA)**: OTP verification for sensitive transactions
+- **Transaction PIN**: Additional PIN verification
+- **Payment Token**: Secure tokenization for saved cards
+- **3D Secure**: Card authentication for online payments
+- **Idempotency**: Prevent duplicate payment processing
+
+<Card title='Learn More' href='/api/deposit-engine/supported-payment-methods'>
+  Explore all payment API endpoints and integration options.
+</Card>
