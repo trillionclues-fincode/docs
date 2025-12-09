@@ -1,18 +1,12 @@
 ---
 title: 'Delivery Currencies'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/quote/supported-delivery-currencies/{sendingCountryCode}/{receivingCountryCode}/{deliveryMethod}/{sendingCurrencyCode}'
+openapi: 'GET /quote/supported-delivery-currencies/{sendingCountryCode}/{receivingCountryCode}/{deliveryMethod}/{sendingCurrencyCode}'
 description: "Retrieves the list of currencies available for the recipient to receive, given the sender's payment currency."
 ---
 
 This endpoint finalizes the currency selection by returning the payout currencies available in the destination country.
 
 It factors in the corridor and the specific **source currency** (`sendingCurrencyCode`) that the sender has chosen to pay with.
-
-<RequestExample>
-          ```bash cURL GET        
-  [https://remitjunction.fincode.software/api/v6/services/quote/supported-delivery-currencies/GBR/NGA/ACCOUNTPAYMENT/GBP](https://remitjunction.fincode.software/api/v6/services/quote/supported-delivery-currencies/GBR/NGA/ACCOUNTPAYMENT/GBP)
-          ```
-</RequestExample>
 
 ## Request Headers
 
@@ -54,32 +48,6 @@ This endpoint requires a valid **Access Token**
   The specific **source currency** the sender is paying with (e.g., `GBP`). This
   is the new parameter.
 </ParamField>
-
-## Response
-
-The response returns a list of currency objects representing the final available receiving currencies.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  A list of supported destination (delivery) currencies.
-  <Expandable title='data array item (Delivery Currency Details)'>
-    <ResponseField name='currencyCode' type='string'>
-      The ISO 4217 code of the supported receiving currency (e.g., `NGN`).
-    </ResponseField>
-    <ResponseField name='currencyName' type='string'>
-      The full name of the currency (e.g., "Nigerian Naira").
-    </ResponseField>
-    <ResponseField name='minAmount' type='number'>
-      The minimum transaction amount supported for this currency.
-    </ResponseField>
-    <ResponseField name='maxAmount' type='number'>
-      The maximum transaction amount supported for this currency.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -131,8 +99,6 @@ async function getSupportedDeliveryCurrencies(
   }
 }
 
-// Usage Example: Sending from GBR to NGA via Account Payment, paying in GBP
-getSupportedDeliveryCurrencies('GBR', 'NGA', 'ACCOUNTPAYMENT', 'GBP');
 ```
 
 </CodeGroup>

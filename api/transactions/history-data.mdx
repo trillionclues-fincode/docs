@@ -1,16 +1,10 @@
 ---
 title: 'History Data'
-api: 'POST https://remitjunction.fincode.software/api/v6/services/transactionmanagement/history-data'
+openapi: 'POST /transactionmanagement/history-data'
 description: 'Retrieves a paginated and filtered list of transactions for the authenticated customer or a customer managed by the agent/manager.'
 ---
 
 This endpoint fetches the transaction history, allowing for detailed filtering by amount range, date range, and pagination. It uses a `POST` method because the complex filtering parameters are sent in the request body.
-
-<RequestExample>
-  ```bash cURL POST
-  [https://remitjunction.fincode.software/api/v6/services/transactionmanagement/history-data](https://remitjunction.fincode.software/api/v6/services/transactionmanagement/history-data)
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -72,42 +66,6 @@ The request body is used to define the filtering and pagination parameters.
   Optional: The unique customer code to search transactions for. If omitted,
   returns transactions for the authenticated user.
 </ParamField>
-
-## Response
-
-The response includes the filtered list of transactions and total counts for pagination context.
-
-<ResponseField name='totalCount' type='number'>
-  The total number of transactions matching the criteria across all pages.
-</ResponseField>
-
-<ResponseField name='transactions' type='array'>
-  A paginated list of transaction records.
-  <Expandable title='transactions array item'>
-    <ResponseField name='transactionId' type='string'>
-      Unique ID of the transaction.
-    </ResponseField>
-    <ResponseField name='amount' type='number'>
-      The amount of the transaction.
-    </ResponseField>
-    <ResponseField name='currency' type='string'>
-      The currency used for the transaction.
-    </ResponseField>
-    <ResponseField name='status' type='string'>
-      Current state of the transaction (e.g., `COMPLETED`, `PENDING`, `FAILED`).
-    </ResponseField>
-    <ResponseField name='transactionDate' type='string'>
-      Timestamp of transaction creation.
-    </ResponseField>
-    <ResponseField name='type' type='string'>
-      Type of transaction (e.g., `ACCOUNTPAYMENT`).
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
-<ResponseField name='message' type='string'>
-  Confirmation message from the server.
-</ResponseField>
 
 ## Code Examples
 
@@ -175,9 +133,6 @@ async function getTransactionHistory(accessToken, payload) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-getTransactionHistory(accessToken, historyPayload);
 ```
 
 </CodeGroup>

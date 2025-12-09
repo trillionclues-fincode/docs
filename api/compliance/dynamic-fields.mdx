@@ -1,18 +1,12 @@
 ---
 title: 'Dynamic Fields'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/dynamicfields/dynamic-fields-group/{processGroupCode}'
+openapi: 'GET /dynamicfields/dynamic-fields-group/{processGroupCode}'
 description: 'Retrieves a set of dynamic input fields required for a specific process (e.g., creating a transaction).'
 ---
 
 Retrieves the structured set of dynamic fields (forms, documents, or additional data) required for a specific business process, identified by the `{processGroupCode}` in the URL.
 
 This allows client applications to adapt their user interface to the requirements of the chosen transaction type or user state.
-
-<RequestExample>
-          ```bash cURL GET        
-  [https://remitjunction.fincode.software/api/v6/services/dynamicfields/dynamic-fields-group/REGISTERED_CUSTOMER_SEND_BANK_TRANSFER](https://remitjunction.fincode.software/api/v6/services/dynamicfields/dynamic-fields-group/REGISTERED_CUSTOMER_SEND_BANK_TRANSFER)
-          ```
-</RequestExample>
 
 ## Request Headers
 
@@ -43,47 +37,6 @@ This endpoint requires a valid **Access Token** to fetch system configuration da
   The unique code identifying the context or process for which the dynamic
   fields are required.
 </ParamField>
-
-## Response
-
-The response contains the structure defining the group of fields, including input type, validation rules, and display order.
-
-<ResponseField name='groupId' type='string'>
-  Unique identifier for this specific dynamic field group.
-</ResponseField>
-
-<ResponseField name='groupCode' type='string'>
-  The code used in the path (`REGISTERED_CUSTOMER_SEND_BANK_TRANSFER`).
-</ResponseField>
-
-<ResponseField name='title' type='string'>
-  Human-readable title for the field group (e.g., "Transaction Security
-  Questions").
-</ResponseField>
-
-<ResponseField name='fields' type='array'>
-  A list of individual input fields required for this process group.
-  <Expandable title='fields array item (Field Definition)'>
-    <ResponseField name='fieldKey' type='string'>
-      The unique key used to submit this field's data (e.g., `sourceOfFunds`).
-    </ResponseField>
-    <ResponseField name='label' type='string'>
-      The display label for the field (e.g., "Select Source of Funds").
-    </ResponseField>
-    <ResponseField name='type' type='string'>
-      The required input type (e.g., `TEXT`, `SELECT`, `DOCUMENT`).
-    </ResponseField>
-    <ResponseField name='required' type='boolean'>
-      If `true`, this field must be populated by the user.
-    </ResponseField>
-    <ResponseField name='options' type='array'>
-      If `type` is `SELECT`, this array contains the possible values/options.
-    </ResponseField>
-    <ResponseField name='validationRegex' type='string'>
-      The regular expression string used for client-side validation.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 

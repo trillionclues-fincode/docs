@@ -1,16 +1,10 @@
 ---
 title: 'Beneficiary Details'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/usermanagement/view-beneficiery-details/{beneficiaryId}'
+openapi: 'GET /usermanagement/view-beneficiery-details/{beneficiaryId}'
 description: 'Retrieves the full profile and banking details for a specific saved beneficiary.'
 ---
 
 Retrieves all stored details for a single beneficiary, identified by the unique `{beneficiaryId}`. This includes personal information and the associated payout account details.
-
-<RequestExample>
-          ```bash cURL GET        
-  [https://remitjunction.fincode.software/api/v6/services/usermanagement/view-beneficiery-details/6327c026-c646-4a9d-86b2-57731d867727](https://remitjunction.fincode.software/api/v6/services/usermanagement/view-beneficiery-details/6327c026-c646-4a9d-86b2-57731d867727)
-          ```
-</RequestExample>
 
 ## Request Headers
 
@@ -39,58 +33,6 @@ This endpoint requires a valid **Access Token** for authorization.
 >
   The unique ID of the beneficiary whose details are being requested.
 </ParamField>
-
-## Response
-
-The response returns a comprehensive object containing the beneficiary's profile and banking information.
-
-<ResponseField name='beneficiaryId' type='string'>
-  Unique system ID of the beneficiary.
-</ResponseField>
-
-<ResponseField name='firstName' type='string'>
-  Beneficiary's first name.
-</ResponseField>
-
-<ResponseField name='lastName' type='string'>
-  Beneficiary's last name.
-</ResponseField>
-
-<ResponseField name='countryCode' type='string'>
-  The country where the beneficiary resides (ISO 3166-1 alpha-3 code).
-</ResponseField>
-
-<ResponseField name='email' type='string'>
-  Beneficiary's email address.
-</ResponseField>
-
-<ResponseField name='bankDetails' type='object'>
-  The saved banking or payout information for the beneficiary.
-  <Expandable title='bankDetails object'>
-    <ResponseField name='accountName' type='string'>
-      Name on the bank account.
-    </ResponseField>
-    <ResponseField name='accountNumber' type='string'>
-      The full account number or ID.
-    </ResponseField>
-    <ResponseField name='bankName' type='string'>
-      Name of the bank.
-    </ResponseField>
-    <ResponseField name='swiftBic' type='string'>
-      SWIFT/BIC code (if applicable).
-    </ResponseField>
-    <ResponseField name='bankCode' type='string'>
-      The country-specific bank code (e.g., routing number, sort code).
-    </ResponseField>
-    <ResponseField name='currencyCode' type='string'>
-      The currency the account accepts (e.g., `NGN`).
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
-<ResponseField name='message' type='string'>
-  Confirmation message from the server.
-</ResponseField>
 
 ## Code Examples
 
@@ -139,10 +81,6 @@ async function viewBeneficiaryDetails(accessToken, beneficiaryId) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const beneficiaryId = '6327c026-c646-4a9d-86b2-57731d867727';
-viewBeneficiaryDetails(accessToken, beneficiaryId);
 ```
 
 </CodeGroup>

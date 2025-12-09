@@ -1,16 +1,10 @@
 ---
 title: 'Submit CRA Form'
-api: 'POST https://remitjunction.fincode.software/api/v6/services/admin/compliance/submit-cra'
+openapi: 'POST /admin/compliance/submit-cra'
 description: 'Submits the data collected from a dynamic form, such as a Customer Risk Assessment (CRA), for processing and compliance evaluation.'
 ---
 
 This endpoint is used to submit the collected data from dynamic forms (e.g., CRA or KYC forms). The system validates the input, updates the customer's compliance status, and may automatically trigger the next step in the enrolment process (like external screening).
-
-<RequestExample>
-          ```bash cURL POST        
-  [https://remitjunction.fincode.software/api/v6/services/admin/compliance/submit-cra](https://remitjunction.fincode.software/api/v6/services/admin/compliance/submit-cra)
-          ```
-</RequestExample>
 
 ## Request Headers
 
@@ -73,32 +67,6 @@ The request body contains the identifiers of the form and the customer, along wi
   Optional ID of a specific KYC rule that mandated this form submission (can be
   `null`).
 </ParamField>
-
-## Response
-
-The response confirms the successful submission and usually provides the new compliance status or next step.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='message' type='string'>
-  A confirmation message regarding the form submission.
-</ResponseField>
-
-<ResponseField name='data' type='object'>
-  Details regarding the outcome of the submission.
-  <Expandable title='data object'>
-    <ResponseField name='newCustomerRiskLevel' type='string'>
-      The updated risk level of the customer after the assessment (e.g., `LOW`,
-      `MEDIUM`, `HIGH`).
-    </ResponseField>
-    <ResponseField name='nextStep' type='string'>
-      The action automatically triggered by the system (e.g.,
-      `TRIGGER_EXTERNAL_SCREENING`, `PROFILE_ACTIVE`).
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 

@@ -1,16 +1,10 @@
 ---
 title: "Logout"
-api: "POST https://remitjunction.fincode.software/api/v6/services/securitymanagement/logout"
+openapi: "PUT /securitymanagement/logout"
 description: "Invalidate the current user session by revoking the refresh token and access token."
 ---
 
 Invalidate the current user session by revoking both the access token and the refresh token. After a successful logout, the user must perform a full login with email and password to regain access.
-
-<RequestExample>
-        ```bash cURL PUT      
-  [https://remitjunction.fincode.software/api/v6/services/securitymanagement/logout](https://remitjunction.fincode.software/api/v6/services/securitymanagement/logout)
-        ```
-</RequestExample>
 
 ## Request Headers
 
@@ -38,20 +32,6 @@ Invalidate the current user session by revoking both the access token and the re
 >
     Unique JWT token
 </ParamField>
-
-## Response
-
-This endpoint typically returns an empty success response (`200 OK`) or a confirmation message, as the tokens themselves are being destroyed.
-
-<ResponseField name='status' type='string'>
-    Confirmation status, e.g., `SUCCESS`.
-</ResponseField>
-
-<ResponseField name='message' type='string'>
-    Confirmation message, e.g., "User logged out successfully."
-</ResponseField>
-
----
 
 ## Code Examples
 

@@ -1,40 +1,22 @@
 ---
 title: 'List Countries'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/utilitiesmanagement/list-all-countries'
+openapi: 'GET /utilitiesmanagement/list-all-countries'
 description: "Retrieves the systems's saved country list."
 ---
 
 Retrieves the current list of countries stored in the system with their various properties like country name and iso3Codes. This endpoint helps client applications for where users country is required.
-
-<RequestExample>
-          ```bash cURL GET        
-  [https://remitjunction.fincode.software/api/v6/services/utilitiesmanagement/list-all-countries](https://remitjunction.fincode.software/api/v6/services/utilitiesmanagement/list-all-countries)
-          ```
-</RequestExample>
 
 ## Request Headers
 
 This endpoint is typically **public** and **does not require an Access Token** for authorization, relying on the organization domain provided in the URL.
 
 <ParamField header='platform' type='string' required default='fincode'>
-        Platform identifier. Use `fincode`.
+  Platform identifier. Use `fincode`.
 </ParamField>
 
 <ParamField header='uuid' type='string' required default='200'>
-        Unique request identifier.
+  Unique request identifier.
 </ParamField>
-
-## Response
-
-The response returns an object detailing all the countries of the world with their different iso3Codes.
-
-<ResponseField name='iso3Code' type='string'>
-    Unique identifier for the country record.
-</ResponseField>
-
-<ResponseField name='common_name' type='string'>
-    The country's common name.
-</ResponseField>
 
 ## Code Examples
 

@@ -1,6 +1,6 @@
 ---
 title: "List Awaiting Payments"
-api: "GET https://remitjunction.fincode.software/api/v6/services/paymentmanagement/awaiting-payments"
+openapi: "GET /paymentmanagement/awaiting-payments"
 description: "Retrieve all pending/awaiting payment records for a customer based on filters such as date range, currency, and reference search."
 ---
 
@@ -19,8 +19,6 @@ It is typically used by dashboards, finance teams, or customer apps to list:
   Use this endpoint to display or filter all awaiting/pending payments for your customers.
 </Note>
 
----
-
 ## Authentication
 
 <ParamField header="X-Auth-Token" type="string" required>
@@ -35,8 +33,6 @@ It is typically used by dashboards, finance teams, or customer apps to list:
   Platform identifier (e.g., "WEB", "ANDROID", "IOS").
 </ParamField>
 
----
-
 ## Query Parameters
 
 <ParamField query="page" type="number">
@@ -46,8 +42,6 @@ It is typically used by dashboards, finance teams, or customer apps to list:
 <ParamField query="size" type="number">
   Number of records per page (default: `20`)
 </ParamField>
-
----
 
 ## Request Body
 
@@ -66,149 +60,6 @@ It is typically used by dashboards, finance teams, or customer apps to list:
 <ParamField body="searchablePaymentReference" type="string">
   Optional payment reference or identifier used for fuzzy search.
 </ParamField>
-
----
-
-## Response Fields
-
-<ResponseField name="status" type="enum" required>
-  API request status: `SUCCESS` or `FAILED`
-</ResponseField>
-
-<ResponseField name="message" type="string">
-  Error description, displayed only on failure.
-</ResponseField>
-
-<ResponseField name="responseCode" type="number">
-  HTTP response code e.g. `200`, `401`, `500`
-</ResponseField>
-
-<ResponseField name="data" type="object" required>
-
-  <Expandable title="data properties">
-
-  <ResponseField name="awaitingPayments" type="array">
-    Array of awaiting payment records.
-
-  <Expandable title="Awaiting Payment Object">
-
-<ResponseField name="id" type="string">
-  Unique ID of the awaiting payment entry.
-</ResponseField>
-
-<ResponseField name="payableType" type="enum">
-  Category of payable item.
-
-  **Options:**
-  - `TRANSACTION`
-  - `CANALPLUS`
-  - `CURRENCY_BUY`
-  - `CURRENCY_SELL`
-  - `VOUCHER`
-  - `TOP_UP`
-  - `MOBILE_TOP_UP`
-  - `BILL`
-  - `MERCHANT`
-  - `WALLET`
-  - `WALLET_PAYCENTER`
-  - `WALLET_CUSTOMER`
-  - `WALLET_TREASUARY`
-  - `WITHDRAWAL`
-  - `CART_INVOICE`
-</ResponseField>
-
-<ResponseField name="bankTransferFollowupActionType" type="enum">
-  Indicates required follow-up action.
-
-  Options include:
-  - `AUTO_CONFIRM_TRANSACTION`
-  - `MARK_AS_PENDING_TRANSACTION`
-  - `AUTO_HOLDFUND_WALLET`
-  - `AUTO_FUND_WALLET`
-  - `AUTO_WITHDRAWAL_WALLET`
-</ResponseField>
-
-<ResponseField name="bankTransferLifeCycle" type="enum">
-  Payment lifecycle stage:  
-  - `AWAITING_BANK_TRANSFER_PAYMENT`  
-  - `RECEIVED_BANK_TRANSFER_PAYMENT`  
-  - `COMPLETED_PAYMENT_LIFECYCLE`
-</ResponseField>
-
-<ResponseField name="mtoPaymentConfirmtionType" type="enum">
-  MTO confirmation type:
-  - `AUTO_BANK_STATEMENT_SCAN`
-  - `NOT_CONFIRMED`
-  - `MANUAL`
-</ResponseField>
-
-<ResponseField name="customerConfirmedPaymentDate" type="date">
-  When customer confirmed payment.
-</ResponseField>
-
-<ResponseField name="mtoPaymentReceivedDate" type="date">
-  When MTO confirmed receiving the payment.
-</ResponseField>
-
-<ResponseField name="creationDate" type="date">
-  When the payment entry was created.
-</ResponseField>
-
-<ResponseField name="cancellationDate" type="date">
-  When the item was cancelled (if applicable).
-</ResponseField>
-
-<ResponseField name="followupActionExecutionDate" type="date">
-  Timestamp when follow-up action occurred.
-</ResponseField>
-
-<ResponseField name="customerIwillPayLater" type="boolean">
-  Whether customer selected "I will pay later".
-</ResponseField>
-
-<ResponseField name="customerConfirmedPayment" type="boolean">
-  Whether customer confirmed payment.
-</ResponseField>
-
-<ResponseField name="mtoConfirmedPaymentReceived" type="boolean">
-  Whether the MTO has confirmed receiving funds.
-</ResponseField>
-
-<ResponseField name="cancelled" type="boolean">
-  Whether the entry is cancelled.
-</ResponseField>
-
-<ResponseField name="payableitemId" type="string">
-  Reference to the payable item (transaction, bill, voucher, etc.).
-</ResponseField>
-
-<ResponseField name="currency" type="string">
-  Currency of the payment.
-</ResponseField>
-
-<ResponseField name="walletFundingAmount" type="number">
-  Amount intended for wallet funding (if applicable).
-</ResponseField>
-
-<ResponseField name="requestedBankTransferAmount" type="number">
-  Expected transfer amount from the customer.
-</ResponseField>
-
-<ResponseField name="searchablePaymentReference" type="string">
-  Searchable reference associated with the payment.
-</ResponseField>
-
-<ResponseField name="payerBankTransferReference" type="string">
-  Reference provided by the payer during bank transfer.
-</ResponseField>
-
-  </Expandable>
-</ResponseField>
-
-  </Expandable>
-</ResponseField>
-
----
 
 ## Request Example
 
@@ -275,8 +126,6 @@ data = response.json()
 
 </CodeGroup>
 
----
-
 ## Response Example
 
 <CodeGroup>
@@ -323,8 +172,6 @@ data = response.json()
 
 </CodeGroup>
 
----
-
 ## Use Cases
 
 ### 1. Display Awaiting Payments in a Dashboard
@@ -336,8 +183,6 @@ res.data.awaitingPayments.forEach(entry => {
 });
 ```
 
----
-
 ### 2. Filter Payments by Date Range
 
 ```javascript
@@ -348,8 +193,6 @@ await getAwaitingPayments({
 });
 ```
 
----
-
 ### 3. Identify Items Requiring Follow-Up
 
 ```javascript
@@ -357,8 +200,6 @@ const items = res.data.awaitingPayments.filter(
   p => p.bankTransferFollowupActionType === 'MARK_AS_PENDING_TRANSACTION'
 );
 ```
-
----
 
 ## Error Handling
 
@@ -380,8 +221,6 @@ try {
 
 </ResponseExample>
 
----
-
 ## Important Notes
 
 <Warning>
@@ -395,8 +234,6 @@ try {
   - The lifecycle status helps identify pending, received, or completed items  
   - Reference search improves lookup of specific payments  
 </Info>
-
----
 
 ## Next Steps
 

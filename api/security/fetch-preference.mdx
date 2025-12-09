@@ -1,59 +1,22 @@
 ---
 title: 'Fetch Preference'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/admin/organisation-preference-management/fetch-organisaction-preference'
+openapi: 'GET /admin/organisation-preference-management/fetch-organisaction-preference'
 description: 'Retrieves the current system and configuration preferences for the authenticated organisation/tenant.'
 ---
 
 Retrieves the global settings and configurations applied to the current organisation/tenant. This includes business rules, feature toggles, and system defaults.
-
-<RequestExample>
-        ```bash cURL GET      
-  [https://remitjunction.fincode.software/api/v6/services/admin/organisation-preference-management/fetch-organisaction-preference](https://remitjunction.fincode.software/api/v6/services/admin/organisation-preference-management/fetch-organisaction-preference)
-        ```
-</RequestExample>
 
 ## Request Headers
 
 This endpoint does NOT requires an **Access Token** for authorization, and relies on the organization domain provided by that url.
 
 <ParamField header='platform' type='string' required default='fincode'>
-      Platform identifier. Use `fincode`.
+  Platform identifier. Use `fincode`.
 </ParamField>
 
 <ParamField header='uuid' type='string' required default='200'>
-      Unique request identifier.
+  Unique request identifier.
 </ParamField>
-
-## Response
-
-The response returns a single object containing all configuration key-value pairs for the organization.
-
-<ResponseField name='preferenceId' type='string'>
-  Unique identifier for the preference record.
-</ResponseField>
-
-<ResponseField name='tenantId' type='string'>
-  The ID of the organization the preferences belong to.
-</ResponseField>
-
-<ResponseField name='preferences' type='object'>
-  A key-value map containing all system preferences.
-  <Expandable title='preferences map'>
-    <ResponseField name='MAX_TRANSACTION_LIMIT' type='number'>
-      Example: The maximum amount allowed for a single transaction.
-    </ResponseField>
-    <ResponseField name='DEFAULT_FX_MARKUP' type='number'>
-      Example: The default percentage markup applied to exchange rates.
-    </ResponseField>
-    <ResponseField name='IS_FEATURE_X_ENABLED' type='boolean'>
-      Example: Toggle switch for a specific feature.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
-<ResponseField name='message' type='string'>
-  Confirmation message from the server.
-</ResponseField>
 
 ## Code Examples
 

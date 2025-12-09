@@ -1,16 +1,10 @@
 ---
 title: "Login"
-api: "PUT https://remitjunction.fincode.software/api/v6/services/securitymanagement/login"
+openapi: "PUT /securitymanagement/login"
 description: "Authenticate users and obtain access tokens for API requests"
 ---
 
 Authenticate users with email and password to obtain JWT access and refresh tokens. This endpoint supports all user roles: MANAGER, AGENT, CASHIER, and CUSTOMER, etc.
-
-<RequestExample>
-      ```bash cURL PUT    
-  [https://remitjunction.fincode.software/api/v6/services/securitymanagement/login](https://remitjunction.fincode.software/api/v6/services/securitymanagement/login)
-      ```
-</RequestExample>
 
 ## Request Headers
 
@@ -31,8 +25,6 @@ Authenticate users with email and password to obtain JWT access and refresh toke
     Unique request identifier. Use `200`
 </ParamField>
 
----
-
 ## Request Body
 
 <ParamField body='email' type='string' required>
@@ -42,49 +34,6 @@ Authenticate users with email and password to obtain JWT access and refresh toke
 <ParamField body='currentPassword' type='string' required>
       User's password (minimum 8 characters)
 </ParamField>
-
----
-
-## Response
-
-<ResponseField name='access_token' type='string'>
-  JWT access token valid for 1 hour. Use this token in the `X-Auth-Token` header
-  for authenticated requests.
-</ResponseField>
-
-<ResponseField name='expires_in' type='number'>
-  Token expiration time in seconds (default: 3600)
-</ResponseField>
-
-<ResponseField name='refresh_token' type='string'>
-  Refresh token for obtaining new access tokens without re-authentication
-</ResponseField>
-
-<ResponseField name="user" type="object">
-  User information and permissions
-  <Expandable title="user object">
-    <ResponseField name="id" type="string">
-      Unique user identifier
-    </ResponseField>
-
-    <ResponseField name="email" type="string">
-      User's email address
-    </ResponseField>
-
-    <ResponseField name="role" type="string">
-      User role: `MANAGER`, `AGENT`, `CASHIER`, or `CUSTOMER`
-    </ResponseField>
-
-    <ResponseField name="tenant_id" type="string">
-      Tenant/organization identifier
-    </ResponseField>
-
-    <ResponseField name="permissions" type="array">
-      List of granted permissions for this user
-    </ResponseField>
-
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 

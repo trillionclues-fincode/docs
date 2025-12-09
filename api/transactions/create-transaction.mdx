@@ -1,16 +1,10 @@
 ---
 title: 'Create Transaction'
-api: 'POST https://remitjunction.fincode.software/api/v6/services/transactionmanagement/create-transaction'
+openapi: 'POST /transactionmanagement/create-transaction'
 description: 'Initiate a new remittance or lending transaction with sender, recipient, and transfer details.'
 ---
 
 Initiates a new transaction, covering all details required for compliance, routing, and processing. This endpoint is used for Remittance transactions.
-
-<RequestExample>
-        ```bash cURL POST      
-  [https://remitjunction.fincode.software/api/v6/services/transactionmanagement/create-transaction](https://remitjunction.fincode.software/api/v6/services/transactionmanagement/create-transaction)
-        ```
-</RequestExample>
 
 ## Request Headers
 
@@ -179,53 +173,6 @@ Initiates a new transaction, covering all details required for compliance, routi
     </ParamField>
   </Expandable>
 </ParamField>
-
-## Response
-
-Upon success, this endpoint returns the newly created transaction object, including the unique transaction identifier and its initial status.
-
-<ResponseField name='transactionId' type='string'>
-  Unique system identifier for the newly created transaction.
-</ResponseField>
-
-<ResponseField name='status' type='string' default='CREATED'>
-  The initial status of the transaction. Typically `CREATED` or `PENDING`.
-</ResponseField>
-
-<ResponseField name='exchangeRate' type='number'>
-  The exchange rate applied to this transaction.
-</ResponseField>
-
-<ResponseField name='totalFees' type='number'>
-  The total fees charged for the transaction.
-</ResponseField>
-
-<ResponseField name='sendAmount' type='number'>
-  The finalized amount debited from the sender.
-</ResponseField>
-
-<ResponseField name='receiveAmount' type='number'>
-  The finalized amount credited to the recipient.
-</ResponseField>
-
-<ResponseField name='message' type='string'>
-  Confirmation message from the server.
-</ResponseField>
-
-<ResponseField name='data' type='object'>
-  Detailed transaction data object.
-  <Expandable title='data object'>
-    <ResponseField name='transactionDate' type='string'>
-      Timestamp of transaction creation.
-    </ResponseField>
-    <ResponseField name='sender' type='object'>
-      Summary of sender details.
-    </ResponseField>
-    <ResponseField name='recipient' type='object'>
-      Summary of recipient details.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 

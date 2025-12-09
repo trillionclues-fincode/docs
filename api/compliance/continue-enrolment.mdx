@@ -1,18 +1,12 @@
 ---
 title: 'Continue Enrolment'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/admin/compliance/continue-enrolment'
+openapi: 'GET /admin/compliance/continue-enrolment'
 description: 'Checks or triggers the next stage of external compliance screening for a customer, typically after a Customer Risk Assessment (CRA) form submission.'
 ---
 
 This endpoint is crucial for initiating or checking the status of required **external compliance screenings** (e.g., identity verification, sanctions checks) after a customer has submitted their initial forms or documents.
 
 It confirms whether the external process has started and provides the necessary URL if user interaction is required.
-
-<RequestExample>
-          ```bash cURL GET        
-  [https://remitjunction.fincode.software/api/v6/services/admin/compliance/continue-enrolment](https://remitjunction.fincode.software/api/v6/services/admin/compliance/continue-enrolment)
-          ```
-</RequestExample>
 
 ## Request Headers
 
@@ -39,43 +33,6 @@ This endpoint typically requires the identifier of the customer whose enrolment 
   The unique identifier of the customer whose enrolment process needs to be
   continued or checked.
 </ParamField>
-
-## Response
-
-The response confirms the status of the external screening process. If a link is required for the user to proceed, it will be provided in `externalVerificationUrl`.
-
-<ResponseField name='status' type='string' required default='SUCCESS'>
-  The outcome status of the request.
-</ResponseField>
-
-<ResponseField name='message' type='string' required>
-  A descriptive message indicating the next steps or status.
-</ResponseField>
-
-<ResponseField name='externalScreeningEnrolled' type='boolean' required>
-  **`true`** if the customer is successfully enrolled in, or has completed, the
-  required external compliance screening.
-</ResponseField>
-
-<ResponseField name='externalVerificationUrl' type='string'>
-  The URL the customer should be redirected to if external interaction (like
-  identity verification) is required. This is **`null`** if no external
-  interaction is needed.
-</ResponseField>
-
-<ResponseField name='customerId' type='string'>
-  The ID of the customer involved in the enrolment process.
-</ResponseField>
-
-<ResponseField name='validityMinutes' type='number'>
-  The number of minutes the provided `externalVerificationUrl` is valid for (if
-  a URL is returned).
-</ResponseField>
-
-<ResponseField name='createdDate' type='string'>
-  Timestamp indicating when the external screening process was initiated or last
-  updated.
-</ResponseField>
 
 ## Code Examples
 

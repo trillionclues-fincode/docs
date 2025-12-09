@@ -1,18 +1,12 @@
 ---
 title: 'Create Customer'
-api: 'POST https://remitjunction.fincode.software/api/v6/services/usermanagement/create-customer'
+openapi: 'POST /usermanagement/create-customer'
 description: 'Register a new customer account in the FinCode platform'
 ---
 
 Create a new customer account with personal information and authentication credentials.
 
 Customers can access self-service features including sending remittances, applying for loans, and managing investments.
-
-<RequestExample>
-  ```bash cURL POST
-  https://https://remitjunction.fincode.software/api/v6/services/usermanagement/create-customer
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -107,63 +101,6 @@ Customers can access self-service features including sending remittances, applyi
 <ParamField body='sendWelcomeEmail' type='boolean' default='true'>
   Whether to send a welcome email to the customer
 </ParamField>
-
-## Response
-
-<ResponseField name='success' type='boolean'>
-  Indicates if the customer was created successfully
-</ResponseField>
-
-<ResponseField name='customerId' type='string'>
-  Unique identifier for the created customer
-</ResponseField>
-
-<ResponseField name='customer' type='object'>
-  Complete customer information
-  <Expandable title='customer object'>
-    <ResponseField name='id' type='string'>
-      Customer unique identifier
-    </ResponseField>
-
-    <ResponseField name='userId' type='string'>
-      Associated user account ID
-    </ResponseField>
-
-    <ResponseField name='firstName' type='string'>
-      Customer's first name
-    </ResponseField>
-
-    <ResponseField name='lastName' type='string'>
-      Customer's last name
-    </ResponseField>
-
-    <ResponseField name='email' type='string'>
-      Customer's email address
-    </ResponseField>
-
-    <ResponseField name='phoneNumber' type='string'>
-      Customer's phone number
-    </ResponseField>
-
-    <ResponseField name='status' type='string'>
-      Account status: `active`, `pending_verification`, `suspended`
-    </ResponseField>
-
-    <ResponseField name='kycStatus' type='string'>
-      KYC verification status: `not_started`, `in_progress`, `verified`,
-      `failed`
-    </ResponseField>
-
-    <ResponseField name='createdAt' type='string'>
-      Timestamp when customer was created (ISO 8601)
-    </ResponseField>
-
-    <ResponseField name='tenantId' type='string'>
-      Tenant/organization identifier
-    </ResponseField>
-
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 

@@ -1,16 +1,10 @@
 ---
 title: 'Find All Beneficiary'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/usermanagement/find-all-beneficiery'
+openapi: 'GET /usermanagement/find-all-beneficiery'
 description: 'Retrieves a list of all saved beneficiaries associated with the authenticated customer or managed by the agent.'
 ---
 
 This endpoint fetches all saved recipient profiles (**beneficiaries**) linked to the authenticated user's account. This list is typically displayed when a user initiates a new transaction to select a pre-saved recipient.
-
-<RequestExample>
-          ```bash cURL GET        
-  [https://remitjunction.fincode.software/api/v6/services/usermanagement/find-all-beneficiery](https://remitjunction.fincode.software/api/v6/services/usermanagement/find-all-beneficiery)
-          ```
-</RequestExample>
 
 ## Request Headers
 
@@ -28,42 +22,6 @@ This endpoint requires a valid **Access Token** for authorization to identify th
 <ParamField header='uuid' type='string' required default='200'>
         Unique request identifier.
 </ParamField>
-
-## Response
-
-The response returns an array containing details for each saved beneficiary.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  A list of the user's saved beneficiaries.
-  <Expandable title='data array item (Beneficiary Details)'>
-    <ResponseField name='beneficiaryId' type='string'>
-      Unique system ID for the beneficiary.
-    </ResponseField>
-    <ResponseField name='name' type='string'>
-      Full name of the recipient.
-    </ResponseField>
-    <ResponseField name='country' type='string'>
-      The country where the beneficiary resides or receives funds (ISO 3166-1
-      alpha-3 code).
-    </ResponseField>
-    <ResponseField name='payoutMethod' type='string'>
-      The preferred method for payment (e.g., `BANK_ACCOUNT`, `CASH_PICKUP`).
-    </ResponseField>
-    <ResponseField name='accountNumber' type='string'>
-      The recipient's bank account number or identifier (may be masked).
-    </ResponseField>
-    <ResponseField name='bankName' type='string'>
-      Name of the recipient's bank or payout institution.
-    </ResponseField>
-    <ResponseField name='currency' type='string'>
-      The currency the beneficiary usually receives.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -109,9 +67,6 @@ async function findAllBeneficiaries(accessToken) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-findAllBeneficiaries(accessToken);
 ```
 
 </CodeGroup>

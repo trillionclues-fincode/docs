@@ -1,18 +1,12 @@
 ---
 title: 'Call Quote'
-api: 'POST https://remitjunction.fincode.software/api/v6/services/quote/callQuote'
+openapi: 'POST /quote/callQuote'
 description: 'Calculates the real-time exchange rate, fees, and total cost for an intended transaction.'
 ---
 
 This endpoint provides a definitive, real-time calculation (the **Quote**) for an intended transaction.
 
 It calculates the total payable amount, all applicable fees, the guaranteed exchange rate, and the final recipient amount based on the provided parameters.
-
-<RequestExample>
-          ```bash cURL POST        
-  [https://remitjunction.fincode.software/api/v6/services/quote/callQuote](https://remitjunction.fincode.software/api/v6/services/quote/callQuote)
-          ```
-</RequestExample>
 
 ## Request Headers
 
@@ -115,44 +109,6 @@ The request body defines the core parameters for the rate calculation. You shoul
 <ParamField body='mobileOperator' type='string'>
   Required if the `transactionType` is mobile top-up; otherwise optional.
 </ParamField>
-
-## Response
-
-The response contains the final quote details, including rates, fees, and validity.
-
-<ResponseField name='exchangeRate' type='number'>
-  The fixed exchange rate guaranteed for the transaction.
-</ResponseField>
-
-<ResponseField name='fees' type='number'>
-  The total calculated fees for the transaction.
-</ResponseField>
-
-<ResponseField name='principalAmount' type='number'>
-  The final calculated sending amount (payer amount).
-</ResponseField>
-
-<ResponseField name='deriveAmount' type='number'>
-  The final calculated receiving amount (recipient amount).
-</ResponseField>
-
-<ResponseField name='quoteExpiryMinutes' type='number'>
-  The duration (in minutes) for which this specific quote is guaranteed to be
-  valid.
-</ResponseField>
-
-<ResponseField name='totalPayableAmount' type='number'>
-  The final amount the customer needs to pay, including principal and fees.
-</ResponseField>
-
-<ResponseField name='quoteId' type='string'>
-  A unique identifier for this specific quote (used when confirming the
-  transaction).
-</ResponseField>
-
-<ResponseField name='message' type='string'>
-  Confirmation message from the server.
-</ResponseField>
 
 ## Code Examples
 

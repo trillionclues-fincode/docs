@@ -1,16 +1,10 @@
 ---
 title: 'List Mobile Operators'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/admin/bank/config/find-all-mobile-operator/{country}'
+openapi: 'GET /admin/bank/config/find-all-mobile-operator/{country}'
 description: 'Retrieves the list of supported mobile money operators for a country.'
 ---
 
 This endpoint returns the available mobile money operators (e.g., MTN, Orange, Airtel) for a specific country. The operator code is required for validating mobile numbers and creating transactions.
-
-<RequestExample>
-  ```bash cURL GET
-  [https://remitjunction.fincode.software/api/v6/services/admin/bank/config/find-all-mobile-operator/{country}](https://remitjunction.fincode.software/api/v6/services/admin/bank/config/find-all-mobile-operator/{country})
-  ```
-</RequestExample>
 
 ## Request Headers
 

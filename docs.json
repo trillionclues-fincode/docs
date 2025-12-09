@@ -2,6 +2,9 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "FinCode Platform",
+  "openapi": [
+    "openapi.json"
+  ],
   "appearance": {
     "default": "light",
     "isHidden": true
@@ -10,6 +13,14 @@
     "primary": "#734CDC",
     "light": "#734CDC",
     "dark": "#79359F"
+  },
+  "api": {
+    "mdx": {
+      "server": [
+        "https://remitjunction.fincode.software/api/v6/services",
+        "https://sandbox.fincode.software/api/v6/services"
+      ]
+    }
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -199,7 +210,6 @@
               "api/transactions/create-transaction",
               "api/transactions/beneficiary-details",
               "api/transactions/delivery-currencies",
-              "api/transactions/destination-countries",
               "api/transactions/destination-countries",
               "api/transactions/supported-currencies",
               "api/transactions/payment-methods",

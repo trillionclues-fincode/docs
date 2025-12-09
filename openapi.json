@@ -1,0 +1,1493 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "FinCode API",
+        "version": "v6"
+    },
+    "servers": [
+        {
+            "url": "https://{tenant}.fincode.software/api/v6/services",
+            "variables": {
+                "tenant": {
+                    "default": "remitjunction",
+                    "description": "Enter your tenant subdomain"
+                }
+            }
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "parameters": {
+            "platformHeader": {
+                "in": "header",
+                "name": "platform",
+                "schema": {
+                    "type": "string",
+                    "default": "fincode"
+                },
+                "required": true
+            },
+            "uuidHeader": {
+                "in": "header",
+                "name": "uuid",
+                "schema": {
+                    "type": "string",
+                    "default": "200"
+                },
+                "required": true
+            }
+        }
+    },
+    "paths": {
+        "/securitymanagement/login": {
+            "put": {
+                "summary": "Login",
+                "description": "Authenticate users and obtain access tokens",
+                "operationId": "login",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "currentPassword": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "email",
+                                    "currentPassword"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login"
+                    }
+                }
+            }
+        },
+        "/quote/callQuote": {
+            "post": {
+                "summary": "Call Quote",
+                "description": "Calculate exchange rate, fees, and total cost",
+                "operationId": "callQuote",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "principalAmount": {
+                                        "type": "string"
+                                    },
+                                    "principalAmountCurrency": {
+                                        "type": "string",
+                                        "default": "GBP"
+                                    },
+                                    "deriveAmount": {
+                                        "type": "string"
+                                    },
+                                    "deriveAmountCurrency": {
+                                        "type": "string",
+                                        "default": "NGN"
+                                    },
+                                    "inverseCalculation": {
+                                        "type": "boolean",
+                                        "default": false
+                                    },
+                                    "paymentType": {
+                                        "type": "string",
+                                        "default": "ONLINE_CARD_PAYMENT"
+                                    },
+                                    "chargeCategory": {
+                                        "type": "string",
+                                        "default": "MONEYTRANSFER"
+                                    },
+                                    "transactionType": {
+                                        "type": "string",
+                                        "default": "ACCOUNTPAYMENT"
+                                    },
+                                    "destinationCountry": {
+                                        "type": "string",
+                                        "default": "NGA"
+                                    },
+                                    "tradeOriginatingCountry": {
+                                        "type": "string",
+                                        "default": "GBR"
+                                    },
+                                    "conversion": {
+                                        "type": "boolean",
+                                        "default": true
+                                    },
+                                    "promoCode": {
+                                        "type": "string"
+                                    },
+                                    "mobileOperator": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Quote calculated successfully"
+                    }
+                }
+            }
+        },
+        "/securitymanagement/logout": {
+            "put": {
+                "summary": "Logout",
+                "description": "Invalidate user session",
+                "operationId": "logout",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "refresh_token": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Logged out successfully"
+                    }
+                }
+            }
+        },
+        "/usermanagement/profile": {
+            "get": {
+                "summary": "User Profile",
+                "description": "Get authenticated user profile",
+                "operationId": "getProfile",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User profile details"
+                    }
+                }
+            }
+        },
+        "/securitymanagement/refresh-token": {
+            "put": {
+                "summary": "Refresh Token",
+                "description": "Obtain new access token",
+                "operationId": "refreshToken",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "refresh_token": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "refresh_token"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Token refreshed successfully"
+                    }
+                }
+            }
+        },
+        "/usermanagement/create-customer": {
+            "post": {
+                "summary": "Create Customer",
+                "description": "Register a new customer",
+                "operationId": "createCustomer",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "firstName": {
+                                        "type": "string"
+                                    },
+                                    "lastName": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "phoneNumber": {
+                                        "type": "string"
+                                    },
+                                    "dateOfBirth": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "address": {
+                                        "type": "object",
+                                        "properties": {
+                                            "street": {
+                                                "type": "string"
+                                            },
+                                            "city": {
+                                                "type": "string"
+                                            },
+                                            "state": {
+                                                "type": "string"
+                                            },
+                                            "postalCode": {
+                                                "type": "string"
+                                            },
+                                            "country": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "confirmPassword": {
+                                        "type": "string"
+                                    },
+                                    "nationality": {
+                                        "type": "string"
+                                    },
+                                    "occupation": {
+                                        "type": "string"
+                                    },
+                                    "sourceOfFunds": {
+                                        "type": "string"
+                                    },
+                                    "sendWelcomeEmail": {
+                                        "type": "boolean",
+                                        "default": true
+                                    }
+                                },
+                                "required": [
+                                    "firstName",
+                                    "lastName",
+                                    "email",
+                                    "phoneNumber",
+                                    "dateOfBirth",
+                                    "address",
+                                    "password",
+                                    "confirmPassword"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Customer created successfully"
+                    }
+                }
+            }
+        },
+        "/utilitiesmanagement/list-all-countries": {
+            "get": {
+                "summary": "List Countries",
+                "description": "Retrieves the systems's saved country list",
+                "operationId": "listCountries",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of countries"
+                    }
+                }
+            }
+        },
+        "/utilitiesmanagement/active-countries": {
+            "get": {
+                "summary": "Active Countries",
+                "description": "Retrieves active countries",
+                "operationId": "activeCountries",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of active countries"
+                    }
+                }
+            }
+        },
+        "/admin/security/view-password-policy": {
+            "get": {
+                "summary": "Password Policy",
+                "description": "Retrieves password complexity rules",
+                "operationId": "viewPasswordPolicy",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password policy details"
+                    }
+                }
+            }
+        },
+        "/admin/organisation-preference-management/fetch-organisaction-preference": {
+            "get": {
+                "summary": "Fetch Preference",
+                "description": "Retrieves organisation preferences",
+                "operationId": "fetchPreference",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Organisation preferences"
+                    }
+                }
+            }
+        },
+        "/admin/compliance/list-attached-form": {
+            "get": {
+                "summary": "List Attached Forms",
+                "description": "Retrieves pending compliance forms",
+                "operationId": "listAttachedForms",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "customerCode",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of attached forms"
+                    }
+                }
+            }
+        },
+        "/dynamicfields/dynamic-fields-group/{processGroupCode}": {
+            "get": {
+                "summary": "Dynamic Fields",
+                "description": "Retrieves dynamic fields for a process",
+                "operationId": "getDynamicFields",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "processGroupCode",
+                        "schema": {
+                            "type": "string",
+                            "default": "REGISTERED_CUSTOMER_SEND_BANK_TRANSFER"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dynamic fields definition"
+                    }
+                }
+            }
+        },
+        "/admin/compliance/continue-enrolment": {
+            "get": {
+                "summary": "Continue Enrolment",
+                "description": "Checks or triggers external compliance screening",
+                "operationId": "continueEnrolment",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "customerCode": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "customerCode"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Enrolment status"
+                    }
+                }
+            }
+        },
+        "/paymentmanagement/awaiting-payments": {
+            "get": {
+                "summary": "List Awaiting Payments",
+                "description": "Retrieve all pending payments",
+                "operationId": "listAwaitingPayments",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "number",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "size",
+                        "schema": {
+                            "type": "number",
+                            "default": 20
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "selectedCurrency": {
+                                        "type": "string"
+                                    },
+                                    "fromDate": {
+                                        "type": "string"
+                                    },
+                                    "toDate": {
+                                        "type": "string"
+                                    },
+                                    "searchablePaymentReference": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "selectedCurrency",
+                                    "fromDate",
+                                    "toDate"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "List of awaiting payments"
+                    }
+                }
+            }
+        },
+        "/admin/compliance/submit-cra": {
+            "post": {
+                "summary": "Submit CRA Form",
+                "description": "Submits dynamic form data",
+                "operationId": "submitCRA",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "dynamicFormId": {
+                                        "type": "string",
+                                        "default": "31564b03-f183-44e3-ae4a-fa343c6f7e3a"
+                                    },
+                                    "customerId": {
+                                        "type": "string",
+                                        "default": "daa02d5e-2be1-4523-ba6e-1930045b0e53"
+                                    },
+                                    "dynamicFieldIds": {
+                                        "type": "object"
+                                    },
+                                    "kycRuleId": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "dynamicFormId",
+                                    "customerId",
+                                    "dynamicFieldIds"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Submission result"
+                    }
+                }
+            }
+        },
+        "/transactionmanagement/history-data": {
+            "post": {
+                "summary": "History Data",
+                "description": "Retrieves filtered transaction history",
+                "operationId": "historyData",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "fromAmount": {
+                                        "type": "number",
+                                        "default": 0.1
+                                    },
+                                    "toAmount": {
+                                        "type": "number",
+                                        "default": 100000000
+                                    },
+                                    "fromDate": {
+                                        "type": "string",
+                                        "default": "2025-09-21"
+                                    },
+                                    "toDate": {
+                                        "type": "string",
+                                        "default": "2025-11-20"
+                                    },
+                                    "totalNumber": {
+                                        "type": "number",
+                                        "default": 200
+                                    },
+                                    "startNumber": {
+                                        "type": "number",
+                                        "default": 1
+                                    },
+                                    "customerCode": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "fromAmount",
+                                    "toAmount",
+                                    "fromDate",
+                                    "toDate",
+                                    "totalNumber",
+                                    "startNumber"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transaction history"
+                    }
+                }
+            }
+        },
+        "/walletmanagement/walletaccountlist": {
+            "get": {
+                "summary": "Wallet Account List",
+                "description": "Retrieves user wallet accounts",
+                "operationId": "walletAccountList",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of wallet accounts"
+                    }
+                }
+            }
+        },
+        "/usermanagement/find-all-beneficiery": {
+            "get": {
+                "summary": "Find All Beneficiary",
+                "description": "Retrieves user beneficiaries",
+                "operationId": "findAllBeneficiaries",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of beneficiaries"
+                    }
+                }
+            }
+        },
+        "/transactionmanagement/transaction-types": {
+            "get": {
+                "summary": "Transaction Types",
+                "description": "Retrieves supported transaction types",
+                "operationId": "transactionTypes",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of transaction types"
+                    }
+                }
+            }
+        },
+        "/transactionmanagement/create-transaction": {
+            "post": {
+                "summary": "Create Transaction",
+                "description": "Initiate a new transaction",
+                "operationId": "createTransaction",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "password",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "ipAddress",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "amount": {
+                                        "type": "string"
+                                    },
+                                    "sendAmount": {
+                                        "type": "string"
+                                    },
+                                    "inclussive": {
+                                        "type": "boolean"
+                                    },
+                                    "receivingCurrency": {
+                                        "type": "string",
+                                        "default": "NGN"
+                                    },
+                                    "sendCurrency": {
+                                        "type": "string",
+                                        "default": "GBP"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "default": "ACCOUNTPAYMENT"
+                                    },
+                                    "transactionProcessingMode": {
+                                        "type": "string",
+                                        "default": "NONE_AGGREGATION"
+                                    },
+                                    "descriptionText": {
+                                        "type": "string"
+                                    },
+                                    "preExistingSenderCustomerCode": {
+                                        "type": "string"
+                                    },
+                                    "preExistingRecipientCustomerCode": {
+                                        "type": "string"
+                                    },
+                                    "transactionModule": {
+                                        "type": "string",
+                                        "default": "REMITTANCE"
+                                    },
+                                    "creditParty": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "internationalTransferInformation": {
+                                        "type": "object"
+                                    }
+                                },
+                                "required": [
+                                    "amount",
+                                    "sendAmount",
+                                    "inclussive",
+                                    "receivingCurrency",
+                                    "sendCurrency",
+                                    "type",
+                                    "preExistingSenderCustomerCode",
+                                    "preExistingRecipientCustomerCode",
+                                    "creditParty",
+                                    "internationalTransferInformation"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transaction created"
+                    }
+                }
+            }
+        },
+        "/usermanagement/view-beneficiery-details/{beneficiaryId}": {
+            "get": {
+                "summary": "Beneficiary Details",
+                "description": "Retrieves beneficiary details",
+                "operationId": "viewBeneficiaryDetails",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "beneficiaryId",
+                        "schema": {
+                            "type": "string",
+                            "default": "6327c026-c646-4a9d-86b2-57731d867727"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Beneficiary details"
+                    }
+                }
+            }
+        },
+        "/quote/supported-delivery-currencies/{sendingCountryCode}/{receivingCountryCode}/{deliveryMethod}/{sendingCurrencyCode}": {
+            "get": {
+                "summary": "Delivery Currencies",
+                "description": "Retrieves supported delivery currencies",
+                "operationId": "supportedDeliveryCurrencies",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "sendingCountryCode",
+                        "schema": {
+                            "type": "string",
+                            "default": "GBR"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "receivingCountryCode",
+                        "schema": {
+                            "type": "string",
+                            "default": "NGA"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "deliveryMethod",
+                        "schema": {
+                            "type": "string",
+                            "default": "ACCOUNTPAYMENT"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "sendingCurrencyCode",
+                        "schema": {
+                            "type": "string",
+                            "default": "GBP"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of delivery currencies"
+                    }
+                }
+            }
+        },
+        "/quote/destination-country-by-delivery-method/{sendingCountryCode}/{deliveryMethod}": {
+            "get": {
+                "summary": "Destination Countries",
+                "description": "Retrieves destination countries",
+                "operationId": "destinationCountries",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "sendingCountryCode",
+                        "schema": {
+                            "type": "string",
+                            "default": "GBR"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "deliveryMethod",
+                        "schema": {
+                            "type": "string",
+                            "default": "ACCOUNTPAYMENT"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of destination countries"
+                    }
+                }
+            }
+        },
+        "/quote/supported-currencies/{sendingCountryCode}/{receivingCountryCode}/{deliveryMethod}": {
+            "get": {
+                "summary": "Supported Currencies",
+                "description": "Retrieves supported currencies for corridor",
+                "operationId": "supportedCurrencies",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "sendingCountryCode",
+                        "schema": {
+                            "type": "string",
+                            "default": "GBR"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "receivingCountryCode",
+                        "schema": {
+                            "type": "string",
+                            "default": "NGA"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "deliveryMethod",
+                        "schema": {
+                            "type": "string",
+                            "default": "ACCOUNTPAYMENT"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of supported currencies"
+                    }
+                }
+            }
+        },
+        "/usermanagement/new-beneficiary": {
+            "post": {
+                "summary": "Create Beneficiary",
+                "description": "Creates a new beneficiary",
+                "operationId": "createBeneficiary",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "senderCode": {
+                                        "type": "string"
+                                    },
+                                    "firstName": {
+                                        "type": "string"
+                                    },
+                                    "lastName": {
+                                        "type": "string"
+                                    },
+                                    "beneficiaryName": {
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "default": "INDIVIDUAL"
+                                    },
+                                    "phone": {
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "type": "object"
+                                    }
+                                },
+                                "required": [
+                                    "senderCode",
+                                    "firstName",
+                                    "lastName",
+                                    "beneficiaryName"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Beneficiary created"
+                    }
+                }
+            }
+        },
+        "/usermanagement/validate-bank-account": {
+            "get": {
+                "summary": "Validate Bank Account",
+                "description": "Validates bank account details",
+                "operationId": "validateBankAccount",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "bankCode": {
+                                        "type": "string"
+                                    },
+                                    "transactionType": {
+                                        "type": "string",
+                                        "default": "ACCOUNTPAYMENT"
+                                    },
+                                    "accountNumber": {
+                                        "type": "string"
+                                    },
+                                    "accountNumberCountry": {
+                                        "type": "string"
+                                    },
+                                    "expectedCurrencyCode": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "bankCode",
+                                    "transactionType",
+                                    "accountNumber",
+                                    "accountNumberCountry",
+                                    "expectedCurrencyCode"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Validation result"
+                    }
+                }
+            }
+        },
+        "/bankmanagement/list-supported-banks-iso3/{country}": {
+            "get": {
+                "summary": "List Supported Banks",
+                "description": "Retrieves supported banks for a country",
+                "operationId": "listSupportedBanks",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "country",
+                        "schema": {
+                            "type": "string",
+                            "default": "NGA"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of banks"
+                    }
+                }
+            }
+        },
+        "/bankmanagement/required-bank-fields/{country}": {
+            "get": {
+                "summary": "Required Bank Fields",
+                "description": "Retrieves required bank fields",
+                "operationId": "requiredBankFields",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "country",
+                        "schema": {
+                            "type": "string",
+                            "default": "NGA"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Required bank fields"
+                    }
+                }
+            }
+        },
+        "/bankmanagement/add-bank-details-key-value-pairs": {
+            "post": {
+                "summary": "Add Bank Details",
+                "description": "Links bank account to beneficiary",
+                "operationId": "addBankDetails",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "customerId": {
+                                        "type": "string"
+                                    },
+                                    "accountOwnerCustomerCode": {
+                                        "type": "string"
+                                    },
+                                    "currencyCode": {
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "type": "string"
+                                    },
+                                    "bankAccountMetaData": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "id",
+                                    "customerId",
+                                    "accountOwnerCustomerCode",
+                                    "currencyCode",
+                                    "country",
+                                    "bankAccountMetaData"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bank details added"
+                    }
+                }
+            }
+        },
+        "/admin/bank/config/find-all-mobile-operator/{country}": {
+            "get": {
+                "summary": "List Mobile Operators",
+                "description": "Retrieves mobile money operators",
+                "operationId": "listMobileOperators",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "country",
+                        "schema": {
+                            "type": "string",
+                            "default": "GIN"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of mobile operators"
+                    }
+                }
+            }
+        }
+    }
+}

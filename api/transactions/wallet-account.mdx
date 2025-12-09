@@ -1,16 +1,10 @@
 ---
 title: 'Wallet Account List'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/walletmanagement/walletaccountlist'
+openapi: 'GET /walletmanagement/walletaccountlist'
 description: 'Retrieves a list of all wallet accounts associated with the authenticated user.'
 ---
 
 Retrieves a list of all digital wallet accounts (e.g., currency accounts) registered under the current user's profile. This list is essential for displaying balances or selecting a source account for transactions.
-
-<RequestExample>
-          ```bash cURL GET        
-  [https://remitjunction.fincode.software/api/v6/services/walletmanagement/walletaccountlist](https://remitjunction.fincode.software/api/v6/services/walletmanagement/walletaccountlist)
-          ```
-</RequestExample>
 
 ## Request Headers
 
@@ -28,38 +22,6 @@ This endpoint requires a valid **Access Token** for authorization to identify th
 <ParamField header='uuid' type='string' required default='200'>
         Unique request identifier.
 </ParamField>
-
-## Response
-
-The response returns an array containing details for each associated wallet account.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  A list of the user's wallet accounts.
-  <Expandable title='data array item (Wallet Account Details)'>
-    <ResponseField name='walletAccountId' type='string'>
-      Unique system identifier for the wallet account.
-    </ResponseField>
-    <ResponseField name='currency' type='string'>
-      The currency of the wallet (ISO 4217 code, e.g., `GBP`, `NGN`, `USD`).
-    </ResponseField>
-    <ResponseField name='availableBalance' type='number'>
-      The current available balance in the wallet.
-    </ResponseField>
-    <ResponseField name='ledgerBalance' type='number'>
-      The total balance including pending funds.
-    </ResponseField>
-    <ResponseField name='accountName' type='string'>
-      The name registered to the wallet account holder.
-    </ResponseField>
-    <ResponseField name='status' type='string' default='ACTIVE'>
-      The current status of the wallet account (e.g., `ACTIVE`, `SUSPENDED`).
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -107,9 +69,6 @@ async function getWalletAccountList(accessToken) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-getWalletAccountList(accessToken);
 ```
 
 </CodeGroup>

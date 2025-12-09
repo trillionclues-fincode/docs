@@ -1,16 +1,10 @@
 ---
 title: 'Transaction Types'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/transactionmanagement/transaction-types'
+openapi: 'GET /transactionmanagement/transaction-types'
 description: 'Retrieves a list of all supported transaction types available on the platform for the current organization.'
 ---
 
 Retrieves a list of all currently active and supported transaction types (e.g., `ACCOUNTPAYMENT`, `CASH_PICKUP`, `BILL_PAYMENT`) available for the organization associated with the subdomain. This is typically used to populate selection menus when a user initiates a new transaction flow.
-
-<RequestExample>
-          ```bash cURL GET        
-  [https://remitjunction.fincode.software/api/v6/services/transactionmanagement/transaction-types](https://remitjunction.fincode.software/api/v6/services/transactionmanagement/transaction-types)
-          ```
-</RequestExample>
 
 ## Request Headers
 
@@ -21,35 +15,8 @@ This endpoint is typically **open/unauthenticated** and relies on the domain to 
 </ParamField>
 
 <ParamField header='uuid' type='string' required default='200'>
-        Unique request identifier.
+  Unique request identifier.
 </ParamField>
-
-## Response
-
-The response returns a list of transaction type objects.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  A list of supported transaction types.
-  <Expandable title='data array item (Transaction Type)'>
-    <ResponseField name='code' type='string'>
-      The unique system code for the transaction type (e.g., `ACCOUNTPAYMENT`).
-    </ResponseField>
-    <ResponseField name='name' type='string'>
-      The user-friendly display name (e.g., "Direct Account Payment").
-    </ResponseField>
-    <ResponseField name='module' type='string'>
-      The business module associated with the type (e.g., `REMITTANCE`,
-      `LENDING`).
-    </ResponseField>
-    <ResponseField name='isActive' type='boolean'>
-      Indicates if the transaction type is currently active and available.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 

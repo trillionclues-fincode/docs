@@ -1,16 +1,10 @@
 ---
 title: 'Supported Currencies'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/quote/supported-currencies/{sendingCountryCode}/{receivingCountryCode}/{deliveryMethod}'
+openapi: 'GET /quote/supported-currencies/{sendingCountryCode}/{receivingCountryCode}/{deliveryMethod}'
 description: 'Retrieves the list of supported currencies for a specific remittance corridor and delivery method.'
 ---
 
 This endpoint is the final step in determining the valid parameters for initiating a transaction. It retrieves all supported payout currencies for the specified **sending country**, **receiving country**, and **delivery method**.
-
-<RequestExample>
-          ```bash cURL GET        
-  [https://remitjunction.fincode.software/api/v6/services/quote/supported-currencies/GBR/NGA/ACCOUNTPAYMENT](https://remitjunction.fincode.software/api/v6/services/quote/supported-currencies/GBR/NGA/ACCOUNTPAYMENT)
-          ```
-</RequestExample>
 
 ## Request Headers
 
@@ -50,32 +44,6 @@ All path parameters are mandatory to define the specific corridor.
 >
   The intended **payout method** (e.g., `ACCOUNTPAYMENT`, `CASH_PICKUP`).
 </ParamField>
-
-## Response
-
-The response returns a list of currency objects that are supported for the specified transfer path.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  A list of supported currency codes and details.
-  <Expandable title='data array item (Currency Details)'>
-    <ResponseField name='currencyCode' type='string'>
-      The ISO 4217 code of the supported currency (e.g., `NGN`).
-    </ResponseField>
-    <ResponseField name='currencyName' type='string'>
-      The full name of the currency (e.g., "Nigerian Naira").
-    </ResponseField>
-    <ResponseField name='minAmount' type='number'>
-      The minimum transaction amount supported for this currency.
-    </ResponseField>
-    <ResponseField name='maxAmount' type='number'>
-      The maximum transaction amount supported for this currency.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -127,8 +95,6 @@ async function getSupportedCurrencies(
   }
 }
 
-// Usage Example: Sending from Great Britain (GBR) to Nigeria (NGA) via Account Payment
-getSupportedCurrencies('GBR', 'NGA', 'ACCOUNTPAYMENT');
 ```
 
 </CodeGroup>

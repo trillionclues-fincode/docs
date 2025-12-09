@@ -1,18 +1,12 @@
 ---
 title: 'List Attached Forms'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/admin/compliance/list-attached-form'
+openapi: 'GET /admin/compliance/list-attached-form'
 description: "Retrieves a list of required compliance forms or documents currently attached to the authenticated user's profile."
 ---
 
 Retrieves a list of specific compliance forms, documents, or data requirements currently pending or attached to the user's profile.
 
 This is often used by agents or administrators to manage customer compliance requirements.
-
-<RequestExample>
-          ```bash cURL GET        
-  [https://remitjunction.fincode.software/api/v6/services/admin/compliance/list-attached-form](https://remitjunction.fincode.software/api/v6/services/admin/compliance/list-attached-form)
-          ```
-</RequestExample>
 
 ## Request Headers
 
@@ -25,11 +19,11 @@ This endpoint requires a valid **Access Token** for administrative authorization
 </ParamField>
 
 <ParamField header='platform' type='string' required default='fincode'>
-        Platform identifier. Use `fincode`.
+  Platform identifier. Use `fincode`.
 </ParamField>
 
 <ParamField header='uuid' type='string' required default='200'>
-        Unique request identifier.
+  Unique request identifier.
 </ParamField>
 
 ## Query Parameters
@@ -39,39 +33,6 @@ While not explicitly in your example, administrative endpoints often use query p
 <ParamField query='customerCode' type='string'>
   The unique customer code of the user whose compliance forms are being queried.
 </ParamField>
-
-## Response
-
-The response returns a list of compliance documents/forms that are pending or attached to the customer's profile.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='message' type='string'>
-  A descriptive message (often `null` or empty on success).
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  A list of attached compliance forms or document requirements. If empty (`[]`),
-  the customer has no currently attached forms.
-  <Expandable title='data array item (Form/Document Details)'>
-    <ResponseField name='formId' type='string'>
-      Unique identifier for the specific form or document type.
-    </ResponseField>
-    <ResponseField name='title' type='string'>
-      Human-readable name of the requirement (e.g., "Source of Funds
-      Declaration").
-    </ResponseField>
-    <ResponseField name='status' type='string'>
-      Current status of the form/document (e.g., `PENDING_SUBMISSION`,
-      `AWAITING_REVIEW`).
-    </ResponseField>
-    <ResponseField name='requiredForRiskLevel' type='string'>
-      The minimum risk level that triggers this requirement.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
