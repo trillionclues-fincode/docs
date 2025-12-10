@@ -1,17 +1,10 @@
 ---
 title: 'Accept Loan Offer'
-api: 'PUT https://finlend.fincode.software/api/v1/services/user/accept-loan-offer/{loanApplicationId}/accept'
+openapi: 'PUT /user/accept-loan-offer/{loanApplicationId}/accept'
 description: 'Accepts the loan offer.'
 ---
 
 Allows the customer to accept the loan offer. This action typically triggers the next steps in the loan process.
-
-<RequestExample>
-  ```bash cURL
-  curl --request PUT 'https://finlend.fincode.software/api/v1/services/user/accept-loan-offer/a1df2e04-62c5-431a-9c20-455c66280b1d/accept' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -45,12 +38,4 @@ Allows the customer to accept the loan offer. This action typically triggers the
   The unique identifier of the loan application.
 </ParamField>
 
-## Response
 
-<ResponseField name="status" type="string">
-  The status of the request.
-</ResponseField>
-
-<ResponseField name="message" type="string">
-  Confirmation message (e.g., "Offer accepted successfully").
-</ResponseField>

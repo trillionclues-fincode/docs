@@ -1,16 +1,10 @@
 ---
 title: 'Ledger History'
-api: 'GET https://{domain}.fincode.software/api/v6/services/ledger/account-ledger-history/{account_id}/{page}/{size}'
+openapi: 'GET /ledger/account-ledger-history/{account_id}/{page}/{size}'
 description: 'Retrieves paginated transaction history for a specific account.'
 ---
 
 Fetches a paginated list of all ledger entries (transactions) for an account, providing a complete audit trail of account movements.
-
-<RequestExample>
-  ```bash cURL GET
-  [https://{domain}.fincode.software/api/v6/services/ledger/account-ledger-history/{account_id}/{page}/{size}](https://{domain}.fincode.software/api/v6/services/ledger/account-ledger-history/{account_id}/{page}/{size})
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -43,86 +37,6 @@ Fetches a paginated list of all ledger entries (transactions) for an account, pr
 <ParamField path='size' type='number' required>
   Number of items per page.
 </ParamField>
-
-## Response
-
-Returns a paginated list of ledger entries.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  List of ledger entries (transactions).
-  <Expandable title='data array item'>
-    <ResponseField name='id' type='string'>
-      Unique identifier of the ledger entry.
-    </ResponseField>
-    <ResponseField name='accountIdentificationNumber' type='string'>
-      Account identification number ID.
-    </ResponseField>
-    <ResponseField name='account' type='string'>
-      Account ID.
-    </ResponseField>
-    <ResponseField name='transactionAmount' type='number'>
-      Amount of the transaction.
-    </ResponseField>
-    <ResponseField name='previousAccountBalance' type='number'>
-      Account balance before this transaction.
-    </ResponseField>
-    <ResponseField name='newBalance' type='number'>
-      Account balance after this transaction.
-    </ResponseField>
-    <ResponseField name='currencyCode' type='string'>
-      Currency code of the transaction.
-    </ResponseField>
-    <ResponseField name='ledgerType' type='string'>
-      Type of ledger entry (e.g., `DEBIT`, `CREDIT`).
-    </ResponseField>
-    <ResponseField name='status' type='string'>
-      Status of the transaction.
-    </ResponseField>
-    <ResponseField name='paymentReference' type='string'>
-      Payment reference or transaction reference.
-    </ResponseField>
-    <ResponseField name='executionDate' type='string'>
-      Date and time when the transaction was executed.
-    </ResponseField>
-    <ResponseField name='idempotencykey' type='string'>
-      Idempotency key used for this transaction.
-    </ResponseField>
-    <ResponseField name='externalCorrelationId' type='string'>
-      External correlation ID for tracking.
-    </ResponseField>
-    <ResponseField name='internalCorrelationId' type='string'>
-      Internal correlation ID for tracking.
-    </ResponseField>
-    <ResponseField name='postingGroupId' type='string'>
-      Posting group ID (for grouped transactions).
-    </ResponseField>
-    <ResponseField name='depositorFullName' type='string'>
-      Name of the depositor or transaction initiator.
-    </ResponseField>
-    <ResponseField name='hostBankCorrelationId' type='string'>
-      Host bank correlation ID (if applicable).
-    </ResponseField>
-    <ResponseField name='actionPerformedByUser' type='string'>
-      User who performed the transaction.
-    </ResponseField>
-    <ResponseField name='clientId' type='string'>
-      Client identifier.
-    </ResponseField>
-    <ResponseField name='tenancyId' type='string'>
-      Tenancy identifier.
-    </ResponseField>
-    <ResponseField name='fundSenderAccountId' type='string'>
-      Account ID of the sender (for transfers).
-    </ResponseField>
-    <ResponseField name='paymentAuthorisationId' type='string'>
-      Payment authorization ID (if applicable).
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -173,10 +87,6 @@ async function getLedgerHistory(accessToken, accountId, page = 0, size = 10) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const accountId = '123e4567-e89b-12d3-a456-426614174000';
-getLedgerHistory(accessToken, accountId, 0, 10);
 ```
 
 </CodeGroup>

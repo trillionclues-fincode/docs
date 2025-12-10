@@ -1,16 +1,10 @@
 ---
 title: 'Account Balance'
-api: 'GET https://{domain}.fincode.software/api/v6/services/ledger/account-balance/{account_id}'
+openapi: 'GET /ledger/account-balance/{account_id}'
 description: 'Retrieves the current balance and account details for a specific account.'
 ---
 
 Fetches comprehensive account balance information including available balance, account balance, account status, and account details.
-
-<RequestExample>
-  ```bash cURL GET
-  [https://{domain}.fincode.software/api/v6/services/ledger/account-balance/{account_id}](https://{domain}.fincode.software/api/v6/services/ledger/account-balance/{account_id})
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -35,68 +29,6 @@ Fetches comprehensive account balance information including available balance, a
 <ParamField path='account_id' type='string' required>
   The unique identifier (UUID) of the account to query.
 </ParamField>
-
-## Response
-
-Returns comprehensive account balance and details.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='object'>
-  Account balance and details.
-  <Expandable title='data object'>
-    <ResponseField name='accountNumberId' type='string'>
-      Unique identifier of the account number.
-    </ResponseField>
-    <ResponseField name='accountNumber' type='string'>
-      Human-readable account number.
-    </ResponseField>
-    <ResponseField name='accountName' type='string'>
-      Name of the account.
-    </ResponseField>
-    <ResponseField name='accountOwnerId' type='string'>
-      Unique identifier of the account owner.
-    </ResponseField>
-    <ResponseField name='accountBalance' type='number'>
-      Total account balance including all transactions.
-    </ResponseField>
-    <ResponseField name='availableBalance' type='number'>
-      Available balance for transactions (excludes liens and holds).
-    </ResponseField>
-    <ResponseField name='accountStatus' type='string'>
-      Current account status (e.g., `ACTIVATED`, `DEACTIVATED`).
-    </ResponseField>
-    <ResponseField name='currencyCode' type='string'>
-      Account currency code (e.g., `NGN`, `USD`, `GBP`).
-    </ResponseField>
-    <ResponseField name='overDraftLimit' type='number'>
-      Overdraft limit for the account (if applicable).
-    </ResponseField>
-    <ResponseField name='newOverDraftBalance' type='number'>
-      Current overdraft balance used (if applicable).
-    </ResponseField>
-    <ResponseField name='totalLienAmount' type='number'>
-      Total amount placed on lien (frozen/unavailable).
-    </ResponseField>
-    <ResponseField name='hostBank' type='string'>
-      Host bank identifier.
-    </ResponseField>
-    <ResponseField name='parentAccountId' type='string'>
-      Parent account identifier (if this is a sub-account).
-    </ResponseField>
-    <ResponseField name='accountGroupId' type='string'>
-      Account group identifier.
-    </ResponseField>
-    <ResponseField name='tenancyId' type='string'>
-      Tenancy identifier.
-    </ResponseField>
-    <ResponseField name='actionPerformedByUse' type='string'>
-      User who last performed an action on the account.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -145,10 +77,6 @@ async function getAccountBalance(accessToken, accountId) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const accountId = '123e4567-e89b-12d3-a456-426614174000';
-getAccountBalance(accessToken, accountId);
 ```
 
 </CodeGroup>

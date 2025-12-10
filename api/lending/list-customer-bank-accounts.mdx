@@ -1,17 +1,10 @@
 ---
 title: 'List Bank Accounts'
-api: 'GET https://finlend.fincode.software/api/v1/services/user/list-customer-bank-accounts/{customerId}'
+openapi: 'GET /user/list-customer-bank-accounts/{customerId}'
 description: 'Retrieves a list of saved bank accounts for the customer.'
 ---
 
 Returns the list of bank accounts associated with the customer, which can be used for withdrawing disbursed loans.
-
-<RequestExample>
-  ```bash cURL
-  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/list-customer-bank-accounts/8ecca811-607f-44e1-a57e-cd856c50437d' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -41,23 +34,4 @@ Returns the list of bank accounts associated with the customer, which can be use
   The unique identifier of the customer.
 </ParamField>
 
-## Response
 
-<ResponseField name="status" type="string">
-  The status of the request.
-</ResponseField>
-
-<ResponseField name="data" type="array">
-  List of bank accounts.
-  <Expandable title="Bank Account Object">
-    <ResponseField name="accountNumber" type="string">
-      The bank account number.
-    </ResponseField>
-    <ResponseField name="bankName" type="string">
-      Name of the bank.
-    </ResponseField>
-    <ResponseField name="accountName" type="string">
-      Name on the account.
-    </ResponseField>
-  </Expandable>
-</ResponseField>

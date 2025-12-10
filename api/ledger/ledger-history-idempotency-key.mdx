@@ -1,16 +1,10 @@
 ---
 title: 'Ledger History by Idempotency Key'
-api: 'GET https://{domain}.fincode.software/api/v6/services/ledger/account-ledger-history-idempotencykey'
+openapi: 'GET /ledger/account-ledger-history-idempotencykey'
 description: 'Retrieves ledger entries matching a specific idempotency key.'
 ---
 
 Fetches all ledger entries that were processed with a specific idempotency key. This is useful for retrieving all transactions related to a single idempotent request.
-
-<RequestExample>
-  ```bash cURL GET
-  [https://{domain}.fincode.software/api/v6/services/ledger/account-ledger-history-idempotencykey](https://{domain}.fincode.software/api/v6/services/ledger/account-ledger-history-idempotencykey)
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -29,59 +23,6 @@ Fetches all ledger entries that were processed with a specific idempotency key. 
 <ParamField header='x-fapi-customer-ip-address' type='string' required>
   The IP address of the customer making the request.
 </ParamField>
-
-## Response
-
-Returns all ledger entries that match the idempotency key.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  List of ledger entries matching the idempotency key.
-  <Expandable title='data array item'>
-    <ResponseField name='id' type='string'>
-      Unique identifier of the ledger entry.
-    </ResponseField>
-    <ResponseField name='accountIdentificationNumber' type='string'>
-      Account identification number ID.
-    </ResponseField>
-    <ResponseField name='transactionAmount' type='number'>
-      Amount of the transaction.
-    </ResponseField>
-    <ResponseField name='previousAccountBalance' type='number'>
-      Account balance before this transaction.
-    </ResponseField>
-    <ResponseField name='newBalance' type='number'>
-      Account balance after this transaction.
-    </ResponseField>
-    <ResponseField name='currencyCode' type='string'>
-      Currency code of the transaction.
-    </ResponseField>
-    <ResponseField name='ledgerType' type='string'>
-      Type of ledger entry (e.g., `DEBIT`, `CREDIT`).
-    </ResponseField>
-    <ResponseField name='status' type='string'>
-      Status of the transaction.
-    </ResponseField>
-    <ResponseField name='paymentReference' type='string'>
-      Payment reference or transaction reference.
-    </ResponseField>
-    <ResponseField name='executionDate' type='string'>
-      Date and time when the transaction was executed.
-    </ResponseField>
-    <ResponseField name='idempotencykey' type='string'>
-      Idempotency key used for this transaction.
-    </ResponseField>
-    <ResponseField name='externalCorrelationId' type='string'>
-      External correlation ID for tracking.
-    </ResponseField>
-    <ResponseField name='internalCorrelationId' type='string'>
-      Internal correlation ID for tracking.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -132,10 +73,6 @@ async function getLedgerHistoryByIdempotencyKey(accessToken, idempotencyKey) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const idempotencyKey = '123e4567-e89b-12d3-a456-426614174000';
-getLedgerHistoryByIdempotencyKey(accessToken, idempotencyKey);
 ```
 
 </CodeGroup>

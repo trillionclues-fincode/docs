@@ -1,25 +1,10 @@
 ---
 title: 'Create Investment Application'
-api: 'POST https://test-investment-products-service.fincode.software/api/v1/user/apply'
+openapi: 'POST /apply'
 description: 'Creates a new investment application for a customer.'
 ---
 
 Creates a new investment application allowing customers to invest in a specific investment product with a specified number of units.
-
-<RequestExample>
-  ```bash cURL
-  curl --request POST 'https://test-investment-products-service.fincode.software/api/v1/user/apply' \
-  --header 'Authorization: Bearer <token>' \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "investmentProductId": "123e4567-e89b-12d3-a456-426614174000",
-    "numberOfUnitsToPurchase": 100,
-    "userWalletId": "123e4567-e89b-12d3-a456-426614174001",
-    "customerId": "123e4567-e89b-12d3-a456-426614174002",
-    "customerName": "John Doe"
-  }'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -68,26 +53,6 @@ Creates a new investment application allowing customers to invest in a specific 
 <ParamField body='customerName' type='string' required>
   The full name of the customer making the investment.
 </ParamField>
-
-## Response
-
-Returns the created investment application details.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='object'>
-  Investment application details.
-  <Expandable title='data object'>
-    <ResponseField name='InvestmentApplicationId' type='string'>
-      Unique identifier for the created investment application.
-    </ResponseField>
-    <ResponseField name='numberOfUnitsToPurchase' type='number'>
-      Number of units purchased in this application.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -148,15 +113,6 @@ async function createInvestmentApplication(accessToken, applicationData) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-createInvestmentApplication(accessToken, {
-  investmentProductId: '123e4567-e89b-12d3-a456-426614174000',
-  numberOfUnitsToPurchase: 100,
-  userWalletId: '123e4567-e89b-12d3-a456-426614174001',
-  customerId: '123e4567-e89b-12d3-a456-426614174002',
-  customerName: 'John Doe',
-});
 ```
 
 </CodeGroup>

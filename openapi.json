@@ -7,9 +7,20 @@
     "servers": [
         {
             "url": "https://{tenant}.fincode.software/api/v6/services",
+            "description": "API v6",
             "variables": {
                 "tenant": {
                     "default": "remitjunction",
+                    "description": "Enter your tenant subdomain"
+                }
+            }
+        },
+        {
+            "url": "https://{tenant}.fincode.software/api/v1/services",
+            "description": "API v1",
+            "variables": {
+                "tenant": {
+                    "default": "finlend",
                     "description": "Enter your tenant subdomain"
                 }
             }
@@ -45,6 +56,620 @@
         }
     },
     "paths": {
+        "/admin/loan-application/{loan-application-id}": {
+            "get": {
+                "summary": "Get Application",
+                "description": "Retrieves detailed information about a specific loan application by its ID.",
+                "tags": [
+                    "Lending"
+                ],
+                "parameters": [
+                    {
+                        "name": "loan-application-id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of loan application details"
+                    }
+                }
+            }
+        },
+        "/user/request-loan": {
+            "post": {
+                "summary": "Request Loan",
+                "description": "Creates a new loan application request.",
+                "tags": [
+                    "Lending"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "currencyCode": {
+                                        "type": "string"
+                                    },
+                                    "dateOfBirth": {
+                                        "type": "string"
+                                    },
+                                    "durationCounter": {
+                                        "type": "number"
+                                    },
+                                    "loanApplicationStatusEnum": {
+                                        "type": "string",
+                                        "default": "REQUESTED"
+                                    },
+                                    "employmentStatus": {
+                                        "type": "string"
+                                    },
+                                    "loanAmount": {
+                                        "type": "number"
+                                    },
+                                    "bvn": {
+                                        "type": "string"
+                                    },
+                                    "firstName": {
+                                        "type": "string"
+                                    },
+                                    "lastName": {
+                                        "type": "string"
+                                    },
+                                    "accountNumber": {
+                                        "type": "string"
+                                    },
+                                    "bankCode": {
+                                        "type": "string"
+                                    },
+                                    "phoneNumber": {
+                                        "type": "string"
+                                    },
+                                    "loanDuration": {
+                                        "type": "number"
+                                    },
+                                    "loanProductId": {
+                                        "type": "string"
+                                    },
+                                    "loanRepaymentMethodEnum": {
+                                        "type": "string"
+                                    },
+                                    "monthlyIncome": {
+                                        "type": "number"
+                                    },
+                                    "eligibilityAnswers": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "questionId": {
+                                                    "type": "string"
+                                                },
+                                                "answer": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Loan application created successfully"
+                    }
+                }
+            }
+        },
+        "/user/list-products": {
+            "get": {
+                "summary": "List Loan Products",
+                "description": "Retrieves a list of all activated loan products available to customers.",
+                "tags": [
+                    "Lending"
+                ],
+                "servers": [
+                    {
+                        "url": "https://{tenant}.fincode.software/api/v1/services",
+                        "variables": {
+                            "tenant": {
+                                "default": "finlend"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of loan products retrieved successfully"
+                    }
+                }
+            }
+        },
+        "/user/loan-eligibility-questions/{productId}": {
+            "get": {
+                "summary": "Eligibility Questions",
+                "description": "Retrieves the eligibility questions required for a specific loan product.",
+                "tags": [
+                    "Lending"
+                ],
+                "servers": [
+                    {
+                        "url": "https://{tenant}.fincode.software/api/v1/services",
+                        "variables": {
+                            "tenant": {
+                                "default": "finlend"
+                            }
+                        }
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Eligibility questions retrieved successfully"
+                    }
+                }
+            }
+        },
+        "/user/get-loan-history/{customerId}": {
+            "get": {
+                "summary": "Loan History",
+                "description": "Retrieves a paginated history of all loans for a customer.",
+                "tags": [
+                    "Lending"
+                ],
+                "servers": [
+                    {
+                        "url": "https://{tenant}.fincode.software/api/v1/services",
+                        "variables": {
+                            "tenant": {
+                                "default": "finlend"
+                            }
+                        }
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Loan history retrieved successfully"
+                    }
+                }
+            }
+        },
+        "/user/get-total/{customerId}": {
+            "get": {
+                "summary": "Customers Total Loan",
+                "description": "Retrieves dashboard summary information including total borrowed amounts.",
+                "tags": [
+                    "Lending"
+                ],
+                "servers": [
+                    {
+                        "url": "https://{tenant}.fincode.software/api/v1/services",
+                        "variables": {
+                            "tenant": {
+                                "default": "finlend"
+                            }
+                        }
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dashboard summary retrieved successfully"
+                    }
+                }
+            }
+        },
+        "/user/get-loan-offer": {
+            "get": {
+                "summary": "Get Loan Offer",
+                "description": "Retrieves the current loan offer for the customer.",
+                "tags": [
+                    "Lending"
+                ],
+                "servers": [
+                    {
+                        "url": "https://{tenant}.fincode.software/api/v1/services",
+                        "variables": {
+                            "tenant": {
+                                "default": "finlend"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Loan offers retrieved successfully"
+                    }
+                }
+            }
+        },
+        "/user/accept-loan-offer/{loanApplicationId}/accept": {
+            "put": {
+                "summary": "Accept Loan Offer",
+                "description": "Accepts the loan offer.",
+                "tags": [
+                    "Lending"
+                ],
+                "servers": [
+                    {
+                        "url": "https://{tenant}.fincode.software/api/v1/services",
+                        "variables": {
+                            "tenant": {
+                                "default": "finlend"
+                            }
+                        }
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "loanApplicationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Loan offer accepted"
+                    }
+                }
+            }
+        },
+        "/user/accept-loan-offer/{loanApplicationId}/reject": {
+            "put": {
+                "summary": "Reject Loan Offer",
+                "description": "Rejects the loan offer.",
+                "tags": [
+                    "Lending"
+                ],
+                "servers": [
+                    {
+                        "url": "https://{tenant}.fincode.software/api/v1/services",
+                        "variables": {
+                            "tenant": {
+                                "default": "finlend"
+                            }
+                        }
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "loanApplicationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Loan offer rejected"
+                    }
+                }
+            }
+        },
+        "/user/accept-terms-and-conditions/{loanApplicationId}": {
+            "put": {
+                "summary": "Accept Loan Terms",
+                "description": "Allows customers to accept loan terms and conditions.",
+                "tags": [
+                    "Lending"
+                ],
+                "servers": [
+                    {
+                        "url": "https://{tenant}.fincode.software/api/v1/services",
+                        "variables": {
+                            "tenant": {
+                                "default": "finlend"
+                            }
+                        }
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "loanApplicationId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Terms accepted and loan disbursed"
+                    }
+                }
+            }
+        },
+        "/user/get-available-banks/": {
+            "get": {
+                "summary": "Available Banks",
+                "description": "Retrieves a list of all available banks.",
+                "tags": [
+                    "Lending"
+                ],
+                "servers": [
+                    {
+                        "url": "https://{tenant}.fincode.software/api/v1/services",
+                        "variables": {
+                            "tenant": {
+                                "default": "finlend"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of banks retrieved"
+                    }
+                }
+            }
+        },
+        "/user/verify-bank-account/{bankCode}/{accountNumber}": {
+            "get": {
+                "summary": "Verify Bank Account",
+                "description": "Verifies a bank account number against a bank code.",
+                "tags": [
+                    "Lending"
+                ],
+                "servers": [
+                    {
+                        "url": "https://{tenant}.fincode.software/api/v1/services",
+                        "variables": {
+                            "tenant": {
+                                "default": "finlend"
+                            }
+                        }
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "bankCode",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "accountNumber",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Account verified"
+                    }
+                }
+            }
+        },
+        "/user/list-customer-bank-accounts/{customerId}": {
+            "get": {
+                "summary": "List Bank Accounts",
+                "description": "Retrieves a list of saved bank accounts for the customer.",
+                "tags": [
+                    "Lending"
+                ],
+                "servers": [
+                    {
+                        "url": "https://{tenant}.fincode.software/api/v1/services",
+                        "variables": {
+                            "tenant": {
+                                "default": "finlend"
+                            }
+                        }
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of bank accounts retrieved"
+                    }
+                }
+            }
+        },
+        "/user/transfer-history/{customerId}": {
+            "get": {
+                "summary": "Transfer History",
+                "description": "Retrieves the history of transfers (withdrawals) made by the customer.",
+                "tags": [
+                    "Lending"
+                ],
+                "servers": [
+                    {
+                        "url": "https://{tenant}.fincode.software/api/v1/services",
+                        "variables": {
+                            "tenant": {
+                                "default": "finlend"
+                            }
+                        }
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transfer history retrieved"
+                    }
+                }
+            }
+        },
+        "/user/manage-loans/{customerId}": {
+            "get": {
+                "summary": "Manage Loans",
+                "description": "Retrieves active loans that are due for repayment.",
+                "tags": [
+                    "Lending"
+                ],
+                "servers": [
+                    {
+                        "url": "https://{tenant}.fincode.software/api/v1/services",
+                        "variables": {
+                            "tenant": {
+                                "default": "finlend"
+                            }
+                        }
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Active loans retrieved"
+                    }
+                }
+            }
+        },
+        "/admin/repayments/list": {
+            "get": {
+                "summary": "List Repayments",
+                "description": "Retrieves a paginated list of all repayments.",
+                "tags": [
+                    "Lending"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "loanApplicationId",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Repayments retrieved successfully"
+                    }
+                }
+            }
+        },
         "/securitymanagement/login": {
             "put": {
                 "summary": "Login",
@@ -1485,6 +2110,613 @@
                 "responses": {
                     "200": {
                         "description": "List of mobile operators"
+                    }
+                }
+            }
+        },
+        "/ledger/account-balance/{account_id}": {
+            "get": {
+                "summary": "Account Balance",
+                "description": "Retrieves the current balance and account details for a specific account.",
+                "operationId": "getAccountBalance",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "account_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Account balance details"
+                    }
+                }
+            }
+        },
+        "/gateway/post-account": {
+            "post": {
+                "summary": "Post to Account",
+                "description": "Executes a double-entry transaction.",
+                "operationId": "postAccount",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "primaryAccountNumber": {
+                                            "type": "string"
+                                        },
+                                        "currencyCode": {
+                                            "type": "string"
+                                        },
+                                        "creditDebitInstructionDirection": {
+                                            "type": "string"
+                                        },
+                                        "instructionIdempotencykey": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transaction result"
+                    }
+                }
+            }
+        },
+        "/ledger/account-ledger-history/{account_id}/{page}/{size}": {
+            "get": {
+                "summary": "Ledger History",
+                "description": "Retrieves paginated transaction history.",
+                "operationId": "getLedgerHistory",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "account_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "page",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "size",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ledger history"
+                    }
+                }
+            }
+        },
+        "/ledger/account-ledger-history-interaction-id": {
+            "get": {
+                "summary": "Ledger History by Interaction ID",
+                "description": "Retrieves ledger entries matching a specific interaction ID.",
+                "operationId": "getLedgerHistoryByInteractionId",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "x-fapi-interaction-id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ledger entries"
+                    }
+                }
+            }
+        },
+        "/ledger/account-ledger-history-idempotencykey": {
+            "get": {
+                "summary": "Ledger History by Idempotency Key",
+                "description": "Retrieves ledger entries matching a specific idempotency key.",
+                "operationId": "getLedgerHistoryByIdempotencyKey",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "x-idempotency-key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ledger entries"
+                    }
+                }
+            }
+        },
+        "/account-maintenance/list-accounts/{account-owner-id}": {
+            "get": {
+                "summary": "List Accounts",
+                "description": "Retrieves a list of all accounts owned by a specific account owner.",
+                "operationId": "listAccounts",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "x-idempotency-key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "account-owner-id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of accounts"
+                    }
+                }
+            }
+        },
+        "/account-maintenance/change-account-permission/{id}/{permission}": {
+            "get": {
+                "summary": "Change Account Permission",
+                "description": "Changes the permission level for a specific account.",
+                "operationId": "changeAccountPermission",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "x-idempotency-key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "permission",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated account"
+                    }
+                }
+            }
+        },
+        "/apply": {
+            "post": {
+                "summary": "Create Investment Application",
+                "description": "Creates a new investment application.",
+                "operationId": "createInvestmentApplication",
+                "servers": [
+                    {
+                        "url": "https://test-investment-products-service.fincode.software/api/v1/user"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "x-idempotency-key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "investmentProductId": {
+                                        "type": "string"
+                                    },
+                                    "numberOfUnitsToPurchase": {
+                                        "type": "number"
+                                    },
+                                    "userWalletId": {
+                                        "type": "string"
+                                    },
+                                    "customerId": {
+                                        "type": "string"
+                                    },
+                                    "customerName": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Application created"
+                    }
+                }
+            }
+        },
+        "/get-total/{user-id}": {
+            "get": {
+                "summary": "Get Total Investments",
+                "description": "Retrieves dashboard information.",
+                "operationId": "getTotalInvestments",
+                "servers": [
+                    {
+                        "url": "https://test-investment-products-service.fincode.software/api/v1/user"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "x-idempotency-key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "user-id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Total investments"
+                    }
+                }
+            }
+        },
+        "/portfolios/{customer-id}": {
+            "get": {
+                "summary": "List Customer Portfolios",
+                "description": "Retrieves a paginated list of all investment portfolios.",
+                "operationId": "listPortfolios",
+                "servers": [
+                    {
+                        "url": "https://test-investment-products-service.fincode.software/api/v1/user"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "x-idempotency-key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "customer-id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "number",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "size",
+                        "schema": {
+                            "type": "number",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Portfolios list"
+                    }
+                }
+            }
+        },
+        "/quote/get-quote/{product-id}/{number-of-units-to-purchase}": {
+            "get": {
+                "summary": "Get Investment Quote",
+                "description": "Retrieves a quote for purchasing units.",
+                "operationId": "getInvestmentQuote",
+                "servers": [
+                    {
+                        "url": "https://test-investment-products-service.fincode.software/api/v1/user"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "x-idempotency-key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "product-id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "number-of-units-to-purchase",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Investment quote"
+                    }
+                }
+            }
+        },
+        "/wallet/fund-wallet/{wallet-id}/{amount}": {
+            "put": {
+                "summary": "Fund Wallet",
+                "description": "Adds funds to a user wallet account.",
+                "operationId": "fundWallet",
+                "servers": [
+                    {
+                        "url": "https://test-investment-products-service.fincode.software/api/v1/user"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "x-idempotency-key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "wallet-id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "amount",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Funding status"
                     }
                 }
             }

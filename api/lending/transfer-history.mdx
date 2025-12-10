@@ -1,17 +1,10 @@
 ---
 title: 'Transfer History'
-api: 'GET https://finlend.fincode.software/api/v1/services/user/transfer-history/{customerId}'
+openapi: 'GET /user/transfer-history/{customerId}'
 description: 'Retrieves the history of transfers (withdrawals) made by the customer.'
 ---
 
 Returns a list of transfers initiated by the customer, typically withdrawals from their loan wallet to their bank account.
-
-<RequestExample>
-  ```bash cURL
-  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/transfer-history/8ecca811-607f-44e1-a57e-cd856c50437d' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -41,26 +34,4 @@ Returns a list of transfers initiated by the customer, typically withdrawals fro
   The unique identifier of the customer.
 </ParamField>
 
-## Response
 
-<ResponseField name="status" type="string">
-  The status of the request.
-</ResponseField>
-
-<ResponseField name="data" type="array">
-  List of transfers.
-  <Expandable title="Transfer Object">
-    <ResponseField name="reference" type="string">
-      Transaction reference ID.
-    </ResponseField>
-    <ResponseField name="amount" type="number">
-      Amount transferred.
-    </ResponseField>
-    <ResponseField name="status" type="string">
-      Status of the transfer (e.g., SUCCESSFUL, PENDING).
-    </ResponseField>
-    <ResponseField name="date" type="string">
-      Date of the transfer.
-    </ResponseField>
-  </Expandable>
-</ResponseField>

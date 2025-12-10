@@ -1,16 +1,10 @@
 ---
 title: 'Get Application'
-api: 'GET https://finlend.fincode.software/api/v6/services/admin/loan-application/{loan-application-id}'
+openapi: 'GET /admin/loan-application/{loan-application-id}'
 description: 'Retrieves detailed information about a specific loan application by its ID.'
 ---
 
 Fetches comprehensive details of a loan application including customer information, loan terms, status, eligibility answers, and related data.
-
-<RequestExample>
-  ```bash cURL GET
-  [https://finlend.fincode.software/api/v6/services/admin/loan-application/{loan-application-id}](https://finlend.fincode.software/api/v6/services/admin/loan-application/loan-application/{loan-application-id})
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -39,56 +33,6 @@ Fetches comprehensive details of a loan application including customer informati
 <ParamField path='loan-application-id' type='string' required>
   The unique identifier (UUID) of the loan application to retrieve.
 </ParamField>
-
-## Response
-
-Returns detailed loan application information including status, customer details, loan terms, and eligibility information.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='object'>
-  The loan application details.
-  <Expandable title='data object'>
-    <ResponseField name='loanApplicationId' type='string'>
-      Unique identifier for the loan application.
-    </ResponseField>
-    <ResponseField name='customerId' type='string'>
-      Unique identifier of the customer who applied for the loan.
-    </ResponseField>
-    <ResponseField name='loanProductId' type='string'>
-      Identifier of the loan product associated with this application.
-    </ResponseField>
-    <ResponseField name='requestedAmount' type='number'>
-      The loan amount requested by the customer.
-    </ResponseField>
-    <ResponseField name='approvedAmount' type='number'>
-      The loan amount approved (if approved).
-    </ResponseField>
-    <ResponseField name='status' type='string'>
-      Current status of the application (e.g., `REQUESTED`, `PROCESSING`, `APPROVED`, `REJECTED`, `DISBURSED`).
-    </ResponseField>
-    <ResponseField name='interestRate' type='number'>
-      Interest rate applicable to the loan.
-    </ResponseField>
-    <ResponseField name='tenure' type='number'>
-      Loan tenure in months.
-    </ResponseField>
-    <ResponseField name='createdDate' type='string'>
-      Date and time when the application was created.
-    </ResponseField>
-    <ResponseField name='updatedDate' type='string'>
-      Date and time when the application was last updated.
-    </ResponseField>
-    <ResponseField name='customerDetails' type='object'>
-      Customer information associated with the application.
-    </ResponseField>
-    <ResponseField name='eligibilityAnswers' type='array'>
-      Array of eligibility questions and answers provided during application.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -134,10 +78,6 @@ async function getLoanApplication(accessToken, loanApplicationId) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const loanApplicationId = '123e4567-e89b-12d3-a456-426614174000';
-getLoanApplication(accessToken, loanApplicationId);
 ```
 
 </CodeGroup>

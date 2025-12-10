@@ -1,17 +1,10 @@
 ---
 title: 'Customers Total Loan'
-api: 'GET https://finlend.fincode.software/api/v1/services/user/get-total/{customerId}'
+openapi: 'GET /user/get-total/{customerId}'
 description: 'Retrieves dashboard summary information including total borrowed amounts for a user.'
 ---
 
 Fetches aggregated loan information for the user's dashboard, including total amounts borrowed, outstanding balances, and other summary statistics.
-
-<RequestExample>
-  ```bash cURL
-  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/get-total/8ecca811-607f-44e1-a57e-cd856c50437d' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -41,34 +34,4 @@ Fetches aggregated loan information for the user's dashboard, including total am
   The unique identifier (UUID) of the user whose dashboard totals to retrieve.
 </ParamField>
 
-## Response
 
-Returns dashboard summary information.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  Array of total borrowed information objects.
-  <Expandable title='data array item'>
-    <ResponseField name='totalBorrowed' type='number'>
-      Total amount borrowed across all loans.
-    </ResponseField>
-    <ResponseField name='totalOutstanding' type='number'>
-      Total outstanding balance across all active loans.
-    </ResponseField>
-    <ResponseField name='totalRepaid' type='number'>
-      Total amount repaid across all loans.
-    </ResponseField>
-    <ResponseField name='activeLoans' type='number'>
-      Number of active loans.
-    </ResponseField>
-    <ResponseField name='completedLoans' type='number'>
-      Number of completed loans.
-    </ResponseField>
-    <ResponseField name='currency' type='string'>
-      Currency code for the amounts.
-    </ResponseField>
-  </Expandable>
-</ResponseField>

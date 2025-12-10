@@ -1,10 +1,8 @@
 ---
 title: "Notify Bank Transfer Payment"
-api: "POST https://remitjunction.fincode.software/api/v6/services/paymentmanagement/notify-bank-transfer-payment"
+openapi: "POST /paymentmanagement/notify-bank-transfer-payment"
 description: "Notify the system that a customer has made a bank transfer payment, alerting Admin to verify or take appropriate action."
 ---
-
-## Overview
 
 This endpoint allows a customer to **notify the system** about a bank transfer payment.  
 
@@ -13,14 +11,6 @@ Supported options include:
 - `bank_pay_later` – Customer will pay later; adds item to awaiting payments list  
 - `bank_paid_now` – Customer confirms payment has been made  
 - `mistake` – Customer reports a payment was made by mistake  
-
-This API is used by dashboards, mobile apps, or back-office systems to **alert Admin** for verification or follow-up actions on bank transfer payments.
-
-<Note>
-  Use this endpoint to inform the system of payment status and trigger verification or corrective actions.
-</Note>
-
----
 
 ## Authentication
 
@@ -55,44 +45,7 @@ This API is used by dashboards, mobile apps, or back-office systems to **alert A
   Type of payable item. Defaults to `TRANSACTION` if not specified.
 </ParamField>
 
----
-
-## Response Fields
-
-<ResponseField name="status" type="enum" required>
-  API request status: `SUCCESS` or `FAILED`
-</ResponseField>
-
-<ResponseField name="message" type="string">
-  Error description if request failed.
-</ResponseField>
-
-<ResponseField name="responseCode" type="number">
-  HTTP-style response code: `200`, `401`, `500`, etc.
-</ResponseField>
-
-<ResponseField name="data" type="object" required>
-
-  <Expandable title="data properties">
-
-  <ResponseField name="pcn" type="string" required>
-    Payment code number provided in the request.
-  </ResponseField>
-
-  <ResponseField name="option" type="enum" required>
-    Option selected by the customer. Options: `bank_pay_later`, `bank_paid_now`, `mistake`.
-  </ResponseField>
-
-  <ResponseField name="payAbleType" type="string">
-    Type of payable item (defaults to `TRANSACTION` if not specified).
-  </ResponseField>
-
-  </Expandable>
-</ResponseField>
-
----
-
-## Request Example
+## Code Examples
 
 <CodeGroup>
 
@@ -154,44 +107,6 @@ data = response.json()
 
 </CodeGroup>
 
----
-
-## Response Example
-
-<CodeGroup>
-
-```json 200 OK
-{
-  "status": "SUCCESS",
-  "responseCode": 200,
-  "data": {
-    "pcn": "PCN12345",
-    "option": "bank_paid_now",
-    "payAbleType": "TRANSACTION"
-  }
-}
-```
-
-```json 401 Unauthorized
-{
-  "status": "FAILED",
-  "message": "Invalid device info or token.",
-  "responseCode": 401
-}
-```
-
-```json 500 Error
-{
-  "status": "FAILED",
-  "message": "PCN cannot be empty.",
-  "responseCode": 500
-}
-```
-
-</CodeGroup>
-
----
-
 ## Use Cases
 
 ### 1. Notify That Payment Has Been Made Now
@@ -224,62 +139,3 @@ await notifyBankTransferPayment({
   option: "mistake"
 });
 ```
-
----
-
-## Error Handling
-
-<ResponseExample>
-
-```javascript
-try {
-  const res = await fetch("/notify-bank-transfer-payment", { ...config });
-  const data = await res.json();
-
-  if (data.status === "FAILED") {
-    console.error("Error:", data.message);
-  }
-} catch (err) {
-  console.error("Network/server error:", err);
-}
-```
-
-</ResponseExample>
-
----
-
-## Important Notes
-
-<Warning>
-  - Authentication is mandatory  
-  - `pcn` and `option` are required  
-  - `payAbleType` defaults to `TRANSACTION` if not provided  
-</Warning>
-
-<Info>
-  - `option` must be one of: `bank_pay_later`, `bank_paid_now`, `mistake`  
-  - This endpoint triggers notifications to Admin for verification or corrective action  
-</Info>
-
----
-
-## Next Steps
-
-<CardGroup cols={2}>
-  <Card title="Awaiting Payment Actions" href="/api/deposit-engine/awaiting-payment-actions">
-    Perform actions on existing awaiting payments.
-  </Card>
-
-  <Card title="Bank I Will Pay Later" href="/api/deposit-engine/bank-iwillpaylater">
-    Mark a payment as 'I will pay later'.
-  </Card>
-
-  <Card title="Payment Method Charges" href="/api/deposit-engine/payment-methods-charges">
-    Retrieve applicable charges for payments.
-  </Card>
-
-  <Card title="List Awaiting Payments" href="/api/deposit-engine/awaiting-payments">
-    Retrieve all awaiting payments with filters.
-  </Card>
-</CardGroup>
-````

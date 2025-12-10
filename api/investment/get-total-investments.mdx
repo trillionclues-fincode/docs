@@ -1,17 +1,10 @@
 ---
 title: 'Get Total Investments'
-api: 'GET https://test-investment-products-service.fincode.software/api/v1/user/get-total/{user-id}'
+openapi: 'GET /get-total/{user-id}'
 description: 'Retrieves dashboard information including total investments and interest accrued for a user.'
 ---
 
 Fetches comprehensive dashboard information for a user, including their total investments across all products and the total interest accrued.
-
-<RequestExample>
-  ```bash cURL
-  curl --request GET 'https://test-investment-products-service.fincode.software/api/v1/user/get-total/8ecca811-607f-44e1-a57e-cd856c50437d' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -40,42 +33,6 @@ Fetches comprehensive dashboard information for a user, including their total in
 <ParamField path='user-id' type='string' required>
   The unique identifier (UUID) of the user whose investment dashboard information to retrieve.
 </ParamField>
-
-## Response
-
-Returns dashboard information with total investments and interest accrued.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='object'>
-  Dashboard information object.
-  <Expandable title='data object'>
-    <ResponseField name='totalInvestmentsResponseDto' type='object'>
-      Total investments information.
-      <Expandable title='totalInvestmentsResponseDto object'>
-        <ResponseField name='totalInvestments' type='number'>
-          Total amount invested across all products.
-        </ResponseField>
-        <ResponseField name='currencyCode' type='string'>
-          Currency code for the investments (e.g., `NGN`, `USD`).
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
-    <ResponseField name='interestAccruedResponseDto' type='object'>
-      Interest accrued information.
-      <Expandable title='interestAccruedResponseDto object'>
-        <ResponseField name='totalInvestments' type='number'>
-          Total interest accrued on all investments.
-        </ResponseField>
-        <ResponseField name='currencyCode' type='string'>
-          Currency code for the interest (e.g., `NGN`, `USD`).
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -123,10 +80,6 @@ async function getTotalInvestments(accessToken, userId) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const userId = '123e4567-e89b-12d3-a456-426614174000';
-getTotalInvestments(accessToken, userId);
 ```
 
 </CodeGroup>

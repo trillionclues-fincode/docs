@@ -1,17 +1,10 @@
 ---
 title: 'Verify Bank Account'
-api: 'GET https://finlend.fincode.software/api/v1/services/user/verify-bank-account/{bankCode}/{accountNumber}'
+openapi: 'GET /user/verify-bank-account/{bankCode}/{accountNumber}'
 description: 'Verifies a bank account number against a bank code.'
 ---
 
 Verifies the provided bank account details and returns the account holder's name if valid. This is used before adding a bank account for withdrawals.
-
-<RequestExample>
-  ```bash cURL
-  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/verify-bank-account/000014/0710013264' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -45,19 +38,4 @@ Verifies the provided bank account details and returns the account holder's name
   The account number to verify.
 </ParamField>
 
-## Response
 
-<ResponseField name="status" type="string">
-  The status of the request.
-</ResponseField>
-
-<ResponseField name="data" type="object">
-  <Expandable title="Account Details">
-    <ResponseField name="accountName" type="string">
-      The name associated with the bank account.
-    </ResponseField>
-    <ResponseField name="accountNumber" type="string">
-      The verified account number.
-    </ResponseField>
-  </Expandable>
-</ResponseField>

@@ -1,16 +1,10 @@
 ---
 title: 'List Accounts'
-api: 'GET https://{domain}.fincode.software/api/v6/services/account-maintenance/list-accounts/{account-owner-id}'
+openapi: 'GET /account-maintenance/list-accounts/{account-owner-id}'
 description: 'Retrieves a list of all accounts owned by a specific account owner (customer).'
 ---
 
 Fetches all accounts associated with a specific account owner, allowing customers to view all their accounts in one place.
-
-<RequestExample>
-  ```bash cURL GET
-  [https://{domain}.fincode.software/api/v6/services/account-maintenance/list-accounts/{account-owner-id}](https://{domain}.fincode.software/api/v6/services/account-maintenance/list-accounts/{account-owner-id})
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -39,44 +33,6 @@ Fetches all accounts associated with a specific account owner, allowing customer
 <ParamField path='account-owner-id' type='string' required>
   The unique identifier (UUID) of the account owner (customer) whose accounts to retrieve.
 </ParamField>
-
-## Response
-
-Returns a list of all accounts owned by the specified account owner.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  List of account information objects.
-  <Expandable title='data array item'>
-    <ResponseField name='accountId' type='string'>
-      Unique identifier of the account.
-    </ResponseField>
-    <ResponseField name='accountNumber' type='string'>
-      Account number.
-    </ResponseField>
-    <ResponseField name='accountName' type='string'>
-      Name of the account.
-    </ResponseField>
-    <ResponseField name='accountStatus' type='string'>
-      Current account status (e.g., `ACTIVATED`, `DEACTIVATED`).
-    </ResponseField>
-    <ResponseField name='currencyCode' type='string'>
-      Account currency code (e.g., `NGN`, `USD`, `GBP`).
-    </ResponseField>
-    <ResponseField name='accountBalance' type='number'>
-      Current account balance.
-    </ResponseField>
-    <ResponseField name='availableBalance' type='number'>
-      Available balance for transactions.
-    </ResponseField>
-    <ResponseField name='accountOwnerId' type='string'>
-      Unique identifier of the account owner.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -129,10 +85,6 @@ async function listAccounts(accessToken, accountOwnerId) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const accountOwnerId = '123e4567-e89b-12d3-a456-426614174000';
-listAccounts(accessToken, accountOwnerId);
 ```
 
 </CodeGroup>

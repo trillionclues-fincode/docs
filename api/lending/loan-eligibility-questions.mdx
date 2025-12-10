@@ -1,16 +1,10 @@
 ---
 title: 'Eligibility Questions'
-api: 'GET https://finlend.fincode.software/api/v1/services/user/loan-eligibility-questions/{productId}'
+openapi: 'GET /user/loan-eligibility-questions/{productId}'
 description: 'Retrieves the eligibility questions required for a specific loan product.'
 ---
 
 Fetches all eligibility questions that customers need to answer when applying for a specific loan product. These questions are used to determine if the customer meets the product's eligibility criteria.
-<RequestExample>
-  ```bash cURL
-  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/loan-eligibility-questions/11d936b5-f6db-45d6-b35e-2ce24791997f' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -39,35 +33,3 @@ Fetches all eligibility questions that customers need to answer when applying fo
 <ParamField path='loan-product-id' type='string' required>
   The unique identifier (UUID) of the loan product whose eligibility questions to retrieve.
 </ParamField>
-
-## Response
-
-Returns a list of eligibility questions for the loan product.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  Array of eligibility question objects.
-  <Expandable title='data array item'>
-    <ResponseField name='questionId' type='string'>
-      Unique identifier for the question.
-    </ResponseField>
-    <ResponseField name='questionText' type='string'>
-      The question text to display to the customer.
-    </ResponseField>
-    <ResponseField name='questionType' type='string'>
-      Type of question (e.g., `TEXT`, `NUMBER`, `BOOLEAN`, `SELECT`, `DATE`).
-    </ResponseField>
-    <ResponseField name='isRequired' type='boolean'>
-      Whether this question is mandatory.
-    </ResponseField>
-    <ResponseField name='options' type='array'>
-      Available options for select-type questions.
-    </ResponseField>
-    <ResponseField name='validationRules' type='object'>
-      Validation rules for the answer (e.g., min/max values, format requirements).
-    </ResponseField>
-  </Expandable>
-</ResponseField>

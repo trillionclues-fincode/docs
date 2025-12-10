@@ -1,17 +1,10 @@
 ---
 title: 'Loan History'
-api: 'GET https://finlend.fincode.software/api/v1/services/user/get-loan-history/{customerId}'
+openapi: 'GET /user/get-loan-history/{customerId}'
 description: 'Retrieves a paginated history of all loans for a customer, including active, completed, and cancelled loans.'
 ---
 
 Fetches a comprehensive, paginated history of all loans associated with a customer, providing detailed information about each loan's status, amounts, and timeline.
-
-<RequestExample>
-  ```bash cURL
-  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/get-loan-history/8ecca811-607f-44e1-a57e-cd856c50437d' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -50,30 +43,6 @@ The unique identifier (UUID) of the customer whose loan history to retrieve.
 <ParamField query='size' type='number' default='10'>
   Number of items per page (maximum recommended: 50).
 </ParamField>
-
-## Response
-
-<ResponseField name="status" type="string">
-  The status of the request.
-</ResponseField>
-
-<ResponseField name="data" type="array">
-  List of loan applications.
-  <Expandable title="Application Object">
-    <ResponseField name="applicationId" type="string">
-      Unique ID of the application.
-    </ResponseField>
-    <ResponseField name="amount" type="number">
-      Requested loan amount.
-    </ResponseField>
-    <ResponseField name="status" type="string">
-      Current status (e.g., PENDING, APPROVED, REJECTED).
-    </ResponseField>
-    <ResponseField name="dateApplied" type="string">
-      Date of application.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -129,9 +98,5 @@ async function getCustomerLoanHistory(accessToken, customerId, page = 1, size = 
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const customerId = '123e4567-e89b-12d3-a456-426614174000';
-getCustomerLoanHistory(accessToken, customerId, 1, 20);
 ```
 </CodeGroup>

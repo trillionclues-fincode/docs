@@ -1,17 +1,10 @@
 ---
 title: 'Available Banks'
-api: 'GET https://finlend.fincode.software/api/v1/services/user/get-available-banks/'
+openapi: 'GET /user/get-available-banks/'
 description: 'Retrieves a list of all available banks that customers can use for transfers and account registration.'
 ---
 
 Fetches all banks that are supported for bank account registration, fund transfers, and loan disbursements.
-
-<RequestExample>
-  ```bash cURL
-  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/get-available-banks/' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -35,28 +28,4 @@ Fetches all banks that are supported for bank account registration, fund transfe
   Unique identifier for the interaction/session.
 </ParamField>
 
-## Response
 
-Returns a list of all available banks.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  Array of bank objects.
-  <Expandable title='data array item'>
-    <ResponseField name='bankCode' type='string'>
-      Unique code identifying the bank.
-    </ResponseField>
-    <ResponseField name='bankName' type='string'>
-      Name of the bank.
-    </ResponseField>
-    <ResponseField name='country' type='string'>
-      Country where the bank operates.
-    </ResponseField>
-    <ResponseField name='isActive' type='boolean'>
-      Whether the bank is currently active and accepting transfers.
-    </ResponseField>
-  </Expandable>
-</ResponseField>

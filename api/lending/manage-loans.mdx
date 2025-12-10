@@ -1,17 +1,10 @@
 ---
 title: 'Manage Loans'
-api: 'GET https://finlend.fincode.software/api/v1/services/user/manage-loans/{customerId}'
+openapi: 'GET /user/manage-loans/{customerId}'
 description: 'Retrieves active loans that are due for repayment.'
 ---
 
 Returns details of loans that are currently active and may require repayment management.
-
-<RequestExample>
-  ```bash cURL
-  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/manage-loans/8ecca811-607f-44e1-a57e-cd856c50437d' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -41,23 +34,4 @@ Returns details of loans that are currently active and may require repayment man
   The unique identifier of the customer.
 </ParamField>
 
-## Response
 
-<ResponseField name="status" type="string">
-  The status of the request.
-</ResponseField>
-
-<ResponseField name="data" type="array">
-  List of active loans.
-  <Expandable title="Loan Object">
-    <ResponseField name="loanId" type="string">
-      Unique identifier of the loan.
-    </ResponseField>
-    <ResponseField name="outstandingBalance" type="number">
-      Amount remaining to be paid.
-    </ResponseField>
-    <ResponseField name="nextDueDate" type="string">
-      Next repayment due date.
-    </ResponseField>
-  </Expandable>
-</ResponseField>

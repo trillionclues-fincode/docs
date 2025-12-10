@@ -1,17 +1,10 @@
 ---
 title: 'Get Investment Quote'
-api: 'GET https://test-investment-products-service.fincode.software/api/v1/user/quote/get-quote/{product-id}/{number-of-units-to-purchase}'
+openapi: 'GET /quote/get-quote/{product-id}/{number-of-units-to-purchase}'
 description: 'Retrieves a quote for purchasing a specific number of units of an investment product.'
 ---
 
 Calculates and returns a quote for purchasing a specified number of units of an investment product, including the total amount, fees, and investing amount.
-
-<RequestExample>
-  ```bash cURL
-  curl --request GET 'https://test-investment-products-service.fincode.software/api/v1/user/quote/get-quote/11d936b5-f6db-45d6-b35e-2ce24791997f/100' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -44,29 +37,6 @@ Calculates and returns a quote for purchasing a specified number of units of an 
 <ParamField path='number-of-units-to-purchase' type='number' required>
   The number of units to purchase.
 </ParamField>
-
-## Response
-
-Returns the quote details including total amount, fees, and investing amount.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='object'>
-  Quote details.
-  <Expandable title='data object'>
-    <ResponseField name='totalAmount' type='number'>
-      Total amount required (investing amount + fees).
-    </ResponseField>
-    <ResponseField name='feeAmount' type='number'>
-      Fee amount applicable to this purchase.
-    </ResponseField>
-    <ResponseField name='investingAmount' type='number'>
-      Amount that will be invested (excluding fees).
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 

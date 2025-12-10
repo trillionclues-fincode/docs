@@ -1,17 +1,10 @@
 ---
 title: 'Fund Wallet'
-api: 'PUT https://test-investment-products-service.fincode.software/api/v1/user/wallet/fund-wallet/{wallet-id}/{amount}'
+openapi: 'PUT /wallet/fund-wallet/{wallet-id}/{amount}'
 description: 'Adds funds to a user wallet account.'
 ---
 
 Adds a specified amount to a user's wallet account. This is used to fund the wallet before making investments.
-
-<RequestExample>
-  ```bash cURL
-  curl --request PUT 'https://test-investment-products-service.fincode.software/api/v1/user/wallet/fund-wallet/8ecca811-607f-44e1-a57e-cd856c50437d/50000' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -44,18 +37,6 @@ Adds a specified amount to a user's wallet account. This is used to fund the wal
 <ParamField path='amount' type='number' required>
   The amount to add to the wallet.
 </ParamField>
-
-## Response
-
-Returns confirmation of the wallet funding operation.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='boolean'>
-  `true` if the wallet was successfully funded, `false` otherwise.
-</ResponseField>
 
 ## Code Examples
 
@@ -106,11 +87,6 @@ async function fundWallet(accessToken, walletId, amount) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const walletId = '123e4567-e89b-12d3-a456-426614174000';
-const amount = 50000;
-fundWallet(accessToken, walletId, amount);
 ```
 
 </CodeGroup>

@@ -1,16 +1,10 @@
 ---
 title: 'Change Account Permission'
-api: 'GET https://{domain}.fincode.software/api/v6/services/account-maintenance/change-account-permission/{id}/{permission}'
+openapi: 'GET /account-maintenance/change-account-permission/{id}/{permission}'
 description: 'Changes the permission level for a specific account.'
 ---
 
 Updates the account permission, allowing customers to control access and transaction capabilities for their accounts.
-
-<RequestExample>
-  ```bash cURL GET
-  [https://{domain}.fincode.software/api/v6/services/account-maintenance/change-account-permission/{id}/{permission}](https://{domain}.fincode.software/api/v6/services/account-maintenance/change-account-permission/{id}/{permission})
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -43,38 +37,6 @@ Updates the account permission, allowing customers to control access and transac
 <ParamField path='permission' type='string' required>
   The new permission level to set for the account. Valid values depend on the account permission enum.
 </ParamField>
-
-## Response
-
-Returns the updated account information.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='object'>
-  Updated account information.
-  <Expandable title='data object'>
-    <ResponseField name='accountId' type='string'>
-      Unique identifier of the account.
-    </ResponseField>
-    <ResponseField name='accountNumber' type='string'>
-      Account number.
-    </ResponseField>
-    <ResponseField name='accountName' type='string'>
-      Name of the account.
-    </ResponseField>
-    <ResponseField name='accountStatus' type='string'>
-      Current account status.
-    </ResponseField>
-    <ResponseField name='permission' type='string'>
-      Updated account permission level.
-    </ResponseField>
-    <ResponseField name='currencyCode' type='string'>
-      Account currency code.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -120,11 +82,6 @@ async function changeAccountPermission(accessToken, accountId, permission) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const accountId = '123e4567-e89b-12d3-a456-426614174000';
-const permission = 'READ_ONLY'; // or other permission values
-changeAccountPermission(accessToken, accountId, permission);
 ```
 
 </CodeGroup>

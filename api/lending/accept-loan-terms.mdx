@@ -1,17 +1,10 @@
 ---
 title: 'Accept Loan Terms'
-api: 'PUT https://finlend.fincode.software/api/v1/services/user/accept-terms-and-conditions/{loanApplicationId}'
+openapi: 'PUT /user/accept-terms-and-conditions/{loanApplicationId}'
 description: 'Allows customers to accept loan terms and conditions, which triggers automatic loan disbursement.'
 ---
 
 This endpoint runs when customers accept the terms and conditions for an approved loan offer. Upon acceptance, the loan is automatically disbursed to the customer.
-
-<RequestExample>
-  ```bash cURL
-  curl --request PUT 'https://finlend.fincode.software/api/v1/services/user/accept-terms-and-conditions/a1df2e04-62c5-431a-9c20-455c66280b1d' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -44,32 +37,6 @@ This endpoint runs when customers accept the terms and conditions for an approve
 <ParamField path='loanApplicationId' type='string' required>
   The unique identifier (UUID) of the loan application for which terms are being accepted.
 </ParamField>
-
-## Response
-
-Returns confirmation of terms acceptance and loan disbursement.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='object'>
-  Confirmation details.
-  <Expandable title='data object'>
-    <ResponseField name='loanApplicationId' type='string'>
-      Unique identifier of the loan application.
-    </ResponseField>
-    <ResponseField name='status' type='string' default='DISBURSED'>
-      Updated status of the application (should be `DISBURSED`).
-    </ResponseField>
-    <ResponseField name='message' type='string'>
-      Confirmation message indicating successful acceptance and disbursement.
-    </ResponseField>
-    <ResponseField name='disbursementDate' type='string'>
-      Date and time when the loan was disbursed.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -115,8 +82,5 @@ async function acceptTermsAndConditions(accessToken, loanApplicationId) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-acceptTermsAndConditions(accessToken, '123e4567-e89b-12d3-a456-426614174000');
 ```
 </CodeGroup>

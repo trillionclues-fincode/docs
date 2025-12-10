@@ -1,16 +1,10 @@
 ---
 title: 'List Repayments'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/admin/repayments/list'
+openapi: 'GET /admin/repayments/list'
 description: 'Retrieves a paginated list of all repayments for a loan or across all loans.'
 ---
 
 Fetches a paginated list of repayment records, allowing managers to view and track all loan repayments. Can be filtered by loan application ID to show repayments for a specific loan.
-
-<RequestExample>
-  ```bash cURL GET
-  [https://remitjunction.fincode.software/api/v6/services/admin/repayments/list](https://remitjunction.fincode.software/api/v6/services/admin/repayments/list)
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -59,67 +53,6 @@ Fetches a paginated list of repayment records, allowing managers to view and tra
 <ParamField query='endDate' type='string'>
   Optional end date filter (ISO 8601 format) to show repayments up to a specific date.
 </ParamField>
-
-## Response
-
-Returns a paginated list of repayment records with metadata.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='object'>
-  Paginated response containing repayment records.
-  <Expandable title='data object (PaginatedResponse)'>
-    <ResponseField name='content' type='array'>
-      Array of repayment objects.
-      <Expandable title='content array item'>
-        <ResponseField name='repaymentId' type='string'>
-          Unique identifier for the repayment record.
-        </ResponseField>
-        <ResponseField name='loanApplicationId' type='string'>
-          Identifier of the loan application.
-        </ResponseField>
-        <ResponseField name='repaymentAmount' type='number'>
-          The amount that was repaid.
-        </ResponseField>
-        <ResponseField name='paymentMethod' type='string'>
-          Method used for payment.
-        </ResponseField>
-        <ResponseField name='paymentReference' type='string'>
-          Reference number for the payment.
-        </ResponseField>
-        <ResponseField name='status' type='string'>
-          Status of the repayment.
-        </ResponseField>
-        <ResponseField name='paymentDate' type='string'>
-          Date and time when the payment was made.
-        </ResponseField>
-        <ResponseField name='createdDate' type='string'>
-          Date and time when the repayment record was created.
-        </ResponseField>
-        <ResponseField name='verifiedDate' type='string'>
-          Date and time when the repayment was verified (if verified).
-        </ResponseField>
-        <ResponseField name='customerName' type='string'>
-          Name of the customer who made the repayment.
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
-    <ResponseField name='totalElements' type='number'>
-      Total number of repayments across all pages.
-    </ResponseField>
-    <ResponseField name='totalPages' type='number'>
-      Total number of pages available.
-    </ResponseField>
-    <ResponseField name='currentPage' type='number'>
-      Current page number (1-indexed).
-    </ResponseField>
-    <ResponseField name='pageSize' type='number'>
-      Number of items per page.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
 
 ## Code Examples
 
@@ -192,27 +125,6 @@ async function listRepayments(accessToken, filters = {}) {
   }
 }
 
-// Usage Examples
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-
-// List all repayments
-listRepayments(accessToken);
-
-// List repayments for a specific loan
-listRepayments(accessToken, {
-  loanApplicationId: '123e4567-e89b-12d3-a456-426614174000',
-  page: 1,
-  size: 20,
-});
-
-// List verified repayments in a date range
-listRepayments(accessToken, {
-  status: 'VERIFIED',
-  startDate: '2024-01-01T00:00:00Z',
-  endDate: '2024-01-31T23:59:59Z',
-  page: 1,
-  size: 50,
-});
 ```
 
 </CodeGroup>

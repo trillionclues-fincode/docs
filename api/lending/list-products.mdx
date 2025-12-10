@@ -1,17 +1,10 @@
 ---
 title: 'List Loan Products'
-api: 'GET https://finlend.fincode.software/api/v1/services/user/list-products'
+openapi: 'GET /user/list-products'
 description: 'Retrieves a list of all activated loan products available to customers.'
 ---
 
 Fetches all active loan products that customers can apply for, including product details, interest rates, tenure options, and eligibility requirements.
-
-<RequestExample>
-  ```bash cURL
-  curl --request GET 'https://finlend.fincode.software/api/v1/services/user/list-products' \
-  --header 'Authorization: Bearer <token>'
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -34,44 +27,3 @@ Fetches all active loan products that customers can apply for, including product
 <ParamField header='x-fapi-interaction-id' type='string' required>
   Unique identifier for the interaction/session.
 </ParamField>
-
-## Response
-
-Returns a list of all activated loan products.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  Array of loan product objects.
-  <Expandable title='data array item'>
-    <ResponseField name='loanProductId' type='string'>
-      Unique identifier for the loan product.
-    </ResponseField>
-    <ResponseField name='productName' type='string'>
-      Name of the loan product.
-    </ResponseField>
-    <ResponseField name='description' type='string'>
-      Description of the loan product.
-    </ResponseField>
-    <ResponseField name='minAmount' type='number'>
-      Minimum loan amount for this product.
-    </ResponseField>
-    <ResponseField name='maxAmount' type='number'>
-      Maximum loan amount for this product.
-    </ResponseField>
-    <ResponseField name='interestRate' type='number'>
-      Interest rate for this product (annual percentage).
-    </ResponseField>
-    <ResponseField name='tenureOptions' type='array'>
-      Available tenure options in months (e.g., [3, 6, 12, 24]).
-    </ResponseField>
-    <ResponseField name='eligibilityCriteria' type='object'>
-      Eligibility requirements for this product.
-    </ResponseField>
-    <ResponseField name='isActive' type='boolean'>
-      Whether the product is currently active and available.
-    </ResponseField>
-  </Expandable>
-</ResponseField>

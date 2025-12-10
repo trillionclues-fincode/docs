@@ -1,16 +1,10 @@
 ---
 title: 'Post to Account'
-api: 'POST https://{domain}.fincode.software/api/v6/services/gateway/post-account'
+openapi: 'POST /gateway/post-account'
 description: 'Executes a double-entry transaction by debiting and crediting accounts.'
 ---
 
 Processes a double-entry accounting transaction by debiting one account and crediting one or more counterparty accounts. This is the core transaction posting mechanism for the ledger engine.
-
-<RequestExample>
-  ```bash cURL POST
-  [https://{domain}.fincode.software/api/v6/services/gateway/post-account](https://{domain}.fincode.software/api/v6/services/gateway/post-account)
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -88,50 +82,6 @@ The request body is an array of account posting instructions. Each instruction r
   </Expandable>
 </ParamField>
 
-## Response
-
-Returns the result of the posting operation for each instruction.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='array'>
-  Array of posting responses, one for each instruction.
-  <Expandable title='data array item'>
-    <ResponseField name='responseCode' type='string'>
-      Response code indicating the result:
-      - `PAID`: Transaction successful
-      - `ACCOUNT_NOT_FOUND`: Account not found
-      - `INSUFFICIENT_FUNDS`: Insufficient balance
-      - `TRANSACTION_NOT_PERMITTED`: Transaction not allowed
-    </ResponseField>
-    <ResponseField name='responseMessage' type='string'>
-      Descriptive message about the transaction result.
-    </ResponseField>
-    <ResponseField name='instructions' type='array'>
-      Array of counter-party response details.
-      <Expandable title='instructions array item'>
-        <ResponseField name='accountNumber' type='string'>
-          Account number involved in the transaction.
-        </ResponseField>
-        <ResponseField name='amount' type='number'>
-          Transaction amount.
-        </ResponseField>
-        <ResponseField name='newBalance' type='number'>
-          New balance after the transaction.
-        </ResponseField>
-        <ResponseField name='previousBalance' type='number'>
-          Previous balance before the transaction.
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
-    <ResponseField name='postingRuleMetadataList' type='array'>
-      Array of posting rule metadata (if applicable).
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
 ## Code Examples
 
 <CodeGroup>
@@ -204,25 +154,6 @@ async function postToAccount(accessToken, postingInstructions) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-const postingInstructions = [
-  {
-    primaryAccountNumber: '1234567890',
-    currencyCode: 'NGN',
-    creditDebitInstructionDirection: 'DEBIT_PRIMARY_ACCOUNT_CREDIT_COUNTERPARTY_ACCOUNT',
-    counterParties: [
-      {
-        accountNumber: '0987654321',
-        currencyCode: 'NGN',
-        amount: 5000.00,
-        narration: 'Payment for services',
-      },
-    ],
-    instructionIdempotencykey: `key-${Date.now()}`,
-  },
-];
-postToAccount(accessToken, postingInstructions);
 ```
 
 </CodeGroup>

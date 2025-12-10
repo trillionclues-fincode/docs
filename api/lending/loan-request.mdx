@@ -1,16 +1,10 @@
 ---
 title: 'Request Loan'
-api: 'POST https://finlend.fincode.software/api/v6/services/user/request-loan'
+openapi: 'POST /user/request-loan'
 description: 'Creates a new loan application request from a customer or agent.'
 ---
 
 Creates a new loan application request. Customers or agents can use this endpoint to submit loan applications with required details including loan amount, product selection, and eligibility information.
-
-<RequestExample>
-  ```bash cURL POST
-  [https://finlend.fincode.software/api/v6/services/user/request-loan](https://finlend.fincode.software/api/v6/services/user/request-loan)
-  ```
-</RequestExample>
 
 ## Request Headers
 
@@ -116,44 +110,6 @@ Creates a new loan application request. Customers or agents can use this endpoin
   </Expandable>
 </ParamField>
 
-## Response
-
-Returns confirmation of the loan application creation with application details.
-
-<ResponseField name='status' type='string' default='SUCCESS'>
-  Overall status of the API request.
-</ResponseField>
-
-<ResponseField name='data' type='object'>
-  Loan application response details.
-  <Expandable title='data object'>
-    <ResponseField name='loanApplicationId' type='string'>
-      Unique identifier for the newly created loan application.
-    </ResponseField>
-    <ResponseField name='loanRequestId' type='string'>
-      Unique identifier for the loan request (initial request before processing).
-    </ResponseField>
-    <ResponseField name='status' type='string' default='REQUESTED'>
-      Initial status of the application (typically `REQUESTED`).
-    </ResponseField>
-    <ResponseField name='requestedAmount' type='number'>
-      The loan amount that was requested.
-    </ResponseField>
-    <ResponseField name='loanProductName' type='string'>
-      Name of the loan product applied for.
-    </ResponseField>
-    <ResponseField name='createdDate' type='string'>
-      Date and time when the application was created.
-    </ResponseField>
-    <ResponseField name='message' type='string'>
-      Confirmation message indicating successful application creation.
-    </ResponseField>
-    <ResponseField name='nextSteps' type='array'>
-      Array of next steps or actions required (e.g., document upload, verification).
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
 ## Code Examples
 
 <CodeGroup>
@@ -244,20 +200,6 @@ async function requestLoan(accessToken, loanRequestData) {
   }
 }
 
-// Usage Example
-const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-requestLoan(accessToken, {
-  customerId: '123e4567-e89b-12d3-a456-426614174000',
-  loanProductId: 'product-123',
-  requestedAmount: 50000.00,
-  purpose: 'BUSINESS',
-  tenurePreference: 12,
-  eligibilityAnswers: [
-    { questionId: 'q1', answer: 'Yes' },
-    { questionId: 'q2', answer: '50000' },
-  ],
-  additionalNotes: 'Need funds for business expansion',
-});
 ```
 
 </CodeGroup>
