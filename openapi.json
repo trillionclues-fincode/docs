@@ -900,7 +900,7 @@
                 }
             }
         },
-        "/usermanagement/create-customer": {
+        "/usermanagement/create-customer/": {
             "post": {
                 "summary": "Create Customer",
                 "description": "Register a new customer",
@@ -1045,7 +1045,7 @@
                 }
             }
         },
-        "/admin/security/view-password-policy": {
+        "/admin/security/view-password-policy/": {
             "get": {
                 "summary": "Password Policy",
                 "description": "Retrieves password complexity rules",
@@ -1065,7 +1065,7 @@
                 }
             }
         },
-        "/admin/organisation-preference-management/fetch-organisaction-preference": {
+        "/admin/organisation-preference-management/fetch-organisaction-preference/": {
             "get": {
                 "summary": "Fetch Preference",
                 "description": "Retrieves organisation preferences",
@@ -1589,6 +1589,123 @@
                                     "preExistingRecipientCustomerCode",
                                     "creditParty",
                                     "internationalTransferInformation"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transaction created"
+                    }
+                }
+            }
+        },
+        "/transactionmanagement/create-transaction/": {
+            "post": {
+                "summary": "Create Transaction (Direct)",
+                "description": "Initiate a new transaction providing full KYC details for sender and recipient inline. Use this flow if you are managing your own customer data and not using our User Management APIs.",
+                "operationId": "createTransactionDirect",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "password",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "ipAddress",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "amount": {
+                                        "type": "string"
+                                    },
+                                    "sendAmount": {
+                                        "type": "string"
+                                    },
+                                    "inclussive": {
+                                        "type": "boolean"
+                                    },
+                                    "receivingCurrency": {
+                                        "type": "string",
+                                        "default": "NGN"
+                                    },
+                                    "sendCurrency": {
+                                        "type": "string",
+                                        "default": "GBP"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "default": "ACCOUNTPAYMENT"
+                                    },
+                                    "transactionProcessingMode": {
+                                        "type": "string",
+                                        "default": "NONE_AGGREGATION"
+                                    },
+                                    "descriptionText": {
+                                        "type": "string"
+                                    },
+                                    "transactionModule": {
+                                        "type": "string",
+                                        "default": "REMITTANCE"
+                                    },
+                                    "creditParty": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "internationalTransferInformation": {
+                                        "type": "object"
+                                    },
+                                    "newSenderKyc": {
+                                        "type": "object",
+                                        "description": "Object containing full KYC details for the sender"
+                                    },
+                                    "newRecipientKyc": {
+                                        "type": "object",
+                                        "description": "Object containing full KYC details for the recipient"
+                                    }
+                                },
+                                "required": [
+                                    "amount",
+                                    "sendAmount",
+                                    "inclussive",
+                                    "receivingCurrency",
+                                    "sendCurrency",
+                                    "type",
+                                    "creditParty",
+                                    "internationalTransferInformation",
+                                    "newSenderKyc",
+                                    "newRecipientKyc"
                                 ]
                             }
                         }
@@ -2717,6 +2834,2141 @@
                 "responses": {
                     "200": {
                         "description": "Funding status"
+                    }
+                }
+            }
+        },
+        "/admin/compliance/update-aml-rules": {
+            "put": {
+                "summary": "Update AML Rules",
+                "description": "Updates AML rules.",
+                "operationId": "updateAmlRules",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "businessTransactionRuleUpdateDTOs": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Rules updated"
+                    }
+                }
+            }
+        },
+        "/admin/organisation-preference-management/fetch-organisaction-preference": {
+            "get": {
+                "summary": "Fetch Organisation Preference",
+                "description": "Fetches organisation preferences.",
+                "operationId": "fetchOrganisationPreference",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Preferences fetched"
+                    }
+                }
+            }
+        },
+        "/usermanagement/find-customer-by-name-or-phone-no/{searchTerm}": {
+            "get": {
+                "summary": "Find Customer",
+                "description": "Finds a customer by name or phone number.",
+                "operationId": "findCustomerByNameOrPhone",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "searchTerm",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customer found"
+                    }
+                }
+            }
+        },
+        "/admin/compliance/kyc-detail/{id}": {
+            "get": {
+                "summary": "KYC Detail",
+                "description": "Retrieves KYC details by ID.",
+                "operationId": "kycDetailById",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "KYC details"
+                    }
+                }
+            }
+        },
+        "/admin/compliance/list-aml-rules": {
+            "get": {
+                "summary": "List AML Rules",
+                "description": "Lists AML rules.",
+                "operationId": "listAmlRules",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "size",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "AML rules list"
+                    }
+                }
+            }
+        },
+        "/admin/employee-management/list-employees": {
+            "get": {
+                "summary": "List Employees",
+                "description": "Lists employees.",
+                "operationId": "listEmployees",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Employees list"
+                    }
+                }
+            }
+        },
+        "/branches/listallocatedpayoutpoints": {
+            "post": {
+                "summary": "List Allocated Payout Points",
+                "description": "Lists allocated payout points.",
+                "operationId": "listAllocatedPayoutPoints",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "paymentType": {
+                                        "type": "string"
+                                    },
+                                    "chargeCategory": {
+                                        "type": "string"
+                                    },
+                                    "principalAmount": {
+                                        "type": "number"
+                                    },
+                                    "principalAmountCurrency": {
+                                        "type": "string"
+                                    },
+                                    "deriveAmount": {
+                                        "type": "number"
+                                    },
+                                    "deriveAmountCurrency": {
+                                        "type": "string"
+                                    },
+                                    "transactionType": {
+                                        "type": "object"
+                                    },
+                                    "destinationCountry": {
+                                        "type": "string"
+                                    },
+                                    "inverseCalculation": {
+                                        "type": "boolean"
+                                    },
+                                    "tradeOriginatingCountry": {
+                                        "type": "string"
+                                    },
+                                    "conversion": {
+                                        "type": "boolean"
+                                    },
+                                    "promoCode": {
+                                        "type": "string"
+                                    },
+                                    "mobileOperator": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payout points list"
+                    }
+                }
+            }
+        },
+        "/branches/listpaymentcollectorsbyaddress": {
+            "post": {
+                "summary": "List Payment Collectors by Address",
+                "description": "Lists payment collectors for an address.",
+                "operationId": "listPaymentCollectorsByAddress",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "country_iso_code3": {
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Collectors list"
+                    }
+                }
+            }
+        },
+        "/branches/listpayoutpoints": {
+            "post": {
+                "summary": "List Payout Points",
+                "description": "Lists payout points.",
+                "operationId": "listPayoutPoints",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "countrtyiso3": {
+                                        "type": "string"
+                                    },
+                                    "city": {
+                                        "type": "string"
+                                    },
+                                    "payment_point": {
+                                        "type": "boolean"
+                                    },
+                                    "paycentre_types": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payout points list"
+                    }
+                }
+            }
+        },
+        "/branches/listpaypoints": {
+            "post": {
+                "summary": "List Pay Points",
+                "description": "Lists pay points.",
+                "operationId": "listPayPoints",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "countrtyiso3": {
+                                        "type": "string"
+                                    },
+                                    "city": {
+                                        "type": "string"
+                                    },
+                                    "payment_point": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pay points list"
+                    }
+                }
+            }
+        },
+        "/branches/payoutCenter": {
+            "post": {
+                "summary": "Payout Center Branches",
+                "description": "Lists payout center branches.",
+                "operationId": "payoutCenterBranches",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "subAction": {
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "type": "string"
+                                    },
+                                    "bank": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Branches list"
+                    }
+                }
+            }
+        },
+        "/securitymanagement/reset-password/{email}": {
+            "get": {
+                "summary": "Reset Password",
+                "description": "Resets the user password.",
+                "operationId": "resetPassword",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "email",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password reset"
+                    }
+                }
+            }
+        },
+        "/admin/customer-management/verify-customer/{id}": {
+            "get": {
+                "summary": "Verify Customer",
+                "description": "Verifies a customer by ID.",
+                "operationId": "verifyCustomer",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customer verified"
+                    }
+                }
+            }
+        },
+        "/securitymanagement/verify-login-otp": {
+            "post": {
+                "summary": "Verify Login OTP",
+                "description": "Verifies the login OTP.",
+                "operationId": "verifyLoginOtp",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "otp": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OTP verified"
+                    }
+                }
+            }
+        },
+        "/admin/security/view-password-policy": {
+            "get": {
+                "summary": "View Password Policy",
+                "description": "Views the password policy.",
+                "operationId": "viewPasswordPolicy",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password policy"
+                    }
+                }
+            }
+        },
+        "/usermanagement/profile/": {
+            "get": {
+                "summary": "User Profile",
+                "description": "Retrieves the detailed profile information.",
+                "operationId": "userProfile",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Profile info"
+                    }
+                }
+            }
+        },
+        "/admin/fee-management/add-default-charge": {
+            "post": {
+                "summary": "Add Default Charge",
+                "description": "Adds a default charge.",
+                "operationId": "addDefaultCharge",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "isInclusive": {
+                                        "type": "boolean"
+                                    },
+                                    "userId": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "rateType": {
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "type": "string"
+                                    },
+                                    "currencyCode": {
+                                        "type": "string"
+                                    },
+                                    "supportedFeeType": {
+                                        "type": "string"
+                                    },
+                                    "charge": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Charge added"
+                    }
+                }
+            }
+        },
+        "/admin/payment-management/awaiting-payments": {
+            "put": {
+                "summary": "Awaiting Payments",
+                "description": "Updates awaiting payments.",
+                "operationId": "awaitingPayments",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "pcnNumber": {
+                                        "type": "string"
+                                    },
+                                    "selectedCurrency": {
+                                        "type": "string"
+                                    },
+                                    "fromDate": {
+                                        "type": "string"
+                                    },
+                                    "toDate": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payments updated"
+                    }
+                }
+            }
+        },
+        "/admin/connector-management/create-connector-instance": {
+            "post": {
+                "summary": "Create Connector Instance",
+                "description": "Creates a connector instance.",
+                "operationId": "createConnectorInstance",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "apiType": {
+                                        "type": "string"
+                                    },
+                                    "apiProvider": {
+                                        "type": "string"
+                                    },
+                                    "apiName": {
+                                        "type": "string"
+                                    },
+                                    "supportedCountry": {
+                                        "type": "string"
+                                    },
+                                    "apiGatewayURL": {
+                                        "type": "string"
+                                    },
+                                    "api_key": {
+                                        "type": "string"
+                                    },
+                                    "currencyCode": {
+                                        "type": "string"
+                                    },
+                                    "token": {
+                                        "type": "string"
+                                    },
+                                    "active": {
+                                        "type": "boolean"
+                                    },
+                                    "apiCredentialExtra": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Connector created"
+                    }
+                }
+            }
+        },
+        "/usermanagement/create-transaction-pin": {
+            "post": {
+                "summary": "Create Transaction PIN",
+                "description": "Creates a transaction PIN for the user.",
+                "operationId": "createTransactionPin",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "transactionPin": {
+                                        "type": "string"
+                                    },
+                                    "retypeTransactionPin": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "PIN created"
+                    }
+                }
+            }
+        },
+        "/securitymanagement/create-user-pin": {
+            "post": {
+                "summary": "Create User PIN",
+                "description": "Creates a login PIN for the user.",
+                "operationId": "createUserPin",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "customerPin": {
+                                        "type": "string"
+                                    },
+                                    "confirmPin": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "PIN created"
+                    }
+                }
+            }
+        },
+        "/complaince/documents-required-for-transaction": {
+            "post": {
+                "summary": "Documents Required For Transaction",
+                "description": "Checks required documents for a transaction.",
+                "operationId": "documentsRequiredForTransaction",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "senderCode": {
+                                        "type": "string"
+                                    },
+                                    "direction": {
+                                        "type": "string"
+                                    },
+                                    "amountSend": {
+                                        "type": "number"
+                                    },
+                                    "sendingCurrencyCode": {
+                                        "type": "string"
+                                    },
+                                    "receivingCountryIso3Code": {
+                                        "type": "string"
+                                    },
+                                    "devliveryMethod": {
+                                        "type": "string"
+                                    },
+                                    "transactionModule": {
+                                        "type": "string"
+                                    },
+                                    "eligibleTransaction": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Required documents list"
+                    }
+                }
+            }
+        },
+        "/admin/employee-management/edit-employee/{id}": {
+            "put": {
+                "summary": "Edit Employee",
+                "description": "Updates employee details.",
+                "operationId": "editEmployee",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "userId": {
+                                        "type": "string"
+                                    },
+                                    "firstName": {
+                                        "type": "string"
+                                    },
+                                    "lastName": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    },
+                                    "staffActiveDirectoryId": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "organisationId": {
+                                        "type": "string"
+                                    },
+                                    "userType": {
+                                        "type": "string"
+                                    },
+                                    "addressEntityDTO": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Employee updated"
+                    }
+                }
+            }
+        },
+        "/usermanagement/profile-edit": {
+            "put": {
+                "summary": "Edit Profile",
+                "description": "Updates the user profile.",
+                "operationId": "editProfile",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "firstName": {
+                                        "type": "string"
+                                    },
+                                    "lastName": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "type": "string"
+                                    },
+                                    "dob": {
+                                        "type": "string"
+                                    },
+                                    "nationality": {
+                                        "type": "string"
+                                    },
+                                    "customerGender": {
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "type": "object",
+                                        "properties": {
+                                            "address1": {
+                                                "type": "string"
+                                            },
+                                            "address2": {
+                                                "type": "string"
+                                            },
+                                            "city": {
+                                                "type": "string"
+                                            },
+                                            "countryCommonName": {
+                                                "type": "string"
+                                            },
+                                            "postcode": {
+                                                "type": "string"
+                                            },
+                                            "countryIso3": {
+                                                "type": "string"
+                                            },
+                                            "state": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Profile updated"
+                    }
+                }
+            }
+        },
+        "/bankmanagement/delete-customer-bank-details/{customerCode}/{bankId}": {
+            "put": {
+                "summary": "Delete Customer Bank Details",
+                "description": "Deletes bank details for a customer.",
+                "operationId": "deleteCustomerBankDetails",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "customerCode",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "bankId",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bank details deleted"
+                    }
+                }
+            }
+        },
+        "/usermanagement/activate-user-account/{id}": {
+            "get": {
+                "summary": "Activate User Account",
+                "description": "Activates a user account by ID.",
+                "operationId": "activateUserAccount",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Account activated"
+                    }
+                }
+            }
+        },
+        "/admin/compliance/deactivate-aml-rule/{id}": {
+            "put": {
+                "summary": "Deactivate AML Rule",
+                "description": "Deactivates a specific AML rule.",
+                "operationId": "deactivateAmlRule",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rule deactivated"
+                    }
+                }
+            }
+        },
+        "/usermanagement/deactivate-user-account/{id}": {
+            "get": {
+                "summary": "Deactivate User Account",
+                "description": "Deactivates a user account by ID.",
+                "operationId": "deactivateUserAccount",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Account deactivated"
+                    }
+                }
+            }
+        },
+        "/admin/connector-management/delete-api-connector-instance/{id}": {
+            "delete": {
+                "summary": "Delete API Connector Instance",
+                "description": "Deletes a connector instance.",
+                "operationId": "deleteApiConnectorInstance",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Connector deleted"
+                    }
+                }
+            }
+        },
+        "/complaince/awaiting-compliance-requirements": {
+            "get": {
+                "summary": "Awaiting Compliance Requirements",
+                "description": "Lists awaiting compliance requirements.",
+                "operationId": "awaitingComplianceRequirements",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requirements list"
+                    }
+                }
+            }
+        },
+        "/admin/compliance/activate-aml-rule/{id}": {
+            "put": {
+                "summary": "Activate AML Rule",
+                "description": "Activates a specific AML rule.",
+                "operationId": "activateAmlRule",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rule activated"
+                    }
+                }
+            }
+        },
+        "/admin/compliance/add-kyc-rule": {
+            "post": {
+                "summary": "Add KYC Rule",
+                "description": "Adds a new KYC rule.",
+                "operationId": "addKycRule",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "knowYourCustomerRuleDTO": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Rule added"
+                    }
+                }
+            }
+        },
+        "/admin/pay-centre-management/pay-centre-by/{id}": {
+            "get": {
+                "summary": "Get Pay Centre by ID",
+                "description": "Retrieves pay centre details by ID.",
+                "operationId": "payCentreById",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pay centre details"
+                    }
+                }
+            }
+        },
+        "/securitymanagement/change-password": {
+            "put": {
+                "summary": "Change Password",
+                "description": "Changes the user password.",
+                "operationId": "changePassword",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "currentPassword": {
+                                        "type": "string"
+                                    },
+                                    "newPassword": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password changed"
+                    }
+                }
+            }
+        },
+        "/admin/customer-management/list-customers": {
+            "get": {
+                "summary": "List Customers",
+                "description": "Lists customers.",
+                "operationId": "listCustomers",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "size",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "customer_verification_status",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "paycenter_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customers list"
+                    }
+                }
+            }
+        },
+        "/admin/connector-management/update-connector-instance": {
+            "put": {
+                "summary": "Update Connector Instance",
+                "description": "Updates a connector instance.",
+                "operationId": "updateConnectorInstance",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "apiConnectionId": {
+                                        "type": "string"
+                                    },
+                                    "apiType": {
+                                        "type": "string"
+                                    },
+                                    "apiProvider": {
+                                        "type": "string"
+                                    },
+                                    "apiName": {
+                                        "type": "string"
+                                    },
+                                    "supportedCountry": {
+                                        "type": "string"
+                                    },
+                                    "apiGatewayURL": {
+                                        "type": "string"
+                                    },
+                                    "api_key": {
+                                        "type": "string"
+                                    },
+                                    "currencyCode": {
+                                        "type": "string"
+                                    },
+                                    "token": {
+                                        "type": "string"
+                                    },
+                                    "active": {
+                                        "type": "boolean"
+                                    },
+                                    "apiCredentialExtra": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Connector updated"
+                    }
+                }
+            }
+        },
+        "/complaince/kyc-requirements-by-isocountry/{countryIso}/{triggerPoint}": {
+            "get": {
+                "summary": "KYC Requirements by Country",
+                "description": "Retrieves KYC requirements for a specific country.",
+                "operationId": "kycRequirementsByIsoCountry",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "countryIso",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "triggerPoint",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Requirements fetched"
+                    }
+                }
+            }
+        },
+        "/securitymanagement/generate-and-send-otp-toemail/{email}": {
+            "get": {
+                "summary": "Generate and Send OTP to Email",
+                "description": "Generates and sends an OTP to the specified email.",
+                "operationId": "generateAndSendOtpToEmail",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "email",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OTP sent"
+                    }
+                }
+            }
+        },
+        "/documentmanagement/upload-profile-picture": {
+            "put": {
+                "summary": "Upload Profile Picture",
+                "description": "Uploads a profile picture.",
+                "operationId": "uploadProfilePicture",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "senderCode": {
+                                        "type": "string"
+                                    },
+                                    "imageFileName": {
+                                        "type": "string"
+                                    },
+                                    "imageBase64": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Picture uploaded"
+                    }
+                }
+            }
+        },
+        "/dynamicfields/dynamic-fields-group/{groupName}": {
+            "get": {
+                "summary": "Dynamic Fields Group",
+                "description": "Retrieves dynamic fields for a group.",
+                "operationId": "dynamicFieldsGroup",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "groupName",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dynamic fields"
+                    }
+                }
+            }
+        },
+        "/admin/compliance/edit-kyc-rule": {
+            "put": {
+                "summary": "Edit KYC Rule",
+                "description": "Updates an existing KYC rule.",
+                "operationId": "editKycRule",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "knowYourCustomerRuleUpdateDTOs": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Rule updated"
+                    }
+                }
+            }
+        },
+        "/admin/account-product/payment-details": {
+            "post": {
+                "summary": "Product Payment Details",
+                "description": "Retrieves product payment details.",
+                "operationId": "productPaymentDetails",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "amount": {
+                                        "type": "string"
+                                    },
+                                    "currencyCode": {
+                                        "type": "string"
+                                    },
+                                    "transactionType": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payment details"
+                    }
+                }
+            }
+        },
+        "/documentmanagement/attach-documents": {
+            "post": {
+                "summary": "Attach Documents",
+                "description": "Attaches documents to a customer profile.",
+                "operationId": "attachDocuments",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "customerCode": {
+                                        "type": "string"
+                                    },
+                                    "attachedDocument": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Documents attached"
+                    }
+                }
+            }
+        },
+        "/admin/organisation-preference-management/update-organisaction-preference": {
+            "put": {
+                "summary": "Update Organisation Preference",
+                "description": "Updates organisation preferences.",
+                "operationId": "updateOrganisationPreference",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "organisationPreferenceList": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Preferences updated"
+                    }
+                }
+            }
+        },
+        "/admin/connector-management/list-connectors": {
+            "get": {
+                "summary": "List Connectors",
+                "description": "Lists connectors.",
+                "operationId": "listConnectors",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "size",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Connectors list"
+                    }
+                }
+            }
+        },
+        "/branches/list-paycenters-by-type/{type}": {
+            "get": {
+                "summary": "List Pay Centers by Type",
+                "description": "Lists pay centers for a specific type.",
+                "operationId": "listPayCentersByType",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "type",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pay centers list"
+                    }
+                }
+            }
+        },
+        "/usermanagement/create-customer": {
+            "post": {
+                "summary": "Create Customer",
+                "description": "Register a new customer account.",
+                "operationId": "createCustomer",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {}
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Customer created"
                     }
                 }
             }

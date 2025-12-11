@@ -1,0 +1,139 @@
+---
+title: 'Overview'
+icon: 'atom'
+---
+
+Welcome to the **Nucleus Engine** documentation. This guide will help you understand the core infrastructure capabilities of the FinCode platform, including user management, compliance, security, and connector configurations.
+
+### What is Nucleus Engine?
+
+The Nucleus Engine is the **central nervous system** of the FinCode platform. It manages the fundamental entities and rules that govern system behavior. The engine handles:
+
+- **User Management** - Customer identity, profiles, and authentication
+- **Compliance & KYC** - AML rules, KYC requirements, and document verification
+- **Security & Access** - PIN management, password policies, and OTP verification
+- **System Configuration** - Connectors, organization preferences, and fees
+
+### Key Features
+
+<CardGroup cols={2}>
+  <Card title='Unified User Identity'>
+    Manage customer and employee profiles, roles, and access rights across the platform.
+  </Card>
+
+  <Card title='Dynamic Compliance'>
+    Configure AML rules and KYC requirements specific to countries, transaction types, and risk levels.
+  </Card>
+
+  <Card title='Security First'>
+    Robust security features including transaction PINs, login OTPs, and strict password policies.
+  </Card>
+
+  <Card title='Connector Management'>
+    Manage 3rd-party integrations and connector instances for payments and services.
+  </Card>
+
+  <Card title='Organizational Control'>
+    Set global preferences, fee structures, and branching logic for your organization.
+  </Card>
+
+  <Card title='Document Handling'>
+    Securely upload, attach, and verify required customer documents for compliance.
+  </Card>
+</CardGroup>
+
+### Core Domains
+
+The Nucleus Engine is divided into several key functional areas:
+
+#### 1. User Management
+
+Centralized management of all user types within the system.
+
+- **Customer Profiles**: Create, verify, and update customer details.
+- **Employee Management**: Manage staff access, roles, and permissions.
+- **Status Control**: Activate or deactivate user accounts instantly.
+
+<Card title='View User APIs' href='/api/nuclues/profile'>
+  Explore user management endpoints.
+</Card>
+
+#### 2. Compliance & KYC
+
+A flexible compliance engine that adapts to regulatory requirements.
+
+- **AML Rules**: Define blocks and warnings based on transaction amounts, velocity, and patterns.
+- **KYC Tiers**: Configure document requirements based on customer triggers.
+- **Dynamic Fields**: handle custom compliance data fields for different regions.
+
+<Card title='View Compliance APIs' href='/api/nuclues/list-aml-rules'>
+  Explore compliance and AML endpoints.
+</Card>
+
+#### 3. Security Fundamentals
+
+Essential security tools to protect user accounts and transactions.
+
+- **PIN Management**: Issue and reset transaction and user PINs.
+- **OTP Verification**: Secure 2-factor authentication workflows.
+- **Password Policies**: Enforce organizational security standards.
+
+<Card title='View Security APIs' href='/api/nuclues/view-password-policy'>
+  Explore security management tools.
+</Card>
+
+#### 4. Infrastructure & Config
+
+Tools for configuring the platform's operational backbone.
+
+- **Connectors**: Manage API connections to external payment and service providers.
+- **Branches & Pay Points**: Configure physical and digital payout locations.
+- **Fees & Charges**: Set default charges and fee structures.
+
+### Integration Quick Start
+
+To start building with the Nucleus Engine:
+
+<Steps>
+  <Step title='Authenticate'>
+    Obtain your `X-Auth-Token` via the [Login API](/api/auth/login).
+  </Step>
+
+  <Step title='Check Requirements'>
+    Use the [Compliance APIs](/api/nuclues/kyc-requirements-by-isocountry) to checks mandatory fields for your target region.
+  </Step>
+
+  <Step title='Onboard Users'>
+    Create customers using the [Create Customer API](/api/nuclues/create-customer).
+  </Step>
+
+  <Step title='Verify Identity'>
+    Upload documents and run verification checks.
+  </Step>
+</Steps>
+
+### Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title='User Management'
+    href='/api/nuclues/create-customer'
+  >
+    Start onboarding and managing users.
+  </Card>
+
+  <Card
+    title='Compliance Rules'
+    href='/api/nuclues/list-aml-rules'
+  >
+    Configure your compliance framework.
+  </Card>
+
+  <Card title='Security Setup' href='/api/nuclues/view-password-policy'>
+    Review security policies and PIN management.
+  </Card>
+
+  <Card title='System Config' href='/api/nuclues/fetch-organisaction-preference'>
+    Manage organization-wide settings.
+  </Card>
+</CardGroup>

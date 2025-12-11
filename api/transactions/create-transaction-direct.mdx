@@ -1,0 +1,320 @@
+---
+title: 'Create Transaction (Direct)'
+openapi: 'POST /transactionmanagement/create-transaction/'
+description: 'Initiate a new remittance transaction providing full sender and recipient KYC details inline.'
+---
+
+# Transaction Only Flow
+
+Initiates a new transaction where you provide the full KYC details for both the sender and the recipient within the transaction payload.
+
+This endpoint is ideal for integrations where you manage your own customer data and do not wish to sync it beforehand using the User Management APIs.
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token`
+  endpoint.
+</ParamField>
+
+<ParamField
+  header='Content-Type'
+  type='string'
+  required
+  default='application/json'
+>
+      Must be `application/json`
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+      Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+      Unique request identifier.
+</ParamField>
+
+<ParamField header='password' type='string' required>
+  The user's current password. Used for second-factor transaction authorization.
+</ParamField>
+
+<ParamField header='ipAddress' type='string' required>
+  The originating IP address of the user initiating the transaction.
+</ParamField>
+
+## Request Body
+
+<ParamField body='amount' type='string' required>
+  The **receiving** amount (including fees if `inclusive` is true). Max 3
+  decimal places.
+</ParamField>
+
+<ParamField body='sendAmount' type='string' required>
+  The **sending** amount. Max 3 decimal places.
+</ParamField>
+
+<ParamField body='inclussive' type='boolean' required>
+  If `true`, fees are deducted from the `sendAmount`. If `false`, fees are added
+  to the `sendAmount`.
+</ParamField>
+
+<ParamField body='receivingCurrency' type='string' required default='NGN'>
+  The currency the recipient will receive (ISO 4217 code).
+</ParamField>
+
+<ParamField body='sendCurrency' type='string' required default='GBP'>
+  The currency the sender is paying with (ISO 4217 code).
+</ParamField>
+
+<ParamField body='type' type='string' required default='ACCOUNTPAYMENT'>
+  Type of transfer being executed. Example: `ACCOUNTPAYMENT`.
+</ParamField>
+
+<ParamField
+  body='transactionProcessingMode'
+  type='string'
+  default='NONE_AGGREGATION'
+>
+  Specifies the aggregation strategy. Example: `NONE_AGGREGATION`.
+</ParamField>
+
+<ParamField body='descriptionText' type='string'>
+  Optional description for the transfer.
+</ParamField>
+
+<ParamField
+  body='transactionModule'
+  type='string'
+  required
+  default='REMITTANCE'
+>
+  The core business module this transaction belongs to. Must be `REMITTANCE`.
+</ParamField>
+
+<ParamField body='creditParty' type='array' required>
+  Recipient banking/payout details.
+  <Expandable title='creditParty object array'>
+    <ParamField body='creditParty[].key' type='string' required>
+      Key identifier for the detail (e.g., `bankaccountno`).
+    </ParamField>
+    <ParamField body='creditParty[].value' type='string' required>
+      The actual value for the key (e.g., `8883968718`).
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body='internationalTransferInformation' type='object' required>
+  Details related to the cross-border nature of the transfer.
+  <Expandable title='internationalTransferInformation object'>
+    <ParamField
+      body='internationalTransferInformation.originCountry'
+      type='string'
+      required
+      default='GBR'
+    >
+      Country of the sender (ISO 3166-1 alpha-3 code).
+    </ParamField>
+    <ParamField
+      body='internationalTransferInformation.receivingCountry'
+      type='string'
+      required
+      default='NGA'
+    >
+      Country of the recipient (ISO 3166-1 alpha-3 code).
+    </ParamField>
+    <ParamField
+      body='internationalTransferInformation.sourceOfFunds'
+      type='string'
+      required
+      default='INHERITANCE'
+    >
+      The source of the money being sent (e.g., `BORROWED_FUNDS/LOAN`, `PENSIONS/GOVERNMENT/WELFARE`, `SALARY`, `INHERITANCE`, `MEDICAL_AID`, `OTHER`).
+    </ParamField>
+    <ParamField
+      body='internationalTransferInformation.remittancePurpose'
+      type='string'
+      required
+      default='EDUCATIONAL_EXPENSES'
+    >
+      The purpose of the transfer (e.g., `FAMILY_SUPPORT`, `EDUCATIONAL_EXPENSES` `PAYBACK`, `OTHER`,
+      `FAMILY_SUPPORT`).
+    </ParamField>
+    <ParamField
+      body='internationalTransferInformation.relationshipSender'
+      type='string'
+    >
+      Relationship of the sender to the recipient.
+    </ParamField>
+    <ParamField
+      body='internationalTransferInformation.deliveryMethod'
+      type='string'
+      required
+      default='directtoaccount'
+    >
+      The method for paying out the funds. Example: `directtoaccount`.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body='newSenderKyc' type='object' required>
+  Object containing full KYC details for the sender.
+   <Expandable title='newSenderKyc object'>
+      <ParamField body='nationality' type='string'>Sender's nationality</ParamField>
+      <ParamField body='dateOfBirth' type='string'>Sender's date of birth (YYYY-MM-DD)</ParamField>
+      <ParamField body='postalAddressObject' type='object'>Sender's address object</ParamField>
+   </Expandable>
+</ParamField>
+
+<ParamField body='newRecipientKyc' type='object' required>
+  Object containing full KYC details for the recipient.
+    <Expandable title='newRecipientKyc object'>
+        <ParamField body='nationality' type='string'>Recipient's nationality</ParamField>
+    </Expandable>
+</ParamField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'http://localhost:8080/api/v6/services/transactionmanagement/create-transaction' \
+  --header 'uuid: 200' \
+  --header 'platform: fincode' \
+  --header 'X-Auth-Token: YOUR_TOKEN_HERE' \
+  --header 'ipAddress: 101.188.67.134' \
+  --header 'password: Password@1' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "amount": "24.240",
+    "sendAmount": "7.000",
+    "inclussive": true,
+    "receivingCurrency": "NGN",
+    "sendCurrency": "GBP",
+    "type": "ACCOUNTPAYMENT",
+    "transactionProcessingMode": "NONE_AGGREGATION",
+    "descriptionText": "",
+    "creditParty": [
+        {
+            "key": "bankname",
+            "value": "Anelik Bank CJSC"
+        },
+        {
+            "key": "bankaccountno",
+            "value": "87787786778"
+        },
+        {
+            "key": "swiftbic",
+            "value": "2345"
+        },
+        {
+            "key": "bankcode",
+            "value": ""
+        },
+        {
+            "key": "branchcode",
+            "value": null
+        }
+    ],
+    "securityQuestion": "",
+    "securityAnswer": "",
+    "transactionModule": "REMITTANCE",
+    "eligibleDocumentList": [],
+    "internationalTransferInformation": {
+        "originCountry": "GBR",
+        "receivingCountry": "NGA",
+        "sourceOfFunds": "SAVINGS",
+        "remittancePurpose": "GIFT",
+        "relationshipSender": "",
+        "deliveryMethod": "directtoaccount"
+    },
+    "newSenderKyc": {
+        "nationality": "Nigeria",
+        "dateOfBirth": "2000-05-14",
+        "occupation": "Software Engineer",
+        "employerName": "TechWave Ltd",
+        "contactPhone": "+2348071234567",
+        "gender": "MALE",
+        "idDocument": [
+            {
+                "idType": "PASSPORT",
+                "idNumber": "A12345678",
+                "issueDate": "10-02-2018T00:00:00.000",
+                "expiryDate": "09-02-2028T00:00:00.000",
+                "dateOfBirth": "14-05-1990T00:00:00.000",
+                "issuer": "Nigeria Immigration Service",
+                "issuerPlace": "Lagos",
+                "issuerCountry": "NGA",
+                "otherIdDescription": null,
+                "fileName": null,
+                "base64FileData": null
+            }
+        ],
+        "postalAddressObject": {
+            "addressLine1": "12 Adeola Odeku Street",
+            "addressLine2": "Block A",
+            "addressLine3": "Victoria Island",
+            "city": "Lagos",
+            "stateProvince": "Lagos State",
+            "postalCode": "101241",
+            "iso3country": "NGA"
+        },
+        "subjectNameObject": {
+            "title": "Mr",
+            "firstName": "John",
+            "middleName": "Chinedu",
+            "lastName": "Okafor",
+            "fullName": "John Chinedu Okafor",
+            "nativeName": "John C. Okafor"
+        },
+        "emailAddress": "john.okafor@example.com",
+        "birthCountry": "GBR",
+        "CustomerType":"INDIVIDUAL"
+    },
+    "newRecipientKyc": {
+        "nationality": "Ghana",
+        "dateOfBirth": "2000-09-21",
+        "occupation": "Accountant",
+        "employerName": "Golden Finance Ltd",
+        "contactPhone": "+233245678901",
+        "gender": "FEMALE",
+        "CustomerType":"INDIVIDUAL",
+        "idDocument": [
+            {
+                "idType": "NATIONAL_ID_CARD",
+                "idNumber": "GF123456789",
+                "issueDate": "15-01-2019T00:00:00.000",
+                "expiryDate": "14-01-2029T00:00:00.000",
+                "dateOfBirth": "21-09-1985T00:00:00.000",
+                "issuer": "Registrar General",
+                "issuerPlace": "Accra",
+                "issuerCountry": "GHA",
+                "otherIdDescription": null,
+                "fileName": null,
+                "base64FileData": null
+            }
+        ],
+        "postalAddressObject": {
+            "addressLine1": "14 Independence Avenue",
+            "addressLine2": "Suite 10",
+            "addressLine3": "Accra Central",
+            "city": "Accra",
+            "stateProvince": "Greater Accra",
+            "postalCode": "GA-002-1234",
+            "iso3country": "GHA"
+        },
+        "subjectName": {
+            "title": "Ms",
+            "firstName": "Ama",
+            "middleName": "Serwaa",
+            "lastName": "Mensah",
+            "fullName": "Ama Serwaa Mensah",
+            "nativeName": "Ama S. Mensah"
+        },
+        "emailAddress": "ama.mensah@example.com",
+        "birthCountry": "NGA",
+        "companyReg": "RC-458921"
+    }
+}'
+```
+
+</CodeGroup>

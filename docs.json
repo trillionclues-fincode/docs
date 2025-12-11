@@ -161,6 +161,17 @@
         ]
       },
       {
+        "tab": "Nuclues Engine",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "nuclues/overview"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "API Reference",
         "groups": [
           {
@@ -174,9 +185,7 @@
             "pages": [
               "api/auth/login",
               "api/auth/logout",
-              "api/auth/profile",
-              "api/auth/refresh-token",
-              "api/users/create-customer"
+              "api/auth/refresh-token"
             ]
           },
           {
@@ -195,8 +204,7 @@
               "api/compliance/dynamic-fields",
               "api/compliance/continue-enrolment",
               "api/compliance/awaiting-compliance",
-              "api/compliance/submit-cra",
-              "api/compliance/aml-screening"
+              "api/compliance/submit-cra"
             ]
           },
           {
@@ -208,6 +216,7 @@
               "api/transactions/beneficiary-list",
               "api/transactions/transaction-types",
               "api/transactions/create-transaction",
+              "api/transactions/create-transaction-direct",
               "api/transactions/beneficiary-details",
               "api/transactions/delivery-currencies",
               "api/transactions/destination-countries",
@@ -294,39 +303,68 @@
             ]
           },
           {
-            "group": "Reporting & Analytics",
+            "group": "Nuclues Engine",
             "pages": [
-              "api/reporting/transaction-report",
-              "api/reporting/revenue-report",
-              "api/reporting/agent-performance",
-              "api/reporting/tenant-analytics",
-              "api/reporting/export-data",
-              "api/reporting/call-over-report"
-            ]
-          },
-          {
-            "group": "Revenue Sharing",
-            "pages": [
-              "api/revenue/calculate-commission",
-              "api/revenue/list-settlements",
-              "api/revenue/create-payout",
-              "api/revenue/get-partner-balance",
-              "api/revenue/revenue-breakdown"
+              "api/nuclues/profile",
+              "api/nuclues/create-customer",
+              "api/nuclues/deactivate-user",
+              "api/nuclues/activate-user",
+              "api/nuclues/edit-profile",
+              "api/nuclues/list-employees",
+              "api/nuclues/create-transaction-pin",
+              "api/nuclues/find-customer-by-name-or-phone-no",
+              "api/nuclues/verify-login-otp",
+              "api/nuclues/change-password",
+              "api/nuclues/reset-password",
+              "api/nuclues/create-user-pin",
+              "api/nuclues/generate-and-send-otp-toemail",
+              "api/nuclues/delete-customer-bank-details",
+              "api/nuclues/listpaypoints",
+              "api/nuclues/listpayoutpoints",
+              "api/nuclues/pay-centre-by-id",
+              "api/nuclues/list-connectors",
+              "api/nuclues/add-default-charge",
+              "api/nuclues/create-connector-instance",
+              "api/nuclues/update-connector-instance",
+              "api/nuclues/awaiting-payments",
+              "api/nuclues/list-aml-rules",
+              "api/nuclues/delete-api-connector-instance",
+              "api/nuclues/product-payment-details",
+              "api/nuclues/kyc-detail-by-id",
+              "api/nuclues/list-paycenters-by-type",
+              "api/nuclues/listpaymentcollectorsbyaddress",
+              "api/nuclues/listallocatedpayoutpoints",
+              "api/nuclues/payoutCenter-branches",
+              "api/nuclues/kyc-requirements-by-isocountry",
+              "api/nuclues/awaiting-compliance-requirements",
+              "api/nuclues/documents-required-for-transaction",
+              "api/nuclues/upload-profile-picture",
+              "api/nuclues/attach-documents",
+              "api/nuclues/dynamic-fields-group",
+              "api/nuclues/view-password-policy",
+              "api/nuclues/edit-employee",
+              "api/nuclues/fetch-organisaction-preference",
+              "api/nuclues/update-organisaction-preference",
+              "api/nuclues/list-customers",
+              "api/nuclues/verify-customer",
+              "api/nuclues/deactivate-aml-rule",
+              "api/nuclues/activate-aml-rule",
+              "api/nuclues/update-aml-rules",
+              "api/nuclues/edit-kyc-rule",
+              "api/nuclues/add-kyc-rule"
             ]
           },
           {
             "group": "Webhooks & Events",
             "pages": [
               "api/webhooks",
-              "api/events",
               "api/webhook-security"
             ]
           },
           {
             "group": "Testing & Tools",
             "pages": [
-              "api/postman-collection",
-              "api/sandbox-environment"
+              "api/postman-collection"
             ]
           }
         ]
