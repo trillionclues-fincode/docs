@@ -24,6 +24,10 @@
                     "description": "Enter your tenant subdomain"
                 }
             }
+        },
+        {
+            "url": "https://api.stag.songhaiexchange.io",
+            "description": "Songhai Exchange API"
         }
     ],
     "components": {
@@ -4969,6 +4973,1504 @@
                 "responses": {
                     "200": {
                         "description": "Customer created"
+                    }
+                }
+            }
+        },
+        "/oauth/token": {
+            "post": {
+                "summary": "Generate Token",
+                "description": "Authenticate and generate an access token for API requests.",
+                "tags": [
+                    "Authentication"
+                ],
+                "servers": [
+                    {
+                        "url": "https://api.stag.songhaiexchange.io"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "grant_type"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "description": "Your username"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "description": "Your password"
+                                    },
+                                    "grant_type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "password"
+                                        ],
+                                        "default": "password"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token generated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "enum": [
+                                                "SUCCESS",
+                                                "ERROR"
+                                            ]
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "errorCode": {
+                                            "type": "integer"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "accountNumber": {
+                                                    "type": "string"
+                                                },
+                                                "accountName": {
+                                                    "type": "string"
+                                                },
+                                                "accountCurrency": {
+                                                    "type": "string"
+                                                },
+                                                "receiverMobileNumber": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/services/usermanagement/change-password/{id}": {
+            "put": {
+                "summary": "Change Password",
+                "description": "Change user password.",
+                "operationId": "changePassword",
+                "tags": [
+                    "User Management"
+                ],
+                "servers": [
+                    {
+                        "url": "https://api.stag.songhaiexchange.io"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "User ID"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "Bearer token"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "newPassword": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password changed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "newPassword": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/gateway/transaction/banktransfers": {
+            "post": {
+                "summary": "Create Transaction",
+                "description": "Create a bank transfer transaction.",
+                "operationId": "createTransaction",
+                "tags": [
+                    "Transaction"
+                ],
+                "servers": [
+                    {
+                        "url": "https://api.stag.songhaiexchange.io"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "Bearer token"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "payloadDTOList": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "methodName": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "SENDTRANSGENERIC"
+                                                    ]
+                                                },
+                                                "pluginName": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "SONGHAI_EXCHANGE_MONEY"
+                                                    ]
+                                                },
+                                                "transactionRequest": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "agent": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_address": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_bank_account_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_bank_account_no": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_bank_code": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_city": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_country_iso3": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_curency": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_first_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_last_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_mobile_number": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiving_amount": {
+                                                            "type": "number"
+                                                        },
+                                                        "reference_code": {
+                                                            "type": "string"
+                                                        },
+                                                        "send_amount": {
+                                                            "type": "number"
+                                                        },
+                                                        "sender_address_line1": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_country_iso3": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_date_of_birth": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_first_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_last_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_zip_code": {
+                                                            "type": "string"
+                                                        },
+                                                        "sending_currency": {
+                                                            "type": "string"
+                                                        },
+                                                        "transaction_narration": {
+                                                            "type": "string"
+                                                        },
+                                                        "transaction_type": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "AIRTIME_TOPUP",
+                                                                "ACCOUNTPAYMENT",
+                                                                "ACCOUNTPAYMENT_DEBIT_CARD",
+                                                                "ACCOUNTPAYMENT_CREDIT_CARD",
+                                                                "CASHPICKUP",
+                                                                "CURRENCY_CONVERTER",
+                                                                "CRYPTO_CURRENCY",
+                                                                "BILL_PAYMENT",
+                                                                "WALLET",
+                                                                "MERCHANT_PRODUCT",
+                                                                "MOBILE_MONEY",
+                                                                "MERCHANT_PAYMENT"
+                                                            ]
+                                                        },
+                                                        "transaction_purpose": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "FAMILY_SUPPORT",
+                                                                "EDUCATION",
+                                                                "GIFT_AND_DONATION",
+                                                                "MEDICAL_TREATMENT",
+                                                                "MAINTENANCE_EXPENSES",
+                                                                "TRAVEL",
+                                                                "SMALL_VALUE_REMITTANCE",
+                                                                "LIBERALIZED_REMITTANCE",
+                                                                "OTHER"
+                                                            ]
+                                                        },
+                                                        "receiver_occupation": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_occupation": {
+                                                            "type": "string"
+                                                        },
+                                                        "beneficiaryRelationship": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "FRIENDS",
+                                                                "PARENTS",
+                                                                "RELATIVES",
+                                                                "SPOUSE",
+                                                                "AUNT",
+                                                                "BROTHER",
+                                                                "BROTHER_IN_LAW",
+                                                                "COUSIN",
+                                                                "DAUGHTER",
+                                                                "FATHER",
+                                                                "FATHER_IN_LAW",
+                                                                "FRIEND",
+                                                                "GRAND_FATHER",
+                                                                "GRAND_MOTHER",
+                                                                "HUSBAND",
+                                                                "MOTHER",
+                                                                "MOTHER_IN_LAW",
+                                                                "NEPHEW",
+                                                                "NIECE",
+                                                                "SELF",
+                                                                "SISTER",
+                                                                "SISTER_IN_LAW",
+                                                                "SON",
+                                                                "UNCLE",
+                                                                "WIFE",
+                                                                "OTHER",
+                                                                "BANKING",
+                                                                "BUSINESS_PARTNER",
+                                                                "BUYER_MERCHANT",
+                                                                "CHARITY",
+                                                                "CLIENT",
+                                                                "CONTRACTOR",
+                                                                "COOPERATE_SERVICE",
+                                                                "EMPLOYEE",
+                                                                "INVESTOR",
+                                                                "REGULATOR",
+                                                                "SPONSOR",
+                                                                "RELATED_ENTITY",
+                                                                "VENDOR"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transaction Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pay_out_party_trans_status": {
+                                                "type": "string"
+                                            },
+                                            "reference_code": {
+                                                "type": "string"
+                                            },
+                                            "status": {
+                                                "type": "string"
+                                            },
+                                            "pay_out_party_trans_id": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "msg_note": {
+                                                "type": "string"
+                                            },
+                                            "msg_code": {
+                                                "type": "string"
+                                            },
+                                            "newAccountCreated": {
+                                                "type": "boolean"
+                                            },
+                                            "autoAccountCreationEnabled": {
+                                                "type": "boolean"
+                                            },
+                                            "accountPaymentRedirectedEnabled": {
+                                                "type": "boolean"
+                                            },
+                                            "accountPaymentRedirected": {
+                                                "type": "boolean"
+                                            },
+                                            "originalPaymentInstructionAccountNumber": {
+                                                "type": "string"
+                                            },
+                                            "redirectedAccountNumber": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "accountBankCode": {
+                                                "type": "string"
+                                            },
+                                            "inflowRequestDate": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "executionDate": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "lastUpdate": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "inflowRequestResendCount": {
+                                                "type": "integer"
+                                            },
+                                            "resendCount": {
+                                                "type": "integer"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/gateway/transaction/checkstatus": {
+            "post": {
+                "summary": "Check Transaction Status",
+                "description": "Check the status of a transaction.",
+                "operationId": "checkTransactionStatus",
+                "tags": [
+                    "Transaction"
+                ],
+                "servers": [
+                    {
+                        "url": "https://api.stag.songhaiexchange.io"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "Bearer token"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "reference_codes": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transaction Status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pay_out_party_trans_status": {
+                                                "type": "string"
+                                            },
+                                            "reference_code": {
+                                                "type": "string"
+                                            },
+                                            "status": {
+                                                "type": "string"
+                                            },
+                                            "pay_out_party_trans_id": {
+                                                "type": "string"
+                                            },
+                                            "msg_note": {
+                                                "type": "string"
+                                            },
+                                            "msg_code": {
+                                                "type": "string"
+                                            },
+                                            "newAccountCreated": {
+                                                "type": "boolean"
+                                            },
+                                            "autoAccountCreationEnabled": {
+                                                "type": "boolean"
+                                            },
+                                            "accountPaymentRedirectedEnabled": {
+                                                "type": "boolean"
+                                            },
+                                            "accountPaymentRedirected": {
+                                                "type": "boolean"
+                                            },
+                                            "originalPaymentInstructionAccountNumber": {
+                                                "type": "string"
+                                            },
+                                            "redirectedAccountNumber": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "accountBankCode": {
+                                                "type": "string"
+                                            },
+                                            "inflowRequestDate": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "executionDate": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "lastUpdate": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "inflowRequestResendCount": {
+                                                "type": "integer"
+                                            },
+                                            "resendCount": {
+                                                "type": "integer"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/gateway/list-end-Of-day-position-report": {
+            "post": {
+                "summary": "Client End-of-Day Report",
+                "description": "Get client end of day report.",
+                "operationId": "clientEndOfDayReport",
+                "tags": [
+                    "Reports"
+                ],
+                "servers": [
+                    {
+                        "url": "https://api.stag.songhaiexchange.io"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "Bearer token"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "fromDate": {
+                                        "type": "string"
+                                    },
+                                    "toDate": {
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    },
+                                    "endOfDayReportType": {
+                                        "type": "string"
+                                    },
+                                    "clientId": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Report generated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "createdOn": {
+                                                "type": "string"
+                                            },
+                                            "reportDate": {
+                                                "type": "string"
+                                            },
+                                            "client": {
+                                                "type": "string"
+                                            },
+                                            "transactionStatus": {
+                                                "type": "string"
+                                            },
+                                            "count": {
+                                                "type": "integer"
+                                            },
+                                            "total_amount": {
+                                                "type": "number"
+                                            },
+                                            "country": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/services/walletmanagement/walletledgerbyclient/{startDate}/{endDate}/{currency}/": {
+            "post": {
+                "summary": "Generating Wallet Account Statement",
+                "description": "Generate wallet account statement.",
+                "operationId": "walletAccountStatement",
+                "tags": [
+                    "Wallet Management"
+                ],
+                "servers": [
+                    {
+                        "url": "https://api.stag.songhaiexchange.io"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "startDate",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "currency",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "Bearer token"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Statement Generated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "executionDate": {
+                                                "type": "string"
+                                            },
+                                            "newBalance": {
+                                                "type": "number"
+                                            },
+                                            "currencyCode": {
+                                                "type": "string"
+                                            },
+                                            "paymentRef": {
+                                                "type": "string"
+                                            },
+                                            "accountHolder": {
+                                                "type": "string"
+                                            },
+                                            "ledgerType": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/gateway/v2/account-number-validation": {
+            "post": {
+                "summary": "Account Validation",
+                "description": "Validate bank account number.",
+                "operationId": "validateBankAccount",
+                "tags": [
+                    "Validation"
+                ],
+                "servers": [
+                    {
+                        "url": "https://api.stag.songhaiexchange.io"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "Bearer token"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "accountNumber": {
+                                        "type": "string"
+                                    },
+                                    "accountNumberCountry": {
+                                        "type": "string"
+                                    },
+                                    "bankCode": {
+                                        "type": "integer"
+                                    },
+                                    "expectedCurrencyCode": {
+                                        "type": "string"
+                                    },
+                                    "transactionType": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Account Validated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "accountNumber": {
+                                                    "type": "string"
+                                                },
+                                                "accountName": {
+                                                    "type": "string"
+                                                },
+                                                "accountCurrency": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/gateway/quote": {
+            "post": {
+                "summary": "Exchange Rate",
+                "description": "Get exchange rate quote.",
+                "operationId": "getExchangeRate",
+                "tags": [
+                    "Transaction"
+                ],
+                "servers": [
+                    {
+                        "url": "https://api.stag.songhaiexchange.io"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "Bearer token"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "destinationCountry": {
+                                        "type": "string"
+                                    },
+                                    "fromCurrency": {
+                                        "type": "string"
+                                    },
+                                    "mobileOperator": {
+                                        "type": "string"
+                                    },
+                                    "transactionAmountCurrency": {
+                                        "type": "string"
+                                    },
+                                    "transactionType": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Quote generated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "walletAmount": {
+                                            "type": "number"
+                                        },
+                                        "walletCurrency": {
+                                            "type": "string"
+                                        },
+                                        "transactionAmount": {
+                                            "type": "number"
+                                        },
+                                        "fxRate": {
+                                            "type": "number"
+                                        },
+                                        "fee": {
+                                            "type": "number"
+                                        },
+                                        "total_amount": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/gateway/v3/transaction/mobilemoney": {
+            "post": {
+                "summary": "Create Mobile Money Transaction",
+                "description": "Create a mobile money transaction to send funds to a beneficiary's mobile wallet. Only supported in Ghana.",
+                "tags": [
+                    "Transactions"
+                ],
+                "servers": [
+                    {
+                        "url": "https://api.stag.songhaiexchange.io"
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "mobileWalletPayLoadDTOList"
+                                ],
+                                "properties": {
+                                    "mobileWalletPayLoadDTOList": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "required": [
+                                                "methodName",
+                                                "pluginName",
+                                                "mobileWalletRequest"
+                                            ],
+                                            "properties": {
+                                                "methodName": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "SENDTRANSGENERIC"
+                                                    ],
+                                                    "default": "SENDTRANSGENERIC"
+                                                },
+                                                "pluginName": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "SONGHAI_EXCHANGE_MONEY"
+                                                    ],
+                                                    "default": "SONGHAI_EXCHANGE_MONEY"
+                                                },
+                                                "mobileWalletRequest": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "beneficiaryRelationship": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "FRIENDS",
+                                                                "PARENTS",
+                                                                "RELATIVES",
+                                                                "SPOUSE",
+                                                                "OTHER"
+                                                            ]
+                                                        },
+                                                        "mobileOperatorCode": {
+                                                            "type": "string",
+                                                            "description": "Mobile operator code (e.g., MTN, VOD, AIR)"
+                                                        },
+                                                        "mobile_money_wallet_number": {
+                                                            "type": "string"
+                                                        },
+                                                        "previous_reference_code": {
+                                                            "type": "string"
+                                                        },
+                                                        "rate": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_address": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_city": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_country_iso3": {
+                                                            "type": "string",
+                                                            "description": "ISO 3-letter country code"
+                                                        },
+                                                        "receiver_currency": {
+                                                            "type": "string",
+                                                            "description": "ISO 3-letter currency code"
+                                                        },
+                                                        "receiver_first_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_gender": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_last_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_middle_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_occupation": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiver_wallet_account_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "receiving_amount": {
+                                                            "type": "number",
+                                                            "format": "double"
+                                                        },
+                                                        "reference_code": {
+                                                            "type": "string"
+                                                        },
+                                                        "senderEmail": {
+                                                            "type": "string",
+                                                            "format": "email"
+                                                        },
+                                                        "sender_address_line1": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_city": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_country_iso3": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_date_of_birth": {
+                                                            "type": "string",
+                                                            "format": "date",
+                                                            "example": "1990-01-01"
+                                                        },
+                                                        "sender_first_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_gender": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_last_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_mobile_number": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_occupation": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_state": {
+                                                            "type": "string"
+                                                        },
+                                                        "sender_zip_code": {
+                                                            "type": "string"
+                                                        },
+                                                        "sending_currency": {
+                                                            "type": "string"
+                                                        },
+                                                        "sourceOfFunds": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "CASH"
+                                                            ],
+                                                            "default": "CASH"
+                                                        },
+                                                        "transaction_narration": {
+                                                            "type": "string"
+                                                        },
+                                                        "transaction_purpose": {
+                                                            "type": "string"
+                                                        },
+                                                        "transaction_type": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "MOBILE_MONEY"
+                                                            ],
+                                                            "default": "MOBILE_MONEY"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mobile money transaction created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pay_out_party_trans_status": {
+                                                "type": "string"
+                                            },
+                                            "reference_code": {
+                                                "type": "string"
+                                            },
+                                            "status": {
+                                                "type": "string"
+                                            },
+                                            "pay_out_party_trans_id": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "msg_note": {
+                                                "type": "string"
+                                            },
+                                            "msg_code": {
+                                                "type": "string"
+                                            },
+                                            "newAccountCreated": {
+                                                "type": "boolean"
+                                            },
+                                            "autoAccountCreationEnabled": {
+                                                "type": "boolean"
+                                            },
+                                            "accountPaymentRedirectedEnabled": {
+                                                "type": "boolean"
+                                            },
+                                            "accountPaymentRedirected": {
+                                                "type": "boolean"
+                                            },
+                                            "originalPaymentInstructionAccountNumber": {
+                                                "type": "string"
+                                            },
+                                            "redirectedAccountNumber": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "accountBankCode": {
+                                                "type": "string"
+                                            },
+                                            "inflowRequestDate": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "executionDate": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "lastUpdate": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "inflowRequestResendCount": {
+                                                "type": "integer"
+                                            },
+                                            "resendCount": {
+                                                "type": "integer"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/gateway/account-number-validation": {
+            "post": {
+                "summary": "Validate Mobile Money Wallet",
+                "description": "Validate mobile money wallet number and retrieve wallet details.",
+                "tags": [
+                    "Validation"
+                ],
+                "servers": [
+                    {
+                        "url": "https://api.stag.songhaiexchange.io"
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "mobileMoneyWalletCountry",
+                                    "mobileMoneyWalletNumber",
+                                    "mobileOperatorCode"
+                                ],
+                                "properties": {
+                                    "mobileMoneyWalletCountry": {
+                                        "type": "string",
+                                        "example": "GHA"
+                                    },
+                                    "mobileMoneyWalletNumber": {
+                                        "type": "string"
+                                    },
+                                    "mobileOperatorCode": {
+                                        "type": "string",
+                                        "description": "Mobile operator code (e.g., MTN, VOD, AIR)"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mobile money wallet validated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "enum": [
+                                                "SUCCESS",
+                                                "ERROR"
+                                            ]
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "errorCode": {
+                                            "type": "integer"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "mobileMoneyWalletCountry": {
+                                                    "type": "string"
+                                                },
+                                                "mobileMoneyWalletName": {
+                                                    "type": "string"
+                                                },
+                                                "mobileMoneyWalletNumber": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/gateway/create-domiciliary-bank-account": {
+            "post": {
+                "summary": "Create Domiciliary Account with Account Number",
+                "description": "Automatically create a domiciliary account using an existing Naira account number. Only supported in Nigeria.",
+                "tags": [
+                    "Account Management"
+                ],
+                "servers": [
+                    {
+                        "url": "https://api.stag.songhaiexchange.io"
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "requestDTO"
+                                ],
+                                "properties": {
+                                    "requestDTO": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "required": [
+                                                "country",
+                                                "existingAccountBankCode",
+                                                "existingAccountCurrencyCode",
+                                                "existingBankAccountNumber",
+                                                "newAccountCurrencyCode"
+                                            ],
+                                            "properties": {
+                                                "country": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "NGA"
+                                                    ],
+                                                    "example": "NGA"
+                                                },
+                                                "existingAccountBankCode": {
+                                                    "type": "string",
+                                                    "example": "214"
+                                                },
+                                                "existingAccountCurrencyCode": {
+                                                    "type": "string",
+                                                    "example": "NGN"
+                                                },
+                                                "existingBankAccountNumber": {
+                                                    "type": "string",
+                                                    "example": "0053633074NGN"
+                                                },
+                                                "newAccountCurrencyCode": {
+                                                    "type": "string",
+                                                    "example": "USD"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Domiciliary account created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "dormAccountResponseDTO": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "createdAccountNumber": {
+                                                        "type": "string"
+                                                    },
+                                                    "existingBankAccountNumber": {
+                                                        "type": "string"
+                                                    },
+                                                    "createdAccountCurrencyCode": {
+                                                        "type": "string"
+                                                    },
+                                                    "status": {
+                                                        "type": "string"
+                                                    },
+                                                    "msg_note": {
+                                                        "type": "string"
+                                                    },
+                                                    "msg_code": {
+                                                        "type": "string"
+                                                    },
+                                                    "msg_code_id": {
+                                                        "type": "string"
+                                                    },
+                                                    "accountBankCode": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/gateway/create-domiciliary-bank-account-with-bvn": {
+            "post": {
+                "summary": "Create Domiciliary Account with BVN",
+                "description": "Automatically create a domiciliary account using Bank Verification Number (BVN). Only supported in Nigeria.",
+                "tags": [
+                    "Account Management"
+                ],
+                "servers": [
+                    {
+                        "url": "https://api.stag.songhaiexchange.io"
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "dormAccountRequestDTO"
+                                ],
+                                "properties": {
+                                    "dormAccountRequestDTO": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "required": [
+                                                "bvnCountry",
+                                                "existingAccountBankCode",
+                                                "existingAccountBvn",
+                                                "existingAccountCurrencyCode",
+                                                "newAccountCurrencyCode"
+                                            ],
+                                            "properties": {
+                                                "bvnCountry": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "NGA"
+                                                    ],
+                                                    "example": "NGA"
+                                                },
+                                                "existingAccountBankCode": {
+                                                    "type": "integer",
+                                                    "example": 214
+                                                },
+                                                "existingAccountBvn": {
+                                                    "type": "string",
+                                                    "example": "02234444221"
+                                                },
+                                                "existingAccountCurrencyCode": {
+                                                    "type": "string",
+                                                    "example": "USD"
+                                                },
+                                                "newAccountCurrencyCode": {
+                                                    "type": "string",
+                                                    "example": "USD"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Domiciliary account created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "dormAccountResponseDTO": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "createdAccountNumber": {
+                                                        "type": "string"
+                                                    },
+                                                    "existingBankAccountNumber": {
+                                                        "type": "string"
+                                                    },
+                                                    "createdAccountCurrencyCode": {
+                                                        "type": "string"
+                                                    },
+                                                    "status": {
+                                                        "type": "string"
+                                                    },
+                                                    "msg_note": {
+                                                        "type": "string"
+                                                    },
+                                                    "msg_code": {
+                                                        "type": "string"
+                                                    },
+                                                    "msg_code_id": {
+                                                        "type": "string"
+                                                    },
+                                                    "accountBankCode": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

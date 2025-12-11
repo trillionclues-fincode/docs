@@ -101,7 +101,7 @@
         ]
       },
       {
-        "tab": "Digital Lending",
+        "tab": "Lending",
         "groups": [
           {
             "group": "Getting Started",
@@ -153,6 +153,37 @@
               "api/lending/list-customer-repayments",
               "api/lending/transfer-funds",
               "api/lending/view-bank-account"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Savings & Investment",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "investment/overview",
+              "investment/process-flow",
+              "investment/account-opening"
+            ]
+          },
+          {
+            "group": "Core Flows",
+            "pages": [
+              "investment/portfolio-management",
+              "investment/trading-flow",
+              "investment/withdrawal-process"
+            ]
+          },
+          {
+            "group": "API Endpoints",
+            "pages": [
+              "api/investment/create-investment-application",
+              "api/investment/get-total-investments",
+              "api/investment/list-portfolios",
+              "api/investment/get-quote",
+              "api/investment/fund-wallet"
             ]
           }
         ]
@@ -221,32 +252,29 @@
         ]
       },
       {
-        "tab": "Savings & Investment",
+        "tab": "Payment Switch",
         "groups": [
           {
             "group": "Getting Started",
             "pages": [
-              "investment/overview",
-              "investment/process-flow",
-              "investment/account-opening"
-            ]
-          },
-          {
-            "group": "Core Flows",
-            "pages": [
-              "investment/portfolio-management",
-              "investment/trading-flow",
-              "investment/withdrawal-process"
+              "songhai-exchange/overview"
             ]
           },
           {
             "group": "API Endpoints",
             "pages": [
-              "api/investment/create-investment-application",
-              "api/investment/get-total-investments",
-              "api/investment/list-portfolios",
-              "api/investment/get-quote",
-              "api/investment/fund-wallet"
+              "api/songhai-exchange/generate-token",
+              "api/songhai-exchange/change-password",
+              "api/songhai-exchange/exchange-rate",
+              "api/songhai-exchange/create-transaction",
+              "api/songhai-exchange/transaction-status",
+              "api/songhai-exchange/end-of-day-report",
+              "api/songhai-exchange/wallet-account-statement",
+              "api/songhai-exchange/bank-account-validation",
+              "api/songhai-exchange/mobile-money-creation",
+              "api/songhai-exchange/mobile-money-validation",
+              "api/songhai-exchange/domiciliary-account-with-account-number",
+              "api/songhai-exchange/domiciliary-account-with-bvn"
             ]
           }
         ]
@@ -499,6 +527,23 @@
               "api/ciam/update-aml-rules",
               "api/ciam/edit-kyc-rule",
               "api/ciam/add-kyc-rule"
+            ]
+          },
+          {
+            "group": "Songhai Exchange (Payment Switch)",
+            "pages": [
+              "api/songhai-exchange/generate-token",
+              "api/songhai-exchange/change-password",
+              "api/songhai-exchange/exchange-rate",
+              "api/songhai-exchange/create-transaction",
+              "api/songhai-exchange/transaction-status",
+              "api/songhai-exchange/end-of-day-report",
+              "api/songhai-exchange/wallet-account-statement",
+              "api/songhai-exchange/bank-account-validation",
+              "api/songhai-exchange/mobile-money-creation",
+              "api/songhai-exchange/mobile-money-validation",
+              "api/songhai-exchange/domiciliary-account-with-account-number",
+              "api/songhai-exchange/domiciliary-account-with-bvn"
             ]
           },
           {
