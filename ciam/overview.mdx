@@ -3,11 +3,11 @@ title: 'Overview'
 icon: 'atom'
 ---
 
-Welcome to the **Nucleus Engine** documentation. This guide will help you understand the core infrastructure capabilities of the FinCode platform, including user management, compliance, security, and connector configurations.
+Welcome to the **Customer Identity & Access Management (CIAM)** documentation. This guide will help you understand the core infrastructure capabilities of the FinCode platform, including user management, compliance, security, and connector configurations.
 
-### What is Nucleus Engine?
+### What is CIAM?
 
-The Nucleus Engine is the **central nervous system** of the FinCode platform. It manages the fundamental entities and rules that govern system behavior. The engine handles:
+The CIAM is the **central nervous system** of the FinCode platform. It manages the fundamental entities and rules that govern system behavior. The engine handles:
 
 - **User Management** - Customer identity, profiles, and authentication
 - **Compliance & KYC** - AML rules, KYC requirements, and document verification
@@ -48,7 +48,7 @@ The Nucleus Engine is the **central nervous system** of the FinCode platform. It
 
 ### Core Domains
 
-The Nucleus Engine is divided into several key functional areas:
+The CIAM is divided into several key functional areas:
 
 #### 1. User Management
 
@@ -58,7 +58,7 @@ Centralized management of all user types within the system.
 - **Employee Management**: Manage staff access, roles, and permissions.
 - **Status Control**: Activate or deactivate user accounts instantly.
 
-<Card title='View User APIs' href='/api/nuclues/profile'>
+<Card title='View User APIs' href='/api/ciam/profile'>
   Explore user management endpoints.
 </Card>
 
@@ -70,7 +70,7 @@ A flexible compliance engine that adapts to regulatory requirements.
 - **KYC Tiers**: Configure document requirements based on customer triggers.
 - **Dynamic Fields**: handle custom compliance data fields for different regions.
 
-<Card title='View Compliance APIs' href='/api/nuclues/list-aml-rules'>
+<Card title='View Compliance APIs' href='/api/ciam/list-aml-rules'>
   Explore compliance and AML endpoints.
 </Card>
 
@@ -82,7 +82,7 @@ Essential security tools to protect user accounts and transactions.
 - **OTP Verification**: Secure 2-factor authentication workflows.
 - **Password Policies**: Enforce organizational security standards.
 
-<Card title='View Security APIs' href='/api/nuclues/view-password-policy'>
+<Card title='View Security APIs' href='/api/ciam/view-password-policy'>
   Explore security management tools.
 </Card>
 
@@ -96,7 +96,7 @@ Tools for configuring the platform's operational backbone.
 
 ### Integration Quick Start
 
-To start building with the Nucleus Engine:
+To start building with the CIAM:
 
 <Steps>
   <Step title='Authenticate'>
@@ -104,13 +104,13 @@ To start building with the Nucleus Engine:
   </Step>
 
 <Step title='Check Requirements'>
-  Use the [Compliance APIs](/api/nuclues/kyc-requirements-by-isocountry) to
+  Use the [Compliance APIs](/api/ciam/kyc-requirements-by-isocountry) to
   checks mandatory fields for your target region.
 </Step>
 
 <Step title='Onboard Users'>
   Create customers using the [Create Customer
-  API](/api/nuclues/create-customer).
+  API](/api/ciam/create-customer).
 </Step>
 
   <Step title='Verify Identity'>
@@ -123,20 +123,20 @@ To start building with the Nucleus Engine:
 <CardGroup cols={2}>
   <Card
     title='User Management'
-    href='/api/nuclues/create-customer'
+    href='/api/ciam/create-customer'
   >
     Start onboarding and managing users.
   </Card>
 
-<Card title='Compliance Rules' href='/api/nuclues/list-aml-rules'>
+<Card title='Compliance Rules' href='/api/ciam/list-aml-rules'>
   Configure your compliance framework.
 </Card>
 
-<Card title='Security Setup' href='/api/nuclues/view-password-policy'>
+<Card title='Security Setup' href='/api/ciam/view-password-policy'>
   Review security policies and PIN management.
 </Card>
 
-  <Card title='System Config' href='/api/nuclues/fetch-organisaction-preference'>
+  <Card title='System Config' href='/api/ciam/fetch-organisaction-preference'>
     Manage organization-wide settings.
   </Card>
 </CardGroup>
