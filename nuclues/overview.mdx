@@ -21,21 +21,29 @@ The Nucleus Engine is the **central nervous system** of the FinCode platform. It
     Manage customer and employee profiles, roles, and access rights across the platform.
   </Card>
 
-  <Card title='Dynamic Compliance'>
-    Configure AML rules and KYC requirements specific to countries, transaction types, and risk levels.
-  </Card>
+{' '}
+<Card title='Dynamic Compliance'>
+  Configure AML rules and KYC requirements specific to countries, transaction
+  types, and risk levels.
+</Card>
 
-  <Card title='Security First'>
-    Robust security features including transaction PINs, login OTPs, and strict password policies.
-  </Card>
+{' '}
+<Card title='Security First'>
+  Robust security features including transaction PINs, login OTPs, and strict
+  password policies.
+</Card>
 
-  <Card title='Connector Management'>
-    Manage 3rd-party integrations and connector instances for payments and services.
-  </Card>
+{' '}
+<Card title='Connector Management'>
+  Manage 3rd-party integrations and connector instances for payments and
+  services.
+</Card>
 
-  <Card title='Organizational Control'>
-    Set global preferences, fee structures, and branching logic for your organization.
-  </Card>
+{' '}
+<Card title='Organizational Control'>
+  Set global preferences, fee structures, and branching logic for your
+  organization.
+</Card>
 
   <Card title='Document Handling'>
     Securely upload, attach, and verify required customer documents for compliance.
@@ -64,7 +72,7 @@ A flexible compliance engine that adapts to regulatory requirements.
 
 - **AML Rules**: Define blocks and warnings based on transaction amounts, velocity, and patterns.
 - **KYC Tiers**: Configure document requirements based on customer triggers.
-- **Dynamic Fields**: handle custom compliance data fields for different regions.
+- **Dynamic Fields**: handle custom compliance data fields for different region.
 
 <Card title='View Compliance APIs' href='/api/nuclues/list-aml-rules'>
   Explore compliance and AML endpoints.
@@ -99,13 +107,17 @@ To start building with the Nucleus Engine:
     Obtain your `X-Auth-Token` via the [Login API](/api/auth/login).
   </Step>
 
-  <Step title='Check Requirements'>
-    Use the [Compliance APIs](/api/nuclues/kyc-requirements-by-isocountry) to checks mandatory fields for your target region.
-  </Step>
+{' '}
+<Step title='Check Requirements'>
+  Use the [Compliance APIs](/api/nuclues/kyc-requirements-by-isocountry) to
+  checks mandatory fields for your target region.
+</Step>
 
-  <Step title='Onboard Users'>
-    Create customers using the [Create Customer API](/api/nuclues/create-customer).
-  </Step>
+{' '}
+<Step title='Onboard Users'>
+  Create customers using the [Create Customer
+  API](/api/nuclues/create-customer).
+</Step>
 
   <Step title='Verify Identity'>
     Upload documents and run verification checks.
@@ -122,16 +134,15 @@ To start building with the Nucleus Engine:
     Start onboarding and managing users.
   </Card>
 
-  <Card
-    title='Compliance Rules'
-    href='/api/nuclues/list-aml-rules'
-  >
-    Configure your compliance framework.
-  </Card>
+{' '}
+<Card title='Compliance Rules' href='/api/nuclues/list-aml-rules'>
+  Configure your compliance framework.
+</Card>
 
-  <Card title='Security Setup' href='/api/nuclues/view-password-policy'>
-    Review security policies and PIN management.
-  </Card>
+{' '}
+<Card title='Security Setup' href='/api/nuclues/view-password-policy'>
+  Review security policies and PIN management.
+</Card>
 
   <Card title='System Config' href='/api/nuclues/fetch-organisaction-preference'>
     Manage organization-wide settings.
