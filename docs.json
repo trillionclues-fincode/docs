@@ -18,7 +18,8 @@
     "mdx": {
       "server": [
         "https://remitjunction.fincode.software/api/v6/services",
-        "https://sandbox.fincode.software/api/v6/services"
+        "https://sandbox.fincode.software/api/v6/services",
+        "https://api.stag.songhaiexchange.io"
       ]
     }
   },
