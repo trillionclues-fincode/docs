@@ -74,6 +74,29 @@
               "remittance/fees",
               "remittance/settlement"
             ]
+          },
+          {
+            "group": "API Endpoints",
+            "pages": [
+              "api/transactions/call-quote",
+              "api/transactions/history-data",
+              "api/transactions/wallet-account",
+              "api/transactions/beneficiary-list",
+              "api/transactions/transaction-types",
+              "api/transactions/create-transaction",
+              "api/transactions/create-transaction-direct",
+              "api/transactions/beneficiary-details",
+              "api/transactions/delivery-currencies",
+              "api/transactions/destination-countries",
+              "api/transactions/supported-currencies",
+              "api/transactions/payment-methods",
+              "api/transactions/create-beneficiary",
+              "api/transactions/validate-account",
+              "api/transactions/list-supported-banks",
+              "api/transactions/required-bank-fields",
+              "api/transactions/add-bank-details",
+              "api/transactions/list-mobile-operators"
+            ]
           }
         ]
       },
@@ -94,6 +117,105 @@
               "lending/underwriting",
               "lending/disbursement",
               "lending/repayment-flow"
+            ]
+          },
+          {
+            "group": "API Endpoints",
+            "pages": [
+              "api/lending/get-application",
+              "api/lending/loan-request",
+              "api/lending/list-products",
+              "api/lending/loan-eligibility-questions",
+              "api/lending/get-loan-history",
+              "api/lending/get-total-loan",
+              "api/lending/get-loan-offer",
+              "api/lending/accept-loan-offer",
+              "api/lending/reject-loan-offer",
+              "api/lending/accept-loan-terms",
+              "api/lending/get-available-banks",
+              "api/lending/verify-bank-account",
+              "api/lending/list-customer-bank-accounts",
+              "api/lending/transfer-history",
+              "api/lending/manage-loans",
+              "api/lending/list-repayments",
+              "api/lending/calculate-apr",
+              "api/lending/transfer-status",
+              "api/lending/add-bank-account",
+              "api/lending/get-loan-terms",
+              "api/lending/payoff-loan",
+              "api/lending/repay-loan",
+              "api/lending/pending-repayments",
+              "api/lending/repaid-transactions",
+              "api/lending/repayment-instructions",
+              "api/lending/loan-details-with-payment-history",
+              "api/lending/update-application",
+              "api/lending/loan-application-details",
+              "api/lending/list-customer-repayments",
+              "api/lending/transfer-funds",
+              "api/lending/view-bank-account"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Customer Identity & Access Management",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "ciam/overview"
+            ]
+          },
+          {
+            "group": "API Endpoints",
+            "pages": [
+              "api/ciam/profile",
+              "api/ciam/create-customer",
+              "api/ciam/deactivate-user",
+              "api/ciam/activate-user",
+              "api/ciam/edit-profile",
+              "api/ciam/list-employees",
+              "api/ciam/create-transaction-pin",
+              "api/ciam/find-customer-by-name-or-phone-no",
+              "api/ciam/verify-login-otp",
+              "api/ciam/change-password",
+              "api/ciam/reset-password",
+              "api/ciam/create-user-pin",
+              "api/ciam/generate-and-send-otp-toemail",
+              "api/ciam/delete-customer-bank-details",
+              "api/ciam/listpaypoints",
+              "api/ciam/listpayoutpoints",
+              "api/ciam/pay-centre-by-id",
+              "api/ciam/list-connectors",
+              "api/ciam/add-default-charge",
+              "api/ciam/create-connector-instance",
+              "api/ciam/update-connector-instance",
+              "api/ciam/awaiting-payments",
+              "api/ciam/list-aml-rules",
+              "api/ciam/delete-api-connector-instance",
+              "api/ciam/product-payment-details",
+              "api/ciam/kyc-detail-by-id",
+              "api/ciam/list-paycenters-by-type",
+              "api/ciam/listpaymentcollectorsbyaddress",
+              "api/ciam/listallocatedpayoutpoints",
+              "api/ciam/payoutCenter-branches",
+              "api/ciam/kyc-requirements-by-isocountry",
+              "api/ciam/awaiting-compliance-requirements",
+              "api/ciam/documents-required-for-transaction",
+              "api/ciam/upload-profile-picture",
+              "api/ciam/attach-documents",
+              "api/ciam/dynamic-fields-group",
+              "api/ciam/view-password-policy",
+              "api/ciam/edit-employee",
+              "api/ciam/fetch-organisaction-preference",
+              "api/ciam/update-organisaction-preference",
+              "api/ciam/list-customers",
+              "api/ciam/verify-customer",
+              "api/ciam/deactivate-aml-rule",
+              "api/ciam/activate-aml-rule",
+              "api/ciam/update-aml-rules",
+              "api/ciam/edit-kyc-rule",
+              "api/ciam/add-kyc-rule"
             ]
           }
         ]
@@ -116,6 +238,16 @@
               "investment/trading-flow",
               "investment/withdrawal-process"
             ]
+          },
+          {
+            "group": "API Endpoints",
+            "pages": [
+              "api/investment/create-investment-application",
+              "api/investment/get-total-investments",
+              "api/investment/list-portfolios",
+              "api/investment/get-quote",
+              "api/investment/fund-wallet"
+            ]
           }
         ]
       },
@@ -135,6 +267,18 @@
               "ledger/double-entry-posting",
               "ledger/balance-management",
               "ledger/transaction-history"
+            ]
+          },
+          {
+            "group": "API Endpoints",
+            "pages": [
+              "api/ledger/account-balance",
+              "api/ledger/post-account",
+              "api/ledger/ledger-history",
+              "api/ledger/ledger-history-interaction-id",
+              "api/ledger/ledger-history-idempotency-key",
+              "api/ledger/list-accounts",
+              "api/ledger/change-account-permission"
             ]
           }
         ]
@@ -157,16 +301,19 @@
               "deposit-engine/bank-transfers",
               "deposit-engine/card-payments"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Customer Identity & Access Management (CIAM)",
-        "groups": [
+          },
           {
-            "group": "Getting Started",
+            "group": "API Endpoints",
             "pages": [
-              "ciam/overview"
+              "api/deposit-engine/awaiting-payments",
+              "api/deposit-engine/awaiting-payment-actions",
+              "api/deposit-engine/bank-iwillpaylater",
+              "api/deposit-engine/payment-methods-charges",
+              "api/deposit-engine/notify-bank-transfer-payment",
+              "api/deposit-engine/supported-payment-methods",
+              "api/deposit-engine/make-payment-from-wallet",
+              "api/deposit-engine/process-payment-with-token",
+              "api/deposit-engine/process-card-payment"
             ]
           }
         ]
@@ -303,7 +450,7 @@
             ]
           },
           {
-            "group": "Customer Identity & Access Management (CIAM)",
+            "group": "Customer Identity & Access Management",
             "pages": [
               "api/ciam/profile",
               "api/ciam/create-customer",
