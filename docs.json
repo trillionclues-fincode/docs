@@ -14,15 +14,6 @@
     "light": "#734CDC",
     "dark": "#79359F"
   },
-  "api": {
-    "mdx": {
-      "server": [
-        "https://remitjunction.fincode.software/api/v6/services",
-        "https://sandbox.fincode.software/api/v6/services",
-        "https://api.stag.songhaiexchange.io"
-      ]
-    }
-  },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [

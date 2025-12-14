@@ -1525,6 +1525,14 @@
                             "type": "string"
                         },
                         "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Idempotency-Key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
                     }
                 ],
                 "requestBody": {
@@ -1636,6 +1644,14 @@
                     {
                         "in": "header",
                         "name": "ipAddress",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Idempotency-Key",
                         "schema": {
                             "type": "string"
                         },

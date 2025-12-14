@@ -42,6 +42,10 @@ This endpoint is used for Remittance transactions where we are managing the cust
   The originating IP address of the user initiating the transaction.
 </ParamField>
 
+<ParamField header='X-Idempotency-Key' type='string' required>
+  A unique identifier for the request. Used to prevent duplicate transactions.
+</ParamField>
+
 ## Request Body
 
 <ParamField body='amount' type='string' required>
