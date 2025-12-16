@@ -1,16 +1,10 @@
 ---
 title: 'Awaiting Compliance'
-api: 'GET https://remitjunction.fincode.software/api/v6/services/compliance/awaiting-compliance-requirements'
+openapi: 'GET /compliance/awaiting-compliance-requirements'
 description: 'Checks for any outstanding Know Your Customer (KYC) or regulatory documents required from the authenticated user.'
 ---
 
 This endpoint is used to quickly check if the authenticated user has any pending or mandatory compliance actions or documents required before proceeding with certain high-risk actions (like large transactions or profile changes).
-
-<RequestExample>
-          ```bash cURL GET        
-  [https://remitjunction.fincode.software/api/v6/services/compliance/awaiting-compliance-requirements](remitjunction://agent.fincode.software/api/v6/services/compliance/awaiting-compliance-requirements)
-          ```
-</RequestExample>
 
 ## Request Headers
 

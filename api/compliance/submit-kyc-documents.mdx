@@ -1,0 +1,132 @@
+---
+title: 'Submit KYC Documents'
+openapi: 'POST /compliance/attach-documents'
+description: 'Submits KYC documents for customer compliance verification to fulfill outstanding compliance requirements.'
+---
+
+This endpoint allows you to submit KYC (Know Your Customer) documents for a customer. Use this after retrieving pending requirements from the [Awaiting Compliance](/api/compliance/awaiting-compliance) endpoint.
+
+## Request Headers
+
+This endpoint requires a valid **Access Token** for authorization.
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** obtained from the `/login` or `/refresh-token`
+  endpoint.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+        Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+        Unique request identifier.
+</ParamField>
+
+## Request Body
+
+<ParamField body='customerCode' type='string' required>
+  The unique customer identifier for whom the documents are being submitted.
+</ParamField>
+
+<ParamField body='documentType' type='string' required>
+  The type of KYC document being submitted. Supported values:
+  - `PROOF_OF_ADDRESS` - Utility bill, bank statement, or government letter
+  - `ID_VERIFICATION` - Government-issued ID
+  - `PASSPORT` - Valid passport
+  - `DRIVERS_LICENSE` - Valid driver's license
+  - `UTILITY_BILL` - Recent utility bill
+  - `BANK_STATEMENT` - Recent bank statement
+</ParamField>
+
+<ParamField body='document' type='file' required>
+  The document file to upload. Supported formats: PDF, JPG, PNG.
+</ParamField>
+
+<ParamField body='kycRuleId' type='string'>
+  Optional KYC rule ID if submitting for a specific compliance requirement returned from the awaiting compliance endpoint.
+</ParamField>
+
+## Response
+
+<ResponseField name='status' type='string' default='SUCCESS'>
+  Overall status of the API request.
+</ResponseField>
+
+<ResponseField name='message' type='string'>
+  A descriptive message about the submission result.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Container for the submission result data.
+  <Expandable title='data object'>
+    <ResponseField name='documentId' type='string'>
+      The unique identifier of the uploaded document.
+    </ResponseField>
+    <ResponseField name='status' type='string'>
+      The current status of the document (e.g., `PENDING_REVIEW`, `APPROVED`).
+    </ResponseField>
+    <ResponseField name='submittedAt' type='string'>
+      ISO 8601 timestamp of when the document was submitted.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl --location 'https://remitjunction.fincode.software/api/v6/services/compliance/attach-documents' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--form 'customerCode="CUST123456"' \
+--form 'documentType="PROOF_OF_ADDRESS"' \
+--form 'document=@"/path/to/document.pdf"'
+```
+
+```javascript Node.js
+const axios = require('axios');
+const FormData = require('form-data');
+const fs = require('fs');
+
+const BASE_URL = 'https://remitjunction.fincode.software/api/v6/services/compliance';
+
+async function submitKycDocument(accessToken, customerCode, documentType, filePath) {
+  const formData = new FormData();
+  formData.append('customerCode', customerCode);
+  formData.append('documentType', documentType);
+  formData.append('document', fs.createReadStream(filePath));
+
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/attach-documents`,
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+          'X-Auth-Token': accessToken,
+          'platform': 'fincode',
+          'uuid': '200',
+        },
+      }
+    );
+
+    console.log('Document submitted successfully:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error(
+      'Document submission failed:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+// Usage Example
+const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
+submitKycDocument(accessToken, 'CUST123456', 'PROOF_OF_ADDRESS', './utility_bill.pdf');
+```
+
+</CodeGroup>

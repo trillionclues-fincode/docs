@@ -1207,6 +1207,104 @@
                 }
             }
         },
+        "/compliance/awaiting-compliance-requirements": {
+            "get": {
+                "summary": "List Awaiting Compliance Requirements",
+                "description": "Retrieves the list of awaiting customer kyc compliance requirements",
+                "operationId": "listAwaitingComplianceRequirements",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of awaiting customer kyc compliance requirements"
+                    }
+                }
+            }
+        },
+        "/compliance/attach-documents": {
+            "post": {
+                "summary": "Submit KYC Documents",
+                "description": "Submits KYC documents for customer compliance verification",
+                "operationId": "submitKycDocuments",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "customerCode": {
+                                        "type": "string",
+                                        "description": "The unique customer identifier"
+                                    },
+                                    "documentType": {
+                                        "type": "string",
+                                        "description": "Type of KYC document being submitted",
+                                        "enum": [
+                                            "PROOF_OF_ADDRESS",
+                                            "ID_VERIFICATION",
+                                            "PASSPORT",
+                                            "DRIVERS_LICENSE",
+                                            "UTILITY_BILL",
+                                            "BANK_STATEMENT"
+                                        ]
+                                    },
+                                    "document": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "The document file to upload"
+                                    },
+                                    "kycRuleId": {
+                                        "type": "string",
+                                        "description": "Optional KYC rule ID if submitting for a specific compliance requirement"
+                                    }
+                                },
+                                "required": [
+                                    "customerCode",
+                                    "documentType",
+                                    "document"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "KYC documents submitted successfully"
+                    }
+                }
+            }
+        },
         "/paymentmanagement/awaiting-payments": {
             "get": {
                 "summary": "List Awaiting Payments",

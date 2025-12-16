@@ -38,7 +38,7 @@ sequenceDiagram
     App-->>Sender: Navigate to login
 ```
 
-<Card title='API Endpoint' href='/api/users/create-customer'>
+<Card title='Sender Registration' href='/api/ciam/create-customer'>
   Go to create customer endpoint.
 </Card>
 
@@ -91,8 +91,8 @@ sequenceDiagram
     App-->>Sender: Navigate to dashboard
 ```
 
-<Card title='API Endpoint' href='/api/auth/login'>
-  Go to create login endpoint.
+<Card title='Sender Login' href='/api/auth/login'>
+  Go to login endpoint.
 </Card>
 
 ### 1.3 KYC Verification
@@ -125,9 +125,14 @@ sequenceDiagram
     App-->>Sender: Navigate to dashboard
 ```
 
-<Card title='API Endpoint' href='/api/compliance/submit-kyc-documents'>
-  Go to submit kyc document endpoint.
-</Card>
+<CardGroup cols={2}>
+  <Card title='View KYC Requirements' href='/api/compliance/awaiting-compliance'>
+    View available kyc requirements
+  </Card>
+  <Card title='Submit KYC Documents' href='/api/compliance/submit-kyc-documents'>
+    Submit KYC documents
+  </Card>
+</CardGroup>
 
 <Tabs>
   <Tab title="Tier 1 - Basic KYC">
@@ -203,7 +208,7 @@ graph TD
 
 ### 1.4 Customer Risk Assessment (CRA)
 
-CRA forms collect additional information for regulatory compliance and risk assessment.
+CRA forms are optional forms for collecting additional user information for regulatory compliance and risk assessment.
 
 ```mermaid
 sequenceDiagram
@@ -481,7 +486,7 @@ Senders choose from three or more primary transaction types based on beneficiary
     - MoneyGram
     - Western Union
 
-<Card title='API Endpoint' href='/api/transactions/create-transaction'>
+<Card title='Create Transaction' href='/api/transactions/create-transaction'>
   Go to create transaction endpoint.
 </Card>
 
@@ -492,7 +497,7 @@ Senders choose from three or more primary transaction types based on beneficiary
   </Tab>
 </Tabs>
 
-<Card title='API Endpoint' href='/api/transactions/transaction-types'>
+<Card title='Transaction Types' href='/api/transactions/transaction-types'>
   Go to transaction types endpoint.
 </Card>
 
@@ -532,7 +537,7 @@ sequenceDiagram
 ```
 
 <Card title='API Endpoint' href='/api/transactions/call-quote'>
-  Go to transaction types endpoint.
+  Go to transaction quote endpoint.
 </Card>
 
 ### 2.4 Beneficiary Management
@@ -565,12 +570,15 @@ graph TD
 
 **API Endpoints**:
 
-<Card title='API Endpoint' href='/api/transactions/beneficiary-list'>
+
+<CardGroup cols={2}>
+<Card title='Beneficiary List' href='/api/transactions/beneficiary-list'>
   View all saved beneficiaries endpoint.
 </Card>
-<Card title='API Endpoint' href='/api/transactions/create-beneficiary'>
-  Create/update beneficiary endpoint.
+<Card title='Create Beneficiary' href='/api/transactions/create-beneficiary'>
+  Create beneficiary endpoint.
 </Card>
+</CardGroup>
 
 #### Create New Beneficiary Flow
 
@@ -839,10 +847,6 @@ sequenceDiagram
         System->>System: Send rejection notice to customer
     end
 ```
----
-<Card title='API Endpoint' href='/api/compliance/aml-screening'>
-  Go to transaction types endpoint.
-</Card>
 
 #### Screening Checks Performed
 
@@ -1070,7 +1074,7 @@ stateDiagram-v2
     Expired --> [*]: Complete
 ```
 ---
-<Card title='API Endpoint' href='/api/transactions/history-data'>
+<Card title='Transaction History' href='/api/transactions/history-data'>
   Go to transaction history endpoint.
 </Card>
 
@@ -1208,7 +1212,7 @@ Follow these steps to integrate the complete remittance flow:
     - [ ] KYC document upload successful
     - [ ] CRA form submission works
 
-    <Card title="API Reference" href="/api/users/create-customer">
+    <Card title="API Reference" href="/api/ciam/create-customer">
       View detailed sender management endpoints
     </Card>
 
@@ -1245,7 +1249,7 @@ Follow these steps to integrate the complete remittance flow:
     - [ ] Payment webhooks received
     - [ ] Failed payments handled gracefully
 
-    <Card title="Settlement Guide" href="/remittance/settlement">
+    <Card title="Payment Integration Guide" href="/integration/payment-methods">
       Detailed payment integration guide
     </Card>
 
@@ -1283,7 +1287,6 @@ Follow these steps to integrate the complete remittance flow:
   </Step>
 </Steps>
 
----
 ## Next Steps
 
 <Card title='Start Building' href='/api/authentication'>

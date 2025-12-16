@@ -62,9 +62,7 @@
             "pages": [
               "remittance/transactions",
               "remittance/beneficiary-lifecycle",
-              "remittance/fx-rates",
-              "remittance/fees",
-              "remittance/settlement"
+              "remittance/fx-rates"
             ]
           },
           {
@@ -371,7 +369,8 @@
               "api/compliance/dynamic-fields",
               "api/compliance/continue-enrolment",
               "api/compliance/awaiting-compliance",
-              "api/compliance/submit-cra"
+              "api/compliance/submit-cra",
+              "api/compliance/submit-kyc-documents"
             ]
           },
           {
