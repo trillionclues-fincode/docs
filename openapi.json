@@ -1011,6 +1011,11 @@
                                     },
                                     "customerType": {
                                         "type": "string",
+                                        "enum": [
+                                            "INDIVIDUAL",
+                                            "COMPANY"
+                                        ],
+                                        "default": "INDIVIDUAL",
                                         "example": "INDIVIDUAL"
                                     },
                                     "firstName": {
@@ -1078,7 +1083,23 @@
                                         "type": "object",
                                         "properties": {}
                                     }
-                                }
+                                },
+                                "required": [
+                                    "devicePlatform",
+                                    "appVersion",
+                                    "appId",
+                                    "customerType",
+                                    "firstName",
+                                    "lastName",
+                                    "email",
+                                    "dialingCode",
+                                    "phone",
+                                    "dob",
+                                    "password",
+                                    "confirmPassword",
+                                    "address",
+                                    "dynamicFields"
+                                ]
                             }
                         }
                     }
