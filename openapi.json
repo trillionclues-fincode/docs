@@ -614,6 +614,79 @@
                 }
             }
         },
+        "/compliance/awaiting-compliance-requirements": {
+            "get": {
+                "summary": "Awaiting Compliance",
+                "description": "Checks for any outstanding Know Your Customer (KYC) or regulatory documents required from the authenticated user.",
+                "operationId": "awaitingCompliance",
+                "tags": [
+                    "Compliance"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Compliance status retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "SUCCESS"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No documents required from John Doe"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "awaitingComplianceActions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "documentType": {
+                                                                "type": "string",
+                                                                "example": "PROOF_OF_ADDRESS"
+                                                            },
+                                                            "reason": {
+                                                                "type": "string",
+                                                                "example": "ANNUAL_REVIEW"
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "Success"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/admin/repayments/list": {
             "get": {
                 "summary": "List Repayments",
@@ -1207,39 +1280,11 @@
                 }
             }
         },
-        "/compliance/awaiting-compliance-requirements": {
-            "get": {
-                "summary": "List Awaiting Compliance Requirements",
-                "description": "Retrieves the list of awaiting customer kyc compliance requirements",
-                "operationId": "listAwaitingComplianceRequirements",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/platformHeader"
-                    },
-                    {
-                        "$ref": "#/components/parameters/uuidHeader"
-                    },
-                    {
-                        "in": "header",
-                        "name": "X-Auth-Token",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "List of awaiting customer kyc compliance requirements"
-                    }
-                }
-            }
-        },
-        "/compliance/attach-documents": {
+        "/documentmanagement/attach-documents/": {
             "post": {
                 "summary": "Submit KYC Documents",
                 "description": "Submits KYC documents for customer compliance verification",
-                "operationId": "submitKycDocuments",
+                "operationId": "attachKycDocuments",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/platformHeader"
