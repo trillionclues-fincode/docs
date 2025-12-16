@@ -977,25 +977,17 @@
                 }
             }
         },
-        "/usermanagement/create-customer/": {
+        "/usermanagement/register-customer": {
             "post": {
-                "summary": "Create Customer",
-                "description": "Register a new customer",
-                "operationId": "createCustomer",
+                "summary": "Register Customer",
+                "description": "Register a new customer account",
+                "operationId": "registerCustomer",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/platformHeader"
                     },
                     {
                         "$ref": "#/components/parameters/uuidHeader"
-                    },
-                    {
-                        "in": "header",
-                        "name": "X-Auth-Token",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
                     }
                 ],
                 "requestBody": {
@@ -1005,79 +997,95 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
+                                    "devicePlatform": {
+                                        "type": "string",
+                                        "example": "IOS"
+                                    },
+                                    "appVersion": {
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "appId": {
+                                        "type": "string",
+                                        "example": "com.fincode.remitjunction"
+                                    },
+                                    "customerType": {
+                                        "type": "string",
+                                        "example": "INDIVIDUAL"
+                                    },
                                     "firstName": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "Excel"
                                     },
                                     "lastName": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "Nwachukwu"
                                     },
                                     "email": {
-                                        "type": "string"
-                                    },
-                                    "phoneNumber": {
-                                        "type": "string"
-                                    },
-                                    "dateOfBirth": {
                                         "type": "string",
-                                        "format": "date"
+                                        "format": "email",
+                                        "example": "excel.nwachukwu+2@fincode.co.uk"
+                                    },
+                                    "dialingCode": {
+                                        "type": "string",
+                                        "example": "+44"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "984 573 63733"
+                                    },
+                                    "dob": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "1989-12-16"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "Password@1"
+                                    },
+                                    "confirmPassword": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "Password@1"
                                     },
                                     "address": {
                                         "type": "object",
                                         "properties": {
-                                            "street": {
-                                                "type": "string"
+                                            "address1": {
+                                                "type": "string",
+                                                "example": "San Janet Street"
                                             },
-                                            "city": {
-                                                "type": "string"
+                                            "address2": {
+                                                "type": "string",
+                                                "example": ""
                                             },
-                                            "state": {
-                                                "type": "string"
+                                            "countryCommonName": {
+                                                "type": "string",
+                                                "example": "United Kingdom"
                                             },
-                                            "postalCode": {
-                                                "type": "string"
+                                            "postcode": {
+                                                "type": "string",
+                                                "example": "SWA 1AA"
                                             },
-                                            "country": {
-                                                "type": "string"
+                                            "countryIso3": {
+                                                "type": "string",
+                                                "example": "GBR"
                                             }
                                         }
                                     },
-                                    "password": {
-                                        "type": "string"
-                                    },
-                                    "confirmPassword": {
-                                        "type": "string"
-                                    },
-                                    "nationality": {
-                                        "type": "string"
-                                    },
-                                    "occupation": {
-                                        "type": "string"
-                                    },
-                                    "sourceOfFunds": {
-                                        "type": "string"
-                                    },
-                                    "sendWelcomeEmail": {
-                                        "type": "boolean",
-                                        "default": true
+                                    "dynamicFields": {
+                                        "type": "object",
+                                        "properties": {}
                                     }
-                                },
-                                "required": [
-                                    "firstName",
-                                    "lastName",
-                                    "email",
-                                    "phoneNumber",
-                                    "dateOfBirth",
-                                    "address",
-                                    "password",
-                                    "confirmPassword"
-                                ]
+                                }
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "description": "Customer created successfully"
+                        "description": "Customer registered successfully"
                     }
                 }
             }
@@ -5094,44 +5102,6 @@
                 "responses": {
                     "200": {
                         "description": "Pay centers list"
-                    }
-                }
-            }
-        },
-        "/usermanagement/create-customer": {
-            "post": {
-                "summary": "Create Customer",
-                "description": "Register a new customer account.",
-                "operationId": "createCustomer",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/platformHeader"
-                    },
-                    {
-                        "$ref": "#/components/parameters/uuidHeader"
-                    },
-                    {
-                        "in": "header",
-                        "name": "X-Auth-Token",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {}
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Customer created"
                     }
                 }
             }

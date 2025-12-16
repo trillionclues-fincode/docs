@@ -1,6 +1,6 @@
 ---
 title: 'Create Customer'
-openapi: 'POST /usermanagement/create-customer'
+openapi: 'POST /usermanagement/register-customer'
 description: 'Register a new customer account in the FinCode platform'
 ---
 
@@ -12,95 +12,9 @@ Customers can access self-service features including sending remittances, applyi
 
 | Header         | Type   | Required | Description                          |
 | -------------- | ------ | -------- | ------------------------------------ |
-| `X-Auth-Token` | string | Yes      | JWT access token from login          |
 | `Content-Type` | string | Yes      | Must be `application/json`           |
 | `platform`     | string | Yes      | Platform identifier. Use `fincode`   |
 | `uuid`         | string | Yes      | Unique request identifier. Use `200` |
-
-## Request Body
-
-### Personal Information
-
-<ParamField body='firstName' type='string' required>
-  Customer's first name (2-50 characters)
-</ParamField>
-
-<ParamField body='lastName' type='string' required>
-  Customer's last name (2-50 characters)
-</ParamField>
-
-<ParamField body='email' type='string' required>
-  Customer's email address (must be unique)
-</ParamField>
-
-<ParamField body='phoneNumber' type='string' required>
-  Customer's phone number in international format (e.g., +44123456789)
-</ParamField>
-
-<ParamField body='dateOfBirth' type='string' required>
-  Date of birth in ISO format (YYYY-MM-DD). Customer must be 18+ years old
-</ParamField>
-
-### Address Information
-
-<ParamField body='address' type='object' required>
-  Customer's residential address
-  <Expandable title='address properties'>
-    <ParamField body='street' type='string' required>
-      Street address
-    </ParamField>
-
-    <ParamField body='city' type='string' required>
-      City name
-    </ParamField>
-
-    <ParamField body='state' type='string'>
-      State or province
-    </ParamField>
-
-    <ParamField body='postalCode' type='string' required>
-      Postal or ZIP code
-    </ParamField>
-
-    <ParamField body='country' type='string' required>
-      ISO 3166-1 alpha-2 country code (e.g., "GB", "US", "NG")
-    </ParamField>
-
-  </Expandable>
-</ParamField>
-
-### Authentication
-
-<ParamField body='password' type='string' required>
-  Initial password (min 8 characters, must include uppercase, lowercase, number,
-  and special character)
-</ParamField>
-
-<ParamField body='confirmPassword' type='string' required>
-  Password confirmation (must match password field)
-</ParamField>
-
-### Optional Fields
-
-<ParamField body='middleName' type='string'>
-  Customer's middle name
-</ParamField>
-
-<ParamField body='nationality' type='string'>
-  ISO 3166-1 alpha-2 nationality code
-</ParamField>
-
-<ParamField body='occupation' type='string'>
-  Customer's occupation or profession
-</ParamField>
-
-<ParamField body='sourceOfFunds' type='string'>
-  Source of funds (e.g., "salary", "business", "investment")
-</ParamField>
-
-<ParamField body='sendWelcomeEmail' type='boolean' default='true'>
-  Whether to send a welcome email to the customer
-</ParamField>
 
 ## Code Examples
 
@@ -109,10 +23,10 @@ Customers can access self-service features including sending remittances, applyi
 ```javascript Node.js
 const axios = require('axios');
 
-async function createCustomer(accessToken, customerData) {
+async function createCustomer(customerData) {
   try {
     const response = await axios.post(
-      'https://remitjunction.fincode.software/api/v6/services/usermanagement/create-customer',
+      'https://remitjunction.fincode.software/api/v6/services/usermanagement/register-customer',
       {
         firstName: customerData.firstName,
         lastName: customerData.lastName,
@@ -135,7 +49,6 @@ async function createCustomer(accessToken, customerData) {
       },
       {
         headers: {
-          'X-Auth-Token': accessToken,
           'Content-Type': 'application/json',
           platform: 'fincode',
           uuid: '200',
@@ -183,8 +96,7 @@ createCustomer(accessToken, newCustomer)
 ```
 
 ```bash cURL
-curl -X POST "https://remitjunction.fincode.software/api/v6/services/usermanagement/create-customer" \
-  -H "X-Auth-Token: YOUR_ACCESS_TOKEN" \
+curl -X POST "https://remitjunction.fincode.software/api/v6/services/usermanagement/register-customer" \
   -H "Content-Type: application/json" \
   -H "platform: fincode" \
   -H "uuid: 200" \
@@ -255,8 +167,6 @@ curl -X POST "https://remitjunction.fincode.software/api/v6/services/usermanagem
   <Card title='Login' icon='right-to-bracket' href='/api/auth/login'>
     Authenticate the newly created customer
   </Card>
-
-{' '}
 
 <Card
   title='Submit KYC Documents'
