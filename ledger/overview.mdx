@@ -3,44 +3,22 @@ title: 'Overview'
 icon: 'atom'
 ---
 
-Welcome to the Ledger Engine documentation. This guide will help you understand how our double-entry accounting system works and how to integrate it into your application.
+At Fincode, we have built a **modular, auditable ledger engine** that serves as the financial backbone for fintech companies to rapidly design, launch, and scale regulated financial products.
 
-### What is the Ledger Engine?
+Our ledger abstracts complexity around money movement, balances, interest, repayments, and reconciliations—allowing fintechs to focus on customer experience, distribution, and growth rather than core financial plumbing.
 
-The Ledger Engine is a **double-entry accounting system** that records every financial movement across the platform. It provides:
+### What the Fincode Ledger Engine Does
 
-- **Account Management** - Create and manage wallet accounts with balance tracking
-- **Double-Entry Posting** - Debit and credit transactions with automatic balance updates
-- **Transaction History** - Complete audit trail of all account movements
-- **Balance Queries** - Real-time account balance and transaction history retrieval
+The Fincode ledger engine is a **real-time, double-entry accounting system** purpose-built for modern fintech use cases. It ensures accuracy, consistency, and regulatory alignment across all financial products.
 
-### Key Features
+#### Core Capabilities
 
-<CardGroup cols={2}>
-  <Card title='Double-Entry Accounting'>
-    Every transaction is recorded as both a debit and credit entry, ensuring financial data integrity and accuracy.
-  </Card>
-
-  <Card title='Real-Time Balance Tracking'>
-    Account balances are updated in real-time with every transaction, providing instant balance queries.
-  </Card>
-
-  <Card title='Complete Transaction History'>
-    Full audit trail of all account movements with detailed ledger entries including amounts, dates, and references.
-  </Card>
-
-  <Card title='Multi-Currency Support'>
-    Support for multiple currencies (NGN, USD, GBP, etc.) with currency-specific account balances.
-  </Card>
-
-  <Card title='Idempotency Protection'>
-    Built-in idempotency key support to prevent duplicate transaction processing.
-  </Card>
-
-  <Card title='API-First Design'>
-    RESTful APIs with comprehensive documentation for seamless integration.
-  </Card>
-</CardGroup>
+- **Real-time balance management**
+- **Double-entry accounting** with immutable transaction records
+- **Multi-currency and multi-wallet support**
+- **Event-driven transaction posting**
+- **Product-level and customer-level segregation of funds**
+- **Full auditability and reconciliation readiness**
 
 ### How It Works
 
@@ -64,54 +42,60 @@ The ledger engine flow consists of three main operations:
   For detailed visual flow, see the [Process Flow](/ledger/process-flow) page.
 </Info>
 
-### Core Concepts
+### Products You Can Build on the Ledger
 
-#### Double-Entry Accounting
+The ledger is product-agnostic and can be configured to support multiple fintech verticals:
 
-Every financial transaction is recorded using double-entry bookkeeping principles:
+<CardGroup cols={2}>
+  <Card title='1. Digital Wallets'>
+    - Customer wallets (individual, business, escrow)
+    - Available vs. ledger balance separation
+    - Holds, reversals, fees, and settlements
+    - Multi-currency and FX-ready structures
+  </Card>
 
-- **Debit Entry**: Records money going out of an account
-- **Credit Entry**: Records money coming into an account
-- **Balance**: Automatically calculated as the difference between debits and credits
-- **Immutability**: Once recorded, ledger entries cannot be modified, ensuring data integrity
+  <Card title='2. Lending Products'>
+    - Loan principal, interest, fees, penalties
+    - Amortisation schedules and repayment tracking
+    - Partial repayments and restructures
+    - NPL tracking and write-offs
+    - Integration-ready for credit decisioning engines
+  </Card>
 
-<Card title='Learn More' href='/ledger/process-flow'>
-  Understand how double-entry posting works in detail.
-</Card>
+  <Card title='3. Savings Products'>
+    - Interest-bearing accounts
+    - Fixed and flexible savings plans
+    - Interest accrual and posting logic
+    - Goal-based and pooled savings structures
+  </Card>
 
-#### Account Structure
+  <Card title='4. Investment Products'>
+    - Virtual investment accounts
+    - Unitised balances and NAV tracking
+    - Contributions, redemptions, and returns
+    - Ledger-backed investor reporting and reconciliation
+  </Card>
+</CardGroup>
 
-Accounts in the ledger engine have the following structure:
+### Why the Ledger Matters
 
-- **Account ID**: Unique identifier for the account
-- **Account Number**: Human-readable account number
-- **Account Balance**: Total balance including all transactions
-- **Available Balance**: Balance available for transactions (excluding liens and holds)
-- **Currency**: Account currency (NGN, USD, GBP, etc.)
-- **Status**: Account status (ACTIVATED, DEACTIVATED, etc.)
+Most fintech failures occur not at the UI layer, but at the ledger and reconciliation layer. Fincode’s approach ensures:
 
-#### Transaction Posting
+- **Regulatory confidence** for EMI, MFB, bank, and PSP partners
+- **Scalability** from MVP to millions of transactions
+- **Audit-readiness** for regulators, banks, and investors
+- **Product velocity**, enabling faster launches and iterations
 
-When posting to accounts:
+### How Fintechs Use Fincode Ledger
 
-- **Primary Account**: The main account involved in the transaction
-- **Counterparty Accounts**: One or more accounts that receive or send funds
-- **Amount**: Transaction amount
-- **Direction**: Whether to debit or credit the primary account
-- **Narration**: Optional description of the transaction
+Fincode’s ledger engine is typically used by:
 
-<Card title='Learn More' href='/ledger/process-flow'>
-  Explore the complete posting flow and transaction processing.
-</Card>
+- **Fintech startups** launching wallets, lending, or savings products
+- **Banks and EMIs** offering Banking-as-a-Service or Lending-as-a-Service
+- **Embedded finance providers** building financial products into non-financial platforms
+- **Regulated institutions** modernising legacy core systems
 
-#### Ledger History
 
-Ledger history provides a complete audit trail:
-
-- **Transaction Details**: Amount, date, type, and reference
-- **Balance Changes**: Previous balance and new balance after transaction
-- **Correlation IDs**: Internal and external correlation IDs for tracking
-- **Pagination**: Support for paginated retrieval of large transaction histories
 
 ### Integration Quick Start
 
