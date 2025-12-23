@@ -664,12 +664,47 @@
                                                         "properties": {
                                                             "documentType": {
                                                                 "type": "string",
-                                                                "example": "PROOF_OF_ADDRESS"
+                                                                "example": "INVOICE"
                                                             },
-                                                            "reason": {
+                                                            "businessRuleNumber": {
                                                                 "type": "string",
-                                                                "example": "ANNUAL_REVIEW"
-                                                            }
+                                                                "example": "EXCEL010"
+                                                            },
+                                                            "restrictionLevel": {
+                                                                "type": "string",
+                                                                "example": "WARN"
+                                                            },
+                                                            "docIdType": {
+                                                                "type": "string",
+                                                                "example": "INVOICE"
+                                                            },
+                                                            "docTypeCommonName": {
+                                                                "type": "string",
+                                                                "example": "Service invoice"
+                                                            },
+                                                            "customerInstruction": {
+                                                                "type": "string",
+                                                                "example": ""
+                                                            },
+                                                            "associatedRuleId": {
+                                                                "type": "string",
+                                                                "example": "51017073-8f07-4cc6-81e5-86f1907b5d92"
+                                                            },
+                                                            "dataCollectionFormType": {
+                                                                "type": "string",
+                                                                "example": "BASIC_FILE_UPLOAD"
+                                                            },
+                                                            "acceptableDocType": {
+                                                                "docIdType": {
+                                                                    "type": "string",
+                                                                    "example": "INVOICE"
+                                                                },
+                                                                "docTypeCommonName": {
+                                                                    "type": "string",
+                                                                    "example": "Service invoice"
+                                                                }
+                                                            },
+                                                            "craDynamicFieldIds": null
                                                         }
                                                     }
                                                 },
@@ -913,8 +948,8 @@
         },
         "/usermanagement/profile": {
             "get": {
-                "summary": "User Profile",
-                "description": "Get authenticated user profile",
+                "summary": "Customer Profile",
+                "description": "Get authenticated customer profile",
                 "operationId": "getProfile",
                 "parameters": [
                     {
@@ -935,6 +970,42 @@
                 "responses": {
                     "200": {
                         "description": "User profile details"
+                    }
+                }
+            }
+        },
+        "/admin/customer-management/profile/{id}": {
+            "get": {
+                "summary": "Get Customer By ID",
+                "description": "Get customer profile by ID",
+                "operationId": "getProfileById",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customer profile details"
                     }
                 }
             }
@@ -1284,24 +1355,6 @@
                         "required": true
                     }
                 ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "customerCode": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": [
-                                    "customerCode"
-                                ]
-                            }
-                        }
-                    }
-                },
                 "responses": {
                     "200": {
                         "description": "Enrolment status"
@@ -4589,7 +4642,8 @@
                         "in": "query",
                         "name": "page",
                         "schema": {
-                            "type": "number"
+                            "type": "number",
+                            "example": 1
                         },
                         "required": false
                     },
@@ -4597,7 +4651,8 @@
                         "in": "query",
                         "name": "size",
                         "schema": {
-                            "type": "number"
+                            "type": "number",
+                            "example": 10
                         },
                         "required": false
                     },
@@ -4614,6 +4669,15 @@
                         "name": "paycenter_id",
                         "schema": {
                             "type": "string"
+                        },
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "profile",
+                        "schema": {
+                            "type": "string",
+                            "example": "SENDER"
                         },
                         "required": false
                     }
@@ -4982,12 +5046,27 @@
                                 "type": "object",
                                 "properties": {
                                     "customerCode": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "CUST123456"
                                     },
                                     "attachedDocument": {
                                         "type": "array",
                                         "items": {
-                                            "type": "object"
+                                            "type": "object",
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "proof_of_address.jpg"
+                                                },
+                                                "idType": {
+                                                    "type": "string",
+                                                    "example": "PROOF_OF_ADDRESS"
+                                                },
+                                                "file_base64": {
+                                                    "type": "string",
+                                                    "example": "base64EncodedStringOfYourFile..."
+                                                }
+                                            }
                                         }
                                     }
                                 }
