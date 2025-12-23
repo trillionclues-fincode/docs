@@ -664,47 +664,12 @@
                                                         "properties": {
                                                             "documentType": {
                                                                 "type": "string",
-                                                                "example": "INVOICE"
+                                                                "example": "PROOF_OF_ADDRESS"
                                                             },
-                                                            "businessRuleNumber": {
+                                                            "reason": {
                                                                 "type": "string",
-                                                                "example": "EXCEL010"
-                                                            },
-                                                            "restrictionLevel": {
-                                                                "type": "string",
-                                                                "example": "WARN"
-                                                            },
-                                                            "docIdType": {
-                                                                "type": "string",
-                                                                "example": "INVOICE"
-                                                            },
-                                                            "docTypeCommonName": {
-                                                                "type": "string",
-                                                                "example": "Service invoice"
-                                                            },
-                                                            "customerInstruction": {
-                                                                "type": "string",
-                                                                "example": ""
-                                                            },
-                                                            "associatedRuleId": {
-                                                                "type": "string",
-                                                                "example": "51017073-8f07-4cc6-81e5-86f1907b5d92"
-                                                            },
-                                                            "dataCollectionFormType": {
-                                                                "type": "string",
-                                                                "example": "BASIC_FILE_UPLOAD"
-                                                            },
-                                                            "acceptableDocType": {
-                                                                "docIdType": {
-                                                                    "type": "string",
-                                                                    "example": "INVOICE"
-                                                                },
-                                                                "docTypeCommonName": {
-                                                                    "type": "string",
-                                                                    "example": "Service invoice"
-                                                                }
-                                                            },
-                                                            "craDynamicFieldIds": null
+                                                                "example": "ANNUAL_REVIEW"
+                                                            }
                                                         }
                                                     }
                                                 },
@@ -4677,7 +4642,7 @@
                         "name": "profile",
                         "schema": {
                             "type": "string",
-                            "example": "SENDER"
+                            "example": "sender"
                         },
                         "required": false
                     }
