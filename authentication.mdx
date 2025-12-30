@@ -77,6 +77,36 @@ FinCode supports server-to-server authentication using JWT tokens, allowing your
 
 For comprehensive details on securing your integration, including best practices for managing credentials, please refer to the [Security](/overview/security) section.
 
+## API Token Authentication
+
+For backend services and integrations that require simpler, long-lived authentication, FinCode provides **API Tokens**. These tokens are generated from your dashboard and allow you to call authenticated endpoints without going through the login flow.
+
+<Info>
+  API Tokens are ideal for server-to-server communication, scheduled jobs, and automated processes where the standard login flow is impractical.
+</Info>
+
+### Key Features
+
+- **Custom Expiry**: Choose from 24 hours, 1 month, 3 months, 6 months, or 1 year
+- **Multiple Tokens**: Create separate tokens for different services or environments
+- **Full Control**: Rotate, invalidate, or delete tokens anytime from your dashboard
+
+### Using API Tokens
+
+Include the token in the `X-Auth-Token` header:
+
+```bash
+curl -X GET "https://{domain}.fincode.software/api/v6/services/your-endpoint" \
+  -H "Content-Type: application/json" \
+  -H "X-Auth-Token: your-api-token-here" \
+  -H "platform: fincode" \
+  -H "uuid: 200"
+```
+
+<Card title="Learn More" icon="key" href="/integration/encryption-keys-and-tokens">
+  For complete details on API tokens, encryption keys, and when to use each, see the Encryption Keys and Tokens guide.
+</Card>
+
 ## Interactive Authentication Testing
 
 Test authentication for different user roles in your sandbox environment. Select a role to see the appropriate login request and response.
@@ -570,8 +600,8 @@ async function logout(accessToken) {
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title='API Keys' icon='key' href='/integration/api-keys'>
-    Learn about generating and managing API keys for your tenant
+  <Card title='Encryption Keys & Tokens' icon='lock' href='/integration/encryption-keys-and-tokens'>
+    Learn about payload encryption and API token authentication
   </Card>
   <Card title='Webhooks' icon='webhook' href='/integration/webhooks'>
     Set up real-time notifications for authentication events
@@ -579,7 +609,7 @@ async function logout(accessToken) {
   <Card title='Security' icon='shield-check' href='/overview/security'>
     Deep dive into FinCode's security architecture
   </Card>
-  <Card title='Go Live' icon='gauge-high' href='/api/go-live'>
+  <Card title='Go Live' icon='gauge-high' href='/integration/go-live'>
     Complete your integration and go live!
   </Card>
 </CardGroup>

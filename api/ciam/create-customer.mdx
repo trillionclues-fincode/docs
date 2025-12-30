@@ -8,6 +8,31 @@ Create a new customer account with personal information and authentication crede
 
 Customers can access self-service features including sending remittances, applying for loans, and managing investments.
 
+## Password Encryption
+
+<Warning>
+  **Security Requirement**: The `password` and `confirmPassword` fields can optionally be encrypted using RSA public key encryption before sending to the API.
+</Warning>
+
+When registering customers, you can choose to encrypt password fields using the RSA public key provided on your dashboard. Encryption ensures data confidentiality during transmission.
+
+### Customer Registration Flow
+
+The `payloadEncrypted` field determines how the system processes your payload:
+
+| Value | Description |
+|-------|-------------|
+| `true` | Indicates payload is RSA-encrypted. The system will decrypt before processing. |
+| `false` | Indicates payload is sent as raw plaintext. Use only for testing or internal systems. |
+
+<Tip>
+  For production integrations, use `payloadEncrypted` with encrypted passwords to protect customer credentials.
+</Tip>
+
+<Card title="Encryption Keys & Tokens" icon="lock" href="/integration/encryption-keys-and-tokens">
+  Learn how to encrypt passwords using RSA public key encryption with OAEP padding (SHA-256).
+</Card>
+
 ## Request Headers
 
 | Header         | Type   | Required | Description                          |
@@ -22,17 +47,40 @@ Customers can access self-service features including sending remittances, applyi
 
 ```javascript Node.js
 const axios = require('axios');
+const crypto = require('crypto');
 
-async function createCustomer(customerData) {
+// Encrypt password using RSA public key
+function encryptPassword(password, publicKeyBase64) {
+  const publicKeyPem = `-----BEGIN PUBLIC KEY-----\n${publicKeyBase64}\n-----END PUBLIC KEY-----`;
+
+  const encrypted = crypto.publicEncrypt(
+    {
+      key: publicKeyPem,
+      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+      oaepHash: 'sha256',
+    },
+    Buffer.from(password, 'utf8')
+  );
+
+  return encrypted.toString('base64');
+}
+
+async function createCustomer(customerData, publicKey) {
+  // Encrypt passwords before sending
+  const encryptedPassword = encryptPassword(customerData.password, publicKey);
+
   try {
     const response = await axios.post(
-      'https://remitjunction.fincode.software/api/v6/services/usermanagement/register-customer',
+      'https://agent.fincode.software/api/v6/services/usermanagement/register-customer',
       {
+        devicePlatform: customerData.devicePlatform,
+        appVersion: customerData.appVersion,
+        appId: customerData.appId,
+        customerType: customerData.customerType,
+        payloadEncrypted: true, // Required for encrypted data
         firstName: customerData.firstName,
         lastName: customerData.lastName,
         email: customerData.email,
-        phoneNumber: customerData.phoneNumber,
-        dateOfBirth: customerData.dateOfBirth,
         address: {
           street: customerData.address.street,
           city: customerData.address.city,
@@ -40,12 +88,12 @@ async function createCustomer(customerData) {
           postalCode: customerData.address.postalCode,
           country: customerData.address.country,
         },
-        password: customerData.password,
-        confirmPassword: customerData.confirmPassword,
-        nationality: customerData.nationality,
-        occupation: customerData.occupation,
-        sourceOfFunds: customerData.sourceOfFunds,
-        sendWelcomeEmail: true,
+        dialingCode: customerData.dialingCode,
+        phone: customerData.phone,
+        dob: customerData.dob,
+        password: encryptedPassword,
+        confirmPassword: encryptedPassword,
+        dynamicFields: customerData.dynamicFields || {},
       },
       {
         headers: {
@@ -58,7 +106,6 @@ async function createCustomer(customerData) {
 
     console.log('Customer created successfully!');
     console.log('Customer ID:', response.data.customerId);
-    console.log('KYC Status:', response.data.customer.kycStatus);
 
     return response.data;
   } catch (error) {
@@ -70,59 +117,77 @@ async function createCustomer(customerData) {
   }
 }
 
-const newCustomer = {
-  firstName: 'John',
-  lastName: 'Doe',
-  email: 'john.doe@example.com',
-  phoneNumber: '+447123456789',
-  dateOfBirth: '1990-05-15',
-  address: {
-    street: '123 High Street',
-    city: 'London',
-    state: 'Greater London',
-    postalCode: 'SW1A 1AA',
-    country: 'GB',
-  },
-  password: 'SecurePass123!',
-  confirmPassword: 'SecurePass123!',
-  nationality: 'GB',
-  occupation: 'Software Engineer',
-  sourceOfFunds: 'salary',
-};
-
-createCustomer(accessToken, newCustomer)
-  .then((data) => console.log('Success:', data))
-  .catch((err) => console.error('Error:', err));
 ```
 
-```bash cURL
-curl -X POST "https://remitjunction.fincode.software/api/v6/services/usermanagement/register-customer" \
+```bash cURL (Encrypted Password)
+curl -X POST "https://agent.fincode.software/api/v6/services/usermanagement/register-customer" \
   -H "Content-Type: application/json" \
   -H "platform: fincode" \
   -H "uuid: 200" \
   -d '{
+    "devicePlatform": "Android",
+    "appVersion": "1",
+    "appId": "com.app.remit_junction",
+    "customerType": "INDIVIDUAL",
+    "customerRegistrationFlow": "EXTERNAL_CUSTOMER_SETUP_FLOW",
     "firstName": "John",
     "lastName": "Doe",
     "email": "john.doe@example.com",
-    "phoneNumber": "+447123456789",
-    "dateOfBirth": "1990-05-15",
+    "dialingCode": "+44",
+    "phone": "973 293 74813",
+    "dob": "1990-05-15T00:00:00+01:00",
+    "password": "O5ti8XI/pLYC27E+ehORvg2YplXqX3ckoS7Kzk9cEdtC+LSzVICID9c/Tzsi0V5dEVScmSb74/OwCjYEo1akURB+hD1fC5E/SHVEZIWMY6OKZjFqGx4fCd5gtS3z2kQsdWdm6rqd7144pZbB7PPzkK/I5kIM2TyzOlfMg4nMNNTbwowhzt1cn1YK9kGwkLQgdpSv1BNHkiSaXXl+I6FAqPEVt7leJGJ5njkv7abxkYpIB8JjDYGdQzBAzBXCRysBuJSrLVgU78eAqQ3OvVRzS5pvdFDPhWPaqvOt7Xz+NaH3P3X6JS7XF14h0+fll/rvYTg+OqPLu4yX68PaGf6gcg==",
+    "confirmPassword": "O5ti8XI/pLYC27E+ehORvg2YplXqX3ckoS7Kzk9cEdtC+LSzVICID9c/Tzsi0V5dEVScmSb74/OwCjYEo1akURB+hD1fC5E/SHVEZIWMY6OKZjFqGx4fCd5gtS3z2kQsdWdm6rqd7144pZbB7PPzkK/I5kIM2TyzOlfMg4nMNNTbwowhzt1cn1YK9kGwkLQgdpSv1BNHkiSaXXl+I6FAqPEVt7leJGJ5njkv7abxkYpIB8JjDYGdQzBAzBXCRysBuJSrLVgU78eAqQ3OvVRzS5pvdFDPhWPaqvOt7Xz+NaH3P3X6JS7XF14h0+fll/rvYTg+OqPLu4yX68PaGf6gcg==",
     "address": {
-      "street": "123 High Street",
-      "city": "London",
-      "state": "Greater London",
-      "postalCode": "SW1A 1AA",
-      "country": "GB"
+      "address1": "123 High Street",
+      "address2": "",
+      "countryCommonName": "United Kingdom",
+      "postcode": "SW1A 1AA",
+      "countryIso3": "GBR"
     },
-    "password": "SecurePass123!",
-    "confirmPassword": "SecurePass123!",
-    "nationality": "GB",
-    "occupation": "Software Engineer",
-    "sourceOfFunds": "salary",
-    "sendWelcomeEmail": true
+    "dynamicFields": {}
   }'
 ```
 
 </CodeGroup>
+
+<Accordion title="Using payloadEncrypted: false (Testing Only)" icon="flask">
+  For internal testing or development environments where encryption is not required:
+
+  ```bash
+  curl -X POST "https://agent.fincode.software/api/v6/services/usermanagement/register-customer" \
+    -H "Content-Type: application/json" \
+    -H "platform: fincode" \
+    -H "uuid: 200" \
+    -d '{
+      "devicePlatform": "Android",
+      "appVersion": "1",
+      "appId": "com.app.remit_junction",
+      "customerType": "INDIVIDUAL",
+      "payloadEncrypted": false,
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe+test@example.com",
+      "dialingCode": "+44",
+      "phone": "973 293 74813",
+      "dob": "1990-05-15T00:00:00+01:00",
+      "password": "SecurePass123!",
+      "confirmPassword": "SecurePass123!",
+      "address": {
+        "address1": "123 High Street",
+        "address2": "",
+        "countryCommonName": "United Kingdom",
+        "postcode": "SW1A 1AA",
+        "countryIso3": "GBR"
+      },
+      "dynamicFields": {}
+    }'
+  ```
+
+  <Warning>
+    Never use `payloadEncrypted: false` in production environments as it transmits passwords without encryption.
+  </Warning>
+</Accordion>
 
 ## Validation Rules
 

@@ -1,0 +1,230 @@
+---
+title: 'Payload Encryption Guide'
+icon: 'book'
+---
+
+This document describes the steps required to encrypt sensitive payload data such as passwords before sending it to the FinCode API. The encryption ensures data confidentiality during transmission.
+
+We use **RSA public key encryption with OAEP padding (SHA-256)**. You will be provided with a Base64-encoded public key from your dashboard. Using this key, you must encrypt sensitive fields before sending them in your payload.
+
+## Steps to Encrypt Payload
+
+1. Obtain the RSA public key from your dashboard (Base64 encoded)
+2. Convert the public key from Base64 into an RSA PublicKey object
+3. Initialize an RSA cipher using OAEP with SHA-256 padding
+4. Encrypt the plaintext payload (e.g., password) using UTF-8 encoding
+5. Base64-encode the encrypted output
+6. Send the encrypted value in your API request payload
+
+## Code Examples
+
+### Java
+
+```java
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+import javax.crypto.Cipher;
+
+public class PayloadEncryption {
+
+    public static String encryptPayload(String payload, String publicKeyBase64) {
+        try {
+            // Decode the Base64 public key
+            byte[] keyBytes = Base64.getDecoder().decode(publicKeyBase64);
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
+            PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(keySpec);
+
+            // Initialize cipher with OAEP padding
+            Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+
+            // Encrypt and encode
+            byte[] encryptedBytes = cipher.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+
+            return Base64.getEncoder().encodeToString(encryptedBytes);
+        } catch (Exception e) {
+            throw new IllegalStateException("RSA encryption failed", e);
+        }
+    }
+
+    // Usage example
+    public static void main(String[] args) {
+        String publicKey = "YOUR_BASE64_PUBLIC_KEY";
+        String password = "user-password-123";
+
+        String encryptedPassword = encryptPayload(password, publicKey);
+        System.out.println("Encrypted: " + encryptedPassword);
+    }
+}
+```
+
+### JavaScript (Node.js)
+
+```javascript
+const crypto = require('crypto');
+
+function encryptPayload(payload, publicKeyBase64) {
+  // Convert Base64 to PEM format
+  const publicKeyPem = `-----BEGIN PUBLIC KEY-----\n${publicKeyBase64}\n-----END PUBLIC KEY-----`;
+
+  const encrypted = crypto.publicEncrypt(
+    {
+      key: publicKeyPem,
+      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+      oaepHash: 'sha256',
+    },
+    Buffer.from(payload, 'utf8')
+  );
+
+  return encrypted.toString('base64');
+}
+
+// Usage example
+const publicKey = 'YOUR_BASE64_PUBLIC_KEY';
+const password = 'user-password-123';
+
+const encryptedPassword = encryptPayload(password, publicKey);
+console.log('Encrypted:', encryptedPassword);
+```
+
+### Python
+
+```python
+from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives.asymmetric import padding
+import base64
+
+
+def encrypt_payload(payload: str, public_key_base64: str) -> str:
+    """
+    Encrypt a payload using RSA with OAEP padding (SHA-256).
+
+    Args:
+        payload: The plaintext string to encrypt
+        public_key_base64: Base64-encoded RSA public key
+
+    Returns:
+        Base64-encoded encrypted string
+    """
+    # Decode the Base64 public key
+    key_bytes = base64.b64decode(public_key_base64)
+    public_key = serialization.load_der_public_key(key_bytes)
+
+    # Encrypt with OAEP padding
+    encrypted = public_key.encrypt(
+        payload.encode('utf-8'),
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+
+    return base64.b64encode(encrypted).decode('utf-8')
+
+
+# Usage example
+if __name__ == "__main__":
+    public_key = "YOUR_BASE64_PUBLIC_KEY"
+    password = "user-password-123"
+
+    encrypted_password = encrypt_payload(password, public_key)
+    print(f"Encrypted: {encrypted_password}")
+```
+
+**Required package:** `pip install cryptography`
+
+### C# (.NET)
+
+```csharp
+using System;
+using System.Security.Cryptography;
+using System.Text;
+
+public class PayloadEncryption
+{
+    public static string EncryptPayload(string payload, string publicKeyBase64)
+    {
+        // Decode the Base64 public key
+        byte[] keyBytes = Convert.FromBase64String(publicKeyBase64);
+
+        using (RSA rsa = RSA.Create())
+        {
+            // Import the public key
+            rsa.ImportSubjectPublicKeyInfo(keyBytes, out _);
+
+            // Encrypt with OAEP SHA-256 padding
+            byte[] encryptedBytes = rsa.Encrypt(
+                Encoding.UTF8.GetBytes(payload),
+                RSAEncryptionPadding.OaepSHA256
+            );
+
+            return Convert.ToBase64String(encryptedBytes);
+        }
+    }
+
+    // Usage example
+    public static void Main()
+    {
+        string publicKey = "YOUR_BASE64_PUBLIC_KEY";
+        string password = "user-password-123";
+
+        string encryptedPassword = EncryptPayload(password, publicKey);
+        Console.WriteLine($"Encrypted: {encryptedPassword}");
+    }
+}
+```
+
+## API Request Example
+
+Once you have the encrypted value, include it in your API request:
+
+```json
+{
+  "email": "user@example.com",
+  "currentPassword": "BASE64_ENCRYPTED_PASSWORD_HERE"
+}
+```
+
+**Using cURL:**
+
+```bash
+curl -X PUT "https://{domain}.fincode.software/api/v6/services/securitymanagement/login" \
+  -H "Content-Type: application/json" \
+  -H "platform: fincode" \
+  -H "uuid: 200" \
+  -d '{
+    "email": "user@example.com",
+    "currentPassword": "BASE64_ENCRYPTED_PASSWORD_HERE"
+  }'
+```
+
+## Important Notes
+
+1. **Payload Size Limit**: RSA encryption has a maximum payload size based on key length. For a 2048-bit key, the maximum is approximately 190 bytes. Only encrypt individual sensitive fields, not entire request bodies.
+
+2. **Public Key Only**: Never share your private key. Only the public key should be used for encryption on your side.
+
+3. **Key Rotation**: When you rotate your keys on the dashboard, update your integration with the new public key immediately.
+
+4. **Encoding**: Always use UTF-8 encoding for the plaintext before encryption.
+
+5. **Transport Security**: While encryption protects the data in the payload, always use HTTPS for all API communications.
+
+## Troubleshooting
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Decryption fails | Wrong key used | Verify you're using the current public key from dashboard |
+| Padding error | Incorrect cipher mode | Ensure using `OAEPWithSHA-256AndMGF1Padding` |
+| Key format error | Base64 decode issue | Check for line breaks or spaces in the key |
+| Size limit exceeded | Payload too large | Only encrypt individual fields, not entire bodies |
+
+---
+
+## Need Help?
+
+If you encounter any issues with payload encryption, please contact our support team or refer to the [Authentication documentation](/authentication) for more details.

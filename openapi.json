@@ -1054,6 +1054,12 @@
                                         "default": "INDIVIDUAL",
                                         "example": "INDIVIDUAL"
                                     },
+                                    "payloadEncrypted": {
+                                        "type": "boolean",
+                                        "description": "Determines whether the payload contains encrypted or raw data. Use payloadEncrypted: true when sending encrypted passwords, or payloadEncrypted: false for raw passwords.",
+                                        "default": true,
+                                        "example": true
+                                    },
                                     "firstName": {
                                         "type": "string",
                                         "example": "Excel"
@@ -1083,12 +1089,14 @@
                                     "password": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "Password@1"
+                                        "description": "Customer password. Must be RSA-encrypted (Base64) when using payloadEncrypted is true, or raw when using false.",
+                                        "example": "O5ti8XI/pLYC27E+ehORvg2YplXqX3ckoS7Kzk9cEdtC+LSzVICID9c/Tzsi0V5d..."
                                     },
                                     "confirmPassword": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "Password@1"
+                                        "description": "Must match the password field. Must be RSA-encrypted (Base64) when using payloadEncrypted is true, or raw when false.",
+                                        "example": "O5ti8XI/pLYC27E+ehORvg2YplXqX3ckoS7Kzk9cEdtC+LSzVICID9c/Tzsi0V5d..."
                                     },
                                     "address": {
                                         "type": "object",
@@ -1125,6 +1133,7 @@
                                     "appVersion",
                                     "appId",
                                     "customerType",
+                                    "payloadEncrypted",
                                     "firstName",
                                     "lastName",
                                     "email",

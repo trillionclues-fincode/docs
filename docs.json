@@ -39,6 +39,8 @@
           {
             "group": "Integration",
             "pages": [
+              "integration/encryption-keys-and-tokens",
+              "integration/payload-encryption-guide",
               "integration/payment-methods",
               "integration/testing",
               "integration/go-live",
