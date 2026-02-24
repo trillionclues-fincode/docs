@@ -1,0 +1,313 @@
+---
+title: "Webhooks"
+description: "Receive real-time notifications when transaction statuses change"
+---
+
+## Overview
+
+Webhooks allow you to receive real-time HTTP notifications whenever a transaction status changes. Instead of polling our API for updates, we push the data directly to your server as soon as an event occurs.
+
+When a transaction is processed (paid, failed, or cancelled), we send a `POST` request to the webhook URL you registered with us, containing the full transaction details.
+
+<Info>
+  Webhook notifications are sent for terminal transaction statuses: **PAID**, **FAILED**, and **CANCELLED**.
+</Info>
+
+---
+
+## How It Works
+
+<Steps>
+  <Step title="Register your webhook URL">
+    Provide your webhook callback URL to your account manager during onboarding. This is the HTTPS endpoint where we will send event notifications.
+  </Step>
+  <Step title="A transaction status changes">
+    When a payout transaction reaches a terminal status (PAID, FAILED, or CANCELLED), we build a webhook event with the full transaction details.
+  </Step>
+  <Step title="We send a POST request">
+    Each event is sent individually as a JSON payload via HTTP POST to your registered webhook URL.
+  </Step>
+  <Step title="You acknowledge with 200 OK">
+    Your server must respond with a `200` HTTP status code to confirm receipt. Any other response code triggers a retry.
+  </Step>
+</Steps>
+
+---
+
+## Event Structure
+
+Each webhook notification is a JSON object with the following fields:
+
+### Required Fields
+
+| Field        | Type   | Description                                                                 |
+|--------------|--------|-----------------------------------------------------------------------------|
+| `eventType`  | String | Type of event. Currently `TRANSACTION_STATUS`.                              |
+| `Reference`  | String | Unique transaction reference (PCN). Encrypted if encryption is enabled.     |
+| `Status`     | String | Transaction status: `PAID`, `FAILED`, or `CANCELLED`.                       |
+| `msgNote`    | String | Human-readable description of the event.                                    |
+| `msgCode`    | String | Status code from the processing provider.                                   |
+
+### Transaction Details
+
+| Field                              | Type    | Description                                                |
+|------------------------------------|---------|------------------------------------------------------------|
+| `transactionId`                    | String  | Internal transaction identifier.                           |
+| `amountSent`                       | Number  | Amount sent by the sender.                                 |
+| `amountReceived`                   | Number  | Amount to be received by the beneficiary.                  |
+| `totalAmount`                      | Number  | Total charged amount (sending amount + commission + VAT).  |
+| `transactionDate`                  | String  | ISO 8601 timestamp of when the transaction was created.    |
+| `sendingCurrencyCode`              | String  | Currency of the sending amount (e.g., `GBP`).             |
+| `receivingCurrencyCode`            | String  | Currency of the receiving amount (e.g., `NGN`).            |
+| `bankName`                         | String  | Destination bank name.                                     |
+| `deliveryMethod`                   | String  | How the funds are delivered (e.g., `ACCOUNTPAYMENT`, `CASHPICKUP`, `MOBILE_MONEY`). |
+| `beneficiaryAccountNumber`         | String  | Beneficiary's bank account number.                         |
+| `beneficiaryAccountHoldersName`    | String  | Name on the beneficiary's bank account.                    |
+| `beneficiaryFullName`              | String  | Full name of the beneficiary.                              |
+| `beneficiaryEmail`                 | String  | Beneficiary's email address.                               |
+| `beneficiaryAddress`               | String  | Beneficiary's address.                                     |
+| `sortCode`                         | String  | Bank sort code (where applicable).                         |
+| `bankCode`                         | String  | Bank code.                                                 |
+| `countryTo`                        | String  | Destination country name.                                  |
+| `transactionType`                  | String  | Transaction type (e.g., `ACCOUNTPAYMENT`, `CASHPICKUP`).  |
+| `paymentType`                      | String  | Payment method used (e.g., `CARD`).                        |
+| `accountType`                      | String  | Beneficiary account type (e.g., `SAVINGS_ACCOUNT`).        |
+| `customer`                         | String  | Sender's customer ID.                                      |
+| `compliant`                        | Boolean | Whether the transaction passed compliance checks.          |
+| `complianceCheck`                  | String  | Compliance check result.                                   |
+| `sanctionFlagColor`                | String  | Sanction screening flag colour.                            |
+
+---
+
+## Example Webhook Payload
+
+### Successful Transaction (PAID)
+
+```json
+{
+  "eventType": "TRANSACTION_STATUS",
+  "Reference": "PCN-12345",
+  "Status": "PAID",
+  "msgNote": "Transaction completed successfully",
+  "msgCode": "00",
+  "transactionId": "txn-abc-123",
+  "amountSent": 500.00,
+  "amountReceived": 450.00,
+  "totalAmount": 525.50,
+  "transactionDate": "2026-02-16T18:58:55.000+00:00",
+  "sendingCurrencyCode": "GBP",
+  "receivingCurrencyCode": "NGN",
+  "bankName": "Access Bank",
+  "deliveryMethod": "ACCOUNTPAYMENT",
+  "beneficiaryAccountNumber": "0123456789",
+  "beneficiaryAccountHoldersName": "John Doe",
+  "beneficiaryFullName": "John Doe",
+  "beneficiaryEmail": "john@example.com",
+  "beneficiaryAddress": "123 Lagos Street, Lagos",
+  "sortCode": "123456",
+  "bankCode": "044",
+  "countryTo": "Nigeria",
+  "transactionType": "ACCOUNTPAYMENT",
+  "paymentType": "CARD",
+  "accountType": "SAVINGS_ACCOUNT",
+  "customer": "cust-xyz-789",
+  "compliant": true,
+  "complianceCheck": "PASSED",
+  "sanctionFlagColor": "GREEN"
+}
+```
+
+### Failed Transaction
+
+```json
+{
+  "eventType": "TRANSACTION_STATUS",
+  "Reference": "PCN-67890",
+  "Status": "FAILED",
+  "msgNote": "Insufficient funds",
+  "msgCode": "0030",
+  "transactionId": "txn-def-456",
+  "amountSent": 1000.00,
+  "amountReceived": 900.00,
+  "totalAmount": 1050.00,
+  "transactionDate": "2026-02-16T20:30:00.000+00:00",
+  "sendingCurrencyCode": "GBP",
+  "receivingCurrencyCode": "NGN",
+  "bankName": "GTBank",
+  "deliveryMethod": "ACCOUNTPAYMENT",
+  "beneficiaryFullName": "Jane Smith",
+  "countryTo": "Nigeria"
+}
+```
+
+### Cancelled Transaction
+
+```json
+{
+  "eventType": "TRANSACTION_STATUS",
+  "Reference": "PCN-11111",
+  "Status": "CANCELLED",
+  "msgNote": "Transaction cancelled by operator",
+  "msgCode": "00",
+  "transactionId": "txn-ghi-789",
+  "amountSent": 250.00,
+  "amountReceived": 225.00,
+  "totalAmount": 265.00,
+  "transactionDate": "2026-02-17T10:15:00.000+00:00",
+  "sendingCurrencyCode": "GBP",
+  "receivingCurrencyCode": "KES",
+  "deliveryMethod": "MOBILE_MONEY",
+  "beneficiaryFullName": "Alex Mwangi",
+  "countryTo": "Kenya"
+}
+```
+
+---
+
+## Status Codes
+
+### Status Values
+
+| Status      | Description                        |
+|-------------|------------------------------------|
+| `PAID`      | Transaction successfully paid out. |
+| `FAILED`    | Transaction failed to process.     |
+| `CANCELLED` | Transaction was cancelled.         |
+
+### Common msgCode Values
+
+| Code   | Description        | Details                          |
+|--------|--------------------|----------------------------------|
+| `00`   | Success            | Transaction completed.           |
+| `0000` | Pending            | Transaction is being processed.  |
+| `0030` | Insufficient Funds | Not enough balance.              |
+| `0031` | Invalid Account    | Account not found.               |
+| `0099` | Unknown Error      | Generic processing error.        |
+
+---
+
+## Retry Strategy
+
+Your server **must** respond with a `200` HTTP status code to acknowledge receipt of the webhook.
+
+If your server returns any other status code (e.g., `4xx`, `5xx`) or the request times out, the webhook delivery is considered failed and **will be retried**.
+
+<Warning>
+  If your endpoint consistently fails, the message will be retried until the SQS message retention period expires. Ensure your endpoint is reliable and responds promptly.
+</Warning>
+
+---
+
+## Handling Webhooks
+
+### Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Respond quickly" icon="bolt">
+    Return a `200` status code as fast as possible. Do any heavy processing asynchronously after acknowledging the webhook.
+  </Card>
+  <Card title="Be idempotent" icon="shield">
+    The same event may be delivered more than once. Use the `Reference` field to deduplicate and avoid processing the same transaction twice.
+  </Card>
+  <Card title="Verify the source" icon="lock">
+    See [Webhook Security](/api/webhook-security) for how to verify that requests are genuinely from our system.
+  </Card>
+  <Card title="Handle all statuses" icon="list-check">
+    Your endpoint should handle `PAID`, `FAILED`, and `CANCELLED` statuses gracefully.
+  </Card>
+</CardGroup>
+
+### Example Implementation (Node.js)
+
+```javascript
+app.post('/webhook/notify', async (req, res) => {
+  const event = req.body;
+
+  // 1. Validate required fields
+  if (!event.eventType || !event.Reference || !event.Status) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  // 2. Check for duplicates
+  const alreadyProcessed = await db.webhookEvents.findOne({
+    reference: event.Reference
+  });
+
+  if (alreadyProcessed) {
+    return res.status(200).json({ status: 'already_processed' });
+  }
+
+  // 3. Acknowledge immediately
+  res.status(200).json({ status: 'received' });
+
+  // 4. Process asynchronously
+  try {
+    switch (event.Status) {
+      case 'PAID':
+        await markTransactionAsPaid(event);
+        break;
+      case 'FAILED':
+        await markTransactionAsFailed(event);
+        break;
+      case 'CANCELLED':
+        await markTransactionAsCancelled(event);
+        break;
+    }
+
+    // 5. Store to prevent duplicate processing
+    await db.webhookEvents.insert({
+      reference: event.Reference,
+      eventType: event.eventType,
+      status: event.Status,
+      processedAt: new Date(),
+      payload: event
+    });
+  } catch (error) {
+    console.error('Error processing webhook:', error);
+  }
+});
+```
+
+### Example Implementation (Java / Spring Boot)
+
+```java
+@RestController
+@RequestMapping("/webhook")
+public class WebhookController {
+
+    @PostMapping("/notify")
+    public ResponseEntity<Map<String, String>> handleWebhook(@RequestBody Map<String, Object> event) {
+        String reference = (String) event.get("Reference");
+        String status = (String) event.get("Status");
+        String eventType = (String) event.get("eventType");
+
+        if (reference == null || status == null || eventType == null) {
+            return ResponseEntity.badRequest()
+                .body(Map.of("error", "Missing required fields"));
+        }
+
+        // Check for duplicate
+        if (webhookEventRepository.existsByReference(reference)) {
+            return ResponseEntity.ok(Map.of("status", "already_processed"));
+        }
+
+        // Process based on status
+        switch (status) {
+            case "PAID":
+                transactionService.markAsPaid(reference, event);
+                break;
+            case "FAILED":
+                transactionService.markAsFailed(reference, event);
+                break;
+            case "CANCELLED":
+                transactionService.markAsCancelled(reference, event);
+                break;
+        }
+
+        // Store to prevent duplicates
+        webhookEventRepository.save(new WebhookEvent(reference, eventType, status));
+
+        return ResponseEntity.ok(Map.of("status", "received"));
+    }
+}
+```

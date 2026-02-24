@@ -1,0 +1,220 @@
+---
+title: "Webhook Security"
+description: "Securing your webhook endpoint and handling encrypted payloads"
+---
+
+## Overview
+
+When receiving webhook notifications, it is important to ensure that the requests are genuinely from our system and that sensitive data is protected. This guide covers how encryption works and best practices for securing your webhook endpoint.
+
+---
+
+## Reference Encryption
+
+When encryption is enabled for your account, the `Reference` field (which contains the transaction PCN) is encrypted using your **RSA public key** before delivery. All other fields in the payload remain in plaintext.
+
+<Info>
+  Encryption is configured during onboarding. Contact your account manager to enable or disable it.
+</Info>
+
+### How It Works
+
+<Steps>
+  <Step title="You provide your RSA public key">
+    During setup, you provide a Base64-encoded RSA public key which is stored securely on our side.
+  </Step>
+  <Step title="We encrypt the Reference field">
+    Before delivering each webhook event, we encrypt the `Reference` value using your public key.
+  </Step>
+  <Step title="You decrypt with your private key">
+    On receipt, you decrypt the `Reference` field using your corresponding RSA private key.
+  </Step>
+</Steps>
+
+### Encrypted Payload Example
+
+When encryption is enabled, the webhook payload looks like this:
+
+```json
+{
+  "eventType": "TRANSACTION_STATUS",
+  "Reference": "a3F2d8x9kL2mN4pQ7rS0tU...encrypted...",
+  "Status": "PAID",
+  "msgNote": "Transaction completed successfully",
+  "msgCode": "00",
+  "transactionId": "txn-abc-123",
+  "amountSent": 500.00,
+  "amountReceived": 450.00,
+  "totalAmount": 525.50,
+  "sendingCurrencyCode": "GBP",
+  "receivingCurrencyCode": "NGN",
+  "beneficiaryFullName": "John Doe",
+  "countryTo": "Nigeria"
+}
+```
+
+Notice that only `Reference` is encrypted. All other fields are readable.
+
+### Unencrypted Payload Example
+
+When encryption is not enabled:
+
+```json
+{
+  "eventType": "TRANSACTION_STATUS",
+  "Reference": "PCN-12345",
+  "Status": "PAID",
+  "msgNote": "Transaction completed successfully",
+  "msgCode": "00",
+  "transactionId": "txn-abc-123",
+  "amountSent": 500.00,
+  "amountReceived": 450.00,
+  "totalAmount": 525.50
+}
+```
+
+---
+
+## Decrypting the Reference Field
+
+### Node.js
+
+```javascript
+const crypto = require('crypto');
+
+function decryptReference(encryptedReference, privateKeyPem) {
+  const buffer = Buffer.from(encryptedReference, 'base64');
+  const decrypted = crypto.privateDecrypt(
+    {
+      key: privateKeyPem,
+      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+      oaepHash: 'sha256'
+    },
+    buffer
+  );
+  return decrypted.toString('utf8');
+}
+
+// Usage
+const privateKey = fs.readFileSync('private_key.pem', 'utf8');
+const decryptedPcn = decryptReference(event.Reference, privateKey);
+console.log('Decrypted PCN:', decryptedPcn);
+```
+
+### Java
+
+```java
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
+import javax.crypto.Cipher;
+
+public class WebhookDecryptor {
+
+    public static String decryptReference(String encryptedReference, String privateKeyBase64) throws Exception {
+        byte[] keyBytes = Base64.getDecoder().decode(privateKeyBase64);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+        PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(keySpec);
+
+        Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+        byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedReference));
+        return new String(decryptedBytes, "UTF-8");
+    }
+}
+```
+
+### Python
+
+```python
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hashes, serialization
+import base64
+
+def decrypt_reference(encrypted_reference: str, private_key_pem: str) -> str:
+    private_key = serialization.load_pem_private_key(
+        private_key_pem.encode(), password=None
+    )
+    decrypted = private_key.decrypt(
+        base64.b64decode(encrypted_reference),
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+    return decrypted.decode('utf-8')
+```
+
+---
+
+## Securing Your Endpoint
+
+### Use HTTPS
+
+<Warning>
+  Your webhook URL **must** use HTTPS. We do not send webhook notifications to HTTP endpoints.
+</Warning>
+
+### IP Whitelisting
+
+For additional security, you can restrict your webhook endpoint to only accept requests from our IP addresses. Contact your account manager for the current list of IP addresses.
+
+### Respond Quickly
+
+Return a `200` status code immediately upon receiving the webhook. Perform any heavy processing (database updates, notifications, etc.) asynchronously to avoid timeouts.
+
+```javascript
+// Good: Acknowledge first, process later
+app.post('/webhook/notify', async (req, res) => {
+  res.status(200).json({ status: 'received' });
+
+  // Process asynchronously
+  processWebhookAsync(req.body);
+});
+
+// Bad: Processing before responding (risk of timeout)
+app.post('/webhook/notify', async (req, res) => {
+  await heavyDatabaseOperation(req.body);  // might timeout
+  await sendEmailNotification(req.body);   // might timeout
+  res.status(200).json({ status: 'received' });
+});
+```
+
+### Idempotency
+
+The same webhook event may be delivered more than once due to retries. Always check whether you have already processed an event before acting on it.
+
+Use the `Reference` field as your deduplication key:
+
+```javascript
+const alreadyProcessed = await db.webhookEvents.findOne({
+  reference: event.Reference
+});
+
+if (alreadyProcessed) {
+  // Already handled — just acknowledge
+  return res.status(200).json({ status: 'already_processed' });
+}
+```
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="I'm not receiving webhook notifications">
+    Verify that your webhook URL is correctly registered and that your server is reachable from the internet. Ensure your endpoint returns a `200` status code.
+  </Accordion>
+  <Accordion title="I'm receiving duplicate events">
+    This is expected behaviour during retries. Implement idempotency using the `Reference` field to avoid processing the same event twice.
+  </Accordion>
+  <Accordion title="The Reference field is unreadable">
+    If encryption is enabled for your account, the `Reference` field will be Base64-encoded encrypted text. Decrypt it using your RSA private key as shown in the examples above.
+  </Accordion>
+  <Accordion title="My endpoint keeps getting retried">
+    Ensure your server responds with exactly `200` HTTP status code. Any other code (`201`, `204`, `4xx`, `5xx`) will trigger a retry.
+  </Accordion>
+</AccordionGroup>
