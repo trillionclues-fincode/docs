@@ -1,6 +1,6 @@
 ---
 title: "Webhooks"
-description: "Receive real-time notifications when transaction statuses change"
+description: "Receive real-time notifications when transaction statuses change."
 ---
 
 ## Overview
@@ -13,13 +13,11 @@ When a transaction is processed (paid, failed, or cancelled), we send a `POST` r
   Webhook notifications are sent for terminal transaction statuses: **PAID**, **FAILED**, and **CANCELLED**.
 </Info>
 
----
-
 ## How It Works
 
 <Steps>
   <Step title="Register your webhook URL">
-    Provide your webhook callback URL to your account manager during onboarding. This is the HTTPS endpoint where we will send event notifications.
+    Set up your webhook callback URL in the dashboard. This is the HTTPS endpoint where we will send event notifications as they occur.
   </Step>
   <Step title="A transaction status changes">
     When a payout transaction reaches a terminal status (PAID, FAILED, or CANCELLED), we build a webhook event with the full transaction details.
@@ -31,8 +29,6 @@ When a transaction is processed (paid, failed, or cancelled), we send a `POST` r
     Your server must respond with a `200` HTTP status code to confirm receipt. Any other response code triggers a retry.
   </Step>
 </Steps>
-
----
 
 ## Event Structure
 
@@ -77,11 +73,10 @@ Each webhook notification is a JSON object with the following fields:
 | `complianceCheck`                  | String  | Compliance check result.                                   |
 | `sanctionFlagColor`                | String  | Sanction screening flag colour.                            |
 
----
 
 ## Example Webhook Payload
 
-### Successful Transaction (PAID)
+#### Successful Transaction (PAID)
 
 ```json
 {
@@ -117,7 +112,7 @@ Each webhook notification is a JSON object with the following fields:
 }
 ```
 
-### Failed Transaction
+#### Failed Transaction
 
 ```json
 {
@@ -140,7 +135,7 @@ Each webhook notification is a JSON object with the following fields:
 }
 ```
 
-### Cancelled Transaction
+#### Cancelled Transaction
 
 ```json
 {
@@ -161,11 +156,6 @@ Each webhook notification is a JSON object with the following fields:
   "countryTo": "Kenya"
 }
 ```
-
----
-
-## Status Codes
-
 ### Status Values
 
 | Status      | Description                        |
@@ -184,23 +174,17 @@ Each webhook notification is a JSON object with the following fields:
 | `0031` | Invalid Account    | Account not found.               |
 | `0099` | Unknown Error      | Generic processing error.        |
 
----
 
-## Retry Strategy
+### Retry Strategy
 
-Your server **must** respond with a `200` HTTP status code to acknowledge receipt of the webhook.
-
-If your server returns any other status code (e.g., `4xx`, `5xx`) or the request times out, the webhook delivery is considered failed and **will be retried**.
+Your server **must** respond with a `200` HTTP status code to acknowledge receipt of the webhook. If your server returns any other status code (e.g., `4xx`, `5xx`) or the request times out, the webhook delivery is considered failed and **will be retried**.
 
 <Warning>
   If your endpoint consistently fails, the message will be retried until the SQS message retention period expires. Ensure your endpoint is reliable and responds promptly.
 </Warning>
 
----
 
-## Handling Webhooks
-
-### Best Practices
+### Handling Webhooks
 
 <CardGroup cols={2}>
   <Card title="Respond quickly" icon="bolt">
@@ -217,18 +201,16 @@ If your server returns any other status code (e.g., `4xx`, `5xx`) or the request
   </Card>
 </CardGroup>
 
-### Example Implementation (Node.js)
+#### Example Implementation (Node.js)
 
 ```javascript
 app.post('/webhook/notify', async (req, res) => {
   const event = req.body;
 
-  // 1. Validate required fields
   if (!event.eventType || !event.Reference || !event.Status) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  // 2. Check for duplicates
   const alreadyProcessed = await db.webhookEvents.findOne({
     reference: event.Reference
   });
@@ -237,10 +219,8 @@ app.post('/webhook/notify', async (req, res) => {
     return res.status(200).json({ status: 'already_processed' });
   }
 
-  // 3. Acknowledge immediately
   res.status(200).json({ status: 'received' });
 
-  // 4. Process asynchronously
   try {
     switch (event.Status) {
       case 'PAID':
@@ -254,7 +234,7 @@ app.post('/webhook/notify', async (req, res) => {
         break;
     }
 
-    // 5. Store to prevent duplicate processing
+    // store to prevent duplicate processing
     await db.webhookEvents.insert({
       reference: event.Reference,
       eventType: event.eventType,
@@ -268,7 +248,7 @@ app.post('/webhook/notify', async (req, res) => {
 });
 ```
 
-### Example Implementation (Java / Spring Boot)
+#### Example Implementation (Java / Spring Boot)
 
 ```java
 @RestController
@@ -286,12 +266,10 @@ public class WebhookController {
                 .body(Map.of("error", "Missing required fields"));
         }
 
-        // Check for duplicate
         if (webhookEventRepository.existsByReference(reference)) {
             return ResponseEntity.ok(Map.of("status", "already_processed"));
         }
 
-        // Process based on status
         switch (status) {
             case "PAID":
                 transactionService.markAsPaid(reference, event);
@@ -304,7 +282,6 @@ public class WebhookController {
                 break;
         }
 
-        // Store to prevent duplicates
         webhookEventRepository.save(new WebhookEvent(reference, eventType, status));
 
         return ResponseEntity.ok(Map.of("status", "received"));

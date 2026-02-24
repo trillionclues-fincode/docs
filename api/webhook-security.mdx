@@ -1,27 +1,25 @@
 ---
 title: "Webhook Security"
-description: "Securing your webhook endpoint and handling encrypted payloads"
+description: "Securing your webhook endpoint and handling encrypted payloads."
 ---
 
 ## Overview
 
 When receiving webhook notifications, it is important to ensure that the requests are genuinely from our system and that sensitive data is protected. This guide covers how encryption works and best practices for securing your webhook endpoint.
 
----
-
 ## Reference Encryption
 
 When encryption is enabled for your account, the `Reference` field (which contains the transaction PCN) is encrypted using your **RSA public key** before delivery. All other fields in the payload remain in plaintext.
 
 <Info>
-  Encryption is configured during onboarding. Contact your account manager to enable or disable it.
+  Encryption is optional and is configured on your dashboard.
 </Info>
 
 ### How It Works
 
 <Steps>
   <Step title="You provide your RSA public key">
-    During setup, you provide a Base64-encoded RSA public key which is stored securely on our side.
+    You are provided with a Base64-encoded RSA public key which is stored securely on our side and available for download on your dashboard.
   </Step>
   <Step title="We encrypt the Reference field">
     Before delivering each webhook event, we encrypt the `Reference` value using your public key.
@@ -73,11 +71,9 @@ When encryption is not enabled:
 }
 ```
 
----
+### Decrypting the Reference Field
 
-## Decrypting the Reference Field
-
-### Node.js
+#### Node.js
 
 ```javascript
 const crypto = require('crypto');
@@ -95,13 +91,12 @@ function decryptReference(encryptedReference, privateKeyPem) {
   return decrypted.toString('utf8');
 }
 
-// Usage
 const privateKey = fs.readFileSync('private_key.pem', 'utf8');
 const decryptedPcn = decryptReference(event.Reference, privateKey);
 console.log('Decrypted PCN:', decryptedPcn);
 ```
 
-### Java
+#### Java
 
 ```java
 import java.security.KeyFactory;
@@ -148,34 +143,27 @@ def decrypt_reference(encrypted_reference: str, private_key_pem: str) -> str:
     return decrypted.decode('utf-8')
 ```
 
----
-
-## Securing Your Endpoint
-
-### Use HTTPS
+#### Securing Your Endpoint
 
 <Warning>
   Your webhook URL **must** use HTTPS. We do not send webhook notifications to HTTP endpoints.
 </Warning>
 
-### IP Whitelisting
+#### IP Whitelisting
 
 For additional security, you can restrict your webhook endpoint to only accept requests from our IP addresses. Contact your account manager for the current list of IP addresses.
 
-### Respond Quickly
+#### Respond Quickly
 
 Return a `200` status code immediately upon receiving the webhook. Perform any heavy processing (database updates, notifications, etc.) asynchronously to avoid timeouts.
 
 ```javascript
-// Good: Acknowledge first, process later
 app.post('/webhook/notify', async (req, res) => {
   res.status(200).json({ status: 'received' });
 
-  // Process asynchronously
   processWebhookAsync(req.body);
 });
 
-// Bad: Processing before responding (risk of timeout)
 app.post('/webhook/notify', async (req, res) => {
   await heavyDatabaseOperation(req.body);  // might timeout
   await sendEmailNotification(req.body);   // might timeout
@@ -183,7 +171,7 @@ app.post('/webhook/notify', async (req, res) => {
 });
 ```
 
-### Idempotency
+#### Idempotency
 
 The same webhook event may be delivered more than once due to retries. Always check whether you have already processed an event before acting on it.
 
@@ -199,8 +187,6 @@ if (alreadyProcessed) {
   return res.status(200).json({ status: 'already_processed' });
 }
 ```
-
----
 
 ## Troubleshooting
 
