@@ -1865,53 +1865,451 @@
                                 "type": "object",
                                 "properties": {
                                     "amount": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "The receive amount (what the recipient gets).",
+                                        "example": "24.240"
                                     },
                                     "sendAmount": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "The send amount (what the sender pays, excluding fees).",
+                                        "example": "7.000"
                                     },
                                     "inclussive": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether fees are included in the send amount.",
+                                        "example": true
                                     },
                                     "receivingCurrency": {
                                         "type": "string",
-                                        "default": "NGN"
+                                        "default": "NGN",
+                                        "description": "ISO 4217 currency code for the receiving currency."
                                     },
                                     "sendCurrency": {
                                         "type": "string",
-                                        "default": "GBP"
+                                        "default": "GBP",
+                                        "description": "ISO 4217 currency code for the sending currency."
                                     },
                                     "type": {
                                         "type": "string",
-                                        "default": "ACCOUNTPAYMENT"
+                                        "default": "ACCOUNTPAYMENT",
+                                        "description": "Transaction type. Use ACCOUNTPAYMENT for direct bank account transfers, CASHPICKUP for cash collection at a designated pickup point, or MOBILE_MONEY for delivery to a mobile wallet.",
+                                        "enum": ["ACCOUNTPAYMENT", "CASHPICKUP", "MOBILE_MONEY"]
                                     },
                                     "transactionProcessingMode": {
                                         "type": "string",
-                                        "default": "NONE_AGGREGATION"
+                                        "default": "NONE_AGGREGATION",
+                                        "description": "Aggregation mode for the transaction."
                                     },
                                     "descriptionText": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "Optional free-text description or reference for the transaction."
                                     },
                                     "transactionModule": {
                                         "type": "string",
-                                        "default": "REMITTANCE"
+                                        "default": "REMITTANCE",
+                                        "description": "Module under which the transaction is processed."
                                     },
-                                    "creditParty": {
+                                    "securityQuestion": {
+                                        "type": "string",
+                                        "description": "Security question for cash pickup transactions. Leave empty for account payments."
+                                    },
+                                    "securityAnswer": {
+                                        "type": "string",
+                                        "description": "Answer to the security question. Leave empty for account payments."
+                                    },
+                                    "eligibleDocumentList": {
                                         "type": "array",
+                                        "description": "List of eligible documents attached to this transaction. Pass an empty array if none.",
                                         "items": {
                                             "type": "object"
                                         }
                                     },
+                                    "creditParty": {
+                                        "type": "array",
+                                        "description": "Key-value pairs describing the recipient's bank/account details.",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "key": {
+                                                    "type": "string",
+                                                    "description": "Field identifier e.g. bankname, bankaccountno, swiftbic, bankcode, branchcode."
+                                                },
+                                                "value": {
+                                                    "type": "string",
+                                                    "nullable": true,
+                                                    "description": "Value for the field. May be a string or null."
+                                                }
+                                            }
+                                        },
+                                        "example": [
+                                            { "key": "bankname", "value": "Anelik Bank CJSC" },
+                                            { "key": "bankaccountno", "value": "87787786778" },
+                                            { "key": "swiftbic", "value": "2345" },
+                                            { "key": "bankcode", "value": "" },
+                                            { "key": "branchcode", "value": null }
+                                        ]
+                                    },
                                     "internationalTransferInformation": {
-                                        "type": "object"
+                                        "type": "object",
+                                        "description": "Regulatory and routing information for the international transfer.",
+                                        "properties": {
+                                            "originCountry": {
+                                                "type": "string",
+                                                "description": "ISO 3166-1 alpha-3 country code of the sender's country.",
+                                                "example": "GBR"
+                                            },
+                                            "receivingCountry": {
+                                                "type": "string",
+                                                "description": "ISO 3166-1 alpha-3 country code of the recipient's country.",
+                                                "example": "NGA"
+                                            },
+                                            "sourceOfFunds": {
+                                                "type": "string",
+                                                "description": "Declared source of the funds being sent.",
+                                                "example": "SAVINGS"
+                                            },
+                                            "remittancePurpose": {
+                                                "type": "string",
+                                                "description": "Purpose of the remittance.",
+                                                "example": "GIFT"
+                                            },
+                                            "relationshipSender": {
+                                                "type": "string",
+                                                "description": "Relationship between the sender and the recipient."
+                                            },
+                                            "deliveryMethod": {
+                                                "type": "string",
+                                                "description": "Method of delivery. Use directtoaccount for bank transfers.",
+                                                "example": "directtoaccount"
+                                            }
+                                        }
                                     },
                                     "newSenderKyc": {
                                         "type": "object",
-                                        "description": "Object containing full KYC details for the sender"
+                                        "description": "Full KYC profile for the sender.",
+                                        "properties": {
+                                            "nationality": {
+                                                "type": "string",
+                                                "example": "Nigeria"
+                                            },
+                                            "dateOfBirth": {
+                                                "type": "string",
+                                                "description": "ISO 8601 date format YYYY-MM-DD.",
+                                                "example": "2000-05-14"
+                                            },
+                                            "occupation": {
+                                                "type": "string",
+                                                "example": "Software Engineer"
+                                            },
+                                            "employerName": {
+                                                "type": "string",
+                                                "example": "TechWave Ltd"
+                                            },
+                                            "contactPhone": {
+                                                "type": "string",
+                                                "example": "+2348071234667"
+                                            },
+                                            "gender": {
+                                                "type": "string",
+                                                "enum": ["MALE", "FEMALE"],
+                                                "example": "MALE"
+                                            },
+                                            "CustomerType": {
+                                                "type": "string",
+                                                "enum": ["INDIVIDUAL", "BUSINESS"],
+                                                "example": "INDIVIDUAL"
+                                            },
+                                            "emailAddress": {
+                                                "type": "string",
+                                                "example": "john.okafor@example.com"
+                                            },
+                                            "birthCountry": {
+                                                "type": "string",
+                                                "description": "ISO 3166-1 alpha-3 country code of birth.",
+                                                "example": "GBR"
+                                            },
+                                            "idDocument": {
+                                                "type": "array",
+                                                "description": "List of identity documents for the sender.",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "idType": {
+                                                            "type": "string",
+                                                            "example": "PASSPORT"
+                                                        },
+                                                        "idNumber": {
+                                                            "type": "string",
+                                                            "example": "A12345678"
+                                                        },
+                                                        "issueDate": {
+                                                            "type": "string",
+                                                            "example": "10-02-2018T00:00:00.000"
+                                                        },
+                                                        "expiryDate": {
+                                                            "type": "string",
+                                                            "example": "09-02-2028T00:00:00.000"
+                                                        },
+                                                        "dateOfBirth": {
+                                                            "type": "string",
+                                                            "example": "14-05-1990T00:00:00.000"
+                                                        },
+                                                        "issuer": {
+                                                            "type": "string",
+                                                            "example": "Nigeria Immigration Service"
+                                                        },
+                                                        "issuerPlace": {
+                                                            "type": "string",
+                                                            "example": "Lagos"
+                                                        },
+                                                        "issuerCountry": {
+                                                            "type": "string",
+                                                            "example": "NGA"
+                                                        },
+                                                        "otherIdDescription": {
+                                                            "type": "string",
+                                                            "nullable": true
+                                                        },
+                                                        "fileName": {
+                                                            "type": "string",
+                                                            "example": "Passport"
+                                                        },
+                                                        "base64FileData": {
+                                                            "type": "string",
+                                                            "nullable": true
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "postalAddressObject": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "addressLine1": {
+                                                        "type": "string",
+                                                        "example": "12 Adeola Odeku Street"
+                                                    },
+                                                    "addressLine2": {
+                                                        "type": "string",
+                                                        "example": "Block A"
+                                                    },
+                                                    "addressLine3": {
+                                                        "type": "string",
+                                                        "example": "Victoria Island"
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "example": "Lagos"
+                                                    },
+                                                    "stateProvince": {
+                                                        "type": "string",
+                                                        "example": "Lagos State"
+                                                    },
+                                                    "postalCode": {
+                                                        "type": "string",
+                                                        "example": "101241"
+                                                    },
+                                                    "iso3country": {
+                                                        "type": "string",
+                                                        "example": "NGA"
+                                                    }
+                                                }
+                                            },
+                                            "subjectNameObject": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "Mr"
+                                                    },
+                                                    "firstName": {
+                                                        "type": "string",
+                                                        "example": "John"
+                                                    },
+                                                    "middleName": {
+                                                        "type": "string",
+                                                        "example": "Chinedu"
+                                                    },
+                                                    "lastName": {
+                                                        "type": "string",
+                                                        "example": "Okafor"
+                                                    },
+                                                    "fullName": {
+                                                        "type": "string",
+                                                        "example": "John Chinedu Okafor"
+                                                    },
+                                                    "nativeName": {
+                                                        "type": "string",
+                                                        "example": "John C. Okafor"
+                                                    }
+                                                }
+                                            }
+                                        }
                                     },
                                     "newRecipientKyc": {
                                         "type": "object",
-                                        "description": "Object containing full KYC details for the recipient"
+                                        "description": "Full KYC profile for the recipient.",
+                                        "properties": {
+                                            "nationality": {
+                                                "type": "string",
+                                                "example": "Ghana"
+                                            },
+                                            "dateOfBirth": {
+                                                "type": "string",
+                                                "description": "ISO 8601 date format YYYY-MM-DD.",
+                                                "example": "2000-09-21"
+                                            },
+                                            "occupation": {
+                                                "type": "string",
+                                                "example": "Accountant"
+                                            },
+                                            "employerName": {
+                                                "type": "string",
+                                                "example": "Golden Finance Ltd"
+                                            },
+                                            "contactPhone": {
+                                                "type": "string",
+                                                "example": "+233245678901"
+                                            },
+                                            "gender": {
+                                                "type": "string",
+                                                "enum": ["MALE", "FEMALE"],
+                                                "example": "FEMALE"
+                                            },
+                                            "CustomerType": {
+                                                "type": "string",
+                                                "enum": ["INDIVIDUAL", "BUSINESS"],
+                                                "example": "INDIVIDUAL"
+                                            },
+                                            "emailAddress": {
+                                                "type": "string",
+                                                "example": "ama.mensah@example.com"
+                                            },
+                                            "birthCountry": {
+                                                "type": "string",
+                                                "description": "ISO 3166-1 alpha-3 country code of birth.",
+                                                "example": "NGA"
+                                            },
+                                            "companyReg": {
+                                                "type": "string",
+                                                "description": "Company registration number. Required when CustomerType is BUSINESS.",
+                                                "example": "RC-458921"
+                                            },
+                                            "idDocument": {
+                                                "type": "array",
+                                                "description": "List of identity documents for the recipient.",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "idType": {
+                                                            "type": "string",
+                                                            "example": "NATIONAL_ID_CARD"
+                                                        },
+                                                        "idNumber": {
+                                                            "type": "string",
+                                                            "example": "GF123456789"
+                                                        },
+                                                        "issueDate": {
+                                                            "type": "string",
+                                                            "example": "15-01-2019T00:00:00.000"
+                                                        },
+                                                        "expiryDate": {
+                                                            "type": "string",
+                                                            "example": "14-01-2029T00:00:00.000"
+                                                        },
+                                                        "dateOfBirth": {
+                                                            "type": "string",
+                                                            "example": "21-09-1985T00:00:00.000"
+                                                        },
+                                                        "issuer": {
+                                                            "type": "string",
+                                                            "example": "Registrar General"
+                                                        },
+                                                        "issuerPlace": {
+                                                            "type": "string",
+                                                            "example": "Accra"
+                                                        },
+                                                        "issuerCountry": {
+                                                            "type": "string",
+                                                            "example": "GHA"
+                                                        },
+                                                        "otherIdDescription": {
+                                                            "type": "string",
+                                                            "nullable": true
+                                                        },
+                                                        "fileName": {
+                                                            "type": "string",
+                                                            "example": "National Id Card"
+                                                        },
+                                                        "base64FileData": {
+                                                            "type": "string",
+                                                            "nullable": true
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "postalAddressObject": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "addressLine1": {
+                                                        "type": "string",
+                                                        "example": "14 Independence Avenue"
+                                                    },
+                                                    "addressLine2": {
+                                                        "type": "string",
+                                                        "example": "Suite 10"
+                                                    },
+                                                    "addressLine3": {
+                                                        "type": "string",
+                                                        "example": "Accra Central"
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "example": "Accra"
+                                                    },
+                                                    "stateProvince": {
+                                                        "type": "string",
+                                                        "example": "Greater Accra"
+                                                    },
+                                                    "postalCode": {
+                                                        "type": "string",
+                                                        "example": "GA-002-1234"
+                                                    },
+                                                    "iso3country": {
+                                                        "type": "string",
+                                                        "example": "GHA"
+                                                    }
+                                                }
+                                            },
+                                            "subjectName": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "Ms"
+                                                    },
+                                                    "firstName": {
+                                                        "type": "string",
+                                                        "example": "Ama"
+                                                    },
+                                                    "middleName": {
+                                                        "type": "string",
+                                                        "example": "Serwaa"
+                                                    },
+                                                    "lastName": {
+                                                        "type": "string",
+                                                        "example": "Mensah"
+                                                    },
+                                                    "fullName": {
+                                                        "type": "string",
+                                                        "example": "Ama Serwaa Mensah"
+                                                    },
+                                                    "nativeName": {
+                                                        "type": "string",
+                                                        "example": "Ama S. Mensah"
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 },
                                 "required": [
