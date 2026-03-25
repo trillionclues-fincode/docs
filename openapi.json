@@ -1892,7 +1892,8 @@
                                     "type": {
                                         "type": "string",
                                         "default": "ACCOUNTPAYMENT",
-                                        "description": "Transaction type. Use ACCOUNTPAYMENT for bank account transfers."
+                                        "description": "Transaction type. Use ACCOUNTPAYMENT for direct bank account transfers, CASHPICKUP for cash collection at a designated pickup point, or MOBILE_MONEY for delivery to a mobile wallet.",
+                                        "enum": ["ACCOUNTPAYMENT", "CASHPICKUP", "MOBILE_MONEY"]
                                     },
                                     "transactionProcessingMode": {
                                         "type": "string",
@@ -2010,7 +2011,7 @@
                                             },
                                             "gender": {
                                                 "type": "string",
-                                                "enum": ["MALE", "FEMALE", "OTHER"],
+                                                "enum": ["MALE", "FEMALE"],
                                                 "example": "MALE"
                                             },
                                             "CustomerType": {
@@ -2171,7 +2172,7 @@
                                             },
                                             "gender": {
                                                 "type": "string",
-                                                "enum": ["MALE", "FEMALE", "OTHER"],
+                                                "enum": ["MALE", "FEMALE"],
                                                 "example": "FEMALE"
                                             },
                                             "CustomerType": {
