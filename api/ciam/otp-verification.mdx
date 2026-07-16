@@ -1,0 +1,19 @@
+---
+title: 'OTP Verification'
+openapi: 'GET /securitymanagement/otp-verification/{email}/{code}'
+description: 'Verifies a one-time password submitted by the customer for phone number or email verification.'
+---
+
+When a phone number verification compliance requirement is initiated, RemitJunction sends an OTP to the customer via SMS. Your system must:
+
+1. Provide a field for the customer to enter the OTP code
+2. Submit the code to this endpoint
+
+On success, the phone verification KYC rule is marked as complete in the customer's compliance record.
+
+## Path Parameters
+
+| Parameter | Description |
+|-----------|-------------|
+| `email` | The customer's registered email address |
+| `code` | The OTP code received by the customer |
