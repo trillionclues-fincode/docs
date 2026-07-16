@@ -242,6 +242,10 @@
               "api/ciam/payoutCenter-branches",
               "api/ciam/documents-required-for-transaction",
               "api/ciam/attach-documents",
+              "api/ciam/initiate-compliance-action",
+              "api/ciam/initiate-external-provider",
+              "api/ciam/external-screening-webhook",
+              "api/ciam/otp-verification",
               "api/ciam/add-kyc-rule",
               "api/ciam/delete-api-connector-instance"
             ]
@@ -517,6 +521,10 @@
               "api/ciam/payoutCenter-branches",
               "api/ciam/documents-required-for-transaction",
               "api/ciam/attach-documents",
+              "api/ciam/initiate-compliance-action",
+              "api/ciam/initiate-external-provider",
+              "api/ciam/external-screening-webhook",
+              "api/ciam/otp-verification",
               "api/ciam/add-kyc-rule",
               "api/ciam/delete-api-connector-instance"
             ]

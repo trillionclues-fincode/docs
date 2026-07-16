@@ -1,0 +1,15 @@
+---
+title: 'Initiate Compliance Action'
+openapi: 'GET /compliance/initiate-awaiting-compliance-action/{customer-kyc-record-id}'
+description: 'Triggers a specific pending KYC compliance action for a customer and returns the data needed to complete it.'
+---
+
+Call this endpoint once for each outstanding requirement returned by the [Awaiting Compliance Requirements](/api/ciam/awaiting-compliance-requirements) endpoint.
+
+Initiating an action causes RemitJunction to begin processing it on our side. Depending on the action type, this may:
+
+- Send a verification email to the customer (email verification)
+- Send an OTP to the customer's phone (phone number verification)
+- Return verification session details (eKYC)
+
+The `customer-kyc-record-id` in the path is the ID of the specific compliance record returned in the awaiting requirements list. Call this endpoint once per action, not once for all actions.
