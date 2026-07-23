@@ -29,22 +29,45 @@ This endpoint requires a valid **Access Token** for authorization.
   The unique customer identifier for whom the documents are being submitted.
 </ParamField>
 
-<ParamField body='documentType' type='string' required>
-  The type of KYC document being submitted. Supported values:
-  - `PROOF_OF_ADDRESS` - Utility bill, bank statement, or government letter
-  - `ID_VERIFICATION` - Government-issued ID
-  - `PASSPORT` - Valid passport
-  - `DRIVERS_LICENSE` - Valid driver's license
-  - `UTILITY_BILL` - Recent utility bill
-  - `BANK_STATEMENT` - Recent bank statement
-</ParamField>
-
-<ParamField body='document' type='file' required>
-  The document file to upload. Supported formats: PDF, JPG, PNG.
-</ParamField>
-
-<ParamField body='kycRuleId' type='string'>
-  Optional KYC rule ID if submitting for a specific compliance requirement returned from the awaiting compliance endpoint.
+<ParamField body='attachedDocument' type='array' required>
+  List of documents to submit. Each item in the array represents one document.
+  <Expandable title='attachedDocument item'>
+    <ParamField body='idType' type='string' required>
+      The type of KYC document being submitted. Supported values:
+      - `PASSPORT` - Valid passport
+      - `DRIVING_LICENSE` - Valid driver's license
+      - `NATIONAL_ID_CARD` - Government-issued national ID card
+      - `VOTE_CARD` - Voter registration card
+      - `ADDRESS_PROOF` - Proof of address (e.g. utility bill, bank statement)
+      - `SOURCE_OF_INCOME_PROOF` - Proof of income source
+      - `CUSTOMER_DECLARATION_FORM` - Customer declaration form
+      - `OTHER_OFFICIAL_DOCUMENT` - Any other official document
+    </ParamField>
+    <ParamField body='file_base64' type='string' required>
+      The document file encoded as a Base64 string.
+    </ParamField>
+    <ParamField body='name' type='string'>
+      The filename of the document (e.g. `passport.pdf`).
+    </ParamField>
+    <ParamField body='associatedRuleId' type='string'>
+      The KYC rule ID to associate this document with. Returned as `customer-kyc-record-id` from the awaiting compliance endpoint.
+    </ParamField>
+    <ParamField body='issueNo' type='string'>
+      The document's issue number or reference (e.g. passport number).
+    </ParamField>
+    <ParamField body='issueCountry' type='string'>
+      ISO country code of the issuing country (e.g. `GB`, `IN`).
+    </ParamField>
+    <ParamField body='issueDate' type='string'>
+      Date the document was issued, in `YYYY-MM-DD` format.
+    </ParamField>
+    <ParamField body='expiryDate' type='string'>
+      Date the document expires, in `YYYY-MM-DD` format.
+    </ParamField>
+    <ParamField body='dob' type='string'>
+      Customer's date of birth, in `YYYY-MM-DD` format.
+    </ParamField>
+  </Expandable>
 </ParamField>
 
 ## Response
@@ -60,14 +83,11 @@ This endpoint requires a valid **Access Token** for authorization.
 <ResponseField name='data' type='object'>
   Container for the submission result data.
   <Expandable title='data object'>
-    <ResponseField name='documentId' type='string'>
-      The unique identifier of the uploaded document.
+    <ResponseField name='accessScope' type='string'>
+      The customer's current compliance access scope.
     </ResponseField>
-    <ResponseField name='status' type='string'>
-      The current status of the document (e.g., `PENDING_REVIEW`, `APPROVED`).
-    </ResponseField>
-    <ResponseField name='submittedAt' type='string'>
-      ISO 8601 timestamp of when the document was submitted.
+    <ResponseField name='customerStatus' type='string'>
+      The customer's current status.
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -77,38 +97,54 @@ This endpoint requires a valid **Access Token** for authorization.
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v6/services/compliance/attach-documents' \
+curl --location 'https://remitjunction.fincode.software/api/v6/services/documentmanagement/attach-documents' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'platform: fincode' \
 --header 'uuid: 200' \
---form 'customerCode="CUST123456"' \
---form 'documentType="PROOF_OF_ADDRESS"' \
---form 'document=@"/path/to/document.pdf"'
+--header 'Content-Type: application/json' \
+--data '{
+  "customerCode": "CUST123456",
+  "attachedDocument": [
+    {
+      "idType": "ADDRESS_PROOF",
+      "file_base64": "BASE64_ENCODED_FILE_CONTENT",
+      "name": "utility_bill.pdf",
+      "associatedRuleId": "RULE_ID_FROM_AWAITING_COMPLIANCE"
+    }
+  ]
+}'
 ```
 
 ```javascript Node.js
 const axios = require('axios');
-const FormData = require('form-data');
 const fs = require('fs');
 
-const BASE_URL = 'https://remitjunction.fincode.software/api/v6/services/compliance';
+const BASE_URL = 'https://remitjunction.fincode.software/api/v6/services/documentmanagement';
 
-async function submitKycDocument(accessToken, customerCode, documentType, filePath) {
-  const formData = new FormData();
-  formData.append('customerCode', customerCode);
-  formData.append('documentType', documentType);
-  formData.append('document', fs.createReadStream(filePath));
+async function submitKycDocument(accessToken, customerCode, ruleId, idType, filePath) {
+  const fileBase64 = fs.readFileSync(filePath).toString('base64');
+  const fileName = filePath.split('/').pop();
 
   try {
     const response = await axios.post(
       `${BASE_URL}/attach-documents`,
-      formData,
+      {
+        customerCode,
+        attachedDocument: [
+          {
+            idType,
+            file_base64: fileBase64,
+            name: fileName,
+            associatedRuleId: ruleId,
+          },
+        ],
+      },
       {
         headers: {
-          ...formData.getHeaders(),
           'X-Auth-Token': accessToken,
           'platform': 'fincode',
           'uuid': '200',
+          'Content-Type': 'application/json',
         },
       }
     );
@@ -126,7 +162,7 @@ async function submitKycDocument(accessToken, customerCode, documentType, filePa
 
 // Usage Example
 const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-submitKycDocument(accessToken, 'CUST123456', 'PROOF_OF_ADDRESS', './utility_bill.pdf');
+submitKycDocument(accessToken, 'CUST123456', 'RULE_ID_FROM_AWAITING_COMPLIANCE', 'ADDRESS_PROOF', './utility_bill.pdf');
 ```
 
 </CodeGroup>

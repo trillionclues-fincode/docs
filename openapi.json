@@ -664,7 +664,7 @@
                                                         "properties": {
                                                             "documentType": {
                                                                 "type": "string",
-                                                                "example": "PROOF_OF_ADDRESS"
+                                                                "example": "ADDRESS_PROOF"
                                                             },
                                                             "reason": {
                                                                 "type": "string",
@@ -1360,7 +1360,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "type": "object",
                                 "properties": {
@@ -1368,32 +1368,66 @@
                                         "type": "string",
                                         "description": "The unique customer identifier"
                                     },
-                                    "documentType": {
-                                        "type": "string",
-                                        "description": "Type of KYC document being submitted",
-                                        "enum": [
-                                            "PROOF_OF_ADDRESS",
-                                            "ID_VERIFICATION",
-                                            "PASSPORT",
-                                            "DRIVERS_LICENSE",
-                                            "UTILITY_BILL",
-                                            "BANK_STATEMENT"
-                                        ]
-                                    },
-                                    "document": {
-                                        "type": "string",
-                                        "format": "binary",
-                                        "description": "The document file to upload"
-                                    },
-                                    "kycRuleId": {
-                                        "type": "string",
-                                        "description": "Optional KYC rule ID if submitting for a specific compliance requirement"
+                                    "attachedDocument": {
+                                        "type": "array",
+                                        "description": "List of documents to submit",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "idType": {
+                                                    "type": "string",
+                                                    "description": "Type of KYC document being submitted",
+                                                    "enum": [
+                                                        "PASSPORT",
+                                                        "DRIVING_LICENSE",
+                                                        "NATIONAL_ID_CARD",
+                                                        "VOTE_CARD",
+                                                        "ADDRESS_PROOF",
+                                                        "SOURCE_OF_INCOME_PROOF",
+                                                        "CUSTOMER_DECLARATION_FORM",
+                                                        "OTHER_OFFICIAL_DOCUMENT"
+                                                    ]
+                                                },
+                                                "file_base64": {
+                                                    "type": "string",
+                                                    "description": "The document file encoded as a Base64 string"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "description": "Filename of the document"
+                                                },
+                                                "associatedRuleId": {
+                                                    "type": "string",
+                                                    "description": "The KYC rule ID to associate this document with, returned as customer-kyc-record-id from the awaiting compliance endpoint"
+                                                },
+                                                "issueNo": {
+                                                    "type": "string",
+                                                    "description": "Document issue number or reference"
+                                                },
+                                                "issueCountry": {
+                                                    "type": "string",
+                                                    "description": "ISO country code of the issuing country"
+                                                },
+                                                "issueDate": {
+                                                    "type": "string",
+                                                    "description": "Date the document was issued (YYYY-MM-DD)"
+                                                },
+                                                "expiryDate": {
+                                                    "type": "string",
+                                                    "description": "Date the document expires (YYYY-MM-DD)"
+                                                },
+                                                "dob": {
+                                                    "type": "string",
+                                                    "description": "Customer date of birth (YYYY-MM-DD)"
+                                                }
+                                            },
+                                            "required": ["idType", "file_base64"]
+                                        }
                                     }
                                 },
                                 "required": [
                                     "customerCode",
-                                    "documentType",
-                                    "document"
+                                    "attachedDocument"
                                 ]
                             }
                         }
@@ -5432,7 +5466,7 @@
                                                 },
                                                 "idType": {
                                                     "type": "string",
-                                                    "example": "PROOF_OF_ADDRESS"
+                                                    "example": "ADDRESS_PROOF"
                                                 },
                                                 "file_base64": {
                                                     "type": "string",
