@@ -179,22 +179,54 @@ Failed responses follow the same envelope:
 
 ## Error Handling
 
-All API endpoints return HTTP 200. Success or failure is communicated through the `status` field in the response body, not through HTTP status codes. Always check `status` before processing `data`.
+Most API endpoints return HTTP 200 regardless of outcome and communicate success or failure through the `status` field in the response body. However, some endpoints — and Spring Security — will return HTTP-level error codes in certain situations.
+
+| HTTP Status | When it occurs |
+|-------------|----------------|
+| `401` | Missing or invalid JWT token — returned by Spring Security before the request reaches the controller |
+| `400` | Bad request — returned by some endpoints on invalid input |
+| `500` | Internal server error — returned by some endpoints on unexpected failures |
+
+Always handle both layers — the HTTP status code and the `status` field in the response body.
 
 ### Error Handling Example
 
 ```javascript
-const response = await axios.post(url, body, { headers });
-const result = response.data;
+try {
+  const response = await axios.post(url, body, { headers });
+  const result = response.data;
 
-if (result.status === 'FAILED' || result.status === 'ERROR') {
-  console.error('Request failed:', result.message);
-  // result.errorCode will be "-1" for failures
-  throw new Error(result.message);
+  if (result.status === 'FAILED' || result.status === 'ERROR') {
+    console.error('Request failed:', result.message);
+    throw new Error(result.message);
+  }
+
+  // Safe to use result.data
+  return result.data;
+
+} catch (error) {
+  if (error.response) {
+    switch (error.response.status) {
+      case 401:
+        // Token missing or expired — refresh and retry
+        await refreshToken();
+        return makeApiCall();
+
+      case 400:
+        console.error('Bad request:', error.response.data);
+        throw error;
+
+      case 500:
+        console.error('Server error:', error.response.data);
+        throw error;
+
+      default:
+        console.error('Unexpected error:', error.response.data);
+        throw error;
+    }
+  }
+  throw error;
 }
-
-// Safe to use result.data
-return result.data;
 ```
 
 ---
