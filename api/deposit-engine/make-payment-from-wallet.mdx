@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Make Payment from Wallet'
 openapi: "POST /paymentmanagement/makepaymentfromwalletaccount"
 description: 'Process payment for any payable item using customer wallet balance.'
@@ -78,7 +78,7 @@ This endpoint allows customers to pay for transactions, bill payments, wallet fu
 
 ```bash cURL
 curl --request POST \
-  --url https://remitjunction.fincode.software/api/v6/services/paymentmanagement/makepaymentfromwalletaccount \
+  --url https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/makepaymentfromwalletaccount \
   --header 'Content-Type: application/json' \
   --header 'X-Auth-Token: your_auth_token' \
   --header 'uuid: device_uuid' \
@@ -98,7 +98,7 @@ curl --request POST \
 
 ```javascript JavaScript
 const payFromWallet = async (paymentData) => {
-  const response = await fetch('https://remitjunction.fincode.software/api/v6/services/paymentmanagement/makepaymentfromwalletaccount', {
+  const response = await fetch('https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/makepaymentfromwalletaccount', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ const payFromWallet = async (paymentData) => {
 ```python Python
 import requests
 
-url = "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/makepaymentfromwalletaccount"
+url = "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/makepaymentfromwalletaccount"
 headers = {
     "Content-Type": "application/json",
     "X-Auth-Token": "your_auth_token",

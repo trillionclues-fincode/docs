@@ -8,29 +8,20 @@ Invalidate the current user session by revoking both the access token and the re
 
 ## Request Headers
 
-<ParamField
-  header='Content-Type'
-  type='string'
-  required
-  default='application/json'
->
-      Must be `application/json`
+<ParamField header='Content-Type' type='string' required default='application/json'>
+  Must be `application/json`
 </ParamField>
 
 <ParamField header='platform' type='string' required default='fincode'>
-      Platform identifier. Use `fincode`
+  Platform identifier. Use `fincode`
 </ParamField>
 
 <ParamField header='uuid' type='string' required default='200'>
-      Unique request identifier. Use `200`
+  Unique request identifier. Use `200`
 </ParamField>
-<ParamField
-  header='x-auth-token'
-  type='string'
-  required
-  default='eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJyb2xlcyI6WyJNQU5BR0VSIl0sInVzZXItaWQiOiJmMjBiYzg2Yy03NGU1LTQ1NzAtODdlNi0xNzUzZWQwZTM2OTYiLCJpc3MiOiJ0b2tlbi5pc3N1ZXI6aHR0cHM6Ly9tb25leXRyYW5zZmVyYXBwbGljYXRpb24uY29tIiwiZXhwIjoxNzYzNjU1NTAyLCJ0ZW5hbmN5LWlkIjoiMDEwODA3OWEtZTk2NS00OGNlLTkwOWMtZGU5MjliZDllODMwIiwiY2xpZW50LWlkIjoiMDEwODA3OWEtZTk2NS00OGNlLTkwOWMtZGU5MjliZDllODMwIiwiaWF0IjoxNzYzNjUxOTAyLCJqdGkiOiIyZWM1MmY2Yi05MGI1LTRlMGUtYWVm'
->
-    Unique JWT token
+
+<ParamField header='x-auth-token' type='string' required>
+  The JWT access token of the authenticated user.
 </ParamField>
 
 ## Code Examples
@@ -43,7 +34,7 @@ const axios = require("axios");
 async function logout(refreshToken) {
   try {
     const response = await axios.put(
-      "[https://remitjunction.fincode.software/api/v6/services/securitymanagement/logout](https://remitjunction.fincode.software/api/v6/services/securitymanagement/logout)",
+      "https://{your-domain}.fincode.software/api/v6/services/securitymanagement/logout",
       {
         refresh_token: refreshToken,
       },
@@ -70,13 +61,13 @@ logout(currentRefreshToken);
 ```
 
 ```bash cURL
-curl -X PUT "https://remitjunction.fincode.software/api/v6/services/securitymanagement/logout" \
-  -H "Content-Type: application/json" \
-  -H "platform: fincode" \
-  -H "uuid: 200" \
-  -d '{
-    "refresh_token": "YOUR_CURRENT_REFRESH_TOKEN"
-  }'
+curl -X PUT "https://{your-domain}.fincode.software/api/v6/services/securitymanagement/logout" \
+  -H "Content-Type: application/json" \
+  -H "platform: fincode" \
+  -H "uuid: 200" \
+  -d '{
+    "refresh_token": "YOUR_CURRENT_REFRESH_TOKEN"
+  }'
 ```
 
 </CodeGroup>

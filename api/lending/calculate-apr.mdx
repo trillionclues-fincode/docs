@@ -1,6 +1,6 @@
----
+﻿---
 title: 'Calculate APR'
-api: 'POST https://finlend.fincode.software/api/v1/services/user/calculate-apr'
+api: 'POST https://{your-domain}.fincode.software/api/v1/services/user/calculate-apr'
 description: 'Calculates the Annual Percentage Rate (APR) for a loan application based on the loan amount, interest rate, and fees.'
 ---
 
@@ -8,7 +8,7 @@ Calculates the APR for a loan application, providing customers with a clear unde
 
 <RequestExample>
   ```bash cURL POST
-  [https://finlend.fincode.software/api/v1/services/user/calculate-apr](https://finlend.fincode.software/api/v1/services/user/calculate-apr)
+  https://{your-domain}.fincode.software/api/v1/services/user/calculate-apr
   ```
 </RequestExample>
 
@@ -99,7 +99,7 @@ Returns the calculated APR and related cost information.
 <CodeGroup>
 
 ```bash cURL
-curl --location --request POST 'https://finlend.fincode.software/api/v1/services/user/calculate-apr' \
+curl --location --request POST 'https://{your-domain}.fincode.software/api/v1/services/user/calculate-apr' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -117,7 +117,7 @@ curl --location --request POST 'https://finlend.fincode.software/api/v1/services
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v1/services/user';
 
 async function calculateAPR(accessToken, aprData) {
   try {

@@ -1,6 +1,6 @@
----
+﻿---
 title: 'Transfer Status'
-api: 'GET https://finlend.fincode.software/api/v1/services/user/check-transfer-status/{transactionReference}'
+api: 'GET https://{your-domain}.fincode.software/api/v1/services/user/check-transfer-status/{transactionReference}'
 description: 'Checks the settlement status of a fund transfer transaction.'
 ---
 
@@ -8,7 +8,7 @@ Allows customers to check the current status of a fund transfer transaction, inc
 
 <RequestExample>
   ```bash cURL GET
-  [https://finlend.fincode.software/api/v1/services/user/check-transfer-status/{transactionReference}](https://finlend.fincode.software/api/v1/services/user/check-transfer-status/{transactionReference})
+  https://{your-domain}.fincode.software/api/v1/services/user/check-transfer-status/{transactionReference}
   ```
 </RequestExample>
 
@@ -76,7 +76,7 @@ Returns the current status of the transfer transaction.
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://finlend.fincode.software/api/v1/services/user/check-transfer-status/TXN-20240115-001234' \
+curl --location 'https://{your-domain}.fincode.software/api/v1/services/user/check-transfer-status/TXN-20240115-001234' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
 --header 'x-fapi-customer-ip-address: 192.168.1.1' \
@@ -86,7 +86,7 @@ curl --location 'https://finlend.fincode.software/api/v1/services/user/check-tra
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v1/services/user';
 
 async function checkTransferStatus(accessToken, transactionReference) {
   try {

@@ -1,4 +1,4 @@
----
+﻿---
 title: "Login"
 openapi: "PUT /securitymanagement/login"
 description: "Authenticate users and obtain access tokens for API requests"
@@ -40,7 +40,7 @@ Authenticate users with email and password to obtain JWT access and refresh toke
 <CodeGroup>
 
 ```bash cURL
-curl -X PUT "https://remitjunction.fincode.software/api/v6/services/securitymanagement/login" \
+curl -X PUT "https://{your-domain}.fincode.software/api/v6/services/securitymanagement/login" \
   -H "Content-Type: application/json" \
   -H "platform: fincode" \
   -H "uuid: 200" \
@@ -93,7 +93,7 @@ public class FinCodeLogin {
         String requestBody = gson.toJson(loginRequest);
 
         HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("https://remitjunction.fincode.software/api/v6/services/securitymanagement/login"))
+            .uri(URI.create("https://{your-domain}.fincode.software/api/v6/services/securitymanagement/login"))
             .header("Content-Type", "application/json")
             .header("platform", "fincode")
             .header("uuid", "200")

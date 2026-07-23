@@ -1,4 +1,4 @@
----
+﻿---
 title: "Notify Bank Transfer Payment"
 openapi: "POST /paymentmanagement/notify-bank-transfer-payment"
 description: "Notify the system that a customer has made a bank transfer payment, alerting Admin to verify or take appropriate action."
@@ -8,9 +8,9 @@ This endpoint allows a customer to **notify the system** about a bank transfer p
 
 Supported options include:
 
-- `bank_pay_later` – Customer will pay later; adds item to awaiting payments list  
-- `bank_paid_now` – Customer confirms payment has been made  
-- `mistake` – Customer reports a payment was made by mistake  
+- `bank_pay_later` — Customer will pay later; adds item to awaiting payments list  
+- `bank_paid_now` — Customer confirms payment has been made  
+- `mistake` — Customer reports a payment was made by mistake  
 
 ## Authentication
 
@@ -51,7 +51,7 @@ Supported options include:
 
 ```bash cURL
 curl --request POST \
-  --url "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/notify-bank-transfer-payment" \
+  --url "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/notify-bank-transfer-payment" \
   --header 'Content-Type: application/json' \
   --header 'X-Auth-Token: your_auth_token' \
   --header 'uuid: your_device_uuid' \
@@ -65,7 +65,7 @@ curl --request POST \
 
 ```javascript JavaScript
 const response = await fetch(
-  "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/notify-bank-transfer-payment",
+  "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/notify-bank-transfer-payment",
   {
     method: "POST",
     headers: {
@@ -88,7 +88,7 @@ const data = await response.json();
 ```python Python
 import requests
 
-url = "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/notify-bank-transfer-payment"
+url = "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/notify-bank-transfer-payment"
 headers = {
     "Content-Type": "application/json",
     "X-Auth-Token": "your_auth_token",

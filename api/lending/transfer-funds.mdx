@@ -1,6 +1,6 @@
----
+﻿---
 title: 'Transfer Funds to Bank'
-api: 'POST https://finlend.fincode.software/api/v1/services/user/transfer-funds-to-bank'
+api: 'POST https://{your-domain}.fincode.software/api/v1/services/user/transfer-funds-to-bank'
 description: 'Allows customers to transfer funds from their loan wallet to a bank account.'
 ---
 
@@ -8,7 +8,7 @@ Customers can use this endpoint to transfer funds from their loan wallet balance
 
 <RequestExample>
   ```bash cURL POST
-  [https://finlend.fincode.software/api/v1/services/user/transfer-funds-to-bank](https://finlend.fincode.software/api/v1/services/user/transfer-funds-to-bank)
+  https://{your-domain}.fincode.software/api/v1/services/user/transfer-funds-to-bank
   ```
 </RequestExample>
 
@@ -109,7 +109,7 @@ Returns confirmation of the fund transfer with transaction details.
 <CodeGroup>
 
 ```bash cURL
-curl --location --request POST 'https://finlend.fincode.software/api/v1/services/user/transfer-funds-to-bank' \
+curl --location --request POST 'https://{your-domain}.fincode.software/api/v1/services/user/transfer-funds-to-bank' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -131,7 +131,7 @@ curl --location --request POST 'https://finlend.fincode.software/api/v1/services
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v1/services/user';
 
 async function transferFundsToBank(accessToken, transferData) {
   try {

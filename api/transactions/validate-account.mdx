@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Validate Recipient Account'
 openapi: 'GET /usermanagement/validate-bank-account'
 description: 'Validates bank account details before beneficiary creation.'
@@ -31,7 +31,7 @@ This endpoint validates the recipient bank account details with the destination 
 ## Code Example
 
 ```bash cURL
-curl -X GET 'https://remitjunction.fincode.software/api/v6/services/usermanagement/validate-bank-account' \
+curl -X GET 'https://{your-domain}.fincode.software/api/v6/services/usermanagement/validate-bank-account' \
 --header 'X-Auth-Token: YOUR_TOKEN' \
 --header 'Content-Type: application/json' \
 --data '{

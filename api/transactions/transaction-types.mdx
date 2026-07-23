@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Transaction Types'
 openapi: 'GET /transactionmanagement/transaction-types'
 description: 'Retrieves a list of all supported transaction types available on the platform for the current organization.'
@@ -23,7 +23,7 @@ This endpoint is typically **open/unauthenticated** and relies on the domain to 
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v6/services/transactionmanagement/transaction-types' \
+curl --location 'https://{your-domain}.fincode.software/api/v6/services/transactionmanagement/transaction-types' \
 --header 'platform: fincode' \
 --header 'uuid: 200'
 ```
@@ -32,7 +32,7 @@ curl --location 'https://remitjunction.fincode.software/api/v6/services/transact
 const axios = require('axios');
 
 const BASE_URL =
-  'https://remitjunction.fincode.software/api/v6/services/transactionmanagement';
+  'https://{your-domain}.fincode.software/api/v6/services/transactionmanagement';
 
 async function getTransactionTypes() {
   try {

@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Request Loan'
 openapi: 'POST /user/request-loan'
 description: 'Creates a new loan application request from a customer or agent.'
@@ -115,7 +115,7 @@ Creates a new loan application request. Customers or agents can use this endpoin
 <CodeGroup>
 
 ```bash cURL
-curl --location --request POST 'https://finlend.fincode.software/api/v6/services/user/request-loan' \
+curl --location --request POST 'https://{your-domain}.fincode.software/api/v6/services/user/request-loan' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -151,7 +151,7 @@ curl --location --request POST 'https://finlend.fincode.software/api/v6/services
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://finlend.fincode.software/api/v6/services/user';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v6/services/user';
 
 async function requestLoan(accessToken, loanRequestData) {
   try {

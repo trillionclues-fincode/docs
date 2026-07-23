@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Fetch Preference'
 openapi: 'GET /admin/organisation-preference-management/fetch-organisaction-preference'
 description: 'Retrieves the current system and configuration preferences for the authenticated organisation/tenant.'
@@ -23,7 +23,7 @@ This endpoint does NOT requires an **Access Token** for authorization, and relie
 <CodeGroup>
 
 ```bash cURL
-curl --location '[https://remitjunction.fincode.software/api/v6/services/admin/organisation-preference-management/fetch-organisaction-preference](https://remitjunction.fincode.software/api/v6/services/admin/organisation-preference-management/fetch-organisaction-preference)' \
+curl --location 'https://{your-domain}.fincode.software/api/v6/services/admin/organisation-preference-management/fetch-organisaction-preference' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'platform: fincode' \
 --header 'uuid: 200'
@@ -33,7 +33,7 @@ curl --location '[https://remitjunction.fincode.software/api/v6/services/admin/o
 const axios = require('axios');
 
 const BASE_URL =
-  'https://remitjunction.fincode.software/api/v6/services/admin/organisation-preference-management';
+  'https://{your-domain}.fincode.software/api/v6/services/admin/organisation-preference-management';
 
 async function fetchOrganisationPreference(accessToken) {
   try {

@@ -1,6 +1,6 @@
----
+﻿---
 title: 'Add Bank Account'
-api: 'POST https://finlend.fincode.software/api/v1/services/user/create-bank-account'
+api: 'POST https://{your-domain}.fincode.software/api/v1/services/user/create-bank-account'
 description: 'Allows customers to add a bank account to their profile for loan disbursements and repayments.'
 ---
 
@@ -8,7 +8,7 @@ Customers can use this endpoint to register a bank account that can be used for 
 
 <RequestExample>
   ```bash cURL POST
-  [https://finlend.fincode.software/api/v1/services/user/create-bank-account](https://finlend.fincode.software/api/v1/services/user/create-bank-account)
+  https://{your-domain}.fincode.software/api/v1/services/user/create-bank-account
   ```
 </RequestExample>
 
@@ -111,7 +111,7 @@ Returns confirmation of bank account creation with account details.
 <CodeGroup>
 
 ```bash cURL
-curl --location --request POST 'https://finlend.fincode.software/api/v1/services/user/create-bank-account' \
+curl --location --request POST 'https://{your-domain}.fincode.software/api/v1/services/user/create-bank-account' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -132,7 +132,7 @@ curl --location --request POST 'https://finlend.fincode.software/api/v1/services
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v1/services/user';
 
 async function createBankAccount(accessToken, accountData) {
   try {

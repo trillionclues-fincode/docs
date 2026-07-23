@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Delivery Currencies'
 openapi: 'GET /quote/supported-delivery-currencies/{sendingCountryCode}/{receivingCountryCode}/{deliveryMethod}/{sendingCurrencyCode}'
 description: "Retrieves the list of currencies available for the recipient to receive, given the sender's payment currency."
@@ -54,7 +54,7 @@ This endpoint requires a valid **Access Token**
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v6/services/quote/supported-delivery-currencies/GBR/NGA/ACCOUNTPAYMENT/GBP' \
+curl --location 'https://{your-domain}.fincode.software/api/v6/services/quote/supported-delivery-currencies/GBR/NGA/ACCOUNTPAYMENT/GBP' \
 --header 'platform: fincode' \
 --header 'uuid: 200'
 ```

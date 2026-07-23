@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Loan History'
 openapi: 'GET /user/get-loan-history/{customerId}'
 description: 'Retrieves a paginated history of all loans for a customer, including active, completed, and cancelled loans.'
@@ -49,7 +49,7 @@ The unique identifier (UUID) of the customer whose loan history to retrieve.
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://finlend.fincode.software/api/v1/services/user/loan-history/123e4567-e89b-12d3-a456-426614174000?page=1&size=10' \
+curl --location 'https://{your-domain}.fincode.software/api/v1/services/user/loan-history/123e4567-e89b-12d3-a456-426614174000?page=1&size=10' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -60,7 +60,7 @@ curl --location 'https://finlend.fincode.software/api/v1/services/user/loan-hist
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v1/services/user';
 
 async function getCustomerLoanHistory(accessToken, customerId, page = 1, size = 10) {
   try {

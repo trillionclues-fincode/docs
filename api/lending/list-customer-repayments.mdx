@@ -1,6 +1,6 @@
----
+﻿---
 title: 'List Customer Repayments'
-api: 'GET https://finlend.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id}'
+api: 'GET https://{your-domain}.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id}'
 description: 'Retrieves a list of all repayments for a specific customer across all their loans.'
 ---
 
@@ -8,7 +8,7 @@ Fetches all repayment records associated with a customer, providing details abou
 
 <RequestExample>
   ```bash cURL GET
-  [https://finlend.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id}](https://finlend.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id})
+  https://{your-domain}.fincode.software/api/v1/services/user/list-customer-repayments/{customer-id}
   ```
 </RequestExample>
 
@@ -103,7 +103,7 @@ Returns a list of all repayments for the customer.
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://finlend.fincode.software/api/v1/services/user/list-customer-repayments/123e4567-e89b-12d3-a456-426614174000' \
+curl --location 'https://{your-domain}.fincode.software/api/v1/services/user/list-customer-repayments/123e4567-e89b-12d3-a456-426614174000' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
 --header 'x-fapi-customer-ip-address: 192.168.1.1' \
@@ -113,7 +113,7 @@ curl --location 'https://finlend.fincode.software/api/v1/services/user/list-cust
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v1/services/user';
 
 async function getCustomerRepayments(accessToken, customerId) {
   try {

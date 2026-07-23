@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Active Countries'
 openapi: 'GET /utilitiesmanagement/active-countries'
 description: "Retrieves the systems's saved country list."
@@ -23,7 +23,7 @@ This endpoint is typically **public** and **does not require an Access Token** f
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v6/services/utilitiesmanagement/active-countries' \
+curl --location 'https://{your-domain}.fincode.software/api/v6/services/utilitiesmanagement/active-countries' \
 --header 'platform: fincode' \
 --header 'uuid: 200'
 ```
@@ -32,7 +32,7 @@ curl --location 'https://remitjunction.fincode.software/api/v6/services/utilitie
 const axios = require('axios');
 
 const BASE_URL =
-  'https://remitjunction.fincode.software/api/v6/services/utilitiesmanagement';
+  'https://{your-domain}.fincode.software/api/v6/services/utilitiesmanagement';
 
 async function viewCountryList() {
   try {

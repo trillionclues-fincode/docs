@@ -1,6 +1,6 @@
----
+﻿---
 title: 'Update Loan Offer'
-api: 'PUT https://finlend.fincode.software/api/v1/services/user/update-application/{loan-application-id}'
+api: 'PUT https://{your-domain}.fincode.software/api/v1/services/user/update-application/{loan-application-id}'
 description: 'Allows customers to accept or withdraw from a loan offer that has been sent to them.'
 ---
 
@@ -12,7 +12,7 @@ Customers can use this endpoint to respond to a loan offer. If the offer is acce
 
 <RequestExample>
   ```bash cURL PUT
-  [https://finlend.fincode.software/api/v1/services/user/update-application/{loan-application-id}?status=true](https://finlend.fincode.software/api/v1/services/user/update-application/{loan-application-id}?status=true)
+  https://{your-domain}.fincode.software/api/v1/services/user/update-application/{loan-application-id}?status=true
   ```
 </RequestExample>
 
@@ -112,7 +112,7 @@ Returns the updated loan application details.
 <CodeGroup>
 
 ```bash cURL
-curl --location --request PUT 'https://finlend.fincode.software/api/v1/services/user/update-application/123e4567-e89b-12d3-a456-426614174000?status=true' \
+curl --location --request PUT 'https://{your-domain}.fincode.software/api/v1/services/user/update-application/123e4567-e89b-12d3-a456-426614174000?status=true' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -123,7 +123,7 @@ curl --location --request PUT 'https://finlend.fincode.software/api/v1/services/
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v1/services/user';
 
 async function updateLoanApplicationOffer(accessToken, loanApplicationId, acceptOffer) {
   try {
