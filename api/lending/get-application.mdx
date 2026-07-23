@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Get Application'
 openapi: 'GET /admin/loan-application/{loan-application-id}'
 description: 'Retrieves detailed information about a specific loan application by its ID.'
@@ -39,7 +39,7 @@ Fetches comprehensive details of a loan application including customer informati
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://finlend.fincode.software/api/v6/services/admin/loan-application/123e4567-e89b-12d3-a456-426614174000' \
+curl --location 'https://{your-domain}.fincode.software/api/v6/services/admin/loan-application/123e4567-e89b-12d3-a456-426614174000' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -50,7 +50,7 @@ curl --location 'https://finlend.fincode.software/api/v6/services/admin/loan-app
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://finlend.fincode.software/api/v6/services/admin/loan-application';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v6/services/admin/loan-application';
 
 async function getLoanApplication(accessToken, loanApplicationId) {
   try {

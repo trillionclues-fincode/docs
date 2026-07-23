@@ -1,4 +1,4 @@
----
+﻿---
 title: "Payment Methods Charges"
 openapi: "POST /paymentmanagement/payment-methods-charges"
 description: "Retrieve applicable charges for a selected payment method based on transaction or transfer details."
@@ -61,7 +61,7 @@ Charges are determined based on:
 
 ```bash cURL
 curl --request POST \
-  --url "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/payment-methods-charges" \
+  --url "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/payment-methods-charges" \
   --header 'Content-Type: application/json' \
   --header 'X-Auth-Token: your_auth_token' \
   --header 'uuid: your_device_uuid' \
@@ -76,7 +76,7 @@ curl --request POST \
 
 ```javascript JavaScript
 const response = await fetch(
-  "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/payment-methods-charges",
+  "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/payment-methods-charges",
   {
     method: "POST",
     headers: {
@@ -100,7 +100,7 @@ const data = await response.json();
 ```python Python
 import requests
 
-url = "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/payment-methods-charges"
+url = "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/payment-methods-charges"
 headers = {
     "Content-Type": "application/json",
     "X-Auth-Token": "your_auth_token",

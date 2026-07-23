@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Beneficiary Details'
 openapi: 'GET /usermanagement/view-beneficiery-details/{beneficiaryId}'
 description: 'Retrieves the full profile and banking details for a specific saved beneficiary.'
@@ -39,7 +39,7 @@ This endpoint requires a valid **Access Token** for authorization.
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v6/services/usermanagement/view-beneficiery-details/6327c026-c646-4a9d-86b2-57731d867727' \
+curl --location 'https://{your-domain}.fincode.software/api/v6/services/usermanagement/view-beneficiery-details/6327c026-c646-4a9d-86b2-57731d867727' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'platform: fincode' \
 --header 'uuid: 200'
@@ -49,7 +49,7 @@ curl --location 'https://remitjunction.fincode.software/api/v6/services/usermana
 const axios = require('axios');
 
 const BASE_URL =
-  'https://remitjunction.fincode.software/api/v6/services/usermanagement';
+  'https://{your-domain}.fincode.software/api/v6/services/usermanagement';
 
 async function viewBeneficiaryDetails(accessToken, beneficiaryId) {
   const url = `${BASE_URL}/view-beneficiery-details/${beneficiaryId}`;

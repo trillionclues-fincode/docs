@@ -1,4 +1,4 @@
----
+﻿---
 title: "Fund Customer Wallet by Payment Token"
 openapi: "POST /paymentmanagement/processpaymentwithpaymenttoken"
 description: "Verify a payment token and process a payment request. If a token is provided, the payment gateway is used; otherwise, the wallet is used."
@@ -81,7 +81,7 @@ Supported payment flows include:
 
 ```bash cURL
 curl --request POST \
-  --url "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/processpaymentwithpaymenttoken" \
+  --url "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/processpaymentwithpaymenttoken" \
   --header 'Content-Type: application/json' \
   --header 'X-Auth-Token: your_auth_token' \
   --header 'uuid: your_device_uuid' \
@@ -100,7 +100,7 @@ curl --request POST \
 
 ```javascript JavaScript
 const response = await fetch(
-  "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/processpaymentwithpaymenttoken",
+  "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/processpaymentwithpaymenttoken",
   {
     method: "POST",
     headers: {
@@ -128,7 +128,7 @@ const data = await response.json();
 ```python Python
 import requests
 
-url = "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/processpaymentwithpaymenttoken"
+url = "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/processpaymentwithpaymenttoken"
 headers = {
     "Content-Type": "application/json",
     "X-Auth-Token": "your_auth_token",

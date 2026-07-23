@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Destination Countries'
 openapi: 'GET /quote/destination-country-by-delivery-method/{sendingCountryCode}/{deliveryMethod}'
 description: 'Retrieves a list of valid destination countries for a given sending country and payout method, used for defining remittance corridors.'
@@ -48,7 +48,7 @@ The dynamic parts of the URL are mandatory for filtering the results.
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v6/services/quote/destination-country-by-delivery-method/GBR/ACCOUNTPAYMENT' \
+curl --location 'https://{your-domain}.fincode.software/api/v6/services/quote/destination-country-by-delivery-method/GBR/ACCOUNTPAYMENT' \
 --header 'platform: fincode' \
 --header 'uuid: 200'
 ```

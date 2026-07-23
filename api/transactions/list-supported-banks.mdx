@@ -1,4 +1,4 @@
----
+﻿---
 title: 'List Supported Banks'
 openapi: 'GET /bankmanagement/list-supported-banks-iso3/{country}'
 description: 'Retrieves the list of supported banks for a specific country.'
@@ -29,7 +29,7 @@ This endpoint returns a list of banks supported for payouts in the specified cou
 ## Code Example
 
 ```bash cURL
-curl -X GET 'https://remitjunction.fincode.software/api/v6/services/bankmanagement/list-supported-banks-iso3/NGA' \
+curl -X GET 'https://{your-domain}.fincode.software/api/v6/services/bankmanagement/list-supported-banks-iso3/NGA' \
 --header 'X-Auth-Token: YOUR_TOKEN' \
 --header 'platform: fincode' \
 --header 'uuid: 200'

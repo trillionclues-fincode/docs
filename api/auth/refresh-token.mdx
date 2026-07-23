@@ -1,4 +1,4 @@
----
+﻿---
 title: "Refresh Token"
 openapi: "PUT /securitymanagement/refresh-token"
 description: "Obtain a new access token and refresh token using a valid refresh token."
@@ -36,7 +36,7 @@ Use a valid refresh token to obtain a new pair of JWT access and refresh tokens 
 
 <CodeGroup>
 ```bash cURL
-curl -X PUT "https://remitjunction.fincode.software/api/v6/services/securitymanagement/refresh-token" \
+curl -X PUT "https://{your-domain}.fincode.software/api/v6/services/securitymanagement/refresh-token" \
   -H "Content-Type: application/json" \
   -H "platform: fincode" \
   -H "uuid: 200" \

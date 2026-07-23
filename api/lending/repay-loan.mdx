@@ -1,6 +1,6 @@
----
+﻿---
 title: 'Repay Loan'
-api: 'POST https://finlend.fincode.software/api/v1/services/user/repay-loan/{user-id}'
+api: 'POST https://{your-domain}.fincode.software/api/v1/services/user/repay-loan/{user-id}'
 description: 'Allows customers to make a partial repayment for their loan.'
 ---
 
@@ -8,7 +8,7 @@ Customers can use this endpoint to record a partial repayment for their loan. Th
 
 <RequestExample>
   ```bash cURL POST
-  [https://finlend.fincode.software/api/v1/services/user/repay-loan/{user-id}](https://finlend.fincode.software/api/v1/services/user/repay-loan/{user-id})
+  https://{your-domain}.fincode.software/api/v1/services/user/repay-loan/{user-id}
   ```
 </RequestExample>
 
@@ -128,7 +128,7 @@ Returns confirmation of the repayment submission with details.
 <CodeGroup>
 
 ```bash cURL
-curl --location --request POST 'https://finlend.fincode.software/api/v1/services/user/repay-loan/123e4567-e89b-12d3-a456-426614174000' \
+curl --location --request POST 'https://{your-domain}.fincode.software/api/v1/services/user/repay-loan/123e4567-e89b-12d3-a456-426614174000' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -149,7 +149,7 @@ curl --location --request POST 'https://finlend.fincode.software/api/v1/services
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v1/services/user';
 
 async function repayLoan(accessToken, userId, repaymentData) {
   try {

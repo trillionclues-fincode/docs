@@ -1,4 +1,4 @@
----
+﻿---
 title: "Awaiting Payment Actions"
 openapi: "POST /paymentmanagement/awaiting-payment-actions"
 description: "Perform actions on an awaiting payment record such as marking it as 'paid' or 'cancel'. Returns the updated list of awaiting payments based on filters."
@@ -59,7 +59,7 @@ Supported actions include:
 
 ```bash cURL
 curl --request POST \
-  --url "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/awaiting-payment-actions" \
+  --url "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/awaiting-payment-actions" \
   --header 'Content-Type: application/json' \
   --header 'X-Auth-Token: your_auth_token' \
   --header 'uuid: your_device_uuid' \
@@ -75,7 +75,7 @@ curl --request POST \
 
 ```javascript JavaScript
 const response = await fetch(
-  "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/awaiting-payment-actions",
+  "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/awaiting-payment-actions",
   {
     method: "POST",
     headers: {
@@ -100,7 +100,7 @@ const data = await response.json();
 ```python Python
 import requests
 
-url = "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/awaiting-payment-actions"
+url = "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/awaiting-payment-actions"
 headers = {
     "Content-Type": "application/json",
     "X-Auth-Token": "your_auth_token",

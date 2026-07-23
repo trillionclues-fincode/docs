@@ -97,7 +97,7 @@ This endpoint requires a valid **Access Token** for authorization.
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v6/services/documentmanagement/attach-documents' \
+curl --location 'https://{your-domain}.fincode.software/api/v6/services/documentmanagement/attach-documents' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'platform: fincode' \
 --header 'uuid: 200' \
@@ -119,7 +119,7 @@ curl --location 'https://remitjunction.fincode.software/api/v6/services/document
 const axios = require('axios');
 const fs = require('fs');
 
-const BASE_URL = 'https://remitjunction.fincode.software/api/v6/services/documentmanagement';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v6/services/documentmanagement';
 
 async function submitKycDocument(accessToken, customerCode, ruleId, idType, filePath) {
   const fileBase64 = fs.readFileSync(filePath).toString('base64');

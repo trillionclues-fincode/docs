@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Find All Beneficiary'
 openapi: 'GET /usermanagement/find-all-beneficiery'
 description: 'Retrieves a list of all saved beneficiaries associated with the authenticated customer or managed by the agent.'
@@ -28,7 +28,7 @@ This endpoint requires a valid **Access Token** for authorization to identify th
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v6/services/usermanagement/find-all-beneficiery' \
+curl --location 'https://{your-domain}.fincode.software/api/v6/services/usermanagement/find-all-beneficiery' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'platform: fincode' \
 --header 'uuid: 200'
@@ -38,7 +38,7 @@ curl --location 'https://remitjunction.fincode.software/api/v6/services/usermana
 const axios = require('axios');
 
 const BASE_URL =
-  'https://remitjunction.fincode.software/api/v6/services/usermanagement';
+  'https://{your-domain}.fincode.software/api/v6/services/usermanagement';
 
 async function findAllBeneficiaries(accessToken) {
   try {

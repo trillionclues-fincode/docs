@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Required Bank Fields'
 openapi: 'GET /bankmanagement/required-bank-fields/{country}'
 description: 'Retrieves the specific bank fields required for a destination country.'
@@ -29,7 +29,7 @@ Different countries have different banking requirements (e.g., some require a Sw
 ## Code Example
 
 ```bash cURL
-curl -X GET 'https://remitjunction.fincode.software/api/v6/services/bankmanagement/required-bank-fields/NGA' \
+curl -X GET 'https://{your-domain}.fincode.software/api/v6/services/bankmanagement/required-bank-fields/NGA' \
 --header 'X-Auth-Token: YOUR_TOKEN' \
 --header 'platform: fincode' \
 --header 'uuid: 200'

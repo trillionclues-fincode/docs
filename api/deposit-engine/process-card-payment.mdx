@@ -1,4 +1,4 @@
----
+﻿---
 title: "Process Card Payment"
 openapi: "POST /paymentmanagement/process-card-payment"
 description: "Process a card payment by providing card details, transaction amount, and request type. Returns the payment gateway response."
@@ -62,7 +62,7 @@ Supported payment flows include:
 
 ```bash cURL
 curl --request POST \
-  --url "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/process-card-payment" \
+  --url "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/process-card-payment" \
   --header 'Content-Type: application/json' \
   --header 'X-Auth-Token: your_auth_token' \
   --header 'uuid: your_device_uuid' \
@@ -80,7 +80,7 @@ curl --request POST \
 
 ```javascript JavaScript
 const response = await fetch(
-  "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/process-card-payment",
+  "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/process-card-payment",
   {
     method: "POST",
     headers: {
@@ -107,7 +107,7 @@ const data = await response.json();
 ```python Python
 import requests
 
-url = "https://remitjunction.fincode.software/api/v6/services/paymentmanagement/process-card-payment"
+url = "https://{your-domain}.fincode.software/api/v6/services/paymentmanagement/process-card-payment"
 headers = {
     "Content-Type": "application/json",
     "X-Auth-Token": "your_auth_token",

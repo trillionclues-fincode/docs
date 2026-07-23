@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Accept Loan Terms'
 openapi: 'PUT /user/accept-terms-and-conditions/{loanApplicationId}'
 description: 'Allows customers to accept loan terms and conditions, which triggers automatic loan disbursement.'
@@ -43,7 +43,7 @@ This endpoint runs when customers accept the terms and conditions for an approve
 <CodeGroup>
 
 ```bash cURL
-curl --location --request PUT 'https://remitjunction.fincode.software/api/v1/services/user/accept-terms-and-conditions/123e4567-e89b-12d3-a456-426614174000' \
+curl --location --request PUT 'https://{your-domain}.fincode.software/api/v1/services/user/accept-terms-and-conditions/123e4567-e89b-12d3-a456-426614174000' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -54,7 +54,7 @@ curl --location --request PUT 'https://remitjunction.fincode.software/api/v1/ser
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://remitjunction.fincode.software/api/v1/services/user';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v1/services/user';
 
 async function acceptTermsAndConditions(accessToken, loanApplicationId) {
   try {

@@ -1,6 +1,6 @@
----
+﻿---
 title: 'Pending Repayments'
-api: 'GET https://finlend.fincode.software/api/v1/services/user/pending-repayments/{user-id}'
+api: 'GET https://{your-domain}.fincode.software/api/v1/services/user/pending-repayments/{user-id}'
 description: 'Retrieves a paginated list of pending repayments for a user across all their loans.'
 ---
 
@@ -8,7 +8,7 @@ Fetches all pending repayments that the user needs to make, including due dates 
 
 <RequestExample>
   ```bash cURL GET
-  [https://finlend.fincode.software/api/v1/services/user/pending-repayments/{user-id}](https://finlend.fincode.software/api/v1/services/user/pending-repayments/{user-id})
+  https://{your-domain}.fincode.software/api/v1/services/user/pending-repayments/{user-id}
   ```
 </RequestExample>
 
@@ -93,7 +93,7 @@ Returns a list of pending repayments with details.
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://finlend.fincode.software/api/v1/services/user/pending-repayments/123e4567-e89b-12d3-a456-426614174000?page=1&size=10' \
+curl --location 'https://{your-domain}.fincode.software/api/v1/services/user/pending-repayments/123e4567-e89b-12d3-a456-426614174000?page=1&size=10' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -104,7 +104,7 @@ curl --location 'https://finlend.fincode.software/api/v1/services/user/pending-r
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://finlend.fincode.software/api/v1/services/user';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v1/services/user';
 
 async function getPendingRepayments(accessToken, userId, page = 1, size = 10) {
   try {

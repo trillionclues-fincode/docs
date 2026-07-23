@@ -1,4 +1,4 @@
----
+﻿---
 title: 'List Repayments'
 openapi: 'GET /admin/repayments/list'
 description: 'Retrieves a paginated list of all repayments for a loan or across all loans.'
@@ -59,7 +59,7 @@ Fetches a paginated list of repayment records, allowing managers to view and tra
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v6/services/admin/repayments/list?page=1&size=10&status=VERIFIED' \
+curl --location 'https://{your-domain}.fincode.software/api/v6/services/admin/repayments/list?page=1&size=10&status=VERIFIED' \
 --header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
 --header 'x-idempotency-key: unique-key-12345' \
 --header 'x-fapi-auth-date: 2024-01-15T10:30:00Z' \
@@ -70,7 +70,7 @@ curl --location 'https://remitjunction.fincode.software/api/v6/services/admin/re
 ```javascript Node.js
 const axios = require('axios');
 
-const BASE_URL = 'https://remitjunction.fincode.software/api/v6/services/admin/repayments';
+const BASE_URL = 'https://{your-domain}.fincode.software/api/v6/services/admin/repayments';
 
 async function listRepayments(accessToken, filters = {}) {
   try {

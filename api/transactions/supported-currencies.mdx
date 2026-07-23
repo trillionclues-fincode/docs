@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Supported Currencies'
 openapi: 'GET /quote/supported-currencies/{sendingCountryCode}/{receivingCountryCode}/{deliveryMethod}'
 description: 'Retrieves the list of supported currencies for a specific remittance corridor and delivery method.'
@@ -50,7 +50,7 @@ All path parameters are mandatory to define the specific corridor.
 <CodeGroup>
 
 ```bash cURL
-curl --location 'https://remitjunction.fincode.software/api/v6/services/quote/supported-currencies/GBR/NGA/ACCOUNTPAYMENT' \
+curl --location 'https://{your-domain}.fincode.software/api/v6/services/quote/supported-currencies/GBR/NGA/ACCOUNTPAYMENT' \
 --header 'platform: fincode' \
 --header 'uuid: 200'
 ```
