@@ -1,19 +1,44 @@
 ---
 title: 'OTP Verification'
 openapi: 'GET /securitymanagement/otp-verification/{email}/{verification-code}'
-description: 'Verifies a one-time password submitted by the customer for email or phone number verification.'
+description: 'Verifies a one-time code and marks the matching VERIFY_ACCOUNT_VIA_EMAIL or VERIFY_ACCOUNT_VIA_PHONE_NUMBER KYC rule as complete.'
 ---
 
-When an email verification compliance requirement is initiated, RemitJunction sends an OTP to the customer's email address. Your system must:
+This endpoint verifies a one-time code against a pending `VERIFY_ACCOUNT_VIA_EMAIL` or `VERIFY_ACCOUNT_VIA_PHONE_NUMBER` compliance requirement and marks the matching record as complete.
 
-1. Provide a field for the customer to enter the OTP code
-2. Submit the code to this endpoint
+**Email verification** — called automatically when the customer clicks the verification link sent to their email address. The link takes the form:
 
-On success, the `VERIFY_ACCOUNT_VIA_EMAIL` KYC rule is marked as complete in the customer's compliance record.
+```
+{domain}/auth/verification-success?email={email}&c={verification-code}
+```
+
+**Phone verification** — called when the customer submits the 6-digit code sent to their phone number via SMS.
+
+No manual integration step is required from the client for either flow.
 
 ## Path Parameters
 
-| Parameter | Type | Required | Validation | Description |
-|-----------|------|----------|------------|-------------|
-| `email` | String | Yes | — | The customer's registered email address |
-| `verification-code` | String | Yes | Min 3 characters | The OTP code received by the customer via email or SMS |
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `email` | String | Yes | The customer's registered email address |
+| `verification-code` | String | Yes | The one-time code from the email link or SMS |
+
+## Response
+
+```json
+{
+  "status": "SUCCESS",
+  "data": {
+    "smsVerified": true
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | String | `SUCCESS` or `FAILED` |
+| `data.smsVerified` | Boolean | `true` if the code matched and the KYC rule was marked complete |
+
+## Notes
+
+- No authentication token is required.
