@@ -1,0 +1,37 @@
+---
+title: 'Resend Phone Verification SMS'
+openapi: 'GET /securitymanagement/sms-resend-otp/{email}'
+description: 'Resends the phone verification SMS for a customer with a pending VERIFY_ACCOUNT_VIA_PHONE_NUMBER KYC requirement.'
+---
+
+Used to resend the phone verification message when a `VERIFY_ACCOUNT_VIA_PHONE_NUMBER` compliance requirement is pending. The SMS delivered by this endpoint contains both the verification code **and** a clickable verification link. The customer taps the link to complete phone verification — there is no separate code-entry step.
+
+Call this endpoint immediately after the compliance action is initiated to ensure the customer receives a message with the verification link.
+
+## Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `email` | String | Yes | The customer's registered email address. Used to look up the pending KYC record. |
+
+## Response
+
+```json
+{
+  "status": "SUCCESS",
+  "data": {
+    "otpSentViasms": true
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | String | `SUCCESS` or `FAILED` |
+| `data.otpSentViasms` | Boolean | `true` if the SMS was dispatched. `false` if no pending `VERIFY_ACCOUNT_VIA_PHONE_NUMBER` record was found for this customer. |
+
+## Notes
+
+- No authentication token is required.
+- `otpSentViasms: false` does not mean delivery failed — it means no pending phone verification record exists for the customer. Check that the compliance action was correctly initiated first.
+- The customer must tap the link in the SMS to complete verification.
