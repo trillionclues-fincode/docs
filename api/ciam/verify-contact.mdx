@@ -24,7 +24,7 @@ If neither setting is enabled, RemitJunction sends the verification automaticall
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `userId` | string | Yes | The customer's user ID returned from the register-customer endpoint |
-| `type` | string | Yes | The contact type to verify. Must be `EMAIL` or `PHONE_NUMBER` |
+| `type` | enum | Yes | The contact type to verify. One of: `EMAIL`, `PHONE_NUMBER` |
 
 ## Response
 
@@ -32,7 +32,7 @@ The response `data` object contains the verification result:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `type` | string | The contact type that was verified (`EMAIL` or `PHONE_NUMBER`) |
+| `type` | enum | The contact type that was verified. One of: `EMAIL`, `PHONE_NUMBER` |
 | `verified` | boolean | Whether the requirement was marked as fulfilled |
 | `rawProviderResponse` | string | The raw response from the verification provider |
 
