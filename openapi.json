@@ -7109,6 +7109,101 @@
                     }
                 }
             }
+        },
+        "/compliance/external-provider/verify-contact": {
+            "post": {
+                "summary": "Verify Contact",
+                "description": "Notifies RemitJunction that a customer's email or phone has been verified externally. Marks the outstanding KYC requirement as fulfilled and triggers the full KYC lifecycle — including risk score adjustment, compliance decision re-evaluation, and account approval if all thresholds are met.",
+                "operationId": "verifyContact",
+                "tags": [
+                    "Compliance"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "Authentication token for the API request"
+                    },
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "The customer's userId returned from the register-customer endpoint"
+                    },
+                    {
+                        "in": "query",
+                        "name": "type",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["EMAIL", "PHONE_NUMBER"]
+                        },
+                        "required": true,
+                        "description": "The contact type to mark as verified"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Contact verification processed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "SUCCESS"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Contact verified successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "type": {
+                                                    "type": "string",
+                                                    "enum": ["EMAIL", "PHONE_NUMBER"],
+                                                    "example": "EMAIL"
+                                                },
+                                                "verified": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "rawProviderResponse": {
+                                                    "type": "string",
+                                                    "example": "deliverable"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request — missing or unrecognised userId or type"
+                    },
+                    "401": {
+                        "description": "Invalid authentication details"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
         }
     }
 }

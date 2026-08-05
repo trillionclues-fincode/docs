@@ -245,6 +245,7 @@
               "api/ciam/initiate-compliance-action",
               "api/ciam/initiate-external-provider",
               "api/ciam/external-screening-webhook",
+              "api/ciam/verify-contact",
               "api/ciam/otp-verification",
               "api/ciam/add-kyc-rule",
               "api/ciam/delete-api-connector-instance"
@@ -524,6 +525,7 @@
               "api/ciam/initiate-compliance-action",
               "api/ciam/initiate-external-provider",
               "api/ciam/external-screening-webhook",
+              "api/ciam/verify-contact",
               "api/ciam/otp-verification",
               "api/ciam/add-kyc-rule",
               "api/ciam/delete-api-connector-instance"
