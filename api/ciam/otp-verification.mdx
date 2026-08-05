@@ -12,16 +12,36 @@ This endpoint verifies a one-time code against a pending `VERIFY_ACCOUNT_VIA_EMA
 {domain}/auth/verification-success?email={email}&c={verification-code}
 ```
 
-**Phone verification** — called when the customer submits the 6-digit code sent to their phone number via SMS.
+The frontend extracts the `email` and `c` values from the link and passes them as path parameters. No manual input is required from the customer.
 
-No manual integration step is required from the client for either flow.
+**Phone verification** — called when the customer submits the 6-digit code sent to their phone number via SMS. The frontend passes the customer's registered email address and the code they entered.
+
+## Request
+
+```
+GET /securitymanagement/otp-verification/{email}/{verification-code}
+```
+
+No request body or authentication token is required.
 
 ## Path Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `email` | String | Yes | The customer's registered email address |
-| `verification-code` | String | Yes | The one-time code from the email link or SMS |
+| `verification-code` | String | Yes | The one-time code from the email link or the 6-digit SMS code entered by the customer |
+
+## Example Requests
+
+**Email verification** (from link click):
+```
+GET /securitymanagement/otp-verification/john.doe@example.com/a1b2c3d4e5
+```
+
+**Phone verification** (from SMS code entry):
+```
+GET /securitymanagement/otp-verification/john.doe@example.com/482910
+```
 
 ## Response
 
@@ -42,3 +62,4 @@ No manual integration step is required from the client for either flow.
 ## Notes
 
 - No authentication token is required.
+- The same endpoint handles both email and phone verification — the backend resolves which KYC rule to mark complete based on the pending record matching the provided email and code.
