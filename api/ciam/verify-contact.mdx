@@ -1,10 +1,10 @@
 ---
 title: 'Verify Contact'
 openapi: 'POST /compliance/external-provider/verify-contact'
-description: 'Notifies RemitJunction that a customer email or phone has been verified externally, triggering the full KYC lifecycle.'
+description: 'Notifies the platform that a customer email or phone has been verified externally, triggering the full KYC lifecycle.'
 ---
 
-Use this endpoint when your agent handles email or phone verification independently, instead of having RemitJunction send the verification link or OTP to the customer.
+Use this endpoint when your agent handles email or phone verification independently, instead of having the platform send the verification link or OTP to the customer.
 
 Calling this endpoint marks the outstanding email or phone KYC requirement as fulfilled and triggers the full KYC lifecycle automatically — including risk score adjustment, compliance decision re-evaluation, and account approval if all requirements are met.
 
@@ -14,10 +14,10 @@ This endpoint is relevant when your agent has one or both of the following setti
 
 | Setting | Behaviour when enabled |
 |---------|------------------------|
-| `doNotForwardEmailVerification` | RemitJunction does **not** send the email verification link. Your system must verify the customer's email and call this endpoint with `type=EMAIL`. |
-| `doNotForwardPhoneVerification` | RemitJunction does **not** send the phone OTP. Your system must verify the customer's phone and call this endpoint with `type=PHONE_NUMBER`. |
+| `doNotForwardEmailVerification` | the platform does **not** send the email verification link. Your system must verify the customer's email and call this endpoint with `type=EMAIL`. |
+| `doNotForwardPhoneVerification` | the platform does **not** send the phone OTP. Your system must verify the customer's phone and call this endpoint with `type=PHONE_NUMBER`. |
 
-If neither setting is enabled, RemitJunction sends the verification automatically when you call [Initiate Compliance Action](/api/ciam/initiate-compliance-action) and this endpoint is not needed.
+If neither setting is enabled, the platform sends the verification automatically when you call [Initiate Compliance Action](/api/ciam/initiate-compliance-action) and this endpoint is not needed.
 
 ## Request Parameters
 
@@ -40,7 +40,7 @@ The response `data` object contains the verification result:
 
 When this endpoint is called:
 
-1. RemitJunction locates the outstanding KYC requirement for the specified `userId` and contact `type`.
+1. the platform locates the outstanding KYC requirement for the specified `userId` and contact `type`.
 2. The requirement is marked as fulfilled.
 3. The customer's risk score is updated to reflect the completed requirement.
 4. The compliance decision is re-evaluated against the configured thresholds.
