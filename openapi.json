@@ -7113,7 +7113,7 @@
         "/compliance/external-provider/verify-contact": {
             "post": {
                 "summary": "Verify Contact",
-                "description": "Notifies RemitJunction that a customer's email or phone has been verified externally. Marks the outstanding KYC requirement as fulfilled and triggers the full KYC lifecycle — including risk score adjustment, compliance decision re-evaluation, and account approval if all thresholds are met.",
+                "description": "Notifies the platform that a customer's email or phone has been verified externally. Marks the outstanding KYC requirement as fulfilled and triggers the full KYC lifecycle — including risk score adjustment, compliance decision re-evaluation, and account approval if all thresholds are met.",
                 "operationId": "verifyContact",
                 "tags": [
                     "Compliance"

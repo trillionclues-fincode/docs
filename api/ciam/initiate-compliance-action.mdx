@@ -6,7 +6,7 @@ description: 'Triggers a specific pending KYC compliance action for a customer a
 
 Call this endpoint once for each outstanding requirement returned by the [Awaiting Compliance Requirements](/api/ciam/awaiting-compliance-requirements) endpoint.
 
-Initiating an action causes RemitJunction to begin processing it on our side. Depending on the action type, this may:
+Initiating an action causes the platform to begin processing it on our side. Depending on the action type, this may:
 
 - Send a verification email to the customer (email verification)
 - Send an OTP to the customer's phone (phone number verification)
@@ -15,5 +15,5 @@ Initiating an action causes RemitJunction to begin processing it on our side. De
 The `customer-kyc-record-id` in the path is the ID of the specific compliance record returned in the awaiting requirements list. Call this endpoint once per action, not once for all actions.
 
 <Note>
-  **Using an external provider that handles email and phone verification?** If your KYC provider performs contact verification as part of its flow, you must first enable `doNotForwardEmailVerification` and/or `doNotForwardPhoneVerification` in your agent (PayCenter) settings. Without this, customers will receive duplicate verification messages — one from your provider and one from RemitJunction. Once configured, use [Verify Contact](/api/ciam/verify-contact) to notify RemitJunction when your provider has confirmed a customer's email or phone.
+  **Using an external provider that handles email and phone verification?** If your KYC provider performs contact verification as part of its flow, you must first enable `doNotForwardEmailVerification` and/or `doNotForwardPhoneVerification` in your agent (PayCenter) settings. Without this, customers will receive duplicate verification messages — one from your provider and one from the platform. Once configured, use [Verify Contact](/api/ciam/verify-contact) to notify the platform when your provider has confirmed a customer's email or phone.
 </Note>
