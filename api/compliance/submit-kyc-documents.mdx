@@ -49,8 +49,8 @@ This endpoint requires a valid **Access Token** for authorization.
     <ParamField body='name' type='string'>
       The filename of the document (e.g. `passport.pdf`).
     </ParamField>
-    <ParamField body='associatedRuleId' type='string'>
-      The KYC rule ID to associate this document with. Returned as `customer-kyc-record-id` from the awaiting compliance endpoint.
+    <ParamField body='associatedRuleId' type='string' required>
+      The KYC rule ID to associate this document with. Returned as `associatedRuleId` in the awaiting compliance requirements response. This must be included — without it the rule will not be closed.
     </ParamField>
     <ParamField body='issueNo' type='string'>
       The document's issue number or reference (e.g. passport number).

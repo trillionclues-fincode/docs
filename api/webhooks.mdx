@@ -1,13 +1,24 @@
 ---
 title: "Webhooks"
-description: "Receive real-time notifications when transaction statuses change."
+description: "Receive real-time notifications for transaction status changes and compliance decisions."
 ---
 
 ## Overview
 
-Webhooks allow you to receive real-time HTTP notifications whenever a transaction status changes. Instead of polling our API for updates, we push the data directly to your server as soon as an event occurs.
+Webhooks allow you to receive real-time HTTP notifications when key events occur on the platform. Instead of polling our API for updates, we push the data directly to your server as soon as an event occurs.
 
-When a transaction is processed (paid, failed, or cancelled), we send a `POST` request to the webhook URL you registered with us, containing the full transaction details.
+We send a `POST` request to the webhook URL you registered with us, containing the full event payload.
+
+## Webhook Events
+
+| Event | Trigger |
+|-------|---------|
+| `TRANSACTION_STATUS` | A payout transaction reaches a terminal status (PAID, FAILED, or CANCELLED) |
+| `COMPLIANCE_RISK_PROFILE_UPDATED` | A customer's compliance profile is updated following an identity verification (IDV) result or an AML screening decision |
+
+---
+
+## TRANSACTION_STATUS
 
 <Info>
   Webhook notifications are sent for terminal transaction statuses: **PAID**, **FAILED**, and **CANCELLED**.
@@ -286,5 +297,195 @@ public class WebhookController {
 
         return ResponseEntity.ok(Map.of("status", "received"));
     }
+}
+```
+
+---
+
+## COMPLIANCE_RISK_PROFILE_UPDATED
+
+This event is fired whenever a customer's compliance risk profile is updated. It is triggered by two situations:
+
+- **Identity verification (IDV) result** — when an eKYC provider returns a decision and our system processes it.
+- **AML screening update** — when a sanctions, PEP, or adverse media screening produces a new result.
+
+Use this event to keep your own customer records in sync with our compliance decisions without polling.
+
+### Payload Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `eventType` | String | Always `COMPLIANCE_RISK_PROFILE_UPDATED` |
+| `userId` | String | Unique identifier of the customer |
+| `firstName` | String | Customer's first name |
+| `lastName` | String | Customer's last name |
+| `email` | String | Customer's email address |
+| `phone` | String | Customer's phone number |
+| `complianceDecision` | String | Current compliance decision: `APPROVED`, `UNDER_REVIEW`, or `REJECTED` |
+| `riskLevel` | String | Current risk level: `LOW`, `MEDIUM`, or `HIGH` |
+| `currentRiskScore` | Number | Current proven risk score |
+| `maximumPotentialRiskScore` | Number | Maximum possible risk score based on the active configuration |
+| `currentRiskScoreRatio` | Number | Ratio of current risk to maximum potential risk (0 to 1) |
+| `currentTrustScore` | Number | Accumulated trust score from passed checks |
+| `relativeMaximumRisk` | Number | Remaining unknown risk (negative means fully proven) |
+| `sanctionsMatch` | Boolean | `true` if the customer matched a sanctions list entry |
+| `pepMatch` | Boolean | `true` if the customer was identified as a Politically Exposed Person |
+| `adverseMediaMatch` | Boolean | `true` if adverse media results were found |
+| `adverseMediaCount` | Number | Number of adverse media hits |
+| `documentVerificationStatus` | String | Status of document verification: `VERIFIED`, `PENDING`, `FAILED` |
+| `fullNameMatch` | Boolean | `true` if the name on the document fully matched the registered name |
+| `partialNameMatch` | Boolean | `true` if the name was a partial match |
+| `nameMatchPercentage` | Number | Percentage similarity between the document name and the registered name |
+| `didNotMatchSignUpName` | Boolean | `true` if the document name did not match the sign-up name |
+| `sourceOfFundsVerified` | Boolean | `true` if source of funds has been verified |
+| `status` | String | Current customer account status |
+| `kycLastUpdateDate` | String | ISO 8601 timestamp of the last KYC update |
+| `defaultIdentificationDocument` | Object | Most recently verified identity document (see below) |
+| `complianceApprovalHistories` | Array | Ordered list of all compliance scoring events (see below) |
+| `customerKycVerificationRecordEntity` | Array | List of all KYC requirements and their current completion state (see below) |
+
+#### defaultIdentificationDocument
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `documentNumber` | String | The document's reference number |
+| `identificationType` | String | Document type, e.g. `PASSPORT`, `DRIVING_LICENSE`, `NATIONAL_ID_CARD` |
+
+#### complianceApprovalHistories
+
+Each entry represents one compliance scoring event, in chronological order.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `checkCategory` | String | The check that produced this entry, e.g. `Sanctions`, `PEP (Politically Exposed Person)`, `Face Match`, `KYC Rule: 04` |
+| `scoreType` | String | Whether this entry added to risk or trust: `RISK` or `TRUST` |
+| `complianceScore` | Number | Points applied. Negative = risk added; positive = trust earned |
+| `complianceStatus` | String | Outcome of this check: `APPROVED`, `UNDER_REVIEW`, `PENDING_VERIFICATION` |
+| `riskLevel` | String | Risk level at the time of this entry |
+| `reason` | String | Human-readable description of why this entry was created |
+| `createdDate` | String | ISO 8601 timestamp of when this entry was created |
+| `updatedDate` | String | ISO 8601 timestamp of when this entry was last updated |
+
+#### customerKycVerificationRecordEntity
+
+Each entry represents one KYC requirement assigned to the customer.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String | The KYC record ID — this is the `associatedRuleId` to pass when uploading documents |
+| `actionType` | String | Type of requirement, e.g. `VERIFY_ACCOUNT_VIA_EKYC`, `ADDRESS_PROOF`, `VERIFY_ACCOUNT_VIA_PHONE_NUMBER` |
+| `idType` | String | Document type required, if applicable (e.g. `ADDRESS_PROOF`) |
+| `complianceDecision` | String | Compliance decision for this specific rule: `APPROVED`, `UNDER_REVIEW`, `REJECTED` |
+| `restriction` | String | Action taken if this rule is outstanding: `BLOCK` |
+| `executed` | Boolean | `true` if this requirement has been completed |
+| `expired` | Boolean | `true` if this requirement has expired |
+| `executionDate` | String | ISO 8601 timestamp of when the requirement was completed |
+| `creationDate` | String | ISO 8601 timestamp of when the requirement was assigned |
+| `ruleExpiredDate` | String | ISO 8601 timestamp of when this rule expired, if applicable |
+| `idRequired` | Boolean | `true` if an identity document is required for this rule |
+| `idRequiredCompleted` | Boolean | `true` if the identity document requirement has been fulfilled |
+| `addressProofRequired` | Boolean | `true` if proof of address is required for this rule |
+| `addressProofRequiredCompleted` | Boolean | `true` if the proof of address requirement has been fulfilled |
+| `sourceOfIncomeRequired` | Boolean | `true` if proof of source of income is required for this rule |
+| `sourceOfIncomeRequiredCompleted` | Boolean | `true` if the source of income requirement has been fulfilled |
+
+### complianceDecision Values
+
+| Value | Meaning |
+|-------|---------|
+| `APPROVED` | Customer has passed all required checks and is cleared to transact |
+| `UNDER_REVIEW` | One or more checks returned a partial or uncertain result — manual review is pending |
+| `REJECTED` | Customer has failed one or more checks and is blocked from transacting |
+
+### Example Payload
+
+```json
+{
+  "eventType": "COMPLIANCE_RISK_PROFILE_UPDATED",
+  "userId": "00000000-0000-0000-0000-000000000001",
+  "firstName": "John",
+  "lastName": "Smith",
+  "email": "john.smith@example.com",
+  "phone": "447000000000",
+  "complianceDecision": "UNDER_REVIEW",
+  "riskLevel": "HIGH",
+  "currentRiskScore": 18,
+  "maximumPotentialRiskScore": 154,
+  "currentRiskScoreRatio": 0.12,
+  "currentTrustScore": 170,
+  "relativeMaximumRisk": -16,
+  "sanctionsMatch": false,
+  "pepMatch": false,
+  "adverseMediaMatch": false,
+  "adverseMediaCount": 0,
+  "documentVerificationStatus": "VERIFIED",
+  "fullNameMatch": true,
+  "partialNameMatch": false,
+  "nameMatchPercentage": 85.0,
+  "didNotMatchSignUpName": false,
+  "sourceOfFundsVerified": false,
+  "status": "PENDING",
+  "kycLastUpdateDate": "2026-01-15T10:30:00.000+00:00",
+  "defaultIdentificationDocument": {
+    "documentNumber": "AB123456",
+    "identificationType": "PASSPORT"
+  },
+  "complianceApprovalHistories": [
+    {
+      "checkCategory": "Sanctions",
+      "scoreType": "TRUST",
+      "complianceScore": 25,
+      "complianceStatus": "APPROVED",
+      "riskLevel": "HIGH",
+      "reason": "Sanctions",
+      "createdDate": "2026-01-15T10:30:00.000+00:00"
+    },
+    {
+      "checkCategory": "PEP (Politically Exposed Person)",
+      "scoreType": "TRUST",
+      "complianceScore": 20,
+      "complianceStatus": "APPROVED",
+      "riskLevel": "HIGH",
+      "reason": "PEP (Politically Exposed Person)",
+      "createdDate": "2026-01-15T10:30:00.000+00:00"
+    },
+    {
+      "checkCategory": "KYC Rule: 04",
+      "scoreType": "RISK",
+      "complianceScore": -10,
+      "complianceStatus": "UNDER_REVIEW",
+      "riskLevel": "HIGH",
+      "reason": "New KYC Rule added: 04",
+      "createdDate": "2026-01-15T09:00:00.000+00:00"
+    }
+  ],
+  "customerKycVerificationRecordEntity": [
+    {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "actionType": "VERIFY_ACCOUNT_VIA_EKYC",
+      "restriction": "BLOCK",
+      "executed": true,
+      "expired": false,
+      "executionDate": "2026-01-15T10:30:00.000+00:00",
+      "creationDate": "2026-01-15T09:00:00.000+00:00"
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000002",
+      "actionType": "ADDRESS_PROOF",
+      "idType": "ADDRESS_PROOF",
+      "restriction": "BLOCK",
+      "executed": false,
+      "expired": false,
+      "creationDate": "2026-01-15T09:00:00.000+00:00"
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000003",
+      "actionType": "VERIFY_ACCOUNT_VIA_PHONE_NUMBER",
+      "restriction": "BLOCK",
+      "executed": false,
+      "expired": false,
+      "creationDate": "2026-01-15T09:00:00.000+00:00"
+    }
+  ]
 }
 ```
