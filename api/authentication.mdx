@@ -239,8 +239,8 @@ FinCode can notify your application of events via webhooks. Configure webhook en
 
 | Event | Description |
 |-------|-------------|
-| `TRANSACTION_STATUS` | Fired when a transaction status changes |
-| `COMPLIANCE_RISK_PROFILE_UPDATED` | Fired after eKYC is processed and a compliance decision is made |
+| `TRANSACTION_STATUS` | Fired when a transaction reaches a terminal status (PAID, FAILED, CANCELLED) |
+| `COMPLIANCE_RISK_PROFILE_UPDATED` | Fired after an eKYC result or AML screening updates a customer's compliance profile |
 
 ### Webhook Payload Example
 
