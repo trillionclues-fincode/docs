@@ -1121,7 +1121,10 @@
                                                 "type": "string",
                                                 "example": "GBR"
                                             }
-                                        }
+                                        },
+                                        "required": [
+                                            "countryIso3"
+                                        ]
                                     },
                                     "dynamicFields": {
                                         "type": "object",
