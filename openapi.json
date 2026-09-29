@@ -671,44 +671,253 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "No documents required from John Doe"
+                                            "example": "Awaiting compliance requirements for Jane Smith ( 447700000001 )"
                                         },
                                         "data": {
                                             "type": "object",
                                             "properties": {
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "Success"
+                                                },
                                                 "awaitingComplianceActions": {
                                                     "type": "array",
                                                     "items": {
                                                         "type": "object",
                                                         "properties": {
-                                                            "documentType": {
+                                                            "actionType": {
                                                                 "type": "string",
+                                                                "enum": ["VERIFY_ACCOUNT_VIA_EMAIL","VERIFY_ACCOUNT_VIA_PHONE_NUMBER","VERIFY_ACCOUNT_VIA_EKYC","VERIFY_ACCOUNT_VIA_EKYC_FACE_PHOTO","VERIFY_ACCOUNT_VIA_EKYC_FACE_VIDEO","VERIFY_ACCOUNT_VIA_IDENTIFICATION_DOCUMENT","CUSTOMER_RISK_ASSESSMENT","THRESHOLD_IDENTIFICATION","THRESHOLD_LIMIT","THRESHOLD_LIMIT_RECEIVING_AMOUNT","THRESHOLD_COUNT_TRANSACTION","LINKED_TRANSACTION","OTHER"],
+                                                                "example": "THRESHOLD_IDENTIFICATION"
+                                                            },
+                                                            "businessRuleNumber": {
+                                                                "type": "string",
+                                                                "example": "90"
+                                                            },
+                                                            "restrictionLevel": {
+                                                                "type": "string",
+                                                                "enum": ["BLOCK","WARN","ALLOW"],
+                                                                "example": "BLOCK"
+                                                            },
+                                                            "docIdType": {
+                                                                "type": "string",
+                                                                "nullable": true,
+                                                                "description": "Legacy field — document ID type from the first acceptable doc type.",
                                                                 "example": "ADDRESS_PROOF"
                                                             },
-                                                            "reason": {
+                                                            "docTypeCommonName": {
                                                                 "type": "string",
-                                                                "example": "ANNUAL_REVIEW"
+                                                                "nullable": true,
+                                                                "description": "Legacy field — common name of the first acceptable doc type.",
+                                                                "example": "Proof of address"
+                                                            },
+                                                            "customerInstruction": {
+                                                                "type": "string",
+                                                                "example": ""
                                                             },
                                                             "associatedRuleId": {
                                                                 "type": "string",
-                                                                "description": "The compliance rule ID. Pass this value as associatedRuleId when submitting documents via attach-documents.",
-                                                                "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                                                                "description": "Pass this as associatedRuleId when submitting documents via attach-documents.",
+                                                                "example": "00000000-0000-0000-0000-000000000001"
                                                             },
-                                                            "actionType": {
+                                                            "dataCollectionFormType": {
                                                                 "type": "string",
-                                                                "example": "DOCUMENT_UPLOAD"
+                                                                "enum": ["NONE_APPLICABLE","BASIC_FILE_UPLOAD","LOAD_CAMERA_AND_SEND_PHOTO","LOAD_CAMERA_AND_SEND_VIDEO","CUSTOMER_RISK_ASSESSMENT"],
+                                                                "example": "BASIC_FILE_UPLOAD"
+                                                            },
+                                                            "acceptableDocType": {
+                                                                "type": "object",
+                                                                "nullable": true,
+                                                                "description": "Legacy field — single DocIdTypeDTO from the first acceptable doc type.",
+                                                                "properties": {
+                                                                    "docIdType": { "type": "string", "example": "ADDRESS_PROOF" },
+                                                                    "docTypeCommonName": { "type": "string", "example": "Proof of address" }
+                                                                }
+                                                            },
+                                                            "craDynamicFieldIds": {
+                                                                "type": "array",
+                                                                "nullable": true,
+                                                                "items": { "type": "string" }
+                                                            },
+                                                            "ekycProviderId": {
+                                                                "type": "string",
+                                                                "nullable": true,
+                                                                "description": "Present when actionType is VERIFY_ACCOUNT_VIA_EKYC.",
+                                                                "example": null
+                                                            },
+                                                            "apiProvider": {
+                                                                "type": "string",
+                                                                "nullable": true,
+                                                                "description": "eKYC provider code.",
+                                                                "example": "SHUFTI_PRO"
                                                             },
                                                             "customerKycRecordId": {
                                                                 "type": "string",
-                                                                "description": "The KYC record ID — used as the path parameter when calling initiate-compliance-action.",
-                                                                "example": "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+                                                                "description": "Pass as the path parameter when calling initiate-compliance-action.",
+                                                                "example": "00000000-0000-0000-0000-000000000002"
+                                                            },
+                                                            "craDynamicFormId": {
+                                                                "type": "string",
+                                                                "nullable": true,
+                                                                "example": null
+                                                            },
+                                                            "complianceScreeningType": {
+                                                                "type": "string",
+                                                                "enum": ["AML","CRA","KYC","EDD","NONE_APPLICABLE"],
+                                                                "example": "KYC"
+                                                            },
+                                                            "amountFrom": {
+                                                                "type": "number",
+                                                                "example": 0.0
+                                                            },
+                                                            "amountTo": {
+                                                                "type": "number",
+                                                                "example": 0.0
+                                                            },
+                                                            "sendingAmount": {
+                                                                "type": "number",
+                                                                "example": 0.0
+                                                            },
+                                                            "result": {
+                                                                "type": "string",
+                                                                "enum": ["PASS","WARNING","FAIL"],
+                                                                "example": "FAIL"
+                                                            },
+                                                            "requestedDocumentUpload": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            },
+                                                            "acceptableDocTypes": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "docIdType": { "type": "string", "example": "ADDRESS_PROOF" },
+                                                                        "docTypeCommonName": { "type": "string", "example": "Proof of address" }
+                                                                    }
+                                                                }
+                                                            },
+                                                            "minimumNumberOfAcceptableDocTypes": {
+                                                                "type": "integer",
+                                                                "example": 0
+                                                            },
+                                                            "complianceOn": {
+                                                                "type": "string",
+                                                                "nullable": true,
+                                                                "enum": ["CUSTOMER","RECEIVER"],
+                                                                "example": null
                                                             }
                                                         }
                                                     }
-                                                },
-                                                "status": {
-                                                    "type": "string",
-                                                    "example": "Success"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/compliance/customer-compliance-checklist": {
+            "put": {
+                "summary": "Pre-Transaction Compliance Checklist",
+                "description": "Returns the compliance checklist a customer must satisfy before a transaction can be booked.",
+                "operationId": "customerComplianceChecklist",
+                "tags": ["Compliance"],
+                "parameters": [
+                    { "$ref": "#/components/parameters/platformHeader" },
+                    { "$ref": "#/components/parameters/uuidHeader" },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": { "type": "string" },
+                        "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-CUSTOMER-ID",
+                        "schema": { "type": "string", "format": "uuid" },
+                        "required": false,
+                        "description": "The customer's userId UUID. Pass when an agent or manager is checking on behalf of a customer."
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "transactionQuote": {
+                                        "type": "object",
+                                        "properties": {
+                                            "direction": { "type": "string", "enum": ["PAYIN","PAYOUT","ACCOUNT_CREDITING"], "example": "PAYIN" },
+                                            "amountSend": { "type": "number", "example": 100.00 },
+                                            "sendingCurrencyCode": { "type": "string", "example": "GBP" },
+                                            "receivingCountryIso3Code": { "type": "string", "example": "NGA" },
+                                            "devliveryMethod": { "type": "string", "example": "ACCOUNTPAYMENT" }
+                                        },
+                                        "required": ["direction","amountSend","sendingCurrencyCode","receivingCountryIso3Code","devliveryMethod"]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Compliance checklist retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": { "type": "string", "example": "SUCCESS" },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "customerComplianceCheckList": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "actionType": {
+                                                                "type": "string",
+                                                                "enum": ["VERIFY_ACCOUNT_VIA_EMAIL","VERIFY_ACCOUNT_VIA_PHONE_NUMBER","VERIFY_ACCOUNT_VIA_EKYC","VERIFY_ACCOUNT_VIA_EKYC_FACE_PHOTO","VERIFY_ACCOUNT_VIA_EKYC_FACE_VIDEO","VERIFY_ACCOUNT_VIA_IDENTIFICATION_DOCUMENT","CUSTOMER_RISK_ASSESSMENT","THRESHOLD_IDENTIFICATION","THRESHOLD_LIMIT","THRESHOLD_LIMIT_RECEIVING_AMOUNT","THRESHOLD_COUNT_TRANSACTION","LINKED_TRANSACTION","OTHER"],
+                                                                "example": "THRESHOLD_IDENTIFICATION"
+                                                            },
+                                                            "businessRuleNumber": { "type": "string", "example": "90" },
+                                                            "restrictionLevel": { "type": "string", "enum": ["BLOCK","WARN","ALLOW"], "example": "BLOCK" },
+                                                            "customerInstruction": { "type": "string", "example": "" },
+                                                            "associatedRuleId": { "type": "string", "example": "00000000-0000-0000-0000-000000000001" },
+                                                            "dataCollectionFormType": { "type": "string", "enum": ["NONE_APPLICABLE","BASIC_FILE_UPLOAD","LOAD_CAMERA_AND_SEND_PHOTO","LOAD_CAMERA_AND_SEND_VIDEO","CUSTOMER_RISK_ASSESSMENT"], "example": "BASIC_FILE_UPLOAD" },
+                                                            "ekycProviderId": { "type": "string", "nullable": true, "example": null },
+                                                            "apiProvider": { "type": "string", "nullable": true, "example": "SHUFTI_PRO" },
+                                                            "customerKycRecordId": { "type": "string", "example": "00000000-0000-0000-0000-000000000002" },
+                                                            "craDynamicFormId": { "type": "string", "nullable": true, "example": null },
+                                                            "complianceScreeningType": { "type": "string", "enum": ["AML","CRA","KYC","EDD","NONE_APPLICABLE"], "example": "KYC" },
+                                                            "amountFrom": { "type": "number", "example": 0.0 },
+                                                            "amountTo": { "type": "number", "example": 0.0 },
+                                                            "sendingAmount": { "type": "number", "example": 0.0 },
+                                                            "requestedDocumentUpload": { "type": "boolean", "example": false },
+                                                            "acceptableDocTypes": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "docIdType": { "type": "string", "example": "ADDRESS_PROOF" },
+                                                                        "docTypeCommonName": { "type": "string", "example": "Proof of address" }
+                                                                    }
+                                                                }
+                                                            },
+                                                            "minimumNumberOfAcceptableDocTypes": { "type": "integer", "example": 1 },
+                                                            "customerType": { "type": "string", "enum": ["INDIVIDUAL","COMPANY"], "example": "INDIVIDUAL" },
+                                                            "complianceOn": { "type": "string", "nullable": true, "enum": ["CUSTOMER","RECEIVER"], "example": "CUSTOMER" },
+                                                            "result": { "type": "string", "enum": ["PASS","WARNING","FAIL"], "example": "FAIL" }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
