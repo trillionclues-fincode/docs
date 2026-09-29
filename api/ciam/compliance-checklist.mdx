@@ -66,7 +66,7 @@ All authenticated user types can call this endpoint.
       List of compliance actions required before the transaction can proceed. An empty array means the customer is fully compliant and the transaction can be booked immediately.
       <Expandable title='customerComplianceCheckList item'>
         <ResponseField name='actionType' type='string'>
-          The type of action required. Common values: `DOCUMENT_UPLOAD`, `EKYC`, `CRA`, `AML_SCREENING`.
+          The type of action required. Possible values: `VERIFY_ACCOUNT_VIA_EMAIL`, `VERIFY_ACCOUNT_VIA_PHONE_NUMBER`, `VERIFY_ACCOUNT_VIA_EKYC`, `VERIFY_ACCOUNT_VIA_EKYC_FACE_PHOTO`, `VERIFY_ACCOUNT_VIA_EKYC_FACE_VIDEO`, `VERIFY_ACCOUNT_VIA_IDENTIFICATION_DOCUMENT`, `CUSTOMER_RISK_ASSESSMENT`, `THRESHOLD_IDENTIFICATION`, `THRESHOLD_LIMIT`, `THRESHOLD_LIMIT_RECEIVING_AMOUNT`, `THRESHOLD_COUNT_TRANSACTION`, `LINKED_TRANSACTION`, `OTHER`.
         </ResponseField>
         <ResponseField name='associatedRuleId' type='string'>
           The compliance rule ID. Pass this as `associatedRuleId` when submitting documents via `attach-documents`.
@@ -78,7 +78,7 @@ All authenticated user types can call this endpoint.
           The business rule that triggered this requirement.
         </ResponseField>
         <ResponseField name='restrictionLevel' type='string'>
-          How strictly this blocks the transaction. Common values: `HARD_BLOCK`, `SOFT_BLOCK`.
+          How strictly this blocks the transaction. Values: `BLOCK` (hard block until resolved), `WARN` (allow but flag to compliance), `ALLOW` (allow if within range).
         </ResponseField>
         <ResponseField name='customerInstruction' type='string'>
           Human-readable instruction to display to the customer.
@@ -93,13 +93,13 @@ All authenticated user types can call this endpoint.
           Minimum number of documents from `acceptableDocTypes` that must be submitted.
         </ResponseField>
         <ResponseField name='complianceScreeningType' type='string'>
-          The screening type (e.g. `IDENTITY_VERIFICATION`, `ADDRESS_VERIFICATION`).
+          The screening type. Values: `AML`, `CRA`, `KYC`, `EDD`, `NONE_APPLICABLE`.
         </ResponseField>
         <ResponseField name='ekycProviderId' type='string'>
-          The eKYC provider ID, if this is an eKYC action.
+          The eKYC provider integration ID. Present when `actionType` is `VERIFY_ACCOUNT_VIA_EKYC`.
         </ResponseField>
         <ResponseField name='apiProvider' type='string'>
-          The external API provider code (e.g. `SEON_IDV`, `SUMSUB`).
+          The eKYC provider code — e.g. `SHUFTI_PRO`, `SEON_IDV`, `SUMSUB`.
         </ResponseField>
         <ResponseField name='craDynamicFormId' type='string'>
           Dynamic form ID for CRA (Customer Risk Assessment) actions.
@@ -117,13 +117,13 @@ All authenticated user types can call this endpoint.
           The sending amount at the time this rule was evaluated.
         </ResponseField>
         <ResponseField name='customerType' type='string'>
-          The customer classification this rule applies to (e.g. `INDIVIDUAL`, `BUSINESS`).
+          The customer classification this rule applies to. Values: `INDIVIDUAL`, `COMPANY`.
         </ResponseField>
         <ResponseField name='complianceOn' type='string'>
-          When this compliance action applies — e.g. `TRANSACTION`, `REGISTRATION`.
+          Who this compliance action applies to. Values: `CUSTOMER`, `RECEIVER`.
         </ResponseField>
         <ResponseField name='result' type='string'>
-          The compliance result — e.g. `PASS`, `FAIL`, `PENDING`.
+          The compliance result. Values: `PASS`, `WARNING`, `FAIL`.
         </ResponseField>
       </Expandable>
     </ResponseField>
