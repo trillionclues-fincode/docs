@@ -1,4 +1,56 @@
 ---
 title: 'List Customers'
 openapi: 'GET /admin/customer-management/list-customers'
+description: 'Returns a paginated list of customers for the authenticated manager.'
 ---
+
+Returns a paginated, filterable list of customers in the pay centre. Requires a `MANAGER` token.
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  JWT Access Token of an authenticated manager.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query='page' type='integer' default='1'>
+  Page number (1-based). Defaults to `1`.
+</ParamField>
+
+<ParamField query='size' type='integer' default='20'>
+  Number of records per page. Defaults to `20`.
+</ParamField>
+
+<ParamField query='search' type='string'>
+  Free-text search by customer name, email, or phone number.
+</ParamField>
+
+<ParamField query='customer_verification_status' type='string'>
+  Filter by verification status. Common values: `VERIFIED`, `UNVERIFIED`, `PENDING`.
+</ParamField>
+
+<ParamField query='paycenter_id' type='string'>
+  Filter by a specific pay centre ID. Defaults to the pay centre of the authenticated manager.
+</ParamField>
+
+<ParamField query='profile' type='string'>
+  Filter by customer profile type.
+</ParamField>
+
+## Code Example
+
+```bash cURL
+curl -X GET 'https://{your-domain}.fincode.software/api/v6/services/admin/customer-management/list-customers?page=1&size=20&search=Jane' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```

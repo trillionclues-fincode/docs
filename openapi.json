@@ -636,6 +636,25 @@
                             "type": "string"
                         },
                         "required": true
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-CUSTOMER-ID",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": false,
+                        "description": "The customer's userId UUID. Passed by agents or admin users to perform this lookup on behalf of a specific customer."
+                    },
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": false,
+                        "description": "Filter compliance requirements by this customer's userId."
                     }
                 ],
                 "responses": {
@@ -669,6 +688,20 @@
                                                             "reason": {
                                                                 "type": "string",
                                                                 "example": "ANNUAL_REVIEW"
+                                                            },
+                                                            "associatedRuleId": {
+                                                                "type": "string",
+                                                                "description": "The compliance rule ID. Pass this value as associatedRuleId when submitting documents via attach-documents.",
+                                                                "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                                                            },
+                                                            "actionType": {
+                                                                "type": "string",
+                                                                "example": "DOCUMENT_UPLOAD"
+                                                            },
+                                                            "customerKycRecordId": {
+                                                                "type": "string",
+                                                                "description": "The KYC record ID — used as the path parameter when calling initiate-compliance-action.",
+                                                                "example": "b2c3d4e5-f6a7-8901-bcde-f12345678901"
                                                             }
                                                         }
                                                     }
@@ -1071,7 +1104,7 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "excel.nwachukwu+2@fincode.co.uk"
+                                        "example": "customer@sandbox.fincode.software"
                                     },
                                     "dialingCode": {
                                         "type": "string",
@@ -1393,7 +1426,8 @@
                                                 },
                                                 "file_base64": {
                                                     "type": "string",
-                                                    "description": "The document file encoded as a Base64 string"
+                                                    "description": "The document file as a data URI string. Must include the MIME type prefix, e.g. data:image/jpeg;base64,<base64data>. Sending raw base64 without the prefix will cause server-side file type detection to fail.",
+                                                    "example": "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
                                                 },
                                                 "name": {
                                                     "type": "string",
@@ -1401,7 +1435,7 @@
                                                 },
                                                 "associatedRuleId": {
                                                     "type": "string",
-                                                    "description": "The KYC rule ID to associate this document with, returned as customer-kyc-record-id from the awaiting compliance endpoint"
+                                                    "description": "The compliance rule ID to associate this document with. Obtained from the associatedRuleId field in the awaiting-compliance-requirements response."
                                                 },
                                                 "issueNo": {
                                                     "type": "string",
@@ -1546,11 +1580,12 @@
                                 "properties": {
                                     "dynamicFormId": {
                                         "type": "string",
-                                        "default": "31564b03-f183-44e3-ae4a-fa343c6f7e3a"
+                                        "example": "00000000-0000-0000-0000-000000000002"
                                     },
-                                    "customerId": {
+                                    "userId": {
                                         "type": "string",
-                                        "default": "daa02d5e-2be1-4523-ba6e-1930045b0e53"
+                                        "description": "The customer's userId (UUID).",
+                                        "example": "00000000-0000-0000-0000-000000000001"
                                     },
                                     "dynamicFieldIds": {
                                         "type": "object"
@@ -1561,7 +1596,7 @@
                                 },
                                 "required": [
                                     "dynamicFormId",
-                                    "customerId",
+                                    "userId",
                                     "dynamicFieldIds"
                                 ]
                             }
@@ -2397,7 +2432,7 @@
                         "name": "beneficiaryId",
                         "schema": {
                             "type": "string",
-                            "default": "6327c026-c646-4a9d-86b2-57731d867727"
+                            "example": "00000000-0000-0000-0000-000000000003"
                         },
                         "required": true
                     }
@@ -2811,7 +2846,8 @@
                                         "type": "string"
                                     },
                                     "customerId": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "Reserved — currently unused by the server; may be omitted."
                                     },
                                     "accountOwnerCustomerCode": {
                                         "type": "string"
@@ -2831,7 +2867,6 @@
                                 },
                                 "required": [
                                     "id",
-                                    "customerId",
                                     "accountOwnerCustomerCode",
                                     "currencyCode",
                                     "country",
@@ -4425,7 +4460,7 @@
                 }
             }
         },
-        "/complaince/documents-required-for-transaction": {
+        "/compliance/documents-required-for-transaction": {
             "post": {
                 "summary": "Documents Required For Transaction",
                 "description": "Checks required documents for a transaction.",
@@ -4649,10 +4684,10 @@
                 }
             }
         },
-        "/bankmanagement/delete-customer-bank-details/{customerCode}/{bankId}": {
-            "put": {
+        "/bankmanagement/delete-customer-bank-details/{account-owner-id}/{bank-detail-id}": {
+            "delete": {
                 "summary": "Delete Customer Bank Details",
-                "description": "Deletes bank details for a customer.",
+                "description": "Deletes a saved bank account for a customer.",
                 "operationId": "deleteCustomerBankDetails",
                 "parameters": [
                     {
@@ -4671,19 +4706,23 @@
                     },
                     {
                         "in": "path",
-                        "name": "customerCode",
+                        "name": "account-owner-id",
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "format": "uuid"
                         },
-                        "required": true
+                        "required": true,
+                        "description": "The internal Customer record id (UUID) — not the customer code."
                     },
                     {
                         "in": "path",
-                        "name": "bankId",
+                        "name": "bank-detail-id",
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "format": "uuid"
                         },
-                        "required": true
+                        "required": true,
+                        "description": "The id of the bank detail record to delete."
                     }
                 ],
                 "responses": {
@@ -4833,34 +4872,6 @@
                 "responses": {
                     "200": {
                         "description": "Connector deleted"
-                    }
-                }
-            }
-        },
-        "/complaince/awaiting-compliance-requirements": {
-            "get": {
-                "summary": "Awaiting Compliance Requirements",
-                "description": "Lists awaiting compliance requirements.",
-                "operationId": "awaitingComplianceRequirements",
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/platformHeader"
-                    },
-                    {
-                        "$ref": "#/components/parameters/uuidHeader"
-                    },
-                    {
-                        "in": "header",
-                        "name": "X-Auth-Token",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Requirements list"
                     }
                 }
             }
@@ -5170,7 +5181,7 @@
                 }
             }
         },
-        "/complaince/kyc-requirements-by-isocountry/{countryIso}/{triggerPoint}": {
+        "/compliance/kyc-requirements-by-isocountry/{countryIso}/{triggerPoint}": {
             "get": {
                 "summary": "KYC Requirements by Country",
                 "description": "Retrieves KYC requirements for a specific country.",
@@ -5473,7 +5484,8 @@
                                                 },
                                                 "file_base64": {
                                                     "type": "string",
-                                                    "example": "base64EncodedStringOfYourFile..."
+                                                    "description": "Data URI string with MIME type prefix, e.g. data:image/jpeg;base64,<base64data>",
+                                                    "example": "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
                                                 }
                                             }
                                         }

@@ -1,6 +1,6 @@
 ---
 title: 'Submit KYC Documents'
-openapi: 'POST /documentmanagement/attach-documents/'
+openapi: 'POST /documentmanagement/attach-documents'
 description: 'Submits KYC documents for customer compliance verification to fulfill outstanding compliance requirements.'
 ---
 
@@ -35,16 +35,19 @@ This endpoint requires a valid **Access Token** for authorization.
     <ParamField body='idType' type='string' required>
       The type of KYC document being submitted. Supported values:
       - `PASSPORT` - Valid passport
-      - `DRIVING_LICENSE` - Valid driver's license
+      - `DRIVING_LICENSE` - Valid driver's licence
       - `NATIONAL_ID_CARD` - Government-issued national ID card
       - `VOTE_CARD` - Voter registration card
       - `ADDRESS_PROOF` - Proof of address (e.g. utility bill, bank statement)
       - `SOURCE_OF_INCOME_PROOF` - Proof of income source
-      - `CUSTOMER_DECLARATION_FORM` - Customer declaration form
+      - `EKYC_FACE_PHOTO` - eKYC face photo (selfie)
+      - `EKYC_FACE_VIDEO` - eKYC face video
+      - `BUSINESS_REGISTRATION` - Business registration document
       - `OTHER_OFFICIAL_DOCUMENT` - Any other official document
+      - `OTHER` - Other
     </ParamField>
     <ParamField body='file_base64' type='string' required>
-      The document file encoded as a Base64 string.
+      The document file as a **data URI string** — must include the MIME type prefix. Format: `data:image/jpeg;base64,<base64data>`. Supported MIME types: `image/jpeg`, `image/png`, `application/pdf`. Sending raw base64 without the `data:...;base64,` prefix will cause server-side file type detection to fail.
     </ParamField>
     <ParamField body='name' type='string'>
       The filename of the document (e.g. `passport.pdf`).
@@ -107,7 +110,7 @@ curl --location 'https://{your-domain}.fincode.software/api/v6/services/document
   "attachedDocument": [
     {
       "idType": "ADDRESS_PROOF",
-      "file_base64": "BASE64_ENCODED_FILE_CONTENT",
+      "file_base64": "data:image/jpeg;base64,/9j/4AAQSkZJRg...",
       "name": "utility_bill.pdf",
       "associatedRuleId": "RULE_ID_FROM_AWAITING_COMPLIANCE"
     }
@@ -122,7 +125,10 @@ const fs = require('fs');
 const BASE_URL = 'https://{your-domain}.fincode.software/api/v6/services/documentmanagement';
 
 async function submitKycDocument(accessToken, customerCode, ruleId, idType, filePath) {
-  const fileBase64 = fs.readFileSync(filePath).toString('base64');
+  const ext = filePath.split('.').pop().toLowerCase();
+  const mimeTypes = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', pdf: 'application/pdf' };
+  const mimeType = mimeTypes[ext] || 'image/jpeg';
+  const fileBase64 = `data:${mimeType};base64,${fs.readFileSync(filePath).toString('base64')}`;
   const fileName = filePath.split('/').pop();
 
   try {

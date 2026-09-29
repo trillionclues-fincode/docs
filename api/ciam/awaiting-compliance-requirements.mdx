@@ -1,4 +1,72 @@
 ---
 title: 'Awaiting Compliance Requirements'
 openapi: 'GET /compliance/awaiting-compliance-requirements'
+description: 'Returns the outstanding KYC requirements for a customer.'
 ---
+
+Returns the list of pending compliance actions the customer must complete before they are fully verified. Poll this endpoint after registration to know what the customer still needs to do.
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** of the authenticated user (agent, cashier, or the customer themselves).
+</ParamField>
+
+<ParamField header='X-CUSTOMER-ID' type='string'>
+  The `userId` UUID of the customer whose requirements you want to check. Required when the token belongs to an agent or cashier — without it, the endpoint returns requirements for the token holder, not the customer.
+
+  <Warning>
+    Must be the customer's **userId UUID** (e.g. `550e8400-e29b-41d4-a716-446655440000`), not their customer code (e.g. `VJJGVE`).
+  </Warning>
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query='userId' type='string'>
+  Alternative way to specify the target customer — the customer's userId UUID. Either this or `X-CUSTOMER-ID` can be used; `X-CUSTOMER-ID` takes precedence if both are provided.
+</ParamField>
+
+## Response
+
+Returns an object with `awaitingComplianceActions` — a list of pending requirements. Each item has:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `customerKycRecordId` | string | ID of this compliance record. Pass this as the path parameter when calling [Initiate Compliance Action](/api/ciam/initiate-compliance-action). |
+| `associatedRuleId` | string | The rule ID to include in `attachedDocument[].associatedRuleId` when uploading documents for this requirement. |
+| `actionType` | string | The type of action required. See Action Types below. |
+| `restrictionLevel` | string | How this requirement restricts the customer — `SOFT_BLOCK`, `HARD_BLOCK`, etc. |
+| `customerInstruction` | string | Human-readable instruction for the customer. |
+| `acceptableDocTypes` | array | List of acceptable document types for this requirement. Each item has `docIdType` and `docTypeCommonName`. |
+| `minimumNumberOfAcceptableDocTypes` | number | Minimum number of documents needed from `acceptableDocTypes`. |
+| `complianceScreeningType` | string | The screening type — `DOCUMENT_UPLOAD`, `EKYC`, `CRA`, etc. |
+| `ekycProviderId` | string | The eKYC provider integration ID. Present when `actionType` is `EXTERNAL_KYC_PROVIDER`. |
+| `apiProvider` | string | The eKYC provider name (e.g. `SEON_IDV`, `SUMSUB`). |
+
+## Action Types
+
+| actionType | What it means | What to do |
+|------------|---------------|------------|
+| `VERIFY_ACCOUNT_VIA_EMAIL` | Customer must verify their email | Platform sends a verification email. If `doNotForwardEmailVerification` is enabled, call [Verify Contact](/api/ciam/verify-contact) with `type=EMAIL` after verifying on your side. |
+| `VERIFY_ACCOUNT_VIA_PHONE_NUMBER` | Customer must verify their phone | Platform sends an OTP via SMS. If `doNotForwardPhoneVerification` is enabled, call [Verify Contact](/api/ciam/verify-contact) with `type=PHONE_NUMBER`. |
+| `UPLOAD_DOCUMENT` | Customer must upload an identity document | Call [Initiate Compliance Action](/api/ciam/initiate-compliance-action), then [Submit KYC Documents](/api/ciam/attach-documents) with the `associatedRuleId`. |
+| `EXTERNAL_KYC_PROVIDER` | Customer must complete eKYC with an external provider | Call [Initiate External KYC Provider](/api/ciam/initiate-external-provider) to get a reference, then embed it in the provider session. |
+| `COMPLETE_CRA` | Customer must fill a compliance risk assessment form | Call [Initiate Compliance Action](/api/ciam/initiate-compliance-action) to get the form, then submit via [Submit CRA](/api/ciam/submit-cra). |
+
+## Code Example
+
+```bash cURL
+curl -X GET 'https://{your-domain}.fincode.software/api/v6/services/compliance/awaiting-compliance-requirements' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'X-CUSTOMER-ID: 550e8400-e29b-41d4-a716-446655440000' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```

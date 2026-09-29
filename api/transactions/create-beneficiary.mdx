@@ -1,7 +1,109 @@
 ---
 title: 'Create Beneficiary'
 openapi: 'POST /usermanagement/new-beneficiary'
-description: 'Creates a new beneficiary profile.'
+description: 'Creates a new beneficiary (recipient) profile linked to a sender.'
 ---
 
-This endpoint creates a new beneficiary profile. For Bank Transfers, this is typically called **after** validating the bank account details.
+Creates a new beneficiary profile. For bank transfers, call this **after** validating the account with [Validate Recipient Account](/api/transactions/validate-account). Once created, add bank account details with [Add Bank Details](/api/transactions/add-bank-details).
+
+Requires an authenticated `REGISTERED_CUSTOMER`, `MANAGER`, or `AGENTS` token.
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  JWT Access Token of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Request Body
+
+<ParamField body='senderCode' type='string' required>
+  The customer code of the sender this beneficiary belongs to (e.g. `VJJGVE`).
+</ParamField>
+
+<ParamField body='firstName' type='string' required>
+  Beneficiary first name.
+</ParamField>
+
+<ParamField body='lastName' type='string'>
+  Beneficiary last name.
+</ParamField>
+
+<ParamField body='middleName' type='string'>
+  Beneficiary middle name.
+</ParamField>
+
+<ParamField body='type' type='string' required>
+  Customer type: `INDIVIDUAL` or `COMPANY`.
+</ParamField>
+
+<ParamField body='email' type='string'>
+  Beneficiary email address.
+</ParamField>
+
+<ParamField body='phone' type='string'>
+  Beneficiary phone number.
+</ParamField>
+
+<ParamField body='dob' type='string'>
+  Date of birth in ISO format (e.g. `1990-05-15T00:00:00+01:00`).
+</ParamField>
+
+<ParamField body='companyName' type='string'>
+  Company name — required when `type` is `COMPANY`.
+</ParamField>
+
+<ParamField body='regNumber' type='string'>
+  Company registration number — for `COMPANY` type.
+</ParamField>
+
+<ParamField body='relationShip' type='string'>
+  Sender's relationship to the beneficiary (e.g. `SPOUSE`, `PARENT`, `FRIEND`).
+</ParamField>
+
+<ParamField body='address' type='object'>
+  Beneficiary address.
+  <Expandable title='address fields'>
+    <ParamField body='address1' type='string'>Street address line 1</ParamField>
+    <ParamField body='address2' type='string'>Street address line 2</ParamField>
+    <ParamField body='countryIso3' type='string'>ISO 3166-1 alpha-3 country code (e.g. `NGA`)</ParamField>
+    <ParamField body='postcode' type='string'>Postcode / ZIP code</ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body='dynamicFields' type='object'>
+  Additional dynamic fields specific to your configuration. Pass an empty object `{}` if not applicable.
+</ParamField>
+
+## Code Example
+
+```bash cURL
+curl -X POST 'https://{your-domain}.fincode.software/api/v6/services/usermanagement/new-beneficiary' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'Content-Type: application/json' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--data '{
+  "senderCode": "VJJGVE",
+  "firstName": "Ada",
+  "lastName": "Okonkwo",
+  "type": "INDIVIDUAL",
+  "email": "ada.okonkwo@example.com",
+  "phone": "+2348012345678",
+  "dob": "1988-03-22T00:00:00+01:00",
+  "relationShip": "FRIEND",
+  "address": {
+    "address1": "12 Victoria Island",
+    "countryIso3": "NGA",
+    "postcode": "101241"
+  },
+  "dynamicFields": {}
+}'
+```

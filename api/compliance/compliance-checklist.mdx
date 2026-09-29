@@ -1,0 +1,170 @@
+---
+title: 'Pre-Transaction Compliance Checklist'
+openapi: 'PUT /compliance/customer-compliance-checklist'
+description: 'Returns the compliance checklist a customer must satisfy before a transaction can be booked.'
+---
+
+Call this before `create-transaction` to find out exactly what compliance actions are required for the given transaction parameters. The platform evaluates all applicable KYC rules and business transaction rules and returns a checklist of outstanding items.
+
+If `transactionQuote` is provided, AML checks are also included in the evaluation.
+
+All authenticated user types can call this endpoint.
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  JWT Access Token of the authenticated user.
+</ParamField>
+
+<ParamField header='X-CUSTOMER-ID' type='string'>
+  The customer's `userId` (UUID). Pass this when an agent or manager is checking on behalf of a customer.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Request Body
+
+<ParamField body='transactionQuote' type='object' required>
+  The transaction parameters to evaluate compliance against.
+  <Expandable title='transactionQuote fields'>
+    <ParamField body='direction' type='string' required>
+      Which side of the transaction to evaluate. Use `PAYIN` when the customer is sending money.
+      - `PAYIN` — evaluate rules on transaction creation
+      - `PAYOUT` — evaluate rules on payout
+      - `ACCOUNT_CREDITING` — evaluate rules on account credit
+    </ParamField>
+    <ParamField body='amountSend' type='number' required>
+      The amount the sender intends to send.
+    </ParamField>
+    <ParamField body='sendingCurrencyCode' type='string' required>
+      ISO 4217 currency code of the sending currency (e.g. `GBP`).
+    </ParamField>
+    <ParamField body='receivingCountryIso3Code' type='string' required>
+      ISO 3166-1 alpha-3 destination country code (e.g. `NGA`).
+    </ParamField>
+    <ParamField body='devliveryMethod' type='string' required>
+      Transaction type / delivery method (e.g. `ACCOUNTPAYMENT`, `MOBILE_MONEY`, `CASH_PICKUP`).
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Response
+
+<ResponseField name='status' type='string'>
+  `SUCCESS` or `FAILED`.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  <Expandable title='data fields'>
+    <ResponseField name='customerComplianceCheckList' type='array'>
+      List of compliance actions required before the transaction can proceed. An empty array means the customer is fully compliant and the transaction can be booked immediately.
+      <Expandable title='customerComplianceCheckList item'>
+        <ResponseField name='actionType' type='string'>
+          The type of action required. Common values: `DOCUMENT_UPLOAD`, `EKYC`, `CRA`, `AML_SCREENING`.
+        </ResponseField>
+        <ResponseField name='associatedRuleId' type='string'>
+          The compliance rule ID. Pass this as `associatedRuleId` when submitting documents via `attach-documents`.
+        </ResponseField>
+        <ResponseField name='customerKycRecordId' type='string'>
+          The KYC record ID. Used as the path parameter when calling `initiate-compliance-action`.
+        </ResponseField>
+        <ResponseField name='businessRuleNumber' type='string'>
+          The business rule that triggered this requirement.
+        </ResponseField>
+        <ResponseField name='restrictionLevel' type='string'>
+          How strictly this blocks the transaction. Common values: `HARD_BLOCK`, `SOFT_BLOCK`.
+        </ResponseField>
+        <ResponseField name='customerInstruction' type='string'>
+          Human-readable instruction to display to the customer.
+        </ResponseField>
+        <ResponseField name='requestedDocumentUpload' type='boolean'>
+          `true` if the action requires a document to be uploaded.
+        </ResponseField>
+        <ResponseField name='acceptableDocTypes' type='array'>
+          List of acceptable document types for this requirement.
+        </ResponseField>
+        <ResponseField name='minimumNumberOfAcceptableDocTypes' type='integer'>
+          Minimum number of documents from `acceptableDocTypes` that must be submitted.
+        </ResponseField>
+        <ResponseField name='complianceScreeningType' type='string'>
+          The screening type (e.g. `IDENTITY_VERIFICATION`, `ADDRESS_VERIFICATION`).
+        </ResponseField>
+        <ResponseField name='ekycProviderId' type='string'>
+          The eKYC provider ID, if this is an eKYC action.
+        </ResponseField>
+        <ResponseField name='apiProvider' type='string'>
+          The external API provider code (e.g. `SEON_IDV`, `SUMSUB`).
+        </ResponseField>
+        <ResponseField name='craDynamicFormId' type='string'>
+          Dynamic form ID for CRA (Customer Risk Assessment) actions.
+        </ResponseField>
+        <ResponseField name='dataCollectionFormType' type='string'>
+          The type of data collection form required.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Example
+
+```bash cURL
+curl -X PUT 'https://{your-domain}.fincode.software/api/v6/services/compliance/customer-compliance-checklist' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'X-CUSTOMER-ID: 00000000-0000-0000-0000-000000000001' \
+--header 'Content-Type: application/json' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--data '{
+  "transactionQuote": {
+    "direction": "PAYIN",
+    "amountSend": 100.00,
+    "sendingCurrencyCode": "GBP",
+    "receivingCountryIso3Code": "NGA",
+    "devliveryMethod": "ACCOUNTPAYMENT"
+  }
+}'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+async function getComplianceChecklist(accessToken, userId, quote) {
+  const response = await axios.put(
+    'https://{your-domain}.fincode.software/api/v6/services/compliance/customer-compliance-checklist',
+    { transactionQuote: quote },
+    {
+      headers: {
+        'X-Auth-Token': accessToken,
+        'X-CUSTOMER-ID': userId,
+        'platform': 'fincode',
+        'uuid': '200',
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+
+  const checklist = response.data.data.customerComplianceCheckList;
+  if (checklist.length === 0) {
+    console.log('Customer is compliant — transaction can proceed.');
+  } else {
+    console.log(`${checklist.length} compliance action(s) required:`, checklist);
+  }
+  return checklist;
+}
+
+// Usage
+getComplianceChecklist('YOUR_TOKEN', '00000000-0000-0000-0000-000000000001', {
+  direction: 'PAYIN',
+  amountSend: 100.00,
+  sendingCurrencyCode: 'GBP',
+  receivingCountryIso3Code: 'NGA',
+  devliveryMethod: 'ACCOUNTPAYMENT',
+});
+```

@@ -4,8 +4,158 @@ openapi: 'POST /transactionmanagement/create-transaction'
 description: 'Initiate a new remittance transaction using existing customer profiles.'
 ---
 
-# Full Customer Flow
+Initiates a new transaction where the sender and recipient have already been onboarded. Both must have active customer profiles.
 
-Initiates a new transaction where the sender and recipient have already been onboarded. You must provide the `preExistingSenderCustomerCode` and `preExistingRecipientCustomerCode`.
+## Request Headers
 
-This endpoint is used for Remittance transactions where we are managing the customer lifecycle via the User Management APIs.
+<ParamField header='X-Auth-Token' type='string' required>
+  JWT Access Token of the authenticated user.
+</ParamField>
+
+<ParamField header='X-Idempotency-Key' type='string' required>
+  A unique key for this transaction submission. If the same key is sent twice, the second request returns the result of the first rather than creating a duplicate transaction. Use a UUID or a unique reference from your system.
+</ParamField>
+
+<ParamField header='ipAddress' type='string' required>
+  IP address of the device initiating the transaction.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+<ParamField header='password' type='string'>
+  Customer's transaction password (if required by your pay centre configuration).
+</ParamField>
+
+## Request Body
+
+<ParamField body='amount' type='number' required>
+  The amount the recipient will receive, in the receiving currency.
+</ParamField>
+
+<ParamField body='sendAmount' type='number' required>
+  The amount the sender pays, in the sending currency.
+</ParamField>
+
+<ParamField body='inclussive' type='boolean' required>
+  Whether fees are included in `sendAmount`. Set to `true` if the sender pays a fixed amount inclusive of all fees; `false` if fees are added on top.
+</ParamField>
+
+<ParamField body='sendCurrency' type='string' required>
+  ISO 4217 currency code the sender is paying in (e.g. `GBP`).
+</ParamField>
+
+<ParamField body='receivingCurrency' type='string' required>
+  ISO 4217 currency code the recipient will receive (e.g. `NGN`).
+</ParamField>
+
+<ParamField body='type' type='string' required>
+  Transaction / delivery method. Common values:
+
+  | Value | Description |
+  |-------|-------------|
+  | `ACCOUNTPAYMENT` | Bank account transfer |
+  | `MOBILE_MONEY` | Mobile money (e.g. M-Pesa) |
+  | `CASH_PICKUP` | Cash pickup at agent location |
+  | `WALLET` | Wallet transfer |
+</ParamField>
+
+<ParamField body='transactionProcessingMode' type='string' required>
+  Processing mode. Use `REAL_TIME` for immediate processing or `BATCH` for scheduled processing.
+</ParamField>
+
+<ParamField body='preExistingSenderCustomerCode' type='string' required>
+  Customer code of the sender (returned from `find-customer-by-name-or-phone-no` or `register-customer`).
+</ParamField>
+
+<ParamField body='preExistingRecipientCustomerCode' type='string' required>
+  Customer code of the recipient/beneficiary (returned from `new-beneficiary`).
+</ParamField>
+
+<ParamField body='creditParty' type='array' required>
+  Key-value pairs for the recipient's bank/account details. See the [Add Bank Details](/api/transactions/add-bank-details) key reference for the full list of valid keys. All keys must be lowercase.
+
+  <Expandable title='creditParty item'>
+    <ParamField body='key' type='string' required>
+      Field key — must be lowercase. Common values: `bankname`, `bankaccountno`, `accountholdername`, `bankcode`, `swiftbic`, `sortcode`, `iban`.
+    </ParamField>
+    <ParamField body='value' type='string'>
+      Field value.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body='internationalTransferInformation' type='object' required>
+  Regulatory and routing information for the transfer.
+  <Expandable title='internationalTransferInformation fields'>
+    <ParamField body='originCountry' type='string' required>ISO 3166-1 alpha-3 code of the sender's country (e.g. `GBR`)</ParamField>
+    <ParamField body='receivingCountry' type='string' required>ISO 3166-1 alpha-3 code of the recipient's country (e.g. `NGA`)</ParamField>
+    <ParamField body='remittancePurpose' type='string' required>Purpose of the transfer (e.g. `FAMILY_SUPPORT`, `GIFT`, `EDUCATION`)</ParamField>
+    <ParamField body='sourceOfFunds' type='string' required>Declared source of funds (e.g. `SALARY`, `SAVINGS`, `BUSINESS`)</ParamField>
+    <ParamField body='relationshipSender' type='string'>Sender's relationship to the recipient (e.g. `PARENT`, `SPOUSE`, `FRIEND`)</ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body='securityQuestion' type='string'>
+  Security question for cash pickup transactions. Required when `type` is `CASH_PICKUP`.
+</ParamField>
+
+<ParamField body='securityAnswer' type='string'>
+  Answer to the security question. Required when `type` is `CASH_PICKUP`.
+</ParamField>
+
+<ParamField body='transactionReference' type='string'>
+  Your own reference for this transaction. Optional — the platform generates one if not provided.
+</ParamField>
+
+<ParamField body='dynamicFields' type='object'>
+  Additional dynamic fields specific to your configuration. Pass an empty object `{}` if not applicable.
+</ParamField>
+
+<ParamField body='eligibleDocumentList' type='array'>
+  List of documents attached to this transaction (for transactions requiring document verification). Pass an empty array `[]` if none.
+</ParamField>
+
+## Code Example
+
+```bash cURL
+curl -X POST 'https://{your-domain}.fincode.software/api/v6/services/transactionmanagement/create-transaction' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'X-Idempotency-Key: a1b2c3d4-e5f6-7890-abcd-ef1234567890' \
+--header 'ipAddress: 192.168.1.100' \
+--header 'Content-Type: application/json' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--data '{
+  "amount": 150000,
+  "sendAmount": 100,
+  "inclussive": false,
+  "sendCurrency": "GBP",
+  "receivingCurrency": "NGN",
+  "type": "ACCOUNTPAYMENT",
+  "transactionProcessingMode": "REAL_TIME",
+  "preExistingSenderCustomerCode": "VJJGVE",
+  "preExistingRecipientCustomerCode": "BNADKO",
+  "creditParty": [
+    {"key": "bankname",          "value": "GTBank"},
+    {"key": "bankaccountno",     "value": "0123456789"},
+    {"key": "accountholdername", "value": "Ada Okonkwo"},
+    {"key": "bankcode",          "value": "058"},
+    {"key": "swiftbic",          "value": "GTBINGLA"}
+  ],
+  "internationalTransferInformation": {
+    "originCountry": "GBR",
+    "receivingCountry": "NGA",
+    "remittancePurpose": "FAMILY_SUPPORT",
+    "sourceOfFunds": "SALARY",
+    "relationshipSender": "PARENT"
+  },
+  "dynamicFields": {},
+  "eligibleDocumentList": []
+}'
+```

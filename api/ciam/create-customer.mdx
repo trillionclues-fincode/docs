@@ -105,7 +105,8 @@ async function createCustomer(customerData, publicKey) {
     );
 
     console.log('Customer created successfully!');
-    console.log('Customer ID:', response.data.customerId);
+    console.log('Customer code:', response.data.customerCode);
+    console.log('User ID:', response.data.userIdKey);
 
     return response.data;
   } catch (error) {
