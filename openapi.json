@@ -6,22 +6,22 @@
     },
     "servers": [
         {
-            "url": "https://{tenant}.fincode.software/api/v6/services",
+            "url": "https://{your-domain}.fincode.software/api/v6/services",
             "description": "API v6",
             "variables": {
-                "tenant": {
+                "your-domain": {
                     "default": "remitjunction",
-                    "description": "Enter your tenant subdomain"
+                    "description": "Enter your subdomain"
                 }
             }
         },
         {
-            "url": "https://{tenant}.fincode.software/api/v1/services",
+            "url": "https://{your-domain}.fincode.software/api/v1/services",
             "description": "API v1",
             "variables": {
-                "tenant": {
+                "your-domain": {
                     "default": "finlend",
-                    "description": "Enter your tenant subdomain"
+                    "description": "Enter your subdomain"
                 }
             }
         },
