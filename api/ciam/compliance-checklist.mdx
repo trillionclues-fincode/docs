@@ -130,45 +130,6 @@ All authenticated user types can call this endpoint.
   </Expandable>
 </ResponseField>
 
-<ResponseExample>
-```json 200
-{
-  "status": "SUCCESS",
-  "data": {
-    "customerComplianceCheckList": [
-      {
-        "actionType": "THRESHOLD_IDENTIFICATION",
-        "businessRuleNumber": "90",
-        "restrictionLevel": "BLOCK",
-        "customerInstruction": "",
-        "associatedRuleId": "00000000-0000-0000-0000-000000000001",
-        "dataCollectionFormType": "BASIC_FILE_UPLOAD",
-        "ekycProviderId": null,
-        "apiProvider": null,
-        "customerKycRecordId": "00000000-0000-0000-0000-000000000002",
-        "craDynamicFormId": null,
-        "complianceScreeningType": "KYC",
-        "amountFrom": 0.0,
-        "amountTo": 0.0,
-        "sendingAmount": 0.0,
-        "requestedDocumentUpload": false,
-        "acceptableDocTypes": [
-          {
-            "docIdType": "ADDRESS_PROOF",
-            "docTypeCommonName": "Proof of address"
-          }
-        ],
-        "minimumNumberOfAcceptableDocTypes": 1,
-        "customerType": "INDIVIDUAL",
-        "complianceOn": "CUSTOMER",
-        "result": "FAIL"
-      }
-    ]
-  }
-}
-```
-</ResponseExample>
-
 ## Code Example
 
 ```bash cURL
