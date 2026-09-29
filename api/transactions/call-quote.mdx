@@ -4,6 +4,78 @@ openapi: 'POST /quote/callQuote'
 description: 'Calculates the real-time exchange rate, fees, and total cost for an intended transaction.'
 ---
 
-This endpoint provides a definitive, real-time calculation (the **Quote**) for an intended transaction.
+Returns the live fee breakdown, exchange rate, and total send/receive amounts for a given corridor and transaction type. Call this before creating a transaction to show the customer the exact cost.
 
-It calculates the total payable amount, all applicable fees, the guaranteed exchange rate, and the final recipient amount based on the provided parameters.
+The `X-Auth-Token` is optional — you can call this endpoint without a token to show rates on a public pricing page.
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string'>
+  JWT Access Token. Optional for public rate lookups; include for customer-specific quotes.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Request Body
+
+<ParamField body='transactionType' type='string' required>
+  The delivery method / transaction type. Common values: `ACCOUNTPAYMENT`, `MOBILE_MONEY`, `CASH_PICKUP`, `WALLET`.
+</ParamField>
+
+<ParamField body='destinationCountry' type='string' required>
+  ISO 3166-1 alpha-3 destination country code (e.g. `NGA`).
+</ParamField>
+
+<ParamField body='principalAmount' type='number'>
+  The amount the sender wants to send (in `principalAmountCurrency`). Provide either `principalAmount` or `deriveAmount`, not both.
+</ParamField>
+
+<ParamField body='principalAmountCurrency' type='string'>
+  ISO 4217 currency code for `principalAmount` (e.g. `GBP`).
+</ParamField>
+
+<ParamField body='deriveAmount' type='number'>
+  The amount the recipient should receive (in `deriveAmountCurrency`). Use this for inverse calculation — the platform works out what the sender needs to pay.
+</ParamField>
+
+<ParamField body='deriveAmountCurrency' type='string'>
+  ISO 4217 currency code for `deriveAmount` (e.g. `NGN`).
+</ParamField>
+
+<ParamField body='inverseCalculation' type='boolean'>
+  Set `true` when providing `deriveAmount` (recipient amount). The platform calculates the sender's cost. Default: `false`.
+</ParamField>
+
+<ParamField body='tradeOriginatingCountry' type='string'>
+  ISO 3166-1 alpha-3 origin country code (e.g. `GBR`). Required for some pay centre configurations.
+</ParamField>
+
+<ParamField body='promoCode' type='string'>
+  Promotional code to apply a discount to fees.
+</ParamField>
+
+<ParamField body='mobileOperator' type='string'>
+  Mobile operator code — required when `transactionType` is `MOBILE_MONEY`.
+</ParamField>
+
+## Code Example
+
+```bash cURL
+curl -X POST 'https://{your-domain}.fincode.software/api/v6/services/quote/callQuote' \
+--header 'Content-Type: application/json' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--data '{
+  "transactionType": "ACCOUNTPAYMENT",
+  "destinationCountry": "NGA",
+  "principalAmount": 100,
+  "principalAmountCurrency": "GBP",
+  "tradeOriginatingCountry": "GBR"
+}'
+```

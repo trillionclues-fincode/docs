@@ -1,4 +1,133 @@
 ---
 title: 'Edit Customer Profile'
 openapi: 'PUT /usermanagement/profile-edit'
+description: 'Updates the profile details of the currently authenticated customer.'
 ---
+
+Updates the profile of the customer who owns the supplied `X-Auth-Token`. Only `REGISTERED_CUSTOMER` tokens are accepted — staff tokens cannot call this endpoint.
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  JWT Access Token of the authenticated customer.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Request Body
+
+<ParamField body='firstName' type='string'>
+  Customer's first name.
+</ParamField>
+
+<ParamField body='lastName' type='string'>
+  Customer's last name.
+</ParamField>
+
+<ParamField body='phone' type='string'>
+  Customer's phone number.
+</ParamField>
+
+<ParamField body='dialingCode' type='string'>
+  International dialing code for the phone number (e.g. `+44`).
+</ParamField>
+
+<ParamField body='email' type='string'>
+  Customer's email address.
+</ParamField>
+
+<ParamField body='dob' type='string'>
+  Date of birth in ISO format (e.g. `1990-05-15T00:00:00+01:00`).
+</ParamField>
+
+<ParamField body='nationality' type='string'>
+  ISO 3166-1 alpha-3 nationality code (e.g. `NGA`, `GBR`).
+</ParamField>
+
+<ParamField body='customerGender' type='string'>
+  Gender. Accepted values: `MALE`, `FEMALE`, `OTHER`.
+</ParamField>
+
+<ParamField body='customerType' type='string'>
+  Customer type. Accepted values: `INDIVIDUAL`, `COMPANY`.
+</ParamField>
+
+<ParamField body='companyName' type='string'>
+  Company name — applicable when `customerType` is `COMPANY`.
+</ParamField>
+
+<ParamField body='occupation' type='string'>
+  Customer's occupation.
+</ParamField>
+
+<ParamField body='address' type='object' required>
+  Customer's address.
+  <Expandable title='address fields'>
+    <ParamField body='address1' type='string'>Street address line 1</ParamField>
+    <ParamField body='address2' type='string'>Street address line 2</ParamField>
+    <ParamField body='countryIso3' type='string'>ISO 3166-1 alpha-3 country code (e.g. `GBR`)</ParamField>
+    <ParamField body='postcode' type='string'>Postcode / ZIP code</ParamField>
+    <ParamField body='city' type='string'>City</ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body='password' type='string'>
+  New password (if the customer wants to change it).
+</ParamField>
+
+<ParamField body='confirmPassword' type='string'>
+  Must match `password` when changing password.
+</ParamField>
+
+<ParamField body='dynamicFields' type='object'>
+  Additional dynamic fields specific to your configuration.
+</ParamField>
+
+## Response
+
+Returns a `ProfileDetailsResponseDTO` with the updated customer profile.
+
+<ResponseField name='status' type='string'>
+  `SUCCESS` or `FAILED`.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Updated profile details.
+  <Expandable title='data fields'>
+    <ResponseField name='userIdKey' type='string'>The customer's userId (UUID).</ResponseField>
+    <ResponseField name='customerCode' type='string'>The customer's short code.</ResponseField>
+    <ResponseField name='firstName' type='string'>First name.</ResponseField>
+    <ResponseField name='lastName' type='string'>Last name.</ResponseField>
+    <ResponseField name='email' type='string'>Email address.</ResponseField>
+    <ResponseField name='phone' type='string'>Phone number.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Example
+
+```bash cURL
+curl -X PUT 'https://{your-domain}.fincode.software/api/v6/services/usermanagement/profile-edit' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'Content-Type: application/json' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--data '{
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "phone": "+447912345678",
+  "dialingCode": "+44",
+  "nationality": "NGA",
+  "address": {
+    "address1": "10 Sample Street",
+    "city": "London",
+    "postcode": "EC1A 1BB",
+    "countryIso3": "GBR"
+  }
+}'
+```

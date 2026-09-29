@@ -1,4 +1,40 @@
 ---
 title: 'Delete Customer Bank Details'
-openapi: 'PUT /bankmanagement/delete-customer-bank-details/{customerCode}/{bankId}'
+openapi: 'DELETE /bankmanagement/delete-customer-bank-details/{account-owner-id}/{bank-detail-id}'
+description: 'Removes a saved bank account from a customer profile.'
 ---
+
+Deletes a specific saved bank account record for a customer.
+
+## Path Parameters
+
+<ParamField path='account-owner-id' type='string' required>
+  The internal Customer record `id` (UUID). This is the `id` field returned by customer management endpoints — **not** the customer code.
+</ParamField>
+
+<ParamField path='bank-detail-id' type='string' required>
+  The `id` of the bank detail record to delete (UUID), returned by the list bank details endpoint.
+</ParamField>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  JWT Access Token of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Code Example
+
+```bash cURL
+curl -X DELETE 'https://{your-domain}.fincode.software/api/v6/services/bankmanagement/delete-customer-bank-details/{account-owner-id}/{bank-detail-id}' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```

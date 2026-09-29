@@ -1,4 +1,119 @@
 ---
 title: 'Submit KYC Documents'
 openapi: 'POST /documentmanagement/attach-documents'
+description: 'Upload identity and compliance documents for a customer.'
 ---
+
+Attach one or more identity or compliance documents to a customer record. Documents are matched to outstanding KYC rules via `associatedRuleId`.
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Request Body
+
+<ParamField body='customerCode' type='string' required>
+  The customer's alphanumeric customer code (e.g. `VJJGVE`). Not the userId UUID.
+</ParamField>
+
+<ParamField body='attachedDocument' type='array' required>
+  List of documents to attach. Each item has the following fields:
+
+  <Expandable title='attachedDocument item'>
+    <ParamField body='file_base64' type='string' required>
+      The document image encoded as a **data URI**. Must be in the format:
+      ```
+      data:image/jpeg;base64,<base64-encoded-content>
+      ```
+      Raw base64 (without the `data:image/...;base64,` prefix) is not accepted and will cause a server error.
+
+      Supported MIME types: `image/jpeg`, `image/png`, `application/pdf`.
+    </ParamField>
+
+    <ParamField body='name' type='string' required>
+      File name including extension (e.g. `passport_front.jpg`). The extension must be present — it is used to determine the file type.
+    </ParamField>
+
+    <ParamField body='idType' type='string'>
+      Document type. One of:
+
+      | Value | Description |
+      |-------|-------------|
+      | `PASSPORT` | Passport |
+      | `NATIONAL_ID_CARD` | National identity card |
+      | `DRIVING_LICENSE` | Driving licence |
+      | `VOTE_CARD` | Voter ID / voter card |
+      | `ADDRESS_PROOF` | Proof of address |
+      | `SOURCE_OF_INCOME_PROOF` | Source of income proof |
+      | `EKYC_FACE_PHOTO` | eKYC face photo (selfie) |
+      | `EKYC_FACE_VIDEO` | eKYC face video |
+      | `BUSINESS_REGISTRATION` | Business registration document |
+      | `OTHER_OFFICIAL_DOCUMENT` | Other official document |
+      | `OTHER` | Other |
+    </ParamField>
+
+    <ParamField body='associatedRuleId' type='string'>
+      The `associatedRuleId` from the [Awaiting Compliance Requirements](/api/ciam/awaiting-compliance-requirements) response. Links this document to the outstanding KYC rule. Required when submitting a document against a specific rule — if omitted, the document is uploaded but does not automatically close any open requirement.
+
+      <Warning>
+        Use the `associatedRuleId` field from the awaiting compliance item, **not** the `customer-kyc-record-id`. They are different values.
+      </Warning>
+    </ParamField>
+
+    <ParamField body='issueNo' type='string'>
+      Document number (e.g. passport number).
+    </ParamField>
+
+    <ParamField body='issueCountry' type='string'>
+      ISO 3166-1 alpha-3 country code of the issuing country (e.g. `GBR`).
+    </ParamField>
+
+    <ParamField body='issueDate' type='string'>
+      Issue date in ISO format (e.g. `2015-06-01`).
+    </ParamField>
+
+    <ParamField body='expiryDate' type='string'>
+      Expiry date in ISO format (e.g. `2030-06-01`).
+    </ParamField>
+
+    <ParamField body='dob' type='string'>
+      Date of birth as shown on the document, in ISO format (e.g. `1990-05-15`).
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Code Example
+
+```bash cURL
+curl -X POST 'https://{your-domain}.fincode.software/api/v6/services/documentmanagement/attach-documents' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'Content-Type: application/json' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--data '{
+  "customerCode": "VJJGVE",
+  "attachedDocument": [
+    {
+      "file_base64": "data:image/jpeg;base64,/9j/4AAQSkZJRgAB...",
+      "name": "passport_front.jpg",
+      "idType": "PASSPORT",
+      "associatedRuleId": "rule-uuid-from-awaiting-compliance",
+      "issueNo": "123456789",
+      "issueCountry": "GBR",
+      "issueDate": "2015-06-01",
+      "expiryDate": "2030-06-01",
+      "dob": "1990-05-15"
+    }
+  ]
+}'
+```

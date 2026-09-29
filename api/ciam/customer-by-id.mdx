@@ -1,4 +1,58 @@
 ---
 title: 'Get Customer By ID'
 openapi: 'GET /admin/customer-management/profile/{id}'
+description: 'Fetches the full profile of a specific customer by their userId.'
 ---
+
+Returns the full profile of a customer. The `{id}` path parameter is the customer's `userId` (UUID).
+
+Accessible by `MANAGER`, `AGENTS`, `BRANCH_ADMIN`, `CASHIER`, `CUSTOMER_SERVICE`, `COMPLIANCE_USER`, and `AUDITOR` roles.
+
+## Path Parameters
+
+<ParamField path='id' type='string' required>
+  The customer's `userId` (UUID) — returned as `userIdKey` from the register-customer and list-customers endpoints.
+</ParamField>
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  JWT Access Token of an authenticated staff member.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Response
+
+<ResponseField name='status' type='string'>
+  `SUCCESS` or `FAILED`.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Full customer profile.
+  <Expandable title='data fields'>
+    <ResponseField name='userIdKey' type='string'>The customer's userId (UUID).</ResponseField>
+    <ResponseField name='customerCode' type='string'>The customer's short code.</ResponseField>
+    <ResponseField name='firstName' type='string'>First name.</ResponseField>
+    <ResponseField name='lastName' type='string'>Last name.</ResponseField>
+    <ResponseField name='email' type='string'>Email address.</ResponseField>
+    <ResponseField name='phone' type='string'>Phone number.</ResponseField>
+    <ResponseField name='type' type='string'>Customer type: `INDIVIDUAL` or `COMPANY`.</ResponseField>
+    <ResponseField name='status' type='string'>Current account status.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Example
+
+```bash cURL
+curl -X GET 'https://{your-domain}.fincode.software/api/v6/services/admin/customer-management/profile/{userId}' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```

@@ -1,4 +1,56 @@
 ---
-title: 'Find Customer By Search'
-openapi: 'GET /usermanagement/find-customer-by-name-or-phone-no/{searchTerm}'
+title: 'Find Customer By Name or Phone'
+openapi: 'GET /usermanagement/find-customer-by-name-or-phone-no/{search-criteria}'
+description: 'Search for existing customers by name or phone number.'
 ---
+
+Search for customers by partial name or phone number. Returns a list of matching customer records.
+
+Requires an authenticated `REGISTERED_CUSTOMER`, `MANAGER`, or `AGENTS` token.
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='search-criteria' type='string' required>
+  The search term — a partial or full customer name, or a phone number. Must not be blank.
+</ParamField>
+
+## Response
+
+Returns a list of matching customers under `data.senders`. Each item has:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `userId` | string | The customer's user ID (UUID). Use this as the identifier in all subsequent API calls. |
+| `customerCode` | string | The customer's short alphanumeric code. |
+| `firstName` | string | First name |
+| `lastName` | string | Last name |
+| `commonName` | string | Display name (company name for COMPANY type, full name otherwise) |
+| `phone` | string | Phone number |
+| `email` | string | Email address |
+| `dob` | string | Date of birth |
+| `country` | string | ISO country code of the customer's address |
+| `type` | string | Customer type — `INDIVIDUAL` or `COMPANY` |
+| `profilePhoto` | string | URL to the customer's profile image |
+
+## Code Example
+
+```bash cURL
+curl -X GET 'https://{your-domain}.fincode.software/api/v6/services/usermanagement/find-customer-by-name-or-phone-no/Ada' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```

@@ -1,4 +1,48 @@
 ---
 title: 'Verify Login OTP'
 openapi: 'POST /securitymanagement/verify-login-otp'
+description: 'Verifies the one-time password sent as part of two-factor authentication at login.'
 ---
+
+Verifies the OTP sent to the customer during login (two-factor authentication). Call this after a successful `/login` response that requires OTP confirmation. Requires the temporary `X-Auth-Token` returned by the login step.
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The JWT token returned from the login step.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Request Body
+
+<ParamField body='otp' type='string' required>
+  The one-time password received by the customer via email or SMS.
+</ParamField>
+
+## Response
+
+<ResponseField name='status' type='string'>
+  `SUCCESS` if the OTP is valid, `FAILED` otherwise.
+</ResponseField>
+
+<ResponseField name='message' type='string'>
+  `otp verified` on success.
+</ResponseField>
+
+## Code Example
+
+```bash cURL
+curl -X POST 'https://{your-domain}.fincode.software/api/v6/services/securitymanagement/verify-login-otp' \
+--header 'X-Auth-Token: YOUR_TEMP_JWT_TOKEN' \
+--header 'Content-Type: application/json' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--data '{"otp": "123456"}'
+```

@@ -43,10 +43,29 @@ After creating a beneficiary, use this endpoint to associate their bank account 
 </ParamField>
 
 <ParamField body='bankAccountMetaData' type='array' required>
-  Key-value pairs of the bank details.
+  Key-value pairs of the bank details. **All keys must be lowercase exactly as listed below.** An unrecognised key causes a `400` with no response body.
   <Expandable title='bankAccountMetaData item'>
     <ParamField body='key' type='string' required>
-      Field key (e.g., `bankname`, `bankaccountno`).
+      Must be one of the following lowercase values:
+
+      | Key | Description |
+      |-----|-------------|
+      | `bankname` | Bank name |
+      | `bankaccountno` | Account number |
+      | `accountholdername` | Account holder name |
+      | `bankcode` | Bank code |
+      | `swiftbic` | SWIFT / BIC code |
+      | `sortcode` | Sort code |
+      | `iban` | IBAN |
+      | `branchcode` | Branch code |
+      | `bankcity` | Bank city |
+      | `ifsccode` | IFSC code (India) |
+      | `mobilemoneynumber` | Mobile money number |
+      | `bankbranchid` | Bank branch ID |
+      | `accounttype` | Account type |
+      | `country` | Country (ISO 3166-1 alpha-3) |
+
+      Which keys are required depends on the destination country. Call `required-bank-fields/{country}` to get the exact requirements for your corridor.
     </ParamField>
     <ParamField body='value' type='string' required>
       Field value.
@@ -67,10 +86,11 @@ curl -X POST 'https://{your-domain}.fincode.software/api/v6/services/bankmanagem
     "currencyCode": "NGN",
     "country": "NGA",
     "bankAccountMetaData": [
-        {"key": "bankname", "value": "FCMB"},
-        {"key": "bankaccountno", "value": "8883968718"},
-        {"key": "country", "value": "NGA"},
-        {"key": "accountholdername", "value": "VICTOR ADEBIYI ADEYINKA"}
+        {"key": "bankname",          "value": "FCMB"},
+        {"key": "bankaccountno",     "value": "8883968718"},
+        {"key": "accountholdername", "value": "Ada Okonkwo"},
+        {"key": "bankcode",          "value": "214"},
+        {"key": "swiftbic",          "value": "FCMBNGLA"}
     ]
 }'
 ```

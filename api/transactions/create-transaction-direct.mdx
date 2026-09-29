@@ -1,11 +1,59 @@
 ---
 title: 'Create Transaction (Direct)'
-openapi: 'POST /transactionmanagement/create-transaction/'
-description: 'Initiate a new remittance transaction providing full sender and recipient KYC details inline.'
+openapi: 'POST /transactionmanagement/create-transaction'
+description: 'Initiate a new remittance transaction using pre-registered sender and recipient customer codes.'
 ---
 
-# Transaction Only Flow
+Initiates a new transaction. Both the sender and recipient must already be registered on the platform — pass their customer codes in `preExistingSenderCustomerCode` and `preExistingRecipientCustomerCode`.
 
-Initiates a new transaction where you provide the full KYC details for both the sender and the recipient within the transaction payload.
+For the full field reference, see [Create Transaction](/api/transactions/create-transaction).
 
-This endpoint is ideal for integrations where you manage your own customer data and do not wish to sync it beforehand using the User Management APIs.
+## Quick Reference
+
+| Field | Required | Notes |
+|-------|----------|-------|
+| `X-Idempotency-Key` | Header — required | Prevents duplicate transactions on retry |
+| `ipAddress` | Header — required | Device IP of the person initiating the transaction |
+| `preExistingSenderCustomerCode` | Body — required | Sender's customer code |
+| `preExistingRecipientCustomerCode` | Body — required | Recipient's customer code |
+| `type` | Body — required | Delivery method: `ACCOUNTPAYMENT`, `MOBILE_MONEY`, `CASH_PICKUP`, `WALLET` |
+| `creditParty` | Body — required | Recipient account details as lowercase key-value pairs |
+| `internationalTransferInformation` | Body — required | `originCountry`, `receivingCountry`, `remittancePurpose`, `sourceOfFunds` |
+
+## Code Example
+
+```bash cURL
+curl -X POST 'https://{your-domain}.fincode.software/api/v6/services/transactionmanagement/create-transaction' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'X-Idempotency-Key: a1b2c3d4-e5f6-7890-abcd-ef1234567890' \
+--header 'ipAddress: 192.168.1.100' \
+--header 'Content-Type: application/json' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--data '{
+  "amount": 150000,
+  "sendAmount": 100,
+  "inclussive": false,
+  "sendCurrency": "GBP",
+  "receivingCurrency": "NGN",
+  "type": "ACCOUNTPAYMENT",
+  "transactionProcessingMode": "REAL_TIME",
+  "preExistingSenderCustomerCode": "VJJGVE",
+  "preExistingRecipientCustomerCode": "BNADKO",
+  "creditParty": [
+    {"key": "bankname",          "value": "GTBank"},
+    {"key": "bankaccountno",     "value": "0123456789"},
+    {"key": "accountholdername", "value": "Ada Okonkwo"},
+    {"key": "bankcode",          "value": "058"},
+    {"key": "swiftbic",          "value": "GTBINGLA"}
+  ],
+  "internationalTransferInformation": {
+    "originCountry": "GBR",
+    "receivingCountry": "NGA",
+    "remittancePurpose": "FAMILY_SUPPORT",
+    "sourceOfFunds": "SALARY"
+  },
+  "dynamicFields": {},
+  "eligibleDocumentList": []
+}'
+```

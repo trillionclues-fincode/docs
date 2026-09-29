@@ -1,7 +1,107 @@
 ---
 title: 'Customer Transaction History'
 openapi: 'POST /transactionmanagement/history-data'
-description: 'Retrieves a paginated and filtered list of transactions for the authenticated customer or a customer managed by the agent/manager.'
+description: 'Retrieves a paginated and filtered list of transactions.'
 ---
 
-This endpoint fetches the transaction history, allowing for detailed filtering by amount range, date range, and pagination. It uses a `POST` method because the complex filtering parameters are sent in the request body.
+Retrieves the transaction history with support for filtering by amount, date, currency, status, and more. Uses `POST` so the filtering parameters can be sent in the request body.
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  JWT Access Token of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Request Body
+
+All fields are optional — omit any you do not need to filter by.
+
+<ParamField body='totalNumber' type='integer'>
+  Number of records to return (page size). Defaults to all matching records if omitted.
+</ParamField>
+
+<ParamField body='startNumber' type='integer'>
+  Zero-based offset for pagination. Use with `totalNumber` to page through results.
+</ParamField>
+
+<ParamField body='fromDate' type='string'>
+  Start of the date range (ISO 8601 format, e.g. `2024-01-01T00:00:00Z`).
+</ParamField>
+
+<ParamField body='toDate' type='string'>
+  End of the date range (ISO 8601 format, e.g. `2024-12-31T23:59:59Z`).
+</ParamField>
+
+<ParamField body='fromAmount' type='number'>
+  Minimum transaction amount filter.
+</ParamField>
+
+<ParamField body='toAmount' type='number'>
+  Maximum transaction amount filter.
+</ParamField>
+
+<ParamField body='selectedCurrency' type='string'>
+  ISO 4217 currency code to filter by (e.g. `GBP`, `NGN`).
+</ParamField>
+
+<ParamField body='status' type='string'>
+  Filter by transaction status. Common values: `PENDING`, `PROCESSED`, `FAILED`, `CANCELLED`.
+</ParamField>
+
+<ParamField body='deliveryMethod' type='string'>
+  Filter by delivery/transaction type (e.g. `ACCOUNTPAYMENT`, `MOBILE_MONEY`, `CASH_PICKUP`).
+</ParamField>
+
+<ParamField body='countryTo' type='string'>
+  ISO 3166-1 alpha-3 destination country code filter (e.g. `NGA`).
+</ParamField>
+
+<ParamField body='pcn' type='string'>
+  Filter by transaction reference / PCN (Platform Control Number).
+</ParamField>
+
+<ParamField body='accountNumber' type='string'>
+  Filter by recipient account number.
+</ParamField>
+
+<ParamField body='beneficiaryCode' type='string'>
+  Filter by recipient's customer code.
+</ParamField>
+
+<ParamField body='senderFullName' type='string'>
+  Filter by sender's full name (partial match).
+</ParamField>
+
+<ParamField body='receiverFullName' type='string'>
+  Filter by recipient's full name (partial match).
+</ParamField>
+
+<ParamField body='complianceStatus' type='string'>
+  Filter by compliance check status.
+</ParamField>
+
+## Code Example
+
+```bash cURL
+curl -X POST 'https://{your-domain}.fincode.software/api/v6/services/transactionmanagement/history-data' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'Content-Type: application/json' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--data '{
+  "startNumber": 0,
+  "totalNumber": 20,
+  "fromDate": "2024-01-01T00:00:00Z",
+  "toDate": "2024-12-31T23:59:59Z",
+  "selectedCurrency": "GBP",
+  "status": "PROCESSED"
+}'
+```
