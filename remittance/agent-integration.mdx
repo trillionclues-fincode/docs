@@ -19,8 +19,8 @@ Create a customer record. This is always the first call. The response returns a 
 
 | Method | Path | What it does | Swagger |
 |--------|------|--------------|---------|
-| `POST` | [usermanagement/register-customer](/api/ciam/create-customer) | Register a new sender | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/user-management/registerCustomer) |
-| `POST` | [usermanagement/profile](/api/ciam/profile) | Retrieve a sender's profile | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+| `POST` | `usermanagement/register-customer` [→](/api/ciam/create-customer) | Register a new sender | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/user-management/registerCustomer) |
+| `POST` | `usermanagement/profile` [→](/api/ciam/profile) | Retrieve a sender's profile | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
 
 <Note>
   Subscribe to our webhook notifications to receive real-time customer status updates.
@@ -34,9 +34,9 @@ Obtain a session token. The token is valid for **50 minutes** and is shared acro
 
 | Method | Path | What it does | Swagger |
 |--------|------|--------------|---------|
-| `PUT` | [securitymanagement/login](/api/auth/login) | Obtain a session token | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/security-management/login) |
+| `PUT` | `securitymanagement/login` [→](/api/auth/login) | Obtain a session token | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/security-management/login) |
 | `GET` | `securitymanagement/reset-password/{email}` [→](/api/ciam/reset-password) | Initiate a password reset | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-| `PUT` | [securitymanagement/change-password](/api/ciam/change-password) | Change the authenticated user's password | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+| `PUT` | `securitymanagement/change-password` [→](/api/ciam/change-password) | Change the authenticated user's password | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
 
 ---
 
@@ -46,8 +46,8 @@ When a customer is registered, the platform automatically assigns KYC rules base
 
 | Method | Path | What it does | Swagger |
 |--------|------|--------------|---------|
-| `GET` | [compliance/list-organisation-compliance-policy](/api/ciam/list-organisation-compliance-policy) | Retrieve the KYC and transaction rules configured for the organisation | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-| `PUT` | [compliance/customer-compliance-checklist](/api/ciam/compliance-checklist) | Retrieve the pre-transaction compliance checklist for a customer | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+| `GET` | `compliance/list-organisation-compliance-policy` [→](/api/ciam/list-organisation-compliance-policy) | Retrieve the KYC and transaction rules configured for the organisation | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+| `PUT` | `compliance/customer-compliance-checklist` [→](/api/ciam/compliance-checklist) | Retrieve the pre-transaction compliance checklist for a customer | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
 
 From here, the flow depends on whether you are using the platform's built-in KYC or your own external KYC provider.
 
@@ -86,7 +86,7 @@ From here, the flow depends on whether you are using the platform's built-in KYC
 
         | Method | Path | What it does | Swagger |
         |--------|------|--------------|---------|
-        | `POST` | [documentmanagement/attach-documents](/api/ciam/attach-documents) | Submit a KYC or AML document | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+        | `POST` | `documentmanagement/attach-documents` [→](/api/ciam/attach-documents) | Submit a KYC or AML document | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
 
         Pass the `associatedRuleId` from the checklist item in the request body to link the document to the correct rule.
       </Accordion>
@@ -120,7 +120,7 @@ From here, the flow depends on whether you are using the platform's built-in KYC
 
     | Method | Path | What it does | Swagger |
     |--------|------|--------------|---------|
-    | `POST` | [compliance/external-provider/initiate](/api/ciam/initiate-external-provider) | Register the eKYC session and obtain a platform reference | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+    | `POST` | `compliance/external-provider/initiate` [→](/api/ciam/initiate-external-provider) | Register the eKYC session and obtain a platform reference | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
 
     <Warning>
       Store the `reference` from the response. Pass it to your KYC provider as the external user identifier so the provider echoes it back in the webhook it sends to the platform.
@@ -166,7 +166,7 @@ From here, the flow depends on whether you are using the platform's built-in KYC
 
     | Method | Path | What it does | Swagger |
     |--------|------|--------------|---------|
-    | `POST` | [compliance/external-provider/verify-contact](/api/ciam/verify-contact) | Mark email or phone as verified | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+    | `POST` | `compliance/external-provider/verify-contact` [→](/api/ciam/verify-contact) | Mark email or phone as verified | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
 
     Pass `userId` and `type` (`EMAIL` or `PHONE_NUMBER`). This marks the requirement as fulfilled and triggers the full KYC lifecycle automatically.
 
@@ -195,7 +195,7 @@ From here, the flow depends on whether you are using the platform's built-in KYC
 
         | Method | Path | What it does | Swagger |
         |--------|------|--------------|---------|
-        | `POST` | [documentmanagement/attach-documents](/api/ciam/attach-documents) | Submit a KYC document | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+        | `POST` | `documentmanagement/attach-documents` [→](/api/ciam/attach-documents) | Submit a KYC document | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
       </Accordion>
     </AccordionGroup>
 
@@ -210,7 +210,7 @@ Get a live exchange rate and fee breakdown before booking.
 
 | Method | Path | What it does | Swagger |
 |--------|------|--------------|---------|
-| `GET` | [services/quote/callQuote](/api/transactions/call-quote) | Perform a transaction quote | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+| `GET` | `services/quote/callQuote` [→](/api/transactions/call-quote) | Perform a transaction quote | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
 
 ---
 
@@ -220,8 +220,8 @@ Add and retrieve beneficiaries linked to a sender.
 
 | Method | Path | What it does | Swagger |
 |--------|------|--------------|---------|
-| `POST` | [usermanagement/new-beneficiary](/api/transactions/create-beneficiary) | Add a new beneficiary to a sender's account | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-| `POST` | [usermanagement/find-all-beneficiery](/api/transactions/beneficiary-list) | Retrieve all beneficiaries for a sender | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+| `POST` | `usermanagement/new-beneficiary` [→](/api/transactions/create-beneficiary) | Add a new beneficiary to a sender's account | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+| `POST` | `usermanagement/find-all-beneficiery` [→](/api/transactions/beneficiary-list) | Retrieve all beneficiaries for a sender | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
 
 ---
 
@@ -231,8 +231,8 @@ Both endpoints require an `X-Idempotency-Key` header to prevent duplicate bookin
 
 | Method | Path | What it does | Swagger |
 |--------|------|--------------|---------|
-| `POST` | [transactionmanagement/create-transaction](/api/transactions/create-transaction) | Book a transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-| `POST` | [transactionmanagement/history-data](/api/transactions/history-data) | Look up a booked transfer's status | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+| `POST` | `transactionmanagement/create-transaction` [→](/api/transactions/create-transaction) | Book a transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+| `POST` | `transactionmanagement/history-data` [→](/api/transactions/history-data) | Look up a booked transfer's status | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
 
 <Tip>
   The `X-Idempotency-Key` must be a unique identifier per request. Subscribe to webhook notifications as an alternative to polling the status endpoint.
@@ -246,7 +246,7 @@ Retrieve the available payment methods for a booked transfer and implement the c
 
 | Method | Path | What it does | Swagger |
 |--------|------|--------------|---------|
-| `POST` | [paymentmanagement/supported-payment-methods](/api/deposit-engine/supported-payment-methods) | List payment methods for a booked transfer | [↗](https://test-deposit-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+| `POST` | `paymentmanagement/supported-payment-methods` [→](/api/deposit-engine/supported-payment-methods) | List payment methods for a booked transfer | [↗](https://test-deposit-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
 
 <Note>
   The `X-Idempotency-Key` must be a unique identifier per request. The `pcn` must match the one used in the booking call.
@@ -274,7 +274,7 @@ AML checks run at the point of transaction. Any outstanding requirements must be
 
 | Method | Path | What it does | Swagger |
 |--------|------|--------------|---------|
-| `POST` | [documentmanagement/attach-documents](/api/ciam/attach-documents) | Submit an AML-required document | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+| `POST` | `documentmanagement/attach-documents` [→](/api/ciam/attach-documents) | Submit an AML-required document | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
 
 ---
 
@@ -284,10 +284,9 @@ Applies to integrations using your own KYC provider. The following providers are
 
 | Provider | Code |
 |----------|------|
-| ShuftiPro | `SHUFTIPRO` |
-| SEON | `SEON` |
+| ShuftiPro | `SHUFTI_PRO` |
+| SEON | `SEON_IDV` |
 | SumSub | `SUMSUB` |
-| Onfido | `ONFIDO` |
 | Didit | `DIDIT` |
 
 ### Technical requirements
