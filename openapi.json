@@ -820,6 +820,49 @@
                 }
             }
         },
+        "/compliance/list-organisation-compliance-policy": {
+            "get": {
+                "summary": "Organisation Compliance Policy",
+                "description": "Retrieves the KYC rules and transaction rules configured for the organisation. Use this to understand what compliance checks are in place before calling the per-customer compliance checklist.",
+                "operationId": "listOrganisationCompliancePolicy",
+                "tags": ["Compliance"],
+                "parameters": [
+                    { "$ref": "#/components/parameters/platformHeader" },
+                    { "$ref": "#/components/parameters/uuidHeader" },
+                    { "$ref": "#/components/parameters/authHeader" }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Policy retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": { "type": "string", "example": "SUCCESS" },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "knowYourCustomerRules": {
+                                                    "type": "array",
+                                                    "description": "KYC rules configured for this organisation",
+                                                    "items": { "type": "object" }
+                                                },
+                                                "transactionRules": {
+                                                    "type": "array",
+                                                    "description": "Business transaction rules configured for this organisation",
+                                                    "items": { "type": "object" }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/compliance/customer-compliance-checklist": {
             "put": {
                 "summary": "Pre-Transaction Compliance Checklist",
