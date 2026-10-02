@@ -56,7 +56,8 @@
             "group": "Getting Started",
             "pages": [
               "remittance/overview",
-              "remittance/process-flows"
+              "remittance/process-flows",
+              "remittance/agent-integration"
             ]
           },
           {
