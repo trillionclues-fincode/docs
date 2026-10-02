@@ -1,0 +1,67 @@
+---
+title: 'Organisation Compliance Policy'
+openapi: 'GET /compliance/list-organisation-compliance-policy'
+description: 'Retrieves the KYC rules and transaction rules configured for the organisation.'
+---
+
+Call this endpoint to retrieve the full set of compliance rules your organisation has configured — both KYC identity rules and business transaction rules. Use it to understand what checks are in place before calling the per-customer [Pre-Transaction Compliance Checklist](/api/ciam/compliance-checklist).
+
+All authenticated user types can call this endpoint.
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  JWT Access Token of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Response
+
+<ResponseField name='status' type='string'>
+  `SUCCESS` or `FAILED`.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  <Expandable title='data fields'>
+    <ResponseField name='knowYourCustomerRules' type='array'>
+      The KYC identity rules configured for this organisation. Each item describes a rule that may be applied to a customer based on their risk profile.
+    </ResponseField>
+    <ResponseField name='transactionRules' type='array'>
+      The business transaction rules configured for this organisation. These rules may trigger AML document requirements at the point of booking a transfer.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Example
+
+```bash cURL
+curl -X GET 'https://{your-domain}.fincode.software/api/v6/services/compliance/list-organisation-compliance-policy' \
+--header 'X-Auth-Token: YOUR_JWT_ACCESS_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+async function getCompliancePolicy(accessToken) {
+  const response = await axios.get(
+    'https://{your-domain}.fincode.software/api/v6/services/compliance/list-organisation-compliance-policy',
+    {
+      headers: {
+        'X-Auth-Token': accessToken,
+        'platform': 'fincode',
+        'uuid': '200',
+      },
+    }
+  );
+  return response.data.data;
+}
+```
