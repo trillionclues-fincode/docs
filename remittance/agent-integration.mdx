@@ -256,7 +256,6 @@ This page lists every endpoint your application needs to go live. Work through t
     | Method | Path | What it does | Swagger |
     |--------|------|--------------|---------|
     | `POST` | [`transactionmanagement/create-transaction`](/api/transactions/create-transaction) [→](/api/transactions/create-transaction) | Book a transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/createTransaction2) |
-    | `POST` | [`transactionmanagement/history-data`](/api/transactions/history-data) [→](/api/transactions/history-data) | Look up a booked transfer's status | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/transactionHistories) |
 
     <Tip>
       The `X-Idempotency-Key` must be a unique identifier per request. Subscribe to webhook notifications as an alternative to polling the status endpoint.
@@ -291,10 +290,10 @@ This page lists every endpoint your application needs to go live. Work through t
 
     | Method | Path | What it does | Swagger |
     |--------|------|--------------|---------|
-    | `GET` | [`transactionmanagement/checktransactionstatus/{transaction_identification_number}`](/api/transactions/history-data) [→](/api/transactions/history-data) | Check the status of a booked transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/checkTransactionStatus) |
+    | `GET` | [`transactionmanagement/checktransactionstatus/{pcn}`](/api/transactions/check-transaction-status) [→](/api/transactions/check-transaction-status) | Check the status of a booked transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/checkTransactionStatus) |
 
     <Note>
-      Subscribe to webhook notifications to receive automatic status updates without polling.
+      Pass the `pcn` from the `create-transaction` response as the path parameter. Subscribe to webhook notifications to receive automatic status updates without polling.
     </Note>
 
     ---
@@ -419,10 +418,10 @@ This page lists every endpoint your application needs to go live. Work through t
 
     | Method | Path | What it does | Swagger |
     |--------|------|--------------|---------|
-    | `GET` | [`transactionmanagement/checktransactionstatus/{transaction_identification_number}`](/api/transactions/history-data) [→](/api/transactions/history-data) | Check the status of a booked transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/checkTransactionStatus) |
+    | `GET` | [`transactionmanagement/checktransactionstatus/{pcn}`](/api/transactions/check-transaction-status) [→](/api/transactions/check-transaction-status) | Check the status of a booked transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/checkTransactionStatus) |
 
     <Note>
-      Subscribe to webhook notifications to receive automatic status updates without polling.
+      Pass the `pcn` from the `create-transaction` response as the path parameter. Subscribe to webhook notifications to receive automatic status updates without polling.
     </Note>
 
     ---
