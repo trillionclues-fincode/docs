@@ -3,7 +3,7 @@ title: 'Agent Integration Guide'
 icon: 'plug'
 ---
 
-This page lists every endpoint your application needs to go live. Work through the sections in order — each section's output feeds the next.
+This page lists every endpoint your application needs to go live. Work through the sections in order - each section's output feeds the next.
 
 <Info>
   **Base URL**: `https://{domain}.fincode.software/api/v6/services/`
@@ -16,7 +16,7 @@ This page lists every endpoint your application needs to go live. Work through t
 <Tabs>
   <Tab title="Interactive mode">
 
-    Use this mode when the customer interacts directly with your application in real time — the sender authenticates, completes KYC, and books their own transactions. Work through the steps in order.
+    Use this mode when the customer interacts directly with your application in real time - the sender authenticates, completes KYC, and books their own transactions. Work through the steps in order.
 
     ---
 
@@ -249,7 +249,7 @@ This page lists every endpoint your application needs to go live. Work through t
 
     ## Step 6 - Book a Transfer
 
-    Supports two modes. **Sender mode** allows the sender to book a transaction for themselves, creating a new recipient or using an existing one. **Cashier mode** enables a cashier to book a transaction on behalf of a sender — see the **Non-interactive mode** tab for the full cashier flow.
+    Supports two modes. **Sender mode** allows the sender to book a transaction for themselves, creating a new recipient or using an existing one. **Cashier mode** enables a cashier to book a transaction on behalf of a sender - see the **Non-interactive mode** tab for the full cashier flow.
 
     Both endpoints require an `X-Idempotency-Key` header to prevent duplicate bookings.
 
@@ -280,7 +280,7 @@ This page lists every endpoint your application needs to go live. Work through t
     | `POST` | [`paymentmanagement/supported-payment-methods`](/api/deposit-engine/supported-payment-methods) [→](/api/deposit-engine/supported-payment-methods) | List payment methods for a booked transfer | [↗](https://test-deposit-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/payment-management/supportedPaymentMethods) |
 
     <Note>
-      The `X-Idempotency-Key` must be a unique identifier per request. The `pcn` must match the one used in the booking call. Call this endpoint once per transaction — each call returns a new `paymentIntentId`.
+      The `X-Idempotency-Key` must be a unique identifier per request. The `pcn` must match the one used in the booking call. Call this endpoint once per transaction - each call returns a new `paymentIntentId`.
     </Note>
 
     ---
@@ -383,15 +383,15 @@ This page lists every endpoint your application needs to go live. Work through t
 
     Include exactly one of the following in your request:
 
-    - **New sender** — include the sender's personal details (name, email, phone, address, etc.) in the request body. The platform creates the customer record and returns a `customerCode` in the response. Store this code for subsequent calls.
-    - **Existing sender** — include `preExistingSenderCustomerCode` with the sender's previously assigned code. All sender fields are resolved from the existing record.
+    - **New sender** - include the sender's personal details (name, email, phone, address, etc.) in the request body. The platform creates the customer record and returns a `customerCode` in the response. Store this code for subsequent calls.
+    - **Existing sender** - include `preExistingSenderCustomerCode` with the sender's previously assigned code. All sender fields are resolved from the existing record.
 
     ### Beneficiary options
 
     Include exactly one of the following:
 
-    - **New beneficiary** — include the recipient's details in `newRecipientKyc` (name, phone, address, destination country, etc.).
-    - **Existing beneficiary** — include the beneficiary's previously assigned code to reuse an existing record.
+    - **New beneficiary** - include the recipient's details in `newRecipientKyc` (name, phone, address, destination country, etc.).
+    - **Existing beneficiary** - include the beneficiary's previously assigned code to reuse an existing record.
 
     ### Embedding KYC documents
 
@@ -434,7 +434,7 @@ This page lists every endpoint your application needs to go live. Work through t
         `GET compliance/list-organisation-compliance-policy`
       </Step>
       <Step title="Book transfer with embedded KYC">
-        `POST transactionmanagement/create-transaction` — include sender (new or existing), beneficiary (new or existing), and any required documents in a single call using a cashier token.
+        `POST transactionmanagement/create-transaction` - include sender (new or existing), beneficiary (new or existing), and any required documents in a single call using a cashier token.
       </Step>
       <Step title="Process payment (if required)">
         `POST paymentmanagement/supported-payment-methods`
