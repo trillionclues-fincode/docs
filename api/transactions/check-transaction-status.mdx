@@ -1,0 +1,79 @@
+---
+title: 'Check Transaction Status'
+openapi: 'GET /transactionmanagement/checktransactionstatus/{transaction_identification_number}'
+description: 'Returns the current processing status of a single transaction by its PCN.'
+---
+
+Returns the current processing status of a booked transfer. Pass the PCN (Platform Control Number) returned from `create-transaction` as the path parameter.
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  JWT Access Token of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+<ParamField header='ipAddress' type='string' required>
+  IP address of the client making the request.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='transaction_identification_number' type='string' required>
+  The PCN of the booked transfer, as returned in the `pcn` field of the `create-transaction` response.
+</ParamField>
+
+## Response
+
+<ResponseField name='error' type='object'>
+  <Expandable title='error fields'>
+    <ResponseField name='errorCategory' type='string'>
+      The transaction status name (e.g. `PENDING`, `PROCESSED`, `FAILED`, `CANCELLED`).
+    </ResponseField>
+    <ResponseField name='errorCode' type='string'>
+      `0` when the transaction is found, `-1` when not found.
+    </ResponseField>
+    <ResponseField name='errorDescription' type='string'>
+      Human-readable label for the current status.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl -X GET 'https://{your-domain}.fincode.software/api/v6/services/transactionmanagement/checktransactionstatus/TR656516344451' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--header 'ipAddress: 192.168.1.100'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const pcn = 'TR656516344451';
+
+const response = await axios.get(
+  `https://{your-domain}.fincode.software/api/v6/services/transactionmanagement/checktransactionstatus/${pcn}`,
+  {
+    headers: {
+      'X-Auth-Token': 'YOUR_TOKEN',
+      'platform': 'fincode',
+      'uuid': '200',
+      'ipAddress': '192.168.1.100'
+    }
+  }
+);
+```
+
+</CodeGroup>
