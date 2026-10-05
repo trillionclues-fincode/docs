@@ -3,278 +3,449 @@ title: 'Agent Integration Guide'
 icon: 'plug'
 ---
 
-This page lists every endpoint your application needs to go live. Work through the sections in order - each section's output feeds the next.
+This page lists every endpoint your application needs to go live. Work through the sections in order — each section's output feeds the next.
 
 <Info>
-  **Base URL**: `https://{your-domain}.fincode.software/api/v6/services/`
+  **Base URL**: `https://{domain}.fincode.software/api/v6/services/`
 
-  Replace `{your-domain}` with the subdomain assigned to your organisation.
+  Replace `{domain}` with the subdomain assigned to your organisation.
 </Info>
 
 ---
 
-## Step 1 - Customer Registration
-
-Create a customer record. This is always the first call. The response returns a `userId` that all subsequent calls depend on.
-
-| Method | Path | What it does | Swagger |
-|--------|------|--------------|---------|
-| `POST` | `usermanagement/register-customer` [→](/api/ciam/create-customer) | Register a new sender | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/user-management/registerCustomer) |
-| `POST` | `usermanagement/profile` [→](/api/ciam/profile) | Retrieve a sender's profile | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-
-<Note>
-  Subscribe to our webhook notifications to receive real-time customer status updates.
-</Note>
-
----
-
-## Step 2 - Authentication
-
-Obtain a session token. The token is valid for **50 minutes** and is shared across all calls within the session.
-
-| Method | Path | What it does | Swagger |
-|--------|------|--------------|---------|
-| `PUT` | `securitymanagement/login` [→](/api/auth/login) | Obtain a session token | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/security-management/login) |
-| `GET` | `securitymanagement/reset-password/{email}` [→](/api/ciam/reset-password) | Initiate a password reset | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-| `PUT` | `securitymanagement/change-password` [→](/api/ciam/change-password) | Change the authenticated user's password | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-
----
-
-## Step 3 - KYC & Compliance
-
-When a customer is registered, the platform automatically assigns KYC rules based on their risk profile. Call the checklist endpoint to find out what actions are outstanding before a transaction can be booked.
-
-| Method | Path | What it does | Swagger |
-|--------|------|--------------|---------|
-| `GET` | `compliance/list-organisation-compliance-policy` [→](/api/ciam/list-organisation-compliance-policy) | Retrieve the KYC and transaction rules configured for the organisation | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-| `PUT` | `compliance/customer-compliance-checklist` [→](/api/ciam/compliance-checklist) | Retrieve the pre-transaction compliance checklist for a customer | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-
-From here, the flow depends on whether you are using the platform's built-in KYC or your own external KYC provider.
-
 <Tabs>
-  <Tab title="Using built-in KYC">
-    ### Initiate each requirement
+  <Tab title="Interactive mode">
 
-    For each item returned by the compliance checklist, call the initiate endpoint. This triggers the action on the platform side and returns what you need to proceed.
+    Use this mode when the customer interacts directly with your application in real time — the sender authenticates, completes KYC, and books their own transactions. Work through the steps in order.
+
+    ---
+
+    ## Step 1 - Customer Registration
+
+    Registers a new customer account in the system. This endpoint is designed to reduce the number of API calls required from sign-up to KYC/AML submission. It presents the option to combine sign-up and KYC/AML documents into a single call. Call `list-organisation-compliance-policy` first to obtain your organisation's KYC/AML requirements and understand what to include. The endpoint:
+
+    - Creates a customer profile with personal or company information
+    - Validates and stores address information
+    - Processes dynamic fields based on organisation configuration
+    - Performs external screening validation for the registration country
+    - Initiates compliance checks for the newly registered customer
 
     | Method | Path | What it does | Swagger |
     |--------|------|--------------|---------|
-    | `GET` | `compliance/initiate-awaiting-compliance-action/{customer-kyc-record-id}` [→](/api/ciam/initiate-compliance-action) | Trigger a specific pending KYC action | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+    | `POST` | [`usermanagement/register-customer`](/api/ciam/create-customer) [→](/api/ciam/create-customer) | Register a new sender | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/user-management/registerCustomer) |
+    | `GET` | [`usermanagement/profile`](/api/ciam/profile) [→](/api/ciam/profile) | Retrieve a sender's profile | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/user-management/profileDetails) |
 
-    Replace `{customer-kyc-record-id}` with the ID from the checklist.
+    <Note>
+      Subscribe to webhook notifications to receive real-time customer status updates.
+    </Note>
 
-    ### Fulfil each requirement
+    ---
 
-    How each action is fulfilled depends on its type.
+    ## Step 2 - Authentication
 
-    <AccordionGroup>
-      <Accordion title="Email verification">
-        Handled automatically. When you call initiate, the platform sends a branded verification email to the customer. No further API call is needed from your side.
-      </Accordion>
+    Authenticates a user and grants access to the system. Performs comprehensive security checks including email and password validation, IP whitelisting, login security rule enforcement, user status verification, and two-factor authentication when enabled. Upon successful authentication the endpoint returns an `X-Auth-Token` valid for **50 minutes**, shared across all calls within the session.
 
-      <Accordion title="Phone OTP">
-        The platform sends an OTP to the customer via SMS when you call initiate. Your application collects the code from the customer and submits it.
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `PUT` | [`securitymanagement/login`](/api/auth/login) [→](/api/auth/login) | Obtain a session token | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/security-management/login) |
+    | `GET` | [`securitymanagement/reset-password/{email}`](/api/ciam/reset-password) [→](/api/ciam/reset-password) | Initiate a password reset | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/security-management/resetPassword) |
+    | `PUT` | [`securitymanagement/change-password`](/api/ciam/change-password) [→](/api/ciam/change-password) | Change the authenticated user's password | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/security-management/changePassword) |
+
+    ---
+
+    ## Step 3 - KYC & Compliance
+
+    When a customer is registered, the platform automatically assigns KYC rules based on their risk profile. The compliance checklist may include:
+
+    - Document verification requirements (passport, national ID, proof of address)
+    - Transaction limits and thresholds that apply to the customer
+    - Identity verification methods (email, phone, eKYC)
+    - Risk assessment requirements
+    - AML/KYC screening requirements
+    - Geographic and delivery method restrictions
+
+    Call `list-organisation-compliance-policy` to retrieve your organisation's KYC policy, then call `customer-compliance-checklist` to find out what actions are outstanding for a specific customer before a transaction can be booked.
+
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `GET` | [`compliance/list-organisation-compliance-policy`](/api/ciam/list-organisation-compliance-policy) [→](/api/ciam/list-organisation-compliance-policy) | Retrieve the KYC and transaction rules configured for the organisation | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/Complaince%20Management%20Service/listComplianceRules) |
+    | `PUT` | [`compliance/customer-compliance-checklist`](/api/ciam/compliance-checklist) [→](/api/ciam/compliance-checklist) | Retrieve the pre-transaction compliance checklist for a customer | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/Complaince%20Management%20Service/preTransactionBookingComplianceCheckList) |
+
+    From here, the flow depends on whether you are using the platform's built-in KYC or your own external KYC provider.
+
+    <Tabs>
+      <Tab title="Using built-in KYC">
+        ### Initiate each requirement
+
+        For each item returned by the compliance checklist, call the initiate endpoint. This triggers the action on the platform side and returns what you need to proceed.
 
         | Method | Path | What it does | Swagger |
         |--------|------|--------------|---------|
-        | `GET` | `securitymanagement/otp-verification/{email}/{verification-code}` [→](/api/ciam/otp-verification) | Submit the OTP the customer received | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-        | `GET` | `securitymanagement/sms-resend-otp/{email}` [→](/api/ciam/sms-resend-otp) | Resend the OTP if the customer did not receive it | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-      </Accordion>
+        | `GET` | [`compliance/initiate-awaiting-compliance-action/{customer-kyc-record-id}`](/api/ciam/initiate-compliance-action) [→](/api/ciam/initiate-compliance-action) | Trigger a specific pending KYC action | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/Complaince%20Management%20Service/initiateAwaitingComplianceActionById) |
 
-      <Accordion title="Document upload (Proof of Address, ID, Source of Funds)">
-        Your application collects the document from the customer and submits it.
+        Replace `{customer-kyc-record-id}` with the ID from the checklist.
+
+        ### Fulfil each requirement
+
+        How each action is fulfilled depends on its type.
+
+        <AccordionGroup>
+          <Accordion title="Email verification">
+            Handled automatically. When you call initiate, the platform sends a branded verification email to the customer. No further API call is needed from your side.
+          </Accordion>
+
+          <Accordion title="Phone OTP">
+            The platform sends an OTP to the customer via SMS when you call initiate. Your application collects the code from the customer and submits it.
+
+            | Method | Path | What it does | Swagger |
+            |--------|------|--------------|---------|
+            | `GET` | [`securitymanagement/otp-verification/{email}/{verification-code}`](/api/ciam/otp-verification) [→](/api/ciam/otp-verification) | Submit the OTP the customer received | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/security-management/smsVerification) |
+            | `GET` | [`securitymanagement/sms-resend-otp/{email}`](/api/ciam/sms-resend-otp) [→](/api/ciam/sms-resend-otp) | Resend the OTP if the customer did not receive it | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/security-management/smsResend) |
+          </Accordion>
+
+          <Accordion title="Document upload (Proof of Address, ID, Source of Funds)">
+            Your application collects the document from the customer and submits it.
+
+            | Method | Path | What it does | Swagger |
+            |--------|------|--------------|---------|
+            | `POST` | [`documentmanagement/attach-documents`](/api/ciam/attach-documents) [→](/api/ciam/attach-documents) | Submit a KYC or AML document | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/document-management-web-service/attachDocuments) |
+
+            Pass the `associatedRuleId` from the checklist item in the request body to link the document to the correct rule.
+          </Accordion>
+
+          <Accordion title="eKYC (electronic identity verification)">
+            The initiation call automatically creates the eKYC session. Follow the flow returned in the initiate response to complete electronic identity verification.
+          </Accordion>
+        </AccordionGroup>
+
+      </Tab>
+
+      <Tab title="Using your own KYC provider">
+        ### Prerequisites - Plugin setup
+
+        Before using your own KYC provider, you must configure it as a plugin on your agent dashboard.
+
+        1. Go to the **Plugins** section on your dashboard.
+        2. Click **Create Plugin** and enter your provider credentials.
+        3. Set the **API Type** to **EXTERNAL KYC PROVIDER**.
+
+        If your provider handles email and phone verification as part of its identity flow, also enable the following settings to prevent the platform from sending its own verification messages to the customer:
+
+        - **doNotForwardEmailVerification**: prevents the platform from sending its own email verification link.
+        - **doNotForwardPhoneVerification**: prevents the platform from sending its own phone OTP.
+
+        ---
+
+        ### Register the eKYC session with the platform
+
+        Before initiating verification with your provider, call this endpoint to create a tracking record on the platform side. The platform generates a unique `reference` and returns it.
 
         | Method | Path | What it does | Swagger |
         |--------|------|--------------|---------|
-        | `POST` | `documentmanagement/attach-documents` [→](/api/ciam/attach-documents) | Submit a KYC or AML document | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+        | `POST` | [`compliance/external-provider/initiate`](/api/ciam/initiate-external-provider) [→](/api/ciam/initiate-external-provider) | Register the eKYC session and obtain a platform reference | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/Complaince%20Management%20Service/initiateExternalKycProvider) |
 
-        Pass the `associatedRuleId` from the checklist item in the request body to link the document to the correct rule.
-      </Accordion>
+        <Warning>
+          Store the `reference` from the response. Pass it to your KYC provider as the external user identifier so the provider echoes it back in the webhook it sends to the platform.
+        </Warning>
 
-      <Accordion title="eKYC (electronic identity verification)">
-        The initiation call automatically creates the eKYC session. Follow the flow returned in the initiate response to complete electronic identity verification.
-      </Accordion>
-    </AccordionGroup>
+        ---
+
+        ### Configure the webhook callback
+
+        Your KYC provider must send its verification result directly to the platform when the customer completes verification. Configure the URL below as the webhook callback in your provider account settings. This is a one-time setup, not per customer.
+
+        | Method | Path | What it does | Swagger |
+        |--------|------|--------------|---------|
+        | `POST` | [`compliance/external-screening/webhooks/{provider-code}`](/api/ciam/external-screening-webhook) [→](/api/ciam/external-screening-webhook) | Receives verification results from your KYC provider | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/Complaince%20Management%20Service/handleExternalScreeningWebhook) |
+
+        Replace `{provider-code}` with the value that matches your KYC provider (see [Supported Providers](#supported-kyc-providers) below).
+
+        ---
+
+        ### Initialise verification with your provider
+
+        Create the verification session with your KYC provider and embed the `reference` from the registration step in the field your provider uses for an external reference. The provider will echo this value back in the webhook it sends to the platform on completion.
+
+        ---
+
+        ### Listen for the platform webhook
+
+        After the platform processes the result, it will POST a webhook to your registered callback URL with:
+
+        ```json
+        {
+          "eventType": "COMPLIANCE_RISK_PROFILE_UPDATED"
+        }
+        ```
+
+        Check the `customerKycVerificationRecordEntity` array in the payload. Any rule with `"executed": false` is still outstanding and must be fulfilled before the customer can transact.
+
+        ---
+
+        ### Fulfil non-eKYC requirements
+
+        If your provider also handles email and phone verification, notify the platform after your provider has verified each one:
+
+        | Method | Path | What it does | Swagger |
+        |--------|------|--------------|---------|
+        | `POST` | [`compliance/external-provider/verify-contact`](/api/ciam/verify-contact) [→](/api/ciam/verify-contact) | Mark email or phone as verified | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/Complaince%20Management%20Service/verifyContact) |
+
+        Pass `userId` and `type` (`EMAIL` or `PHONE_NUMBER`). This marks the requirement as fulfilled and triggers the full KYC lifecycle automatically.
+
+        <Note>
+          When this endpoint is called, the platform also calls your configured KYC provider to independently verify the contact detail. The plugin must be configured before using this endpoint.
+        </Note>
+
+        If your provider does **not** handle email and phone verification, fulfil those requirements using the standard flows:
+
+        <AccordionGroup>
+          <Accordion title="Email verification">
+            Handled automatically. When you call initiate in the registration step, the platform sends a branded verification email to the customer. No further API call is needed.
+          </Accordion>
+
+          <Accordion title="Phone OTP">
+            The platform sends an OTP via SMS. Your application collects the code and submits it.
+
+            | Method | Path | What it does | Swagger |
+            |--------|------|--------------|---------|
+            | `GET` | [`securitymanagement/otp-verification/{email}/{verification-code}`](/api/ciam/otp-verification) [→](/api/ciam/otp-verification) | Submit the OTP the customer received | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/security-management/smsVerification) |
+            | `GET` | [`securitymanagement/sms-resend-otp/{email}`](/api/ciam/sms-resend-otp) [→](/api/ciam/sms-resend-otp) | Resend the OTP if the customer did not receive it | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/security-management/smsResend) |
+          </Accordion>
+
+          <Accordion title="Document upload">
+            Collect the document and submit it. Pass the `associatedRuleId` from the checklist item in the request body.
+
+            | Method | Path | What it does | Swagger |
+            |--------|------|--------------|---------|
+            | `POST` | [`documentmanagement/attach-documents`](/api/ciam/attach-documents) [→](/api/ciam/attach-documents) | Submit a KYC document | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/document-management-web-service/attachDocuments) |
+          </Accordion>
+        </AccordionGroup>
+
+      </Tab>
+    </Tabs>
+
+    ---
+
+    ## Step 4 - Transaction Quote
+
+    Get a live exchange rate and fee breakdown before booking.
+
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `POST` | [`quote/callQuote`](/api/transactions/call-quote) [→](/api/transactions/call-quote) | Perform a transaction quote | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/quote-web-service-6/callQuote) |
+
+    ---
+
+    ## Step 5 - Beneficiary Management
+
+    Add and retrieve beneficiaries linked to a sender.
+
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `POST` | [`usermanagement/new-beneficiary`](/api/transactions/create-beneficiary) [→](/api/transactions/create-beneficiary) | Add a new beneficiary to a sender's account | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/user-management/newBeneficiery) |
+    | `GET` | [`usermanagement/find-all-beneficiery`](/api/transactions/beneficiary-list) [→](/api/transactions/beneficiary-list) | Retrieve all beneficiaries for a sender | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/user-management/findBeneficiery) |
+
+    ---
+
+    ## Step 6 - Book a Transfer
+
+    Supports two modes. **Sender mode** allows the sender to book a transaction for themselves, creating a new recipient or using an existing one. **Cashier mode** enables a cashier to book a transaction on behalf of a sender — see the **Non-interactive mode** tab for the full cashier flow.
+
+    Both endpoints require an `X-Idempotency-Key` header to prevent duplicate bookings.
+
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `POST` | [`transactionmanagement/create-transaction`](/api/transactions/create-transaction) [→](/api/transactions/create-transaction) | Book a transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/createTransaction2) |
+    | `POST` | [`transactionmanagement/history-data`](/api/transactions/history-data) [→](/api/transactions/history-data) | Look up a booked transfer's status | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/transactionHistories) |
+
+    <Tip>
+      The `X-Idempotency-Key` must be a unique identifier per request. Subscribe to webhook notifications as an alternative to polling the status endpoint.
+    </Tip>
+
+    ---
+
+    ## Step 7 - Pay for a Booked Transfer
+
+    Retrieves the available payment methods for a booked transfer. Returns available methods based on the transaction details, including online card payments, open banking transfers, e-wallets, bank transfers, cryptocurrency, and cash at payment points. The endpoint:
+
+    - Validates the authentication token and user credentials
+    - Fetches configured payment gateway integrations for the organisation
+    - Calculates payment method charges and fees for each available option
+    - Validates transaction amounts against payment method limits
+    - Checks compliance requirements and risk profiles
+    - Returns metadata for each supported method including fees, totals, and gateway-specific details
+
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `POST` | [`paymentmanagement/supported-payment-methods`](/api/deposit-engine/supported-payment-methods) [→](/api/deposit-engine/supported-payment-methods) | List payment methods for a booked transfer | [↗](https://test-deposit-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/payment-management/supportedPaymentMethods) |
+
+    <Note>
+      The `X-Idempotency-Key` must be a unique identifier per request. The `pcn` must match the one used in the booking call. Call this endpoint once per transaction — each call returns a new `paymentIntentId`.
+    </Note>
+
+    ---
+
+    ## Step 8 - Check Transfer Status
+
+    Check the current status of a booked transfer by its reference number.
+
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `GET` | [`transactionmanagement/checktransactionstatus/{transaction_identification_number}`](/api/transactions/history-data) [→](/api/transactions/history-data) | Check the status of a booked transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/checkTransactionStatus) |
+
+    <Note>
+      Subscribe to webhook notifications to receive automatic status updates without polling.
+    </Note>
+
+    ---
+
+    ## AML Compliance
+
+    AML checks run at the point of transaction. Any outstanding requirements must be resolved before the transaction can complete. Submit AML-required documents using the same endpoint as KYC documents. Pass the `associatedRuleId` from the outstanding requirement in the request body.
+
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `POST` | [`documentmanagement/attach-documents`](/api/ciam/attach-documents) [→](/api/ciam/attach-documents) | Submit an AML-required document | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/document-management-web-service/attachDocuments) |
+
+    ---
+
+    ## Summary
+
+    <Steps>
+      <Step title="Register the sender">
+        `POST usermanagement/register-customer`
+      </Step>
+      <Step title="Authenticate">
+        `PUT securitymanagement/login`
+      </Step>
+      <Step title="Complete KYC & compliance">
+        Built-in KYC: initiate each requirement then fulfil it. Your own KYC provider: register the session, configure the webhook, initiate with your provider, and listen for `COMPLIANCE_RISK_PROFILE_UPDATED`.
+      </Step>
+      <Step title="Get a quote">
+        `POST quote/callQuote`
+      </Step>
+      <Step title="Add a beneficiary">
+        `POST usermanagement/new-beneficiary`
+      </Step>
+      <Step title="Book the transfer">
+        `POST transactionmanagement/create-transaction`
+      </Step>
+      <Step title="Process payment">
+        `POST paymentmanagement/supported-payment-methods`
+      </Step>
+      <Step title="Resolve any AML requirements">
+        `POST documentmanagement/attach-documents`
+      </Step>
+      <Step title="Track status">
+        Poll `checktransactionstatus` or subscribe to webhooks
+      </Step>
+    </Steps>
 
   </Tab>
 
-  <Tab title="Using your own KYC provider">
-    ### Prerequisites - Plugin setup
+  <Tab title="Non-interactive mode">
 
-    Before using your own KYC provider, you must configure it as a plugin on your agent dashboard.
-
-    1. Go to the **Plugins** section on your dashboard.
-    2. Click **Create Plugin** and enter your provider credentials.
-    3. Set the **API Type** to **EXTERNAL KYC PROVIDER**.
-
-    If your provider handles email and phone verification as part of its identity flow, also enable the following settings to prevent the platform from sending its own verification messages to the customer:
-
-    - **doNotForwardEmailVerification**: prevents the platform from sending its own email verification link.
-    - **doNotForwardPhoneVerification**: prevents the platform from sending its own phone OTP.
+    Use this mode for system-to-system integration where your backend books transactions directly on behalf of senders, without the sender being present. A cashier user authenticates on your backend, then calls `create-transaction` in a single request with the sender, beneficiary, and any required KYC documents all embedded in the payload.
 
     ---
 
-    ### Register the eKYC session with the platform
+    ## Step 1 - Get Organisation Compliance Policy
 
-    Before initiating verification with your provider, call this endpoint to create a tracking record on the platform side. The platform generates a unique `reference` and returns it.
+    Before booking, call this endpoint to retrieve your organisation's KYC and AML requirements. The compliance policy tells you which documents and fields you must embed in the `create-transaction` request for the sender. The policy includes:
+
+    - Document verification requirements (passport, national ID, proof of address)
+    - Transaction limits and thresholds
+    - Identity verification methods
+    - AML/KYC screening requirements
+    - Geographic and delivery method restrictions
 
     | Method | Path | What it does | Swagger |
     |--------|------|--------------|---------|
-    | `POST` | `compliance/external-provider/initiate` [→](/api/ciam/initiate-external-provider) | Register the eKYC session and obtain a platform reference | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
+    | `GET` | [`compliance/list-organisation-compliance-policy`](/api/ciam/list-organisation-compliance-policy) [→](/api/ciam/list-organisation-compliance-policy) | Retrieve KYC and transaction rules for the organisation | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/Complaince%20Management%20Service/listComplianceRules) |
+
+    ---
+
+    ## Step 2 - Book Transfer with Embedded KYC
+
+    Authenticate as a cashier user and call `create-transaction` with everything embedded. This endpoint reduces the number of API calls required from sign-up to booking. It allows you to combine sender creation, beneficiary creation, and KYC document submission into a single call.
+
+    We recommend calling `customer-compliance-checklist` before `create-transaction` so you can identify and submit any outstanding compliance requirements inline.
+
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `POST` | [`transactionmanagement/create-transaction`](/api/transactions/create-transaction) [→](/api/transactions/create-transaction) | Book a transfer on behalf of a sender | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/createTransaction2) |
 
     <Warning>
-      Store the `reference` from the response. Pass it to your KYC provider as the external user identifier so the provider echoes it back in the webhook it sends to the platform.
+      This endpoint requires three additional headers: `ipAddress` (the sender's IP address), `X-Idempotency-Key` (a unique key per request), and `Merchant-Host`. A missing header returns HTTP 400 with an empty body.
     </Warning>
 
+    ### Sender options
+
+    Include exactly one of the following in your request:
+
+    - **New sender** — include the sender's personal details (name, email, phone, address, etc.) in the request body. The platform creates the customer record and returns a `customerCode` in the response. Store this code for subsequent calls.
+    - **Existing sender** — include `preExistingSenderCustomerCode` with the sender's previously assigned code. All sender fields are resolved from the existing record.
+
+    ### Beneficiary options
+
+    Include exactly one of the following:
+
+    - **New beneficiary** — include the recipient's details in `newRecipientKyc` (name, phone, address, destination country, etc.).
+    - **Existing beneficiary** — include the beneficiary's previously assigned code to reuse an existing record.
+
+    ### Embedding KYC documents
+
+    Use the `eligibleDocumentList` field to attach any KYC documents required by the compliance policy. Each entry includes the document type and the base64-encoded file. Pass `associatedRuleId` for each document to link it to the correct compliance rule.
+
+    The response returns a `serverCorrelationId` (the transaction UUID) and a `pcn` (payment reference number) for use in subsequent payment and status calls.
+
     ---
 
-    ### Configure the webhook callback
+    ## Step 3 - Process Payment (Optional)
 
-    Your KYC provider must send its verification result directly to the platform when the customer completes verification. Configure the URL below as the webhook callback in your provider account settings. This is a one-time setup, not per customer.
+    If the transaction requires a payment link (for example, open banking or card), call this endpoint with the `pcn` from Step 2 to retrieve available payment methods and generate a hosted payment URL.
 
     | Method | Path | What it does | Swagger |
     |--------|------|--------------|---------|
-    | `POST` | `compliance/external-screening/webhooks/{provider-code}` [→](/api/ciam/external-screening-webhook) | Receives verification results from your KYC provider | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-
-    Replace `{provider-code}` with the value that matches your KYC provider (see [Supported Providers](#supported-kyc-providers) below).
-
-    ---
-
-    ### Initialise verification with your provider
-
-    Create the verification session with your KYC provider and embed the `reference` from the registration step in the field your provider uses for an external reference. The provider will echo this value back in the webhook it sends to the platform on completion.
-
-    ---
-
-    ### Listen for the platform webhook
-
-    After the platform processes the result, it will POST a webhook to your registered callback URL with:
-
-    ```json
-    {
-      "eventType": "COMPLIANCE_RISK_PROFILE_UPDATED"
-    }
-    ```
-
-    Check the `customerKycVerificationRecordEntity` array in the payload. Any rule with `"executed": false` is still outstanding and must be fulfilled before the customer can transact.
-
-    ---
-
-    ### Fulfil non-eKYC requirements
-
-    If your provider also handles email and phone verification, notify the platform after your provider has verified each one:
-
-    | Method | Path | What it does | Swagger |
-    |--------|------|--------------|---------|
-    | `POST` | `compliance/external-provider/verify-contact` [→](/api/ciam/verify-contact) | Mark email or phone as verified | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-
-    Pass `userId` and `type` (`EMAIL` or `PHONE_NUMBER`). This marks the requirement as fulfilled and triggers the full KYC lifecycle automatically.
+    | `POST` | [`paymentmanagement/supported-payment-methods`](/api/deposit-engine/supported-payment-methods) [→](/api/deposit-engine/supported-payment-methods) | List payment methods for a booked transfer | [↗](https://test-deposit-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/payment-management/supportedPaymentMethods) |
 
     <Note>
-      When this endpoint is called, the platform also calls your configured KYC provider to independently verify the contact detail. The plugin must be configured before using this endpoint.
+      Call this endpoint once per transaction. Each call returns a new `paymentIntentId`. Pass the `pcn` from the `create-transaction` response.
     </Note>
 
-    If your provider does **not** handle email and phone verification, fulfil those requirements using the standard flows:
+    ---
 
-    <AccordionGroup>
-      <Accordion title="Email verification">
-        Handled automatically. When you call initiate in the registration step, the platform sends a branded verification email to the customer. No further API call is needed.
-      </Accordion>
+    ## Step 4 - Check Transfer Status
 
-      <Accordion title="Phone OTP">
-        The platform sends an OTP via SMS. Your application collects the code and submits it.
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `GET` | [`transactionmanagement/checktransactionstatus/{transaction_identification_number}`](/api/transactions/history-data) [→](/api/transactions/history-data) | Check the status of a booked transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/checkTransactionStatus) |
 
-        | Method | Path | What it does | Swagger |
-        |--------|------|--------------|---------|
-        | `GET` | `securitymanagement/otp-verification/{email}/{verification-code}` [→](/api/ciam/otp-verification) | Submit the OTP the customer received | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-        | `GET` | `securitymanagement/sms-resend-otp/{email}` [→](/api/ciam/sms-resend-otp) | Resend the OTP if the customer did not receive it | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-      </Accordion>
+    <Note>
+      Subscribe to webhook notifications to receive automatic status updates without polling.
+    </Note>
 
-      <Accordion title="Document upload">
-        Collect the document and submit it. Pass the `associatedRuleId` from the checklist item in the request body.
+    ---
 
-        | Method | Path | What it does | Swagger |
-        |--------|------|--------------|---------|
-        | `POST` | `documentmanagement/attach-documents` [→](/api/ciam/attach-documents) | Submit a KYC document | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-      </Accordion>
-    </AccordionGroup>
+    ## Summary
+
+    <Steps>
+      <Step title="Get compliance policy">
+        `GET compliance/list-organisation-compliance-policy`
+      </Step>
+      <Step title="Book transfer with embedded KYC">
+        `POST transactionmanagement/create-transaction` — include sender (new or existing), beneficiary (new or existing), and any required documents in a single call using a cashier token.
+      </Step>
+      <Step title="Process payment (if required)">
+        `POST paymentmanagement/supported-payment-methods`
+      </Step>
+      <Step title="Track status">
+        Poll `checktransactionstatus` or subscribe to webhooks
+      </Step>
+    </Steps>
 
   </Tab>
 </Tabs>
-
----
-
-## Step 4 - Transaction Quote
-
-Get a live exchange rate and fee breakdown before booking.
-
-| Method | Path | What it does | Swagger |
-|--------|------|--------------|---------|
-| `GET` | `services/quote/callQuote` [→](/api/transactions/call-quote) | Perform a transaction quote | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-
----
-
-## Step 5 - Beneficiary Management
-
-Add and retrieve beneficiaries linked to a sender.
-
-| Method | Path | What it does | Swagger |
-|--------|------|--------------|---------|
-| `POST` | `usermanagement/new-beneficiary` [→](/api/transactions/create-beneficiary) | Add a new beneficiary to a sender's account | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-| `POST` | `usermanagement/find-all-beneficiery` [→](/api/transactions/beneficiary-list) | Retrieve all beneficiaries for a sender | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-
----
-
-## Step 6 - Book a Transfer
-
-Both endpoints require an `X-Idempotency-Key` header to prevent duplicate bookings.
-
-| Method | Path | What it does | Swagger |
-|--------|------|--------------|---------|
-| `POST` | `transactionmanagement/create-transaction` [→](/api/transactions/create-transaction) | Book a transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-| `POST` | `transactionmanagement/history-data` [→](/api/transactions/history-data) | Look up a booked transfer's status | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-
-<Tip>
-  The `X-Idempotency-Key` must be a unique identifier per request. Subscribe to webhook notifications as an alternative to polling the status endpoint.
-</Tip>
-
----
-
-## Step 7 - Pay for a Booked Transfer
-
-Retrieve the available payment methods for a booked transfer and implement the chosen payment flow in your application. Card and Open Banking are both supported.
-
-| Method | Path | What it does | Swagger |
-|--------|------|--------------|---------|
-| `POST` | `paymentmanagement/supported-payment-methods` [→](/api/deposit-engine/supported-payment-methods) | List payment methods for a booked transfer | [↗](https://test-deposit-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-
-<Note>
-  The `X-Idempotency-Key` must be a unique identifier per request. The `pcn` must match the one used in the booking call.
-</Note>
-
----
-
-## Step 8 - Check Transfer Status
-
-Check the current status of a booked transfer by its reference number.
-
-| Method | Path | What it does | Swagger |
-|--------|------|--------------|---------|
-| `POST` | `transactionmanagement/checktransactionstatus/{transaction_identification_number}` [→](/api/transactions/history-data) | Check the status of a booked transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
-
-<Note>
-  Subscribe to webhook notifications to receive automatic status updates without polling.
-</Note>
-
----
-
-## AML Compliance
-
-AML checks run at the point of transaction. Any outstanding requirements must be resolved before the transaction can complete. Submit AML-required documents using the same endpoint as KYC documents. Pass the `associatedRuleId` from the outstanding requirement in the request body.
-
-| Method | Path | What it does | Swagger |
-|--------|------|--------------|---------|
-| `POST` | `documentmanagement/attach-documents` [→](/api/ciam/attach-documents) | Submit an AML-required document | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer) |
 
 ---
 
@@ -298,37 +469,3 @@ Your provider must meet all of the following before we can accept their results:
 - **Webhook callback support**: must be able to send a webhook to our system when verification is complete.
 - **Correlation ID embedding**: must accept and return a reference ID in the webhook payload so the platform can tie the result back to the correct customer record.
 - **Structured result payload**: the webhook payload must include verification outcome, document details, and any AML/sanctions/PEP screening results in a structured, parseable format.
-
----
-
-## Summary
-
-<Steps>
-  <Step title="Register the sender">
-    `POST usermanagement/register-customer`
-  </Step>
-  <Step title="Authenticate">
-    `PUT securitymanagement/login`
-  </Step>
-  <Step title="Complete KYC & compliance">
-    Built-in KYC: initiate each requirement then fulfil it. Your own KYC provider: register the session, configure the webhook, initiate with your provider, and listen for `COMPLIANCE_RISK_PROFILE_UPDATED`.
-  </Step>
-  <Step title="Get a quote">
-    `GET services/quote/callQuote`
-  </Step>
-  <Step title="Add a beneficiary">
-    `POST usermanagement/new-beneficiary`
-  </Step>
-  <Step title="Book the transfer">
-    `POST transactionmanagement/create-transaction`
-  </Step>
-  <Step title="Process payment">
-    `POST paymentmanagement/supported-payment-methods`
-  </Step>
-  <Step title="Resolve any AML requirements">
-    `POST documentmanagement/attach-documents`
-  </Step>
-  <Step title="Track status">
-    Poll `checktransactionstatus` or subscribe to webhooks
-  </Step>
-</Steps>
