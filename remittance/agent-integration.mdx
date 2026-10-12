@@ -14,6 +14,110 @@ This page lists every endpoint your application needs to go live. Work through t
 ---
 
 <Tabs>
+  <Tab title="Non-interactive mode">
+
+    Use this mode for system-to-system integration where your backend books transactions directly on behalf of senders, without the sender being present. A cashier user authenticates on your backend, then calls `create-transaction` in a single request with the sender, beneficiary, and any required KYC documents all embedded in the payload.
+
+    ---
+
+    ## Step 1 - Get Organisation Compliance Policy
+
+    Before booking, call this endpoint to retrieve your organisation's KYC and AML requirements. The compliance policy tells you which documents and fields you must embed in the `create-transaction` request for the sender. The policy includes:
+
+    - Document verification requirements (passport, national ID, proof of address)
+    - Transaction limits and thresholds
+    - Identity verification methods
+    - AML/KYC screening requirements
+    - Geographic and delivery method restrictions
+
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `GET` | [`compliance/list-organisation-compliance-policy`](/api/ciam/list-organisation-compliance-policy) [→](/api/ciam/list-organisation-compliance-policy) | Retrieve KYC and transaction rules for the organisation | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/Complaince%20Management%20Service/listComplianceRules) |
+    | `PUT` | [`compliance/customer-compliance-checklist`](/api/ciam/compliance-checklist) [→](/api/ciam/compliance-checklist) | Check real-time outstanding KYC and AML requirements for a transaction | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/Complaince%20Management%20Service/preTransactionBookingComplianceCheckList) |
+
+    ---
+
+    ## Step 2 - Book Transfer with Embedded KYC
+
+    Authenticate as a cashier user and call `create-transaction` with everything embedded. This endpoint reduces the number of API calls required from sign-up to booking. It allows you to combine sender creation, beneficiary creation, and KYC document submission into a single call.
+
+    We recommend calling `customer-compliance-checklist` before `create-transaction` so you can identify and submit any outstanding compliance requirements inline.
+
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `POST` | [`transactionmanagement/create-transaction`](/api/transactions/create-transaction) [→](/api/transactions/create-transaction) | Book a transfer on behalf of a sender | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/createTransaction2) |
+
+    <Warning>
+      This endpoint requires two additional headers: `ipAddress` (the sender's IP address) and `X-Idempotency-Key` (a unique key per request). A missing header returns HTTP 400 with an empty body.
+    </Warning>
+
+    ### Sender options
+
+    Include exactly one of the following in your request:
+
+    - **New sender** - include the sender's personal details (name, email, phone, address, etc.) in the request body. The platform creates the customer record and returns a `customerCode` in the response. Store this code for subsequent calls.
+    - **Existing sender** - include `preExistingSenderCustomerCode` with the sender's previously assigned code. All sender fields are resolved from the existing record.
+
+    ### Beneficiary options
+
+    Include exactly one of the following:
+
+    - **New beneficiary** - include the recipient's details in `newRecipientKyc` (name, phone, address, destination country, etc.).
+    - **Existing beneficiary** - include the beneficiary's previously assigned code to reuse an existing record.
+
+    ### Embedding KYC documents
+
+    Use the `eligibleDocumentList` field to attach any KYC documents required by the compliance policy. Each entry includes the document type and the base64-encoded file. Pass `associatedRuleId` for each document to link it to the correct compliance rule.
+
+    The response returns a `serverCorrelationId` (the transaction UUID) and a `pcn` (payment reference number) for use in subsequent payment and status calls.
+
+    ---
+
+    ## Step 3 - Process Payment (Optional)
+
+    If the transaction requires a payment link (for example, open banking or card), call this endpoint with the `pcn` from Step 2 to retrieve available payment methods and generate a hosted payment URL.
+
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `POST` | [`paymentmanagement/supported-payment-methods`](/api/deposit-engine/supported-payment-methods) [→](/api/deposit-engine/supported-payment-methods) | List payment methods for a booked transfer | [↗](https://test-deposit-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/payment-management/supportedPaymentMethods) |
+
+    <Note>
+      Call this endpoint once per transaction. Each call returns a new `paymentIntentId`. Pass the `pcn` from the `create-transaction` response.
+    </Note>
+
+    ---
+
+    ## Step 4 - Check Transfer Status
+
+    | Method | Path | What it does | Swagger |
+    |--------|------|--------------|---------|
+    | `GET` | [`transactionmanagement/checktransactionstatus/{pcn}`](/api/transactions/check-transaction-status) [→](/api/transactions/check-transaction-status) | Check the status of a booked transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/checkTransactionStatus) |
+
+    <Note>
+      Pass the `pcn` from the `create-transaction` response as the path parameter. Subscribe to webhook notifications to receive automatic status updates without polling.
+    </Note>
+
+    ---
+
+    ## Summary
+
+    <Steps>
+      <Step title="Get compliance policy">
+        `GET compliance/list-organisation-compliance-policy`
+      </Step>
+      <Step title="Book transfer with embedded KYC">
+        `POST transactionmanagement/create-transaction` - include sender (new or existing), beneficiary (new or existing), and any required documents in a single call using a cashier token.
+      </Step>
+      <Step title="Process payment (if required)">
+        `POST paymentmanagement/supported-payment-methods`
+      </Step>
+      <Step title="Track status">
+        Poll `checktransactionstatus` or subscribe to webhooks
+      </Step>
+    </Steps>
+
+  </Tab>
+
   <Tab title="Interactive mode">
 
     Use this mode when the customer interacts directly with your application in real time - the sender authenticates, completes KYC, and books their own transactions. Work through the steps in order.
@@ -334,109 +438,6 @@ This page lists every endpoint your application needs to go live. Work through t
       </Step>
       <Step title="Resolve any AML requirements">
         `POST documentmanagement/attach-documents`
-      </Step>
-      <Step title="Track status">
-        Poll `checktransactionstatus` or subscribe to webhooks
-      </Step>
-    </Steps>
-
-  </Tab>
-
-  <Tab title="Non-interactive mode">
-
-    Use this mode for system-to-system integration where your backend books transactions directly on behalf of senders, without the sender being present. A cashier user authenticates on your backend, then calls `create-transaction` in a single request with the sender, beneficiary, and any required KYC documents all embedded in the payload.
-
-    ---
-
-    ## Step 1 - Get Organisation Compliance Policy
-
-    Before booking, call this endpoint to retrieve your organisation's KYC and AML requirements. The compliance policy tells you which documents and fields you must embed in the `create-transaction` request for the sender. The policy includes:
-
-    - Document verification requirements (passport, national ID, proof of address)
-    - Transaction limits and thresholds
-    - Identity verification methods
-    - AML/KYC screening requirements
-    - Geographic and delivery method restrictions
-
-    | Method | Path | What it does | Swagger |
-    |--------|------|--------------|---------|
-    | `GET` | [`compliance/list-organisation-compliance-policy`](/api/ciam/list-organisation-compliance-policy) [→](/api/ciam/list-organisation-compliance-policy) | Retrieve KYC and transaction rules for the organisation | [↗](https://test-nucleus-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/Complaince%20Management%20Service/listComplianceRules) |
-
-    ---
-
-    ## Step 2 - Book Transfer with Embedded KYC
-
-    Authenticate as a cashier user and call `create-transaction` with everything embedded. This endpoint reduces the number of API calls required from sign-up to booking. It allows you to combine sender creation, beneficiary creation, and KYC document submission into a single call.
-
-    We recommend calling `customer-compliance-checklist` before `create-transaction` so you can identify and submit any outstanding compliance requirements inline.
-
-    | Method | Path | What it does | Swagger |
-    |--------|------|--------------|---------|
-    | `POST` | [`transactionmanagement/create-transaction`](/api/transactions/create-transaction) [→](/api/transactions/create-transaction) | Book a transfer on behalf of a sender | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/createTransaction2) |
-
-    <Warning>
-      This endpoint requires three additional headers: `ipAddress` (the sender's IP address), `X-Idempotency-Key` (a unique key per request), and `Merchant-Host`. A missing header returns HTTP 400 with an empty body.
-    </Warning>
-
-    ### Sender options
-
-    Include exactly one of the following in your request:
-
-    - **New sender** - include the sender's personal details (name, email, phone, address, etc.) in the request body. The platform creates the customer record and returns a `customerCode` in the response. Store this code for subsequent calls.
-    - **Existing sender** - include `preExistingSenderCustomerCode` with the sender's previously assigned code. All sender fields are resolved from the existing record.
-
-    ### Beneficiary options
-
-    Include exactly one of the following:
-
-    - **New beneficiary** - include the recipient's details in `newRecipientKyc` (name, phone, address, destination country, etc.).
-    - **Existing beneficiary** - include the beneficiary's previously assigned code to reuse an existing record.
-
-    ### Embedding KYC documents
-
-    Use the `eligibleDocumentList` field to attach any KYC documents required by the compliance policy. Each entry includes the document type and the base64-encoded file. Pass `associatedRuleId` for each document to link it to the correct compliance rule.
-
-    The response returns a `serverCorrelationId` (the transaction UUID) and a `pcn` (payment reference number) for use in subsequent payment and status calls.
-
-    ---
-
-    ## Step 3 - Process Payment (Optional)
-
-    If the transaction requires a payment link (for example, open banking or card), call this endpoint with the `pcn` from Step 2 to retrieve available payment methods and generate a hosted payment URL.
-
-    | Method | Path | What it does | Swagger |
-    |--------|------|--------------|---------|
-    | `POST` | [`paymentmanagement/supported-payment-methods`](/api/deposit-engine/supported-payment-methods) [→](/api/deposit-engine/supported-payment-methods) | List payment methods for a booked transfer | [↗](https://test-deposit-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/payment-management/supportedPaymentMethods) |
-
-    <Note>
-      Call this endpoint once per transaction. Each call returns a new `paymentIntentId`. Pass the `pcn` from the `create-transaction` response.
-    </Note>
-
-    ---
-
-    ## Step 4 - Check Transfer Status
-
-    | Method | Path | What it does | Swagger |
-    |--------|------|--------------|---------|
-    | `GET` | [`transactionmanagement/checktransactionstatus/{pcn}`](/api/transactions/check-transaction-status) [→](/api/transactions/check-transaction-status) | Check the status of a booked transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/checkTransactionStatus) |
-
-    <Note>
-      Pass the `pcn` from the `create-transaction` response as the path parameter. Subscribe to webhook notifications to receive automatic status updates without polling.
-    </Note>
-
-    ---
-
-    ## Summary
-
-    <Steps>
-      <Step title="Get compliance policy">
-        `GET compliance/list-organisation-compliance-policy`
-      </Step>
-      <Step title="Book transfer with embedded KYC">
-        `POST transactionmanagement/create-transaction` - include sender (new or existing), beneficiary (new or existing), and any required documents in a single call using a cashier token.
-      </Step>
-      <Step title="Process payment (if required)">
-        `POST paymentmanagement/supported-payment-methods`
       </Step>
       <Step title="Track status">
         Poll `checktransactionstatus` or subscribe to webhooks
