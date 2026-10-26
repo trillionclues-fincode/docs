@@ -13,10 +13,36 @@ This page lists every endpoint your application needs to go live. Work through t
 
 ---
 
+## Before You Begin
+
+<Steps>
+  <Step title="Your agent account is created">
+    Once your commercial agreement is signed, our support team creates an **agent account** for your organisation and emails you the login credentials.
+  </Step>
+  <Step title="Log in to the agent portal">
+    Use the credentials from that email to log in. From here you can configure plugins, view transactions, and manage your integration.
+  </Step>
+</Steps>
+
+---
+
 <Tabs>
   <Tab title="Non-interactive mode">
 
-    Use this mode for system-to-system integration where your backend books transactions directly on behalf of senders, without the sender being present. A cashier user authenticates on your backend, then calls `create-transaction` in a single request with the sender, beneficiary, and any required KYC documents all embedded in the payload.
+    Use this mode for system-to-system integration where your backend books transactions directly on behalf of senders, without the sender being present.
+
+    ### Set Up Your Cashier Account
+
+    <Steps>
+      <Step title="Create a cashier (teller) account">
+        From within your agent portal, create an automated cashier account. Some teams call this a teller account, it's the same thing. This is separate from your own agent login.
+      </Step>
+      <Step title="Authenticate as the cashier to get your token">
+        Call `PUT securitymanagement/login` with the cashier account's credentials, not your agent login, to obtain the token used for every call in this section. See [Authentication](/api/auth/login).
+      </Step>
+    </Steps>
+
+    A cashier user authenticates on your backend, then calls `create-transaction` in a single request with the sender, beneficiary, and any required KYC documents all embedded in the payload.
 
     ---
 
