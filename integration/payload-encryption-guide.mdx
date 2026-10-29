@@ -75,7 +75,6 @@ function encryptPayload(payload, publicKeyBase64) {
       key: publicKeyPem,
       padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
       oaepHash: 'sha256',
-      mgf1Hash: 'sha256',
     },
     Buffer.from(payload, 'utf8')
   );

@@ -78,6 +78,8 @@ After creating a beneficiary, use this endpoint to associate their bank account 
 ```bash cURL
 curl -X POST 'https://{your-domain}.fincode.software/api/v6/services/bankmanagement/add-bank-details-key-value-pairs' \
 --header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
 --header 'Content-Type: application/json' \
 --data '{
     "id": "beneficiary_uuid",

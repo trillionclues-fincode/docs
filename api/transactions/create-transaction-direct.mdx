@@ -16,7 +16,7 @@ For the full field reference, see [Create Transaction](/api/transactions/create-
 | `ipAddress` | Header — required | Device IP of the person initiating the transaction |
 | `preExistingSenderCustomerCode` | Body — required | Sender's customer code |
 | `preExistingRecipientCustomerCode` | Body — required | Recipient's customer code |
-| `type` | Body — required | Delivery method: `ACCOUNTPAYMENT`, `MOBILE_MONEY`, `CASH_PICKUP`, `WALLET` |
+| `type` | Body — required | Delivery method: `ACCOUNTPAYMENT`, `MOBILE_MONEY`, `CASHPICKUP`, `WALLET` |
 | `creditParty` | Body — required | Recipient account details as lowercase key-value pairs |
 | `internationalTransferInformation` | Body — required | `originCountry`, `receivingCountry`, `remittancePurpose`, `sourceOfFunds` |
 
@@ -37,7 +37,7 @@ curl -X POST 'https://{your-domain}.fincode.software/api/v6/services/transaction
   "sendCurrency": "GBP",
   "receivingCurrency": "NGN",
   "type": "ACCOUNTPAYMENT",
-  "transactionProcessingMode": "REAL_TIME",
+  "transactionProcessingMode": "NONE_AGGREGATION",
   "preExistingSenderCustomerCode": "VJJGVE",
   "preExistingRecipientCustomerCode": "BNADKO",
   "creditParty": [
