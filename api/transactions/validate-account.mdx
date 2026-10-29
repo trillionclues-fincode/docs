@@ -6,6 +6,20 @@ description: 'Validates bank account details before beneficiary creation.'
 
 This endpoint validates the recipient bank account details with the destination bank or provider. It is a critical step in the Bank Transfer flow to ensure funds are sent to the correct account.
 
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
 ## Request Body
 
 <ParamField body='bankCode' type='string' required>
@@ -33,6 +47,8 @@ This endpoint validates the recipient bank account details with the destination 
 ```bash cURL
 curl -X GET 'https://{your-domain}.fincode.software/api/v6/services/usermanagement/validate-bank-account' \
 --header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
 --header 'Content-Type: application/json' \
 --data '{
     "bankCode": "214",

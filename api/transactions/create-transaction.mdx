@@ -61,12 +61,12 @@ Initiates a new transaction where the sender and recipient have already been onb
   |-------|-------------|
   | `ACCOUNTPAYMENT` | Bank account transfer |
   | `MOBILE_MONEY` | Mobile money (e.g. M-Pesa) |
-  | `CASH_PICKUP` | Cash pickup at agent location |
+  | `CASHPICKUP` | Cash pickup at agent location |
   | `WALLET` | Wallet transfer |
 </ParamField>
 
 <ParamField body='transactionProcessingMode' type='string' required>
-  Processing mode. Use `REAL_TIME` for immediate processing or `BATCH` for scheduled processing.
+  Aggregation mode for the transaction. Accepted values: `NONE_AGGREGATION` and `AGGREGATION`. Use `NONE_AGGREGATION` for a standard transaction.
 </ParamField>
 
 <ParamField body='preExistingSenderCustomerCode' type='string' required>
@@ -102,11 +102,11 @@ Initiates a new transaction where the sender and recipient have already been onb
 </ParamField>
 
 <ParamField body='securityQuestion' type='string'>
-  Security question for cash pickup transactions. Required when `type` is `CASH_PICKUP`.
+  Security question for cash pickup transactions. Required when `type` is `CASHPICKUP`.
 </ParamField>
 
 <ParamField body='securityAnswer' type='string'>
-  Answer to the security question. Required when `type` is `CASH_PICKUP`.
+  Answer to the security question. Required when `type` is `CASHPICKUP`.
 </ParamField>
 
 <ParamField body='transactionReference' type='string'>
@@ -138,7 +138,7 @@ curl -X POST 'https://{your-domain}.fincode.software/api/v6/services/transaction
   "sendCurrency": "GBP",
   "receivingCurrency": "NGN",
   "type": "ACCOUNTPAYMENT",
-  "transactionProcessingMode": "REAL_TIME",
+  "transactionProcessingMode": "NONE_AGGREGATION",
   "preExistingSenderCustomerCode": "VJJGVE",
   "preExistingRecipientCustomerCode": "BNADKO",
   "creditParty": [

@@ -16,6 +16,59 @@ We send a `POST` request to the webhook URL you registered with us, containing t
 | `TRANSACTION_STATUS` | A payout transaction reaches a terminal status (PAID, FAILED, or CANCELLED) |
 | `COMPLIANCE_RISK_PROFILE_UPDATED` | A customer's compliance profile is updated following an identity verification (IDV) result or an AML screening decision |
 
+## Register Your Webhook URL
+
+Register one callback URL for each event type you want to receive. Each pay center can have one record per event type.
+
+| Method | Path | What it does |
+|--------|------|--------------|
+| `POST` | `admin/generic-user-management/setup-callback` | Register a callback URL for an event type |
+| `PUT` | `admin/generic-user-management/update-callback/{id}` | Change an existing callback record |
+| `GET` | `admin/generic-user-management/list-callback` | List your callback records |
+
+### Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  The **JWT Access Token** of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+### Request Body
+
+<ParamField body='eventType' type='string' required>
+  The event to subscribe to: `TRANSACTION_STATUS` or `COMPLIANCE_RISK_PROFILE_UPDATED`.
+</ParamField>
+
+<ParamField body='callbackUrl' type='string' required>
+  The HTTPS endpoint on your server that receives the notification.
+</ParamField>
+
+<ParamField body='enablePayloadEncryption' type='boolean'>
+  Set to `true` to receive encrypted payloads.
+</ParamField>
+
+```bash cURL
+curl -X POST 'https://{domain}.fincode.software/api/v6/services/admin/generic-user-management/setup-callback' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200' \
+--header 'Content-Type: application/json' \
+--data '{
+    "eventType": "TRANSACTION_STATUS",
+    "callbackUrl": "https://your-server.example.com/webhooks/fincode",
+    "enablePayloadEncryption": false
+}'
+```
+
+The response contains the `id` of the new record. Registering an event type that already has a record returns an error asking you to update it instead. Use `update-callback/{id}` with the same request body to change an existing record.
+
 ---
 
 ## TRANSACTION_STATUS
@@ -28,7 +81,7 @@ We send a `POST` request to the webhook URL you registered with us, containing t
 
 <Steps>
   <Step title="Register your webhook URL">
-    Set up your webhook callback URL in the dashboard. This is the HTTPS endpoint where we will send event notifications as they occur.
+    Set up your webhook callback URL in the dashboard, or register it through the API as described in Register Your Webhook URL above. This is the HTTPS endpoint where we will send event notifications as they occur.
   </Step>
   <Step title="A transaction status changes">
     When a payout transaction reaches a terminal status (PAID, FAILED, or CANCELLED), we build a webhook event with the full transaction details.
