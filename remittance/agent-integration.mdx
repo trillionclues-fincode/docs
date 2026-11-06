@@ -97,7 +97,23 @@ This page lists every endpoint your application needs to go live. Work through t
 
     Use the `eligibleDocumentList` field to attach any KYC documents required by the compliance policy. Each entry includes the document type and the base64-encoded file. Pass `associatedRuleId` for each document to link it to the correct compliance rule.
 
-    The response returns a `serverCorrelationId` (the transaction UUID) and an `objectReference` (the payment reference number, or PCN) for use in subsequent payment and status calls.
+    The response returns a `serverCorrelationId` (the transaction UUID) and an `objectReference` (the payment reference number, or PCN) for use in subsequent payment and status calls. It also returns `preExistingSenderCustomerCode` and `preExistingRecipientCustomerCode`. Store these codes and reuse them for later transactions with the same customers.
+
+    ### Recovering a customer with a correlation ID
+
+    When you create a new sender or recipient, send your own unique ID in `newSenderKyc.correlationId` or `newRecipientKyc.correlationId`. If the create transaction call times out or the network fails before you receive the response, look the customer up with that ID instead of creating them again.
+
+    | Method | Path | What it does |
+    |--------|------|--------------|
+    | `GET` | `usermanagement/find-customer-by-correlation-id/{correlationId}` | Returns the customers created with that correlation ID |
+
+    Headers: `X-Auth-Token`, `uuid`, `platform`. Allowed roles: AGENTS, CASHIER, MANAGER. To look up several customers at once, separate the IDs with commas.
+
+    Each customer in the response includes `code`, `userProfileId`, `firstName`, `middleName`, `lastName`, `email`, `phone` and `correlationId`. Use `code` as `preExistingSenderCustomerCode` or `preExistingRecipientCustomerCode` in your next create transaction call.
+
+    <Note>
+      Only customers created with a `correlationId` can be found this way.
+    </Note>
 
     ---
 
@@ -487,6 +503,7 @@ Applies to integrations using your own KYC provider. The following providers are
 | SEON | `SEON_IDV` |
 | SumSub | `SUMSUB` |
 | Didit | `DIDIT` |
+| AiPrise | `AIPRISE` |
 
 ### Technical requirements
 
