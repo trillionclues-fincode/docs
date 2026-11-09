@@ -284,6 +284,45 @@ This page lists every endpoint your application needs to go live. Work through t
 
         ---
 
+        ### Customers already verified with your provider
+
+        If your customers complete KYC with your provider before you create them on the platform, you do not need the initiate and webhook steps below. Pass the provider and your provider's verification reference when you create the customer, in `newSenderKyc` on [Create Transaction](/api/transactions/create-transaction) or in the register customer request:
+
+        ```json
+        "externalKycProviderReference": {
+          "provider": "<your provider code>",
+          "customerReference": "<your provider's verification reference>",
+          "emailVerified": true,
+          "phoneVerified": true
+        }
+        ```
+
+        | Field | Description |
+        |-------|-------------|
+        | `provider` | Your KYC provider code (see the table below). |
+        | `customerReference` | Your provider's reference for the completed verification (see the table below). |
+        | `emailVerified` | `true` if your provider has verified the customer's email address. |
+        | `phoneVerified` | `true` if your provider has verified the customer's phone number. |
+
+        | Provider | `provider` | `customerReference` |
+        |----------|------------|---------------------|
+        | AiPrise | `AIPRISE` | The `verification_session_id` |
+        | SumSub | `SUMSUB` | The `applicantId` |
+        | Didit | `DIDIT` | The `session_id` |
+        | SEON | `SEON_IDV` | The workflow `executionId` |
+
+        The platform fetches the verification result from your provider using your plugin and completes the customer's KYC as part of creating the customer. Send it only once the verification is finished. If the result is not final yet, the customer is created with KYC still pending.
+
+        To apply the reference to a customer who already exists, for example one created before the verification was finished, call:
+
+        | Method | Path | What it does |
+        |--------|------|--------------|
+        | `POST` | `compliance/external-provider/customer-reference` | Applies `externalKycProviderReference` to an existing customer |
+
+        Headers: `X-Auth-Token`, `uuid`, `platform`, and `X-CUSTOMER-ID` set to the customer's `userId`. The body is the same `externalKycProviderReference` object. The response message tells you whether the KYC result was applied or is still pending. You can call it again once the verification is finished.
+
+        ---
+
         ### Register the eKYC session with the platform
 
         Before initiating verification with your provider, call this endpoint to create a tracking record on the platform side. The platform generates a unique `reference` and returns it.
