@@ -319,7 +319,12 @@ This page lists every endpoint your application needs to go live. Work through t
         |--------|------|--------------|
         | `POST` | `compliance/external-provider/customer-reference` | Applies `externalKycProviderReference` to an existing customer |
 
-        Headers: `X-Auth-Token`, `uuid`, `platform`, and `X-CUSTOMER-ID` set to the customer's `userId`. The body is the same `externalKycProviderReference` object. The response message tells you whether the KYC result was applied or is still pending. You can call it again once the verification is finished.
+        Headers: `X-Auth-Token`, `uuid`, `platform`. Identify the customer in one of these ways:
+
+        - the `preExistingSenderCustomerCode` query parameter, set to the customer code (the same value you use in create transaction), or
+        - the `X-CUSTOMER-ID` header, set to the customer's `userId` (returned in the create transaction response).
+
+        One of them is required. If you send both, `X-CUSTOMER-ID` is used. The body is the same `externalKycProviderReference` object. The response message tells you whether the KYC result was applied or is still pending. You can call it again once the verification is finished.
 
         ---
 
