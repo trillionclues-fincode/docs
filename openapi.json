@@ -2013,6 +2013,54 @@
                 }
             }
         },
+        "/transactionmanagement/fetch-payable-type/{pcn}/{payable_type}": {
+            "get": {
+                "summary": "Fetch Transaction Details",
+                "description": "Returns the full details of a single transaction by its PCN, including the bank details selected when it was created",
+                "operationId": "fetchPayableType",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/platformHeader"
+                    },
+                    {
+                        "$ref": "#/components/parameters/uuidHeader"
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Auth-Token",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "pcn",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "payable_type",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "TRANSACTION"
+                            ],
+                            "default": "TRANSACTION"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction details"
+                    }
+                }
+            }
+        },
         "/transactionmanagement/create-transaction": {
             "post": {
                 "summary": "Create Transaction",
