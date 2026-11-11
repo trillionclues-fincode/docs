@@ -35,7 +35,7 @@ Use this endpoint when you need more than the status. To check the status only, 
 ## Response
 
 <ResponseField name='status' type='string'>
-  `SUCCESS` when the transaction is found, `FAILED` otherwise.
+  `SUCCESS` when the transaction is found, `FAILED` when the PCN is not valid.
 </ResponseField>
 
 <ResponseField name='message' type='string'>
@@ -79,7 +79,7 @@ Use this endpoint when you need more than the status. To check the status only, 
       The currency the transfer was sent in.
     </ResponseField>
     <ResponseField name='amount_sent' type='string'>
-      The amount sent.
+      The amount sent, formatted with the organisation's decimal format settings.
     </ResponseField>
     <ResponseField name='receiving_currency_code' type='string'>
       The currency the beneficiary receives.
@@ -106,7 +106,7 @@ Use this endpoint when you need more than the status. To check the status only, 
       Whether the transaction has passed compliance checks.
     </ResponseField>
     <ResponseField name='customerComplianceCheckList' type='array'>
-      Compliance requirements still outstanding for the transaction.
+      The compliance rules that failed or raised a warning for the transaction.
     </ResponseField>
   </Expandable>
 </ResponseField>
