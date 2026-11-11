@@ -1,0 +1,170 @@
+---
+title: 'Fetch Transaction Details'
+openapi: 'GET /transactionmanagement/fetch-payable-type/{pcn}/{payable_type}'
+description: 'Returns the full details of a single transaction by its PCN, including the bank details selected when it was created.'
+---
+
+Returns the full details of a booked transfer, including its status, amounts, sender, beneficiary and the bank details selected when the transaction was created. Pass the PCN (Platform Control Number) returned from `create-transaction` and `TRANSACTION` as the payable type.
+
+Use this endpoint when you need more than the status. To check the status only, use [Check Transaction Status](/api/transactions/check-transaction-status).
+
+## Request Headers
+
+<ParamField header='X-Auth-Token' type='string' required>
+  JWT Access Token of the authenticated user.
+</ParamField>
+
+<ParamField header='platform' type='string' required default='fincode'>
+  Platform identifier. Use `fincode`.
+</ParamField>
+
+<ParamField header='uuid' type='string' required default='200'>
+  Unique request identifier.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path='pcn' type='string' required>
+  The PCN of the booked transfer, as returned in the `objectReference` field of the `create-transaction` response.
+</ParamField>
+
+<ParamField path='payable_type' type='string' required>
+  The type of item to fetch. Use `TRANSACTION`.
+</ParamField>
+
+## Response
+
+<ResponseField name='status' type='string'>
+  `SUCCESS` when the transaction is found, `FAILED` otherwise.
+</ResponseField>
+
+<ResponseField name='message' type='string'>
+  The reason for the failure, for example when the PCN is not valid.
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  The transaction details.
+  <Expandable title='data fields'>
+    <ResponseField name='code' type='string'>
+      The PCN of the transaction.
+    </ResponseField>
+    <ResponseField name='status' type='string'>
+      The transaction status name (e.g. `PENDING`, `PAID`, `FAILED`, `CANCELLED`).
+    </ResponseField>
+    <ResponseField name='display_status' type='string'>
+      Human-readable label for the current status.
+    </ResponseField>
+    <ResponseField name='bankDetails' type='boolean'>
+      `true` when bank details were added to the transaction.
+    </ResponseField>
+    <ResponseField name='bankName' type='string'>
+      The name of the bank selected when the transaction was created.
+    </ResponseField>
+    <ResponseField name='accountHolderName' type='string'>
+      The name on the beneficiary's bank account.
+    </ResponseField>
+    <ResponseField name='accountNumber' type='string'>
+      The beneficiary's account number.
+    </ResponseField>
+    <ResponseField name='recipient_bank_details' type='object'>
+      All bank details saved on the transaction, keyed by field name (e.g. `BankName`, `AccountHolderName`, `AccountNumber`, `BankCode`, `AccountType`, `SortCode`, `IBAN`, `SWIFT`). Only the fields that were provided are included. This is `null` for cash pickup transactions.
+    </ResponseField>
+    <ResponseField name='sender' type='object'>
+      The sender's `first_name`, `last_name`, `email`, `phone` and `code`.
+    </ResponseField>
+    <ResponseField name='receiver' type='object'>
+      The beneficiary's `first_name`, `last_name`, `email`, `phone` and `code`.
+    </ResponseField>
+    <ResponseField name='sending_currency_code' type='string'>
+      The currency the transfer was sent in.
+    </ResponseField>
+    <ResponseField name='amount_sent' type='string'>
+      The amount sent.
+    </ResponseField>
+    <ResponseField name='receiving_currency_code' type='string'>
+      The currency the beneficiary receives.
+    </ResponseField>
+    <ResponseField name='amount_received' type='string'>
+      The amount the beneficiary receives.
+    </ResponseField>
+    <ResponseField name='charges' type='string'>
+      The fee charged for the transfer.
+    </ResponseField>
+    <ResponseField name='total_amount_paid' type='string'>
+      The total amount paid by the sender.
+    </ResponseField>
+    <ResponseField name='deliveryMethod' type='string'>
+      The delivery method of the transfer (e.g. `ACCOUNTPAYMENT`, `CASHPICKUP`).
+    </ResponseField>
+    <ResponseField name='date' type='string'>
+      The date the transaction was created.
+    </ResponseField>
+    <ResponseField name='last_update_date' type='string'>
+      The date the transaction was last updated.
+    </ResponseField>
+    <ResponseField name='compliant' type='boolean'>
+      Whether the transaction has passed compliance checks.
+    </ResponseField>
+    <ResponseField name='customerComplianceCheckList' type='array'>
+      Compliance requirements still outstanding for the transaction.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Code Examples
+
+<CodeGroup>
+
+```bash cURL
+curl -X GET 'https://{domain}.fincode.software/api/v6/services/transactionmanagement/fetch-payable-type/TR123456789012/TRANSACTION' \
+--header 'X-Auth-Token: YOUR_TOKEN' \
+--header 'platform: fincode' \
+--header 'uuid: 200'
+```
+
+```javascript Node.js
+const axios = require('axios');
+
+const pcn = 'TR123456789012';
+
+const response = await axios.get(
+  `https://{domain}.fincode.software/api/v6/services/transactionmanagement/fetch-payable-type/${pcn}/TRANSACTION`,
+  {
+    headers: {
+      'X-Auth-Token': 'YOUR_TOKEN',
+      'platform': 'fincode',
+      'uuid': '200'
+    }
+  }
+);
+```
+
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "status": "SUCCESS",
+  "data": {
+    "code": "TR123456789012",
+    "status": "PENDING",
+    "bankDetails": true,
+    "bankName": "Example Bank",
+    "accountHolderName": "Jane Doe",
+    "accountNumber": "0123456789",
+    "recipient_bank_details": {
+      "BankName": "Example Bank",
+      "AccountHolderName": "Jane Doe",
+      "AccountNumber": "0123456789",
+      "BankCode": "000"
+    },
+    "sending_currency_code": "GBP",
+    "amount_sent": "100.00",
+    "receiving_currency_code": "NGN",
+    "amount_received": "150,000.00"
+  }
+}
+```
+
+The example shows a subset of the fields. See the Response section for the full list.

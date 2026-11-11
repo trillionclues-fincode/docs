@@ -88,6 +88,7 @@
               "api/transactions/create-beneficiary",
               "api/transactions/history-data",
               "api/transactions/check-transaction-status",
+              "api/transactions/fetch-transaction-details",
               "api/transactions/create-transaction",
               "api/transactions/create-transaction-direct"
             ]
@@ -398,6 +399,7 @@
               "api/transactions/create-beneficiary",
               "api/transactions/history-data",
               "api/transactions/check-transaction-status",
+              "api/transactions/fetch-transaction-details",
               "api/transactions/create-transaction",
               "api/transactions/create-transaction-direct"
             ]
