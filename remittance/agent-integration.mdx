@@ -136,6 +136,7 @@ This page lists every endpoint your application needs to go live. Work through t
     | Method | Path | What it does | Swagger |
     |--------|------|--------------|---------|
     | `GET` | [`transactionmanagement/checktransactionstatus/{pcn}`](/api/transactions/check-transaction-status) [→](/api/transactions/check-transaction-status) | Check the status of a booked transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/checkTransactionStatus) |
+    | `GET` | [`transactionmanagement/fetch-payable-type/{pcn}/TRANSACTION`](/api/transactions/fetch-transaction-details) [→](/api/transactions/fetch-transaction-details) | Fetch the full details of a booked transfer, including the selected bank details | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/fetchPayableType) |
 
     <Note>
       Pass the `objectReference` value from the `create-transaction` response as the `{pcn}` path parameter. Subscribe to webhook notifications to receive automatic status updates without polling.
@@ -483,6 +484,7 @@ This page lists every endpoint your application needs to go live. Work through t
     | Method | Path | What it does | Swagger |
     |--------|------|--------------|---------|
     | `GET` | [`transactionmanagement/checktransactionstatus/{pcn}`](/api/transactions/check-transaction-status) [→](/api/transactions/check-transaction-status) | Check the status of a booked transfer | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/checkTransactionStatus) |
+    | `GET` | [`transactionmanagement/fetch-payable-type/{pcn}/TRANSACTION`](/api/transactions/fetch-transaction-details) [→](/api/transactions/fetch-transaction-details) | Fetch the full details of a booked transfer, including the selected bank details | [↗](https://test-remittance-service-engine.eks-fincode.com/swagger-ui/index.html?urls.primaryName=customer#/transaction-management/fetchPayableType) |
 
     <Note>
       Pass the `objectReference` value from the `create-transaction` response as the `{pcn}` path parameter. Subscribe to webhook notifications to receive automatic status updates without polling.
