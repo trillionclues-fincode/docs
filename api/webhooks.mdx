@@ -116,7 +116,7 @@ Each webhook notification is a JSON object with the following fields:
 | `amountSent`                       | Number  | Amount sent by the sender.                                 |
 | `amountReceived`                   | Number  | Amount to be received by the beneficiary.                  |
 | `totalAmount`                      | Number  | Total charged amount (sending amount + commission + VAT).  |
-| `transactionDate`                  | String  | ISO 8601 timestamp of when the transaction was created.    |
+| `transactionDate`                  | String  | Date and time the transaction was created, in the format `yyyy-MM-dd HH:mm:ss` followed by 1 to 3 digits of fractional seconds (e.g., `2026-02-16 18:58:55.0` or `2026-02-16 18:58:55.125`). This is not ISO 8601, so read it as a string or parse it with this format. |
 | `sendingCurrencyCode`              | String  | Currency of the sending amount (e.g., `GBP`).             |
 | `receivingCurrencyCode`            | String  | Currency of the receiving amount (e.g., `NGN`).            |
 | `bankName`                         | String  | Destination bank name.                                     |
@@ -153,7 +153,7 @@ Each webhook notification is a JSON object with the following fields:
   "amountSent": 500.00,
   "amountReceived": 450.00,
   "totalAmount": 525.50,
-  "transactionDate": "2026-02-16T18:58:55.000+00:00",
+  "transactionDate": "2026-02-16 18:58:55.0",
   "sendingCurrencyCode": "GBP",
   "receivingCurrencyCode": "NGN",
   "bankName": "Access Bank",
@@ -189,7 +189,7 @@ Each webhook notification is a JSON object with the following fields:
   "amountSent": 1000.00,
   "amountReceived": 900.00,
   "totalAmount": 1050.00,
-  "transactionDate": "2026-02-16T20:30:00.000+00:00",
+  "transactionDate": "2026-02-16 20:30:00.0",
   "sendingCurrencyCode": "GBP",
   "receivingCurrencyCode": "NGN",
   "bankName": "GTBank",
@@ -212,7 +212,7 @@ Each webhook notification is a JSON object with the following fields:
   "amountSent": 250.00,
   "amountReceived": 225.00,
   "totalAmount": 265.00,
-  "transactionDate": "2026-02-17T10:15:00.000+00:00",
+  "transactionDate": "2026-02-17 10:15:00.125",
   "sendingCurrencyCode": "GBP",
   "receivingCurrencyCode": "KES",
   "deliveryMethod": "MOBILE_MONEY",
