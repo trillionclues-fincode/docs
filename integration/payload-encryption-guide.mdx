@@ -180,27 +180,21 @@ public class PayloadEncryption
 
 ## API Request Example
 
-Once you have the encrypted value, include it in your API request:
+Encrypted values are currently accepted on one request: [Create Customer](/api/ciam/create-customer) (`register-customer`). Set `payloadEncrypted` to `true` and send the encrypted `password` and `confirmPassword`. All other fields in the request are sent as normal.
 
 ```json
 {
-  "email": "user@example.com",
-  "currentPassword": "BASE64_ENCRYPTED_PASSWORD_HERE"
+  "payloadEncrypted": true,
+  "password": "BASE64_ENCRYPTED_PASSWORD_HERE",
+  "confirmPassword": "BASE64_ENCRYPTED_PASSWORD_HERE"
 }
 ```
 
-**Using cURL:**
+See [Create Customer](/api/ciam/create-customer) for the full request.
 
-```bash
-curl -X PUT "https://{domain}.fincode.software/api/v6/services/securitymanagement/login" \
-  -H "Content-Type: application/json" \
-  -H "platform: fincode" \
-  -H "uuid: 200" \
-  -d '{
-    "email": "user@example.com",
-    "currentPassword": "BASE64_ENCRYPTED_PASSWORD_HERE"
-  }'
-```
+<Warning>
+  Do not encrypt the login `currentPassword`. Login takes the password as entered, so an encrypted value is rejected as an incorrect password.
+</Warning>
 
 ## Important Notes
 

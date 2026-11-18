@@ -37,17 +37,17 @@ Common frequently asked questions and answers about integrating with FinCode API
   <Accordion title="How do I know when a transaction is complete?">
     Monitor the transaction status via:
     1. **Webhooks** (recommended): Receive real-time notifications when status changes
-    2. **Polling**: Call the transaction history endpoint periodically
-    
-    A transaction is complete when the status is `PAID` or `REFUNDED`.
+    2. **Polling**: Call [Check Transaction Status](/api/transactions/check-transaction-status) periodically
+
+    A transaction is finished when it reaches a final status: `PAID`, `PAID_OUT`, `FAILED`, `CANCELLED`, `REFUNDED`, `EXPIRED` or `VOID`. `PAID` and `PAID_OUT` mean the recipient has been paid. An `EXPIRED` transaction moves to `PENDING_REFUND` if an online payment arrives after it expired. See [Transaction Lifecycle](/remittance/transactions) for every status.
   </Accordion>
 
-  <Accordion title="What does VERIFYING status mean?">
-    `VERIFYING` means the payment has been received and the transaction is undergoing compliance checks (AML/KYC screening). Most compliance checks on transactions are completed instantly.
+  <Accordion title="What does PENDING status mean?">
+    `PENDING` (displayed as "Verifying") means the payment has been received and the transaction is being checked before payout.
   </Accordion>
 
   <Accordion title="Can I cancel a transaction?">
-    Transactions can only be cancelled while in `WAITING_TO_PAY` status (before payment is received). Once payment is processed, the transaction cannot be cancelled, but may be refunded if compliance checks fail.
+    Yes, while the transaction is `PENDING_PAYMENT`, `PENDING`, `CONFIRMED` or `HELD`. If the transaction had already been paid, a refund can then be processed. Refunds are paid into a wallet, not back to the original card or bank account.
   </Accordion>
 </AccordionGroup>
 

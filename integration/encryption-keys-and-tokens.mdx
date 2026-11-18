@@ -53,14 +53,15 @@ sequenceDiagram
 
 ### When to Use Encryption
 
-Encrypt any sensitive fields before including them in your API request payload:
+Encryption currently applies to one request: [Create Customer](/api/ciam/create-customer) (`register-customer`). When you set `payloadEncrypted` to `true`, encrypt the `password` and `confirmPassword` fields.
 
-| Field Type | Examples | Encryption Required |
-|------------|----------|---------------------|
-| Passwords | `currentPassword`, `newPassword` | ✅ Yes |
-| PINs | `transactionPin`, `userPin` | ✅ Yes |
-| Security Answers | `securityAnswer` | ✅ Yes |
-| Regular Data | `email`, `firstName`, `amount` | ❌ No |
+| Field | Request | Encryption Required |
+|-------|---------|---------------------|
+| `password`, `confirmPassword` | Create Customer, with `payloadEncrypted: true` | ✅ Yes |
+| `currentPassword` | Login | ❌ No, send it as entered |
+| PINs, security answers and all other fields | All other requests | ❌ No |
+
+Always send requests over HTTPS.
 
 ### Implementation
 

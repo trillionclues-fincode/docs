@@ -2084,10 +2084,11 @@
                     {
                         "in": "header",
                         "name": "password",
+                        "description": "Optional. Not checked on create-transaction.",
                         "schema": {
                             "type": "string"
                         },
-                        "required": true
+                        "required": false
                     },
                     {
                         "in": "header",
@@ -2179,7 +2180,34 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Transaction created"
+                        "description": "Transaction created. On success these fields carry values; other fields come back empty (null, 0 or false). If compliance documents are required, status is FAILED, errorCodeType is KYC_DOCUMENT_REQUIRED_502 and no PCN is returned.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "objectReference": { "type": "string", "description": "Payment reference number (PCN)" },
+                                        "serverCorrelationId": { "type": "string", "description": "Transaction ID" },
+                                        "payAbleId": { "type": "string", "description": "Transaction ID, for use as payAbleId in payment calls" },
+                                        "status": { "type": "string", "description": "SUCCESS when created, FAILED when compliance documents are required" },
+                                        "transactionStatus": { "type": "string", "description": "Transaction status, normally PENDING_PAYMENT for a new booking" },
+                                        "preExistingSenderCustomerCode": { "type": "string", "description": "Sender's customer code" },
+                                        "preExistingRecipientCustomerCode": { "type": "string", "description": "Recipient's customer code" },
+                                        "userId": { "type": "string", "description": "Sender's user ID" },
+                                        "receivingAmount": { "type": "number", "description": "Amount the recipient will receive" },
+                                        "iso3CountryFrom": { "type": "string", "description": "ISO 3166-1 alpha-3 code of the sending country" },
+                                        "iso3CountryTo": { "type": "string", "description": "ISO 3166-1 alpha-3 code of the receiving country" },
+                                        "payableType": { "type": "string", "description": "TRANSACTION" },
+                                        "compliant": { "type": "boolean", "description": "Whether the transaction has passed its compliance checks" },
+                                        "complienceCheck": { "type": "string", "enum": ["PASS", "WARNING", "AWAITING_CUSTOMER_ACTION", "FAIL"] },
+                                        "customerComplianceCheckList": { "type": "array", "items": { "type": "object" }, "description": "Compliance requirements linked to this transaction" },
+                                        "message": { "type": "string" },
+                                        "errorCode": { "type": "string", "description": "-1 when compliance documents are required" },
+                                        "errorCodeType": { "type": "string", "description": "KYC_DOCUMENT_REQUIRED_502 when compliance documents are required" }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -2207,10 +2235,11 @@
                     {
                         "in": "header",
                         "name": "password",
+                        "description": "Optional. Not checked on create-transaction.",
                         "schema": {
                             "type": "string"
                         },
-                        "required": true
+                        "required": false
                     },
                     {
                         "in": "header",
@@ -2702,7 +2731,34 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Transaction created"
+                        "description": "Transaction created. On success these fields carry values; other fields come back empty (null, 0 or false). If compliance documents are required, status is FAILED, errorCodeType is KYC_DOCUMENT_REQUIRED_502 and no PCN is returned.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "objectReference": { "type": "string", "description": "Payment reference number (PCN)" },
+                                        "serverCorrelationId": { "type": "string", "description": "Transaction ID" },
+                                        "payAbleId": { "type": "string", "description": "Transaction ID, for use as payAbleId in payment calls" },
+                                        "status": { "type": "string", "description": "SUCCESS when created, FAILED when compliance documents are required" },
+                                        "transactionStatus": { "type": "string", "description": "Transaction status, normally PENDING_PAYMENT for a new booking" },
+                                        "preExistingSenderCustomerCode": { "type": "string", "description": "Sender's customer code" },
+                                        "preExistingRecipientCustomerCode": { "type": "string", "description": "Recipient's customer code" },
+                                        "userId": { "type": "string", "description": "Sender's user ID" },
+                                        "receivingAmount": { "type": "number", "description": "Amount the recipient will receive" },
+                                        "iso3CountryFrom": { "type": "string", "description": "ISO 3166-1 alpha-3 code of the sending country" },
+                                        "iso3CountryTo": { "type": "string", "description": "ISO 3166-1 alpha-3 code of the receiving country" },
+                                        "payableType": { "type": "string", "description": "TRANSACTION" },
+                                        "compliant": { "type": "boolean", "description": "Whether the transaction has passed its compliance checks" },
+                                        "complienceCheck": { "type": "string", "enum": ["PASS", "WARNING", "AWAITING_CUSTOMER_ACTION", "FAIL"] },
+                                        "customerComplianceCheckList": { "type": "array", "items": { "type": "object" }, "description": "Compliance requirements linked to this transaction" },
+                                        "message": { "type": "string" },
+                                        "errorCode": { "type": "string", "description": "-1 when compliance documents are required" },
+                                        "errorCodeType": { "type": "string", "description": "KYC_DOCUMENT_REQUIRED_502 when compliance documents are required" }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
