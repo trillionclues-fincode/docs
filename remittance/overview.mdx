@@ -78,10 +78,10 @@ The remittance flow consists of four main phases:
 Every transaction moves through defined states from creation to completion:
 
 ```
-WAITING_TO_PAY → VERIFYING → PAID
+PENDING_PAYMENT → PENDING → PAID
 ```
 
-Transactions can also transition to `CANCELLED`, `EXPIRED`, `FAILED_TO_DELIVER`, `PENDING_REFUND`, or `REFUNDED` based on various conditions.
+Transactions can also move to `CONFIRMED`, `HELD`, `PAID_OUT`, `FAILED`, `CANCELLED`, `EXPIRED`, `PENDING_REFUND`, `REFUNDED` or `VOID` depending on what happens to them.
 
 <Card title='Learn More' href='/remittance/transactions'>
   See detailed state transitions and what triggers each status change.

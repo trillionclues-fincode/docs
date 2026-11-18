@@ -29,7 +29,7 @@ Initiates a new transaction where the sender and recipient have already been onb
 </ParamField>
 
 <ParamField header='password' type='string'>
-  Customer's transaction password (if required by your pay centre configuration).
+  Optional. The password is not checked on create-transaction, so this header can be left out.
 </ParamField>
 
 ## Request Body
@@ -69,12 +69,16 @@ Initiates a new transaction where the sender and recipient have already been onb
   Aggregation mode for the transaction. Accepted values: `NONE_AGGREGATION` and `AGGREGATION`. Use `NONE_AGGREGATION` for a standard transaction.
 </ParamField>
 
-<ParamField body='preExistingSenderCustomerCode' type='string' required>
-  Customer code of the sender (returned from `find-customer-by-name-or-phone-no` or `register-customer`).
+<ParamField body='paymentMethod' type='string'>
+  Accepted but not currently used. Whatever value is sent, cashier bookings are recorded as `CASHIER_PAY_FROM_CUSTOMER_E_WALLET`, and every booking starts as `PENDING_PAYMENT`. To pay for a booking from a wallet, call [Make Payment from Wallet](/api/deposit-engine/make-payment-from-wallet). A value that is not a valid payment method is rejected.
 </ParamField>
 
-<ParamField body='preExistingRecipientCustomerCode' type='string' required>
-  Customer code of the recipient/beneficiary (returned from `new-beneficiary`).
+<ParamField body='preExistingSenderCustomerCode' type='string'>
+  Customer code of an existing sender (returned from `find-customer-by-name-or-phone-no` or `register-customer`). Required unless you send `newSenderKyc` to create a new sender in the same request. Send exactly one of the two. See [Agent Integration](/remittance/agent-integration) for the new sender option.
+</ParamField>
+
+<ParamField body='preExistingRecipientCustomerCode' type='string'>
+  Customer code of an existing recipient/beneficiary (returned from `new-beneficiary`). Required unless you send `newRecipientKyc` to create a new recipient in the same request. Send exactly one of the two.
 </ParamField>
 
 <ParamField body='creditParty' type='array' required>
@@ -159,3 +163,77 @@ curl -X POST 'https://{your-domain}.fincode.software/api/v6/services/transaction
   "eligibleDocumentList": []
 }'
 ```
+
+## Response
+
+The response is returned as a plain object (not wrapped in `data`). On success, these fields carry values:
+
+<ResponseField name='objectReference' type='string'>
+  The payment reference number (PCN). Use it for payment and status calls such as `checktransactionstatus/{pcn}`.
+</ResponseField>
+
+<ResponseField name='serverCorrelationId' type='string'>
+  The transaction ID.
+</ResponseField>
+
+<ResponseField name='payAbleId' type='string'>
+  The transaction ID, for use as `payAbleId` in payment calls.
+</ResponseField>
+
+<ResponseField name='status' type='string'>
+  `SUCCESS` when the transaction was created.
+</ResponseField>
+
+<ResponseField name='transactionStatus' type='string'>
+  The transaction status, normally `PENDING_PAYMENT` for a new booking.
+</ResponseField>
+
+<ResponseField name='preExistingSenderCustomerCode' type='string'>
+  The sender's customer code. Store it and reuse it for later bookings with the same sender.
+</ResponseField>
+
+<ResponseField name='preExistingRecipientCustomerCode' type='string'>
+  The recipient's customer code. Store it and reuse it for later bookings with the same recipient.
+</ResponseField>
+
+<ResponseField name='userId' type='string'>
+  The sender's user ID.
+</ResponseField>
+
+<ResponseField name='receivingAmount' type='number'>
+  The amount the recipient will receive.
+</ResponseField>
+
+<ResponseField name='iso3CountryFrom' type='string'>
+  ISO 3166-1 alpha-3 code of the sending country.
+</ResponseField>
+
+<ResponseField name='iso3CountryTo' type='string'>
+  ISO 3166-1 alpha-3 code of the receiving country.
+</ResponseField>
+
+<ResponseField name='payableType' type='string'>
+  `TRANSACTION`.
+</ResponseField>
+
+<ResponseField name='compliant' type='boolean'>
+  Whether the transaction has passed its compliance checks.
+</ResponseField>
+
+<ResponseField name='complienceCheck' type='string'>
+  Compliance check result: `PASS`, `WARNING`, `AWAITING_CUSTOMER_ACTION` or `FAIL`.
+</ResponseField>
+
+<ResponseField name='customerComplianceCheckList' type='array'>
+  Compliance requirements linked to this transaction.
+</ResponseField>
+
+<ResponseField name='message' type='string'>
+  `Transaction created successfully`.
+</ResponseField>
+
+Other fields in the response are not populated on success and come back empty (`null`, `0` or `false`). There are no fields named `pcn` or `customerCode`; the PCN is in `objectReference`.
+
+### When compliance documents are required
+
+If the booking cannot go ahead until the customer provides documents, no PCN is returned. The response carries `status` `FAILED`, `transactionStatus` `FAILED`, `errorCode` `-1`, `errorCodeType` `KYC_DOCUMENT_REQUIRED_502`, a `message` explaining the requirement, and `customerComplianceCheckList` listing what is needed. Collect the listed documents, then submit the booking again.

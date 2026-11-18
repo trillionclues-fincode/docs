@@ -6,202 +6,103 @@ icon: 'timeline'
 
 Every remittance transaction moves through a series of well-defined states from creation to completion. Understanding these states helps you build robust integrations and provide clear user feedback.
 
+The status value is what the API returns, for example in `error.errorCategory` from [Check Transaction Status](/api/transactions/check-transaction-status). Each status also has a display label, shown on screens and returned in `error.errorDescription`.
+
 ```mermaid
 stateDiagram-v2
-    [*] --> WaitingToPay: Transaction Created
-    
-    WaitingToPay --> Verifying: Payment Received
-    WaitingToPay --> Cancelled: User Cancelled
-    WaitingToPay --> Expired: Timeout (10 min)
-    
-    Verifying --> Paid: Compliance Passed
-    Verifying --> PendingRefund: Compliance Failed
-    Verifying --> FailedToDeliver: Delivery Issue
-    
-    FailedToDeliver --> Paid: Retry Successful
-    FailedToDeliver --> PendingRefund: Max Retries
-    
-    PendingRefund --> Refunded: Refund Complete
-    
-    Paid --> [*]
-    Refunded --> [*]
-    Cancelled --> [*]
-    Expired --> [*]
-    
-    note right of Verifying
-        AML/Sanctions screening
-        typically 1-5 minutes
-    end note
-    
-    note right of FailedToDeliver
-        Automatic retry
-        up to 3 attempts
-    end note
+    [*] --> PENDING_PAYMENT: Transaction created
+
+    PENDING_PAYMENT --> PENDING: Payment received
+    PENDING_PAYMENT --> EXPIRED: Not paid within 12 hours
+    PENDING_PAYMENT --> CANCELLED: Cancelled
+
+    EXPIRED --> PENDING_REFUND: Payment arrives after expiry
+
+    PENDING_PAYMENT --> CONFIRMED: Confirmed
+    PENDING_PAYMENT --> HELD: Held for review
+    PENDING --> CONFIRMED: Confirmed
+    PENDING --> HELD: Held for review
+    PENDING --> CANCELLED: Cancelled
+    CONFIRMED --> HELD: Held for review
+    HELD --> CONFIRMED: Hold released
+    HELD --> CANCELLED: Cancelled
+
+    PENDING --> PAID: Payout partner reports paid
+    PENDING --> FAILED: Payout partner reports failed
+    CONFIRMED --> PAID: Payout partner reports paid
+    CONFIRMED --> FAILED: Payout partner reports failed
+    CONFIRMED --> CANCELLED: Cancelled
+
+    CANCELLED --> REFUNDED: Refund processed
+
+    PAID --> [*]
+    FAILED --> [*]
+    REFUNDED --> [*]
+    EXPIRED --> [*]
 ```
 
-### Active States
+## Statuses
 
-<AccordionGroup>
-  <Accordion title="WAITING_TO_PAY" icon="clock">
-    **Description**: Transaction created, awaiting payment from user
+| Status | Label | Meaning | Final |
+|--------|-------|---------|-------|
+| `PENDING_PAYMENT` | Waiting to pay | Booked, not yet funded | No. Becomes `EXPIRED` if not paid within 12 hours |
+| `PENDING` | Verifying | Funded, being checked | No |
+| `CONFIRMED` | Initiated | Confirmed, in progress | No |
+| `HELD` | Held | On hold for review | No |
+| `PAID` | PAID | Paid to the recipient | Yes |
+| `PAID_OUT` | Completed | Paid out | Yes |
+| `FAILED` | Failed to delivery | Payout failed | Yes |
+| `CANCELLED` | Cancelled | Cancelled | Yes, unless a refund is then processed |
+| `PENDING_REFUND` | pending refund | Payment arrived after the transaction expired | No. There is no automatic next step; our operations team resolves it |
+| `REFUNDED` | Refunded | Refunded | Yes |
+| `EXPIRED` | Expired | Not paid within 12 hours | Yes, unless an online payment arrives later, which moves it to `PENDING_REFUND` |
+| `VOID` | Void | Voided | Yes |
 
-    **What Happens**:
-    - Transaction reference generated
-    - User redirected to payment page
-    - Timer starts for quote validity
+"Final" means the status does not change again unless our operations team changes it.
 
-    **User Actions Available**:
-    - Complete payment via card or open banking
-    - Cancel the transaction
-    - View transaction details
-
-    **Next Possible States**:
-    - `VERIFYING` - Payment successfully received
-    - `CANCELLED` - User cancelled before payment
-    - `EXPIRED` - Payment not completed within 10 minutes
-  </Accordion>
-
-  <Accordion title="VERIFYING" icon="shield-check">
-    **Description**: Payment received, undergoing compliance checks
-
-    **What Happens**:
-    - AML/CFT screening initiated
-    - Sanctions list checking
-    - Risk score calculation
-    - PEP screening (if applicable)
-    - Transaction pattern analysis
-
-    **System Actions**:
-    - Automated compliance checks run
-    - Manual review triggered if flagged
-    - Compliance team notified (if needed)
-
-    **Next Possible States**:
-    - `PAID` - All checks passed, funds disbursed
-    - `PENDING_REFUND` - Compliance or payment after transaction expiration
-    - `FAILED_TO_DELIVER` - Delivery issues detected
-
-    <Info>
-      Most transactions (95%+) pass automated checks and move to PAID within 0-2 minutes.
-    </Info>
-  </Accordion>
-
-  <Accordion title="FAILED_TO_DELIVER" icon="triangle-exclamation">
-    **Description**: Delivery attempt failed, automatic retry in progress
-
-    **Common Causes**:
-    - Invalid or closed bank account
-    - Inactive mobile money account
-    - Network timeout or provider downtime
-    - Incorrect account details
-    - Beneficiary name mismatch
-
-    **System Actions**:
-    - Exponential backoff between retries
-    - Notify compliance team after 2nd failure
-    - Contact user for corrections if needed
-
-    **Next Possible States**:
-    - `PAID` - Retry successful
-    - `PENDING_REFUND`
-
-    <Warning>
-      Contact your customer to verify beneficiary details if this status persists.
-    </Warning>
-  </Accordion>
-
-  <Accordion title="PENDING_REFUND" icon="rotate-left">
-    **Description**: Refund initiated, processing back to sender
-
-    **Triggers**:
-    - Compliance rejection (AML/sanctions)
-    - Delivery failure after max retries
-    - Customer dispute (within refund window)
-    - Technical error requiring reversal
-
-    **What Happens**:
-    - Refund request submitted to payment processor
-    - Original payment method receives credit
-    - Refund notification sent to user
-    - Transaction marked for closure
-
-    **Refund Amount**:
-    - Full transaction amount (send amount)
-    - All fees included
-    - Same payment method as original
-
-    **Next Possible State**:
-    - `REFUNDED` - Refund completed successfully
-  </Accordion>
-</AccordionGroup>
+<Info>
+  Use the status values above in your integration, not the labels. For example, a transaction waiting for payment returns `PENDING_PAYMENT`, which is displayed as "Waiting to pay".
+</Info>
 
 ## State Transition Triggers
 
-Understanding what causes state changes helps you build better error handling.
+### Payment
 
-### Payment-Related Transitions
+| From | To | Trigger |
+|------|----|---------|
+| `PENDING_PAYMENT` | `PENDING` | Payment received |
+| `PENDING_PAYMENT` | `EXPIRED` | Not paid within 12 hours. The expiry check runs every 2 hours. |
+| `EXPIRED` | `PENDING_REFUND` | An online payment arrives after the transaction has expired |
 
-| From State | To State | Trigger | Action Required |
-|------------|----------|---------|-----------------|
-| `WAITING_TO_PAY` | `VERIFYING` | Payment successful | Automatic |
-| `WAITING_TO_PAY` | `CANCELLED` | User cancelled | None |
-| `WAITING_TO_PAY` | `EXPIRED` | 10 min timeout | Request new quote |
+### Processing and payout
 
-### Compliance-Related Transitions
+| From | To | Trigger |
+|------|----|---------|
+| `PENDING_PAYMENT` or `PENDING` | `CONFIRMED` | Transaction confirmed. Confirmation only goes ahead once a successful payment has been recorded. |
+| `PENDING_PAYMENT`, `PENDING` or `CONFIRMED` | `HELD` | Transaction held for review |
+| `HELD` | `CONFIRMED` | Hold released |
+| `PENDING` or `CONFIRMED` | `PAID` | Payout partner reports the transfer paid |
+| `PENDING` or `CONFIRMED` | `FAILED` | Payout partner reports the transfer failed |
 
-| From State | To State | Trigger | Action Required |
-|------------|----------|---------|-----------------|
-| `VERIFYING` | `PAID` | All checks passed | None - Automatic |
-| `VERIFYING` | `PENDING_REFUND` | Compliance/Payment failed | Contact support |
-| `VERIFYING` | `FAILED_TO_DELIVER` | Delivery issue | Check beneficiary details |
+Except for cash pickup, a transaction is sent to the payout partner once its payment has been collected and it has passed compliance; it does not need to be `CONFIRMED` first. The status does not change when a transaction is sent to the payout partner. The `TRANSACTION_STATUS` webhook sends `PENDING` with `msgCode` `000` ("pushed for payout") at that point.
 
-### Refund Transitions
+### Cancellation and refunds
 
-| From State | To State | Trigger | Action Required |
-|------------|----------|---------|-----------------|
-| `PENDING_REFUND` | `REFUNDED` | Refund processed | Automatic |
+| From | To | Trigger |
+|------|----|---------|
+| `PENDING_PAYMENT`, `PENDING`, `CONFIRMED` or `HELD` | `CANCELLED` | Transaction cancelled |
+| `CANCELLED` | `REFUNDED` | A refund is processed after cancellation |
+
+A refund is paid into a wallet, not back to the original card or bank account.
 
 <Card title="Webhook Configuration" href="/api/webhooks">
   Learn how to set up webhooks for real-time updates
 </Card>
 
-## Common Scenarios
-
-### Scenario 1: Successful Transaction
-
-```mermaid
-graph LR
-    A[WAITING_TO_PAY] -->|Payment received| B[VERIFYING]
-    B -->|Checks passed| C[PAID]
-    
-    style C fill:#d4edda
-```
-### Scenario 2: Compliance Rejection
-
-```mermaid
-graph LR
-    A[WAITING_TO_PAY] -->|Payment received| B[VERIFYING]
-    B -->|Sanctions match/Payment failed| C[PENDING_REFUND]
-    C -->|Refund processed| D[REFUNDED]
-    
-    style D fill:#f8d7da
-```
-
-### Scenario 3: Delivery Failure with Recovery
-
-```mermaid
-graph LR
-    A[WAITING_TO_PAY] -->|Payment received| B[VERIFYING]
-    B -->|Checks passed| C[FAILED_TO_DELIVER]
-    C -->|Retry successful| D[PAID]
-    
-    style D fill:#d4edda
-```
-
 ## API Reference
 
 <CardGroup cols={2}>
-<Card title="Transaction Status Endpoint" href="/api/transactions/history-data">
+<Card title="Transaction Status Endpoint" href="/api/transactions/check-transaction-status">
   View complete API documentation for tracking transaction status
 </Card>
 

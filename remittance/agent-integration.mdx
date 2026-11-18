@@ -95,7 +95,7 @@ This page lists every endpoint your application needs to go live. Work through t
 
     ### Embedding KYC documents
 
-    Use the `eligibleDocumentList` field to attach any KYC documents required by the compliance policy. Each entry includes the document type and the base64-encoded file. Pass `associatedRuleId` for each document to link it to the correct compliance rule.
+    Use the `eligibleDocumentList` field to attach any KYC documents required by the compliance policy. Each entry includes the document type and the base64-encoded file. Do not send a rule id with these documents; if one is included, it is ignored.
 
     The response returns a `serverCorrelationId` (the transaction UUID) and an `objectReference` (the payment reference number, or PCN) for use in subsequent payment and status calls. It also returns `preExistingSenderCustomerCode` and `preExistingRecipientCustomerCode`. Store these codes and reuse them for later transactions with the same customers.
 

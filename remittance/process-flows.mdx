@@ -761,7 +761,7 @@ sequenceDiagram
     Sender->>App: Confirm transaction
     App->>API: POST /create-transaction
     API->>API: Create transaction record
-    API-->>App: Transaction ID (WAITING_TO_PAY)
+    API-->>App: Transaction ID (PENDING_PAYMENT)
 
     App->>Sender: Choose payment method
     Sender->>App: Select card/open banking
@@ -790,7 +790,7 @@ sequenceDiagram
 
     Payment Gateway->>Payment Gateway: Process payment
     Payment Gateway-->>API: Webhook: Payment successful
-    API->>System: Update status to VERIFYING
+    API->>System: Update status to PENDING
     API->>System: Trigger compliance checks
     Payment Gateway-->>App: Redirect with success
     App-->>Sender: Show success screen
@@ -1053,148 +1053,38 @@ Transactions move through defined states from creation to completion.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> WaitingToPay: Transaction Created
-    WaitingToPay --> Verifying: Payment Received
-    WaitingToPay --> Cancelled: Sender Cancelled
-    WaitingToPay --> Expired: Rate/Payment Timeout
+    [*] --> PENDING_PAYMENT: Transaction created
+    PENDING_PAYMENT --> PENDING: Payment received
+    PENDING_PAYMENT --> EXPIRED: Not paid within 12 hours
+    PENDING_PAYMENT --> CANCELLED: Cancelled
 
-    Verifying --> Paid: Compliance Approved
-    Verifying --> PendingRefund: Compliance Rejected
-    Verifying --> FailedToDeliver: Initial Delivery Failed
+    PENDING_PAYMENT --> CONFIRMED: Confirmed
+    PENDING_PAYMENT --> HELD: Held for review
+    PENDING --> CONFIRMED: Confirmed
+    PENDING --> HELD: Held for review
+    CONFIRMED --> HELD: Held for review
+    HELD --> CONFIRMED: Hold released
 
-    Paid --> [*]: Success
+    PENDING --> PAID: Payout partner reports paid
+    PENDING --> FAILED: Payout partner reports failed
+    CONFIRMED --> PAID: Payout partner reports paid
+    CONFIRMED --> FAILED: Payout partner reports failed
 
-    FailedToDeliver --> Paid: Retry Successful
-    FailedToDeliver --> PendingRefund: Max Retries Exceeded
+    CANCELLED --> REFUNDED: Refund processed
 
-    PendingRefund --> Refunded: Refund Processed
-    Refunded --> [*]: Complete
-
-    Cancelled --> [*]: Complete
-    Expired --> [*]: Complete
+    PAID --> [*]
+    FAILED --> [*]
+    REFUNDED --> [*]
+    EXPIRED --> [*]
 ```
 ---
-<Card title='Transaction History' href='/api/transactions/history-data'>
-  Go to transaction history endpoint.
+<Card title='Transaction Lifecycle' href='/remittance/transactions'>
+  See every status, its display label, whether it is final, and what triggers each change.
 </Card>
 
-#### Transaction Status Definitions
-
-<AccordionGroup>
-  <Accordion title="WAITING_TO_PAY">
-    **Description**: Transaction created but payment not yet received
-
-    **Sender Actions**:
-    - Complete payment via card or open banking
-    - Cancel transaction
-
-    **Next States**:
-    - `VERIFYING` - Payment received
-    - `CANCELLED` - Sender cancelled
-    - `EXPIRED` - Quote/payment timeout
-
-  </Accordion>
-
-  <Accordion title="VERIFYING">
-    **Description**: Payment received, undergoing compliance checks
-
-    **System Actions**:
-    - AML/CFT screening
-    - Sanctions checking
-    - Risk assessment
-    - PEP screening (if applicable)
-
-    **Next States**:
-    - `PAID` - All checks passed
-    - `PENDING_REFUND` - Compliance rejected
-    - `FAILED_TO_DELIVER` - Delivery issues
-
-  </Accordion>
-
-  <Accordion title="PAID">
-    **Description**: Transaction completed successfully, funds delivered
-
-    **System Actions**:
-    - FX conversion executed
-    - Funds disbursed to beneficiary
-    - Confirmations sent
-
-    **Notifications Sent**:
-    - Email receipt to sender
-    - SMS to beneficiary
-    - Push notification (if enabled)
-
-    **Final State**: Transaction complete ✓
-
-  </Accordion>
-
-  <Accordion title="FAILED_TO_DELIVER">
-    **Description**: Delivery attempt failed (wrong account, network issues, etc.)
-
-    **Common Causes**:
-    - Invalid account number
-    - Inactive mobile money account
-    - Bank account closed
-    - Network timeout
-
-    **System Actions**:
-    - Transaction retry (if activated)
-    - Notify compliance team
-    - Contact customer for corrections
-
-    **Next States**:
-    - `PAID` - Retry successful
-    - `PENDING_REFUND`
-
-  </Accordion>
-
-  <Accordion title="PENDING_REFUND">
-    **Description**: Refund initiated, processing back to sender
-
-    **Triggers**:
-    - Compliance rejection
-    - Delivery failure (max retries)
-    - Customer request (within refund window)
-
-    **Next State**: `REFUNDED` - Refund complete
-
-  </Accordion>
-
-  <Accordion title="REFUNDED">
-    **Description**: Funds returned to sender's payment method
-
-    **Details**:
-    - Full refund (including fees)
-    - Returns to original payment method
-    - Refund confirmation sent
-
-    **Final State**: Transaction complete (refunded)
-
-  </Accordion>
-
-  <Accordion title="CANCELLED">
-    **Description**: Transaction cancelled before payment
-
-    **Triggers**:
-    - Sender cancelled during payment
-    - Sender didn't complete payment
-
-    **No Charges**: No funds were debited
-
-    **Final State**: Transaction complete (cancelled)
-
-  </Accordion>
-
-  <Accordion title="EXPIRED">
-    **Description**: Payment window expired
-
-    **Causes**:
-    - Payment not completed in time
-
-    **Final State**: Transaction complete (expired)
-
-  </Accordion>
-</AccordionGroup>
+<Card title='Check Transaction Status' href='/api/transactions/check-transaction-status'>
+  Get the current status of a transaction by its PCN.
+</Card>
 
 ## API Integration Checklist
 
