@@ -4,15 +4,19 @@ openapi: 'GET /compliance/initiate-awaiting-compliance-action/{customer-kyc-reco
 description: 'Triggers a specific pending KYC compliance action for a customer and returns the data needed to complete it.'
 ---
 
-Call this endpoint once for each outstanding requirement returned by the [Awaiting Compliance Requirements](/api/ciam/awaiting-compliance-requirements) endpoint.
+Call this endpoint once for each outstanding requirement returned by the [Customer Compliance Checklist](/api/ciam/compliance-checklist) endpoint.
 
-Initiating an action causes the platform to begin processing it on our side. Depending on the action type, this may:
+Initiating an action causes the platform to begin processing it on our side. Depending on the action type:
 
-- Send a verification email to the customer (email verification)
-- Send an OTP to the customer's phone (phone number verification)
-- Return verification session details (eKYC)
+- **Email verification**: the platform sends a verification email to the customer's registered email address.
+- **Phone verification**: the platform sends a 6-digit code by SMS to the customer's registered phone number. Submit the code with [OTP Verification](/api/ciam/otp-verification).
+- **eKYC**: the platform creates the verification session and returns the customer's verification link in `generateVerificationUrl`. The platform does not send this link to the customer.
 
-The `customer-kyc-record-id` in the path is the ID of the specific compliance record returned in the awaiting requirements list. Call this endpoint once per action, not once for all actions.
+The `customer-kyc-record-id` in the path is the `customerKycRecordId` of the requirement in the compliance checklist. Call this endpoint once per action, not once for all actions.
+
+<Note>
+  **Calling as a cashier?** The action is started for the customer who owns the KYC record, not for the cashier, so `X-CUSTOMER-ID` is not needed on this call. For eKYC, share the `generateVerificationUrl` with the customer so they can complete the verification.
+</Note>
 
 <Note>
   **Using an external provider that handles email and phone verification?** If your KYC provider performs contact verification as part of its flow, you must first enable `doNotForwardEmailVerification` and/or `doNotForwardPhoneVerification` in your agent (PayCenter) settings. Without this, customers will receive duplicate verification messages — one from your provider and one from the platform. Once configured, use [Verify Contact](/api/ciam/verify-contact) to notify the platform when your provider has confirmed a customer's email or phone.

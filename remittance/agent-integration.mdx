@@ -97,6 +97,23 @@ This page lists every endpoint your application needs to go live. Work through t
 
     Use the `eligibleDocumentList` field to attach any KYC documents required by the compliance policy. Each entry includes the document type and the base64-encoded file. Do not send a rule id with these documents; if one is included, it is ignored.
 
+    ### Completing KYC requirements with built-in KYC
+
+    When a sender is registered, KYC requirements are assigned to them automatically based on your organisation's compliance configuration. You only see the requirements configured for your organisation. If a requirement has the restriction `BLOCK`, the sender cannot book until it is fulfilled.
+
+    | Method | Path | What it does |
+    |--------|------|--------------|
+    | `PUT` | [`compliance/customer-compliance-checklist`](/api/ciam/compliance-checklist) | List the sender's outstanding requirements. Send the sender's `userId` in `X-CUSTOMER-ID`. Send an empty body `{}` to get their KYC requirements, or include a `transactionQuote` to also get requirements for a specific transfer. Each requirement includes a `customerKycRecordId`. |
+    | `GET` | [`compliance/initiate-awaiting-compliance-action/{customer-kyc-record-id}`](/api/ciam/initiate-compliance-action) | Start one requirement. Call it once per requirement with its `customerKycRecordId`. |
+
+    The requirement belongs to the sender, so the action is started for the sender even though your cashier makes the call. `X-CUSTOMER-ID` is not needed on the initiate call.
+
+    What happens next depends on the requirement type:
+
+    - **Email verification** (`VERIFY_ACCOUNT_VIA_EMAIL`): the platform sends a verification email to the email address the sender was registered with.
+    - **Phone verification** (`VERIFY_ACCOUNT_VIA_PHONE_NUMBER`): the platform sends a 6-digit code by SMS to the phone number the sender was registered with. Collect the code from the sender and submit it with [`securitymanagement/otp-verification/{email}/{verification-code}`](/api/ciam/otp-verification), using the sender's email.
+    - **eKYC** (`VERIFY_ACCOUNT_VIA_EKYC`): the platform creates the verification session and returns the sender's verification link in `generateVerificationUrl`. The platform does not send this link to the sender, so share it with them. The verification result is sent to the platform automatically. If it is approved, the requirement is fulfilled. If it is declined, the requirement stays outstanding so the sender can try again.
+
     The response returns a `serverCorrelationId` (the transaction UUID) and an `objectReference` (the payment reference number, or PCN) for use in subsequent payment and status calls. It also returns `preExistingSenderCustomerCode` and `preExistingRecipientCustomerCode`. Store these codes and reuse them for later transactions with the same customers.
 
     ### Recovering a customer with a correlation ID
@@ -152,6 +169,9 @@ This page lists every endpoint your application needs to go live. Work through t
       </Step>
       <Step title="Book transfer with embedded KYC">
         `POST transactionmanagement/create-transaction` - include sender (new or existing), beneficiary (new or existing), and any required documents in a single call using a cashier token.
+      </Step>
+      <Step title="Complete outstanding KYC (if required)">
+        `PUT compliance/customer-compliance-checklist`, then `GET compliance/initiate-awaiting-compliance-action/{customer-kyc-record-id}` for each requirement
       </Step>
       <Step title="Process payment (if required)">
         `POST paymentmanagement/supported-payment-methods`

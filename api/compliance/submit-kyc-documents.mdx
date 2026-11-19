@@ -4,7 +4,7 @@ openapi: 'POST /documentmanagement/attach-documents'
 description: 'Submits KYC documents for customer compliance verification to fulfill outstanding compliance requirements.'
 ---
 
-This endpoint allows you to submit KYC (Know Your Customer) documents for a customer. Use this after retrieving pending requirements from the [Awaiting Compliance](/api/compliance/awaiting-compliance) endpoint.
+This endpoint allows you to submit KYC (Know Your Customer) documents for a customer. Use this after retrieving pending requirements from the [Customer Compliance Checklist](/api/ciam/compliance-checklist) endpoint.
 
 ## Request Headers
 
@@ -47,13 +47,13 @@ This endpoint requires a valid **Access Token** for authorization.
       - `OTHER` - Other
     </ParamField>
     <ParamField body='file_base64' type='string' required>
-      The document file as a **data URI string** — must include the MIME type prefix. Format: `data:image/jpeg;base64,<base64data>`. Supported MIME types: `image/jpeg`, `image/png`, `application/pdf`. Sending raw base64 without the `data:...;base64,` prefix will cause server-side file type detection to fail.
+      The document file as a **data URI string** - must include the MIME type prefix. Format: `data:image/jpeg;base64,<base64data>`. Supported MIME types: `image/jpeg`, `image/png`, `application/pdf`. Sending raw base64 without the `data:...;base64,` prefix will cause server-side file type detection to fail.
     </ParamField>
     <ParamField body='name' type='string'>
       The filename of the document (e.g. `passport.pdf`).
     </ParamField>
     <ParamField body='associatedRuleId' type='string' required>
-      The KYC rule ID to associate this document with. Returned as `associatedRuleId` in the awaiting compliance requirements response. This must be included — without it the rule will not be closed.
+      The KYC rule ID to associate this document with. Returned as `associatedRuleId` in the [Customer Compliance Checklist](/api/ciam/compliance-checklist) response. This must be included - without it the rule will not be closed.
     </ParamField>
     <ParamField body='issueNo' type='string'>
       The document's issue number or reference (e.g. passport number).
@@ -112,7 +112,7 @@ curl --location 'https://{your-domain}.fincode.software/api/v6/services/document
       "idType": "ADDRESS_PROOF",
       "file_base64": "data:image/jpeg;base64,/9j/4AAQSkZJRg...",
       "name": "utility_bill.pdf",
-      "associatedRuleId": "RULE_ID_FROM_AWAITING_COMPLIANCE"
+      "associatedRuleId": "RULE_ID_FROM_COMPLIANCE_CHECKLIST"
     }
   ]
 }'
@@ -168,7 +168,7 @@ async function submitKycDocument(accessToken, customerCode, ruleId, idType, file
 
 // Usage Example
 const accessToken = 'YOUR_JWT_ACCESS_TOKEN';
-submitKycDocument(accessToken, 'CUST123456', 'RULE_ID_FROM_AWAITING_COMPLIANCE', 'ADDRESS_PROOF', './utility_bill.pdf');
+submitKycDocument(accessToken, 'CUST123456', 'RULE_ID_FROM_COMPLIANCE_CHECKLIST', 'ADDRESS_PROOF', './utility_bill.pdf');
 ```
 
 </CodeGroup>

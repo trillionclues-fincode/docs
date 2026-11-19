@@ -16,7 +16,7 @@ When the customer completes verification, the provider sends a webhook to the pl
 |-------|------|----------|-------------|
 | `userId` | string | Yes | The customer's user ID returned from the register-customer endpoint |
 | `customerEmail` | string | Yes | The customer's email address |
-| `ruleId` | string | Yes | The eKYC rule ID from the awaiting compliance requirements list |
+| `ruleId` | string | Yes | The `associatedRuleId` of the eKYC requirement from the [Customer Compliance Checklist](/api/ciam/compliance-checklist) |
 | `correlationId` | string | No | Your own reference for this customer (e.g. your internal profile ID). If provided, the platform stores it and uses it to match incoming webhooks when your provider echoes it back as the external user identifier. If omitted, the platform generates a UUID reference instead. |
 
 ## Response
