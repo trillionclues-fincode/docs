@@ -41,7 +41,7 @@ Attach one or more identity or compliance documents to a customer record. Docume
     </ParamField>
 
     <ParamField body='name' type='string' required>
-      File name including extension (e.g. `passport_front.jpg`). The extension must be present — it is used to determine the file type.
+      File name including extension (e.g. `passport_front.jpg`). The extension must be present - it is used to determine the file type.
     </ParamField>
 
     <ParamField body='idType' type='string'>
@@ -63,10 +63,10 @@ Attach one or more identity or compliance documents to a customer record. Docume
     </ParamField>
 
     <ParamField body='associatedRuleId' type='string'>
-      The `associatedRuleId` from the [Awaiting Compliance Requirements](/api/ciam/awaiting-compliance-requirements) response. Links this document to the outstanding KYC rule. Required when submitting a document against a specific rule — if omitted, the document is uploaded but does not automatically close any open requirement.
+      The `associatedRuleId` from the [Customer Compliance Checklist](/api/ciam/compliance-checklist) response. Links this document to the outstanding KYC rule. Required when submitting a document against a specific rule - if omitted, the document is uploaded but does not automatically close any open requirement.
 
       <Warning>
-        Use the `associatedRuleId` field from the awaiting compliance item, **not** the `customer-kyc-record-id`. They are different values.
+        Use the `associatedRuleId` field from the compliance checklist item, **not** the `customer-kyc-record-id`. They are different values.
       </Warning>
     </ParamField>
 
@@ -107,7 +107,7 @@ curl -X POST 'https://{your-domain}.fincode.software/api/v6/services/documentman
       "file_base64": "data:image/jpeg;base64,/9j/4AAQSkZJRgAB...",
       "name": "passport_front.jpg",
       "idType": "PASSPORT",
-      "associatedRuleId": "rule-uuid-from-awaiting-compliance",
+      "associatedRuleId": "rule-uuid-from-compliance-checklist",
       "issueNo": "123456789",
       "issueCountry": "GBR",
       "issueDate": "2015-06-01",

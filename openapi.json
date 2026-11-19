@@ -617,8 +617,9 @@
         "/compliance/awaiting-compliance-requirements": {
             "get": {
                 "summary": "Awaiting Compliance",
-                "description": "Checks for any outstanding Know Your Customer (KYC) or regulatory documents required from the authenticated user.",
+                "description": "Deprecated. Use PUT /compliance/customer-compliance-checklist instead. Checks for any outstanding Know Your Customer (KYC) or regulatory documents required from the authenticated user.",
                 "operationId": "awaitingCompliance",
+                "deprecated": true,
                 "tags": [
                     "Compliance"
                 ],
